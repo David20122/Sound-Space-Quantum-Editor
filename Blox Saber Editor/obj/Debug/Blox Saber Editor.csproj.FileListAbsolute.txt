@@ -32,3 +32,20 @@ C:\Users\Lenovo\Desktop\editor things\Sound-Space-Map-Editor-OpenGL\Blox Saber E
 C:\Users\Lenovo\Desktop\editor things\Sound-Space-Map-Editor-OpenGL\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CopyComplete
 C:\Users\Lenovo\Desktop\editor things\Sound-Space-Map-Editor-OpenGL\Blox Saber Editor\obj\Debug\Sound Space Editor.exe
 C:\Users\Lenovo\Desktop\editor things\Sound-Space-Map-Editor-OpenGL\Blox Saber Editor\obj\Debug\Sound Space Editor.pdb
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\x86\bassasio.dll
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\x64\bassasio.dll
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\Sound Space Editor.exe.config
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\Sound Space Editor.exe
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\Sound Space Editor.pdb
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\Bass.Net.dll
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\OpenTK.dll
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\Bass.Net.xml
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\OpenTK.pdb
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\OpenTK.xml
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csprojAssemblyReference.cache
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Sound_Space_Editor.Properties.Resources.resources
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.GenerateResource.cache
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CoreCompileInputs.cache
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CopyComplete
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Sound Space Editor.exe
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Sound Space Editor.pdb

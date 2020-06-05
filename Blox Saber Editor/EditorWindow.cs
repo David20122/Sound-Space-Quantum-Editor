@@ -1184,13 +1184,15 @@ namespace Sound_Space_Editor
 				{
 					if (gse.Quantum.Toggle)
 					{
-						// dragging notes by .5
-							var QGnewX = (int)Math.Floor((pos.X - rect.X) / rect.Width * 5f);
-							var QGnewY = (int)Math.Floor((pos.Y - rect.Y) / rect.Height * 5f);
-							var QGMnewX = QGnewX * 0.5f;
-							var QGMnewY = QGnewY * 0.5f;
+						// dragging notes by custom value pog
+                            var vv = float.Parse(gse.NoteAlign.Text, CultureInfo.InvariantCulture.NumberFormat);
+                            var v = 3f / vv;
+							var QGnewX = (int)Math.Floor((pos.X - rect.X) / rect.Width * v);
+							var QGnewY = (int)Math.Floor((pos.Y - rect.Y) / rect.Height * v);
+                            var QGMnewX = QGnewX * vv;
+                            var QGMnewY = QGnewY * vv;
 
-							if (QGMnewX < -0.5f || QGMnewX > 2.5f || QGMnewY < -0.5f || QGMnewY > 2.5f)
+                        if (QGMnewX < -0.5f || QGMnewX > 2.5f || QGMnewY < -0.5f || QGMnewY > 2.5f)
 							{
 								return;
 							}

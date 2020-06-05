@@ -19,7 +19,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiSlider SfxVolume;
 		public readonly GuiSlider BeatSnapDivisor;
 		public readonly GuiSlider Timeline;
-		public readonly GuiTextBox Bpm;
+        public readonly GuiTextBox Bpm;
 		public readonly GuiTextBox Offset;
 		public readonly GuiTextBox NoteAlign;
 		public readonly GuiCheckBox Reposition;
@@ -223,7 +223,7 @@ namespace Sound_Space_Editor.Gui
 			Grid.Render(delta, mouseX, mouseY);
 			Track.Render(delta, mouseX, mouseY);
 			Bpm.Render(delta, mouseX, mouseY);
-			//NoteAlign.Render(delta, mouseX, mouseY);
+			NoteAlign.Render(delta, mouseX, mouseY);
 			Offset.Render(delta, mouseX, mouseY);
 		}
 
@@ -236,7 +236,7 @@ namespace Sound_Space_Editor.Gui
 		{
 			Bpm.OnKeyTyped(key);
 			Offset.OnKeyTyped(key);
-			//NoteAlign.OnKeyTyped(key);
+			NoteAlign.OnKeyTyped(key);
 
 			UpdateTrack();
 		}
@@ -245,7 +245,7 @@ namespace Sound_Space_Editor.Gui
 		{
 			Bpm.OnKeyDown(key, control);
 			Offset.OnKeyDown(key, control);
-			//NoteAlign.OnKeyDown(key, control);
+			NoteAlign.OnKeyDown(key, control);
 
 			UpdateTrack();
 		}
@@ -254,7 +254,7 @@ namespace Sound_Space_Editor.Gui
 		{
 			Bpm.OnMouseClick(x, y);
 			Offset.OnMouseClick(x, y);
-			//NoteAlign.OnMouseClick(x, y);
+			NoteAlign.OnMouseClick(x, y);
 
 			base.OnMouseClick(x, y);
 		}
@@ -361,7 +361,7 @@ namespace Sound_Space_Editor.Gui
 			// sm
 			Bpm.ClientRectangle.Y = Grid.ClientRectangle.Y + 28;
 			Offset.ClientRectangle.Y = Bpm.ClientRectangle.Bottom + 5 + 24 + 10;
-			//NoteAlign.ClientRectangle.Y = Grid.ClientRectangle.Y + 100;
+			NoteAlign.ClientRectangle.Y = Grid.ClientRectangle.Y + 100;
 			SetOffset.ClientRectangle.Y = Offset.ClientRectangle.Y;
 			Reposition.ClientRectangle.Y = Offset.ClientRectangle.Bottom + 10;
 			BeatSnapDivisor.ClientRectangle.Y = Bpm.ClientRectangle.Y;
@@ -375,7 +375,7 @@ namespace Sound_Space_Editor.Gui
 			Bpm.ClientRectangle.X = 10;
 			Offset.ClientRectangle.X = Bpm.ClientRectangle.X;
 			SetOffset.ClientRectangle.X = Bpm.ClientRectangle.Right + 5;
-			//NoteAlign.ClientRectangle.X = Grid.ClientRectangle.X + 390;
+			NoteAlign.ClientRectangle.X = Grid.ClientRectangle.X + 390;
 			Reposition.ClientRectangle.X = Bpm.ClientRectangle.X;
 
 			Autoplay.ClientRectangle.X = Bpm.ClientRectangle.X;
