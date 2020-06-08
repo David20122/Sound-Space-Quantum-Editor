@@ -50,8 +50,6 @@ namespace Sound_Space_Editor.Gui
 			if (flag)
 				return;
 
-			var hasDecimalPoint = _text.Contains(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
-
 			if (Numeric)
 			{
 				if (string.IsNullOrWhiteSpace(_text))
@@ -61,26 +59,35 @@ namespace Sound_Space_Editor.Gui
 				}
 				if (Decimal)
 				{
-					if (hasDecimalPoint)
+                    var text = Text.Trim('0');
+                
+					if (text.Length > 0 && text[text.Length - 1].ToString() == CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator)
 					{
-						var text = Text.Trim('0');
-
-						if (text.Length > 0 && text[text.Length - 1].ToString() == CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
-						{
-							text += 0;
-						}
-
-						if (decimal.TryParse(text, out var parsed))
-						{
-							Text = parsed.ToString();
-						}
+						text += 0;
 					}
-					if (decimal.TryParse(_text, out var num) && num == (long)num)
+					if (decimal.TryParse(text, NumberStyles.AllowDecimalPoint, null, out var parsed))
 					{
-						Text = ((long)num).ToString();
-					}
-				}
-			}
+						Text = parsed.ToString();
+                    }
+                }
+                else
+                {
+                    var text = Text.Trim('0');
+
+                    if (text.Length > 0 && text[text.Length - 1].ToString() == CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator)
+                    {
+                        text += 0;
+                    }
+                    if (decimal.TryParse(text, NumberStyles.Integer, null, out var parsed))
+                    {
+                        Text = parsed.ToString();
+                    }
+                }
+                if (decimal.TryParse(_text, out var num) && num == (long)num)
+                {
+                    Text = ((long)num).ToString();
+                }
+            }
 		}
 
 		public override void Render(float delta, float mouseX, float mouseY)
@@ -153,28 +160,6 @@ namespace Sound_Space_Editor.Gui
 				return;
 
 			var keyChar = key.ToString();
-			
-			if (Numeric && (!CanBeNegative && !byte.TryParse(keyChar, out _) || CanBeNegative && !long.TryParse(_text.Insert(_cursorPos, keyChar), out _))) //if not a number
-			{
-				if (Decimal)
-				{
-					if (keyChar != "." && keyChar != ",") // if not a number and not a decimal splitter
-					{
-						return;
-					}
-					if (_text.Contains(".") || _text.Contains(","))
-					{
-						return;
-					}
-
-					//if a decimal splitter
-					keyChar = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-				}
-				else
-				{
-					return;
-				}
-			}
 
 			try
 			{

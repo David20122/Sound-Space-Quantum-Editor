@@ -65,6 +65,7 @@ namespace Sound_Space_Editor
 		private bool _saved;
 		private bool _rightDown;
 		private bool _controlDown;
+        private bool _altDown;
 		private bool _draggingNoteTimeline;
 		private bool _draggingNoteGrid;
 		private bool _draggingTimeline;
@@ -664,14 +665,18 @@ namespace Sound_Space_Editor
 		{
 			_controlDown = e.Control || Keyboard.GetState().IsKeyDown(Key.ControlLeft) ||
 									   Keyboard.GetState().IsKeyDown(Key.LControl);
-		}
+            _altDown = e.Alt || Keyboard.GetState().IsKeyDown(Key.AltLeft) ||
+                                       Keyboard.GetState().IsKeyDown(Key.LAlt);
+        }
 
 		protected override void OnKeyDown(KeyboardKeyEventArgs e)
 		{
 			_controlDown = e.Control || Keyboard.GetState().IsKeyDown(Key.ControlLeft) ||
 						   Keyboard.GetState().IsKeyDown(Key.LControl);
+            _altDown = e.Alt || Keyboard.GetState().IsKeyDown(Key.AltLeft) ||
+                           Keyboard.GetState().IsKeyDown(Key.LAlt);
 
-			if (e.Key == Key.F11)
+            if (e.Key == Key.F11)
 			{
 				ToggleFullscreen();
 
@@ -981,6 +986,11 @@ namespace Sound_Space_Editor
 				{
 					Zoom += e.DeltaPrecise * 0.1f;
 				}
+                else if (_altDown)
+                {
+                    editor.BeatSnapDivisor.Value += (int)e.DeltaPrecise;
+                    editor.BeatSnapDivisor.Value = MathHelper.Clamp(editor.BeatSnapDivisor.Value, 0, editor.BeatSnapDivisor.MaxValue);
+                }
 				else
 				{
 					MusicPlayer.Pause();
@@ -1497,6 +1507,7 @@ namespace Sound_Space_Editor
 				_saved = false;
 				_rightDown = false;
 				_controlDown = false;
+                _altDown = false;
 				_draggingNoteTimeline = false;
 				_draggingNoteGrid = false;
 				_draggingTimeline = false;

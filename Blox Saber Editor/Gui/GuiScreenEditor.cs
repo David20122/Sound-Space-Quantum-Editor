@@ -12,6 +12,7 @@ namespace Sound_Space_Editor.Gui
 	class GuiScreenEditor : GuiScreen
 	{
 		public GuiScreen GuiScreen { get; private set; }
+        public bool AutoSave = false;
 		public readonly GuiGrid Grid = new GuiGrid(300, 300);
 		public readonly GuiTrack Track = new GuiTrack(0, 64);
 		public readonly GuiSlider Tempo;
@@ -225,6 +226,12 @@ namespace Sound_Space_Editor.Gui
 			Bpm.Render(delta, mouseX, mouseY);
 			NoteAlign.Render(delta, mouseX, mouseY);
 			Offset.Render(delta, mouseX, mouseY);
+
+            if (AutoSave)
+            {
+                AutoSave = false;
+                ShowToast("AUTOSAVING", Color.FromArgb(0, 255, 200));
+            }
 		}
 
 		public override bool AllowInput()
