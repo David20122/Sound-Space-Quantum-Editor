@@ -7,6 +7,8 @@ using Sound_Space_Editor.Properties;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using System.IO;
+
 namespace Sound_Space_Editor.Gui
 {
 	class GuiScreenEditor : GuiScreen
@@ -32,6 +34,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiButton BackButton;
 		public readonly GuiButton CopyButton;
 		public readonly GuiButton SetOffset;
+        public float AutoSaveTimer { get; private set; } = 0f;
 
 		private readonly GuiLabel _toast;
 		private float _toastTime;
@@ -226,12 +229,6 @@ namespace Sound_Space_Editor.Gui
 			Bpm.Render(delta, mouseX, mouseY);
 			NoteAlign.Render(delta, mouseX, mouseY);
 			Offset.Render(delta, mouseX, mouseY);
-
-            if (AutoSave)
-            {
-                AutoSave = false;
-                ShowToast("AUTOSAVING", Color.FromArgb(0, 255, 200));
-            }
 		}
 
 		public override bool AllowInput()
@@ -331,8 +328,15 @@ namespace Sound_Space_Editor.Gui
 					}
 					break;
 				case 4:
-					Clipboard.SetText(EditorWindow.Instance.ParseData());
-					ShowToast("COPIED TO CLIPBOARD", Color.FromArgb(0, 255, 200));
+                    try
+                    {
+                        Clipboard.SetText(EditorWindow.Instance.ParseData());
+                        ShowToast("COPIED TO CLIPBOARD", Color.FromArgb(0, 255, 200));
+                    }
+                    catch
+                    {
+                        ShowToast("FAILED TO COPY", Color.FromArgb(255,200,0))
+                    }
 					break;
 				case 5:
 					Settings.Default.Autoplay = Autoplay.Toggle;

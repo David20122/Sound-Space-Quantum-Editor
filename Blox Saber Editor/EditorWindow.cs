@@ -793,11 +793,11 @@ namespace Sound_Space_Editor
 
 							Clipboard.SetData("notes", copied);
 
-							editor.ShowToast("COPIED NOTES", Color.FromArgb(255, 255, 255));
+							editor.ShowToast("COPIED NOTES", Color.FromArgb(0, 255, 200));
 						}
-						catch (Exception ex)
+						catch
 						{
-							MessageBox.Show($"Error while trying to copy:\n{ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            editor.ShowToast("FAILED TO COPY", Color.FromArgb(255, 200, 0));
 						}
 					}
 					else if (e.Key == Key.V)
@@ -850,12 +850,12 @@ namespace Sound_Space_Editor
 
 								_saved = false;
 							}
-						}
-						catch (Exception ex)
-						{
-							MessageBox.Show($"Error while trying to paste:\n{ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-						}
-					}
+                        }
+                        catch
+                        {
+                            editor.ShowToast("FAILED TO COPY", Color.FromArgb(255, 200, 0));
+                        }
+                    }
 				}
 
 				//make sure to not register input while we're typing into a text box
