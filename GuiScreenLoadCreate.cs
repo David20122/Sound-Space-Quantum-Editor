@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
@@ -15,6 +17,7 @@ namespace Sound_Space_Editor.Gui
 		private readonly GuiButton _createButton;
 		private readonly GuiButton _loadButton;
 		private readonly GuiButton _pasteButton;
+		private readonly GuiButton _githubButton;
 		private readonly GuiLabel _lbl = new GuiLabel(0, 0, "Source Code: github.com/TominoCZ");
 		private readonly GuiLabel _lbl2 = new GuiLabel(0, 0, "New features: David20122");
 
@@ -34,6 +37,7 @@ namespace Sound_Space_Editor.Gui
 			_createButton = new GuiButton(0, 0, 0, 192, 64, "CREATE MAP");
 			_loadButton = new GuiButton(1, 0, 0, 192, 64, "LOAD MAP");
 			_pasteButton = new GuiButton(2, 0, 0, 192, 64, "PASTE DATA");
+			_githubButton = new GuiButton(3, 0, 0, 192, 64, "LOAD GITHUB LINK");
 
 			_lbl.Color = Color.FromArgb(169, 169, 169);
 			_lbl2.Color = Color.FromArgb(169, 169, 169);
@@ -41,6 +45,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(_createButton);
 			Buttons.Add(_loadButton);
 			Buttons.Add(_pasteButton);
+			Buttons.Add(_githubButton);
 
 			OnResize(EditorWindow.Instance.ClientSize);
 		}
@@ -86,6 +91,7 @@ namespace Sound_Space_Editor.Gui
 			_lbl2.Render(delta, mouseX, mouseY);
 		}
 
+
 		protected override void OnButtonClicked(int id)
 		{
 			switch (id)
@@ -127,6 +133,12 @@ namespace Sound_Space_Editor.Gui
 						EditorWindow.Instance.LoadMap(clipboard);
 					}
 					break;
+				case 3:
+					var gclipboard = Clipboard.GetText();
+					WebClient client = new WebClient();
+					string reply = client.DownloadString(gclipboard);
+					EditorWindow.Instance.LoadMap(reply);
+					break;
 			}
 		}
 
@@ -145,7 +157,8 @@ namespace Sound_Space_Editor.Gui
 			_loadButton.ClientRectangle.Location = new PointF((int)(size.Width / 2f + 10), 512 - 64 - 20);
 			//old, incase; _createButton.ClientRectangle.Location = new PointF((int)(size.Width / 2f - _createButton.ClientRectangle.Width - 10), 512);
 			//old. incase; _loadButton.ClientRectangle.Location = new PointF((int)(size.Width / 2f + 10), 512);
-			_pasteButton.ClientRectangle.Location = new PointF((int)(size.Width / 2f - 192 / 2f), 512);
+			_pasteButton.ClientRectangle.Location = new PointF((int)(size.Width / 2f - 192 - 10), 512);
+			_githubButton.ClientRectangle.Location = new PointF((int)(size.Width / 2f + 10), 512);
 		}
 	}
 
