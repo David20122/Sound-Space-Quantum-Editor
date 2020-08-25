@@ -22,9 +22,9 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiSlider SfxVolume;
 		public readonly GuiSlider BeatSnapDivisor;
 		public readonly GuiSlider Timeline;
+		public readonly GuiSlider NoteAlign;
         public readonly GuiTextBox Bpm;
 		public readonly GuiTextBox Offset;
-		public readonly GuiTextBox NoteAlign;
 		public readonly GuiCheckBox Reposition;
 		public readonly GuiCheckBox Autoplay;
 		public readonly GuiCheckBox ApproachSquares;
@@ -38,20 +38,21 @@ namespace Sound_Space_Editor.Gui
 
 		private readonly GuiLabel _toast;
 		private float _toastTime;
-        private readonly int _textureId;
-        private bool bgImg = false;
+		private readonly int _textureId;
+		private bool bgImg = false;
 
 		public GuiScreenEditor() : base(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64)
 		{
-            if (File.Exists("background.png")) {
-                this.bgImg = true;
-                using (Bitmap img = new Bitmap("background.png"))
-                {
-                    this._textureId = TextureManager.GetOrRegister("bg", img, true);
-                }
-            }
+			if (File.Exists("background.png"))
+			{
+				this.bgImg = true;
+				using (Bitmap img = new Bitmap("background.png"))
+				{
+					this._textureId = TextureManager.GetOrRegister("bg", img, true);
+				}
+			}
 
-            _toast = new GuiLabel(0, 0, "")
+			_toast = new GuiLabel(0, 0, "")
 			{
 				Centered = true,
 				FontSize = 36
@@ -70,14 +71,11 @@ namespace Sound_Space_Editor.Gui
 				Text = "0",
 				Centered = true,
 				Numeric = true,
-				CanBeNegative = true
+				CanBeNegative = false
 			};
-			NoteAlign = new GuiTextBox(0, 0, 128, 32)
+			NoteAlign = new GuiSlider(0, 0, 128, 32)
 			{
-				Text = "0.5",
-				Centered = true,
-				Numeric = true,
-				Decimal = true
+				MaxValue = 1
 			};
 			Reposition = new GuiCheckBox(1, "Offset Notes", 10, 0, 32, 32, false);
 			BeatSnapDivisor = new GuiSlider(0, 0, 256, 40);
@@ -113,17 +111,15 @@ namespace Sound_Space_Editor.Gui
 
 			Bpm.Focused = true;
 			Offset.Focused = true;
-			NoteAlign.Focused = true;
 			Bpm.OnKeyDown(Key.Right, false);
 			Offset.OnKeyDown(Key.Right, false);
-			NoteAlign.OnKeyDown(Key.Right, false);
 			Bpm.Focused = false;
 			Offset.Focused = false;
-			NoteAlign.Focused = false;
 			
 			Buttons.Add(playPause);
 			Buttons.Add(Timeline);
 			Buttons.Add(Tempo);
+			Buttons.Add(NoteAlign);
 			Buttons.Add(MasterVolume);
 			Buttons.Add(SfxVolume);
 			Buttons.Add(BeatSnapDivisor);
@@ -143,12 +139,13 @@ namespace Sound_Space_Editor.Gui
 
 			MasterVolume.Value = (int)(Settings.Default.MasterVolume * MasterVolume.MaxValue);
 			SfxVolume.Value = (int)(Settings.Default.SFXVolume * SfxVolume.MaxValue);
+			NoteAlign.Value = (int)(Settings.Default.NoteAlign * NoteAlign.MaxValue);
 
 		}
 
 		public override void Render(float delta, float mouseX, float mouseY)
-        {
-            _toastTime = Math.Min(2, _toastTime + delta);
+		{
+			_toastTime = Math.Min(2, _toastTime + delta);
 
 			var toastOffY = 1f;
 
@@ -165,13 +162,13 @@ namespace Sound_Space_Editor.Gui
 			var fr = EditorWindow.Instance.FontRenderer;
 			var h = fr.GetHeight(_toast.FontSize);
 
-            if (bgImg)
-            {
-                GL.Color3(1, 1, 1f);
-                Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
-            }
+			if (bgImg)
+			{
+				GL.Color3(1, 1, 1f);
+				Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
+			}
 
-            _toast.ClientRectangle.Y = size.Height - toastOffY * h * 3.25f + h / 2;
+			_toast.ClientRectangle.Y = size.Height - toastOffY * h * 3.25f + h / 2;
 			_toast.Color = Color.FromArgb((int)(Math.Pow(toastOffY, 3) * 255), _toast.Color);
 
 			GL.Color3(Color.FromArgb(0, 255, 200));
@@ -200,6 +197,8 @@ namespace Sound_Space_Editor.Gui
 
 			var masterP = $"{(int)(MasterVolume.Value * 100f) / MasterVolume.MaxValue}";
 			var sfxP = $"{(int)(SfxVolume.Value * 100f) / SfxVolume.MaxValue}";
+			// ya my brain isn't working properly rn
+			//var notealignP = $"{(int)(NoteAlign.Value * 100f / NoteAlign.MaxValue)}";
 
 			var masterPw = fr.GetWidth(masterP, 18);
 			var sfxPw = fr.GetWidth(sfxP, 18);
@@ -209,6 +208,7 @@ namespace Sound_Space_Editor.Gui
 
 			fr.Render(masterP, (int)(MasterVolume.ClientRectangle.X + SfxVolume.ClientRectangle.Width / 2 - masterPw / 2f), (int)MasterVolume.ClientRectangle.Bottom - 16, 18);
 			fr.Render(sfxP, (int)(SfxVolume.ClientRectangle.X + SfxVolume.ClientRectangle.Width / 2 - sfxPw / 2f), (int)SfxVolume.ClientRectangle.Bottom - 16, 18);
+			//fr.Render(notealignP, (int)(Grid.ClientRectangle.X + 390), (int)Grid.ClientRectangle.Y + 100, 18);
 
 			var rect = Timeline.ClientRectangle;
 
@@ -249,14 +249,13 @@ namespace Sound_Space_Editor.Gui
 
 		public override bool AllowInput()
 		{
-			return !Bpm.Focused && !Offset.Focused && !NoteAlign.Focused;
+			return !Bpm.Focused && !Offset.Focused;
 		}
 
 		public override void OnKeyTyped(char key)
 		{
 			Bpm.OnKeyTyped(key);
 			Offset.OnKeyTyped(key);
-			NoteAlign.OnKeyTyped(key);
 
 			UpdateTrack();
 		}
@@ -265,7 +264,6 @@ namespace Sound_Space_Editor.Gui
 		{
 			Bpm.OnKeyDown(key, control);
 			Offset.OnKeyDown(key, control);
-			NoteAlign.OnKeyDown(key, control);
 
 			UpdateTrack();
 		}
@@ -351,7 +349,7 @@ namespace Sound_Space_Editor.Gui
                     }
                     catch
                     {
-                        ShowToast("FAILED TO COPY", Color.FromArgb(255, 200, 0));
+						ShowToast("FAILED TO COPY", Color.FromArgb(255, 200, 0));
                     }
 					break;
 				case 5:
@@ -374,6 +372,7 @@ namespace Sound_Space_Editor.Gui
 			Track.OnResize(size);
 			Tempo.OnResize(size);
 			MasterVolume.OnResize(size);
+			NoteAlign.OnResize(size);
 
 			MasterVolume.ClientRectangle.Location = new PointF(EditorWindow.Instance.ClientSize.Width - 64, EditorWindow.Instance.ClientSize.Height - MasterVolume.ClientRectangle.Height - 64);
 			SfxVolume.ClientRectangle.Location = new PointF(MasterVolume.ClientRectangle.X - 64, EditorWindow.Instance.ClientSize.Height - SfxVolume.ClientRectangle.Height - 64);
@@ -420,6 +419,7 @@ namespace Sound_Space_Editor.Gui
 			Tempo.Dragging = false;
 			MasterVolume.Dragging = false;
 			SfxVolume.Dragging = false;
+			NoteAlign.Dragging = false;
 			BeatSnapDivisor.Dragging = false;
 		}
 
@@ -451,9 +451,8 @@ namespace Sound_Space_Editor.Gui
 
 				if (bpm < 0)
 					bpm = 0;
-				else if (bpm > 3000)
-					bpm = 3000;
-
+				else if (bpm > 5000)
+					bpm = 5000;
 				GuiTrack.Bpm = (float)bpm;
 
 				if (GuiTrack.Bpm > 0 && !decimalPont)
