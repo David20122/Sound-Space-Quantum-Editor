@@ -42,10 +42,10 @@ C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\OpenTK.dll
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\Bass.Net.xml
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\OpenTK.pdb
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\OpenTK.xml
-C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csprojAssemblyReference.cache
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Sound_Space_Editor.Properties.Resources.resources
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.GenerateResource.cache
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CoreCompileInputs.cache
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CopyComplete
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Sound Space Editor.exe
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Sound Space Editor.pdb
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csprojAssemblyReference.cache

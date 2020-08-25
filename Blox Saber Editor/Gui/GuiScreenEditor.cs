@@ -38,10 +38,20 @@ namespace Sound_Space_Editor.Gui
 
 		private readonly GuiLabel _toast;
 		private float _toastTime;
+        private readonly int _textureId;
+        private bool bgImg = false;
 
 		public GuiScreenEditor() : base(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64)
 		{
-			_toast = new GuiLabel(0, 0, "")
+            if (File.Exists("background.png")) {
+                this.bgImg = true;
+                using (Bitmap img = new Bitmap("background.png"))
+                {
+                    this._textureId = TextureManager.GetOrRegister("bg", img, true);
+                }
+            }
+
+            _toast = new GuiLabel(0, 0, "")
 			{
 				Centered = true,
 				FontSize = 36
@@ -137,8 +147,8 @@ namespace Sound_Space_Editor.Gui
 		}
 
 		public override void Render(float delta, float mouseX, float mouseY)
-		{
-			_toastTime = Math.Min(2, _toastTime + delta);
+        {
+            _toastTime = Math.Min(2, _toastTime + delta);
 
 			var toastOffY = 1f;
 
@@ -155,7 +165,13 @@ namespace Sound_Space_Editor.Gui
 			var fr = EditorWindow.Instance.FontRenderer;
 			var h = fr.GetHeight(_toast.FontSize);
 
-			_toast.ClientRectangle.Y = size.Height - toastOffY * h * 3.25f + h / 2;
+            if (bgImg)
+            {
+                GL.Color3(1, 1, 1f);
+                Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
+            }
+
+            _toast.ClientRectangle.Y = size.Height - toastOffY * h * 3.25f + h / 2;
 			_toast.Color = Color.FromArgb((int)(Math.Pow(toastOffY, 3) * 255), _toast.Color);
 
 			GL.Color3(Color.FromArgb(0, 255, 200));
@@ -335,7 +351,7 @@ namespace Sound_Space_Editor.Gui
                     }
                     catch
                     {
-                        ShowToast("FAILED TO COPY", Color.FromArgb(255,200,0))
+                        ShowToast("FAILED TO COPY", Color.FromArgb(255, 200, 0));
                     }
 					break;
 				case 5:

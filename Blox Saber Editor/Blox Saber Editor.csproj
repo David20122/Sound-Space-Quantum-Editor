@@ -128,6 +128,7 @@
     <Compile Include="Gui\GuiScreenCreate.cs" />
     <Compile Include="Gui\GuiScreenLoadCreate.cs" />
     <Compile Include="Gui\GuiScreenEditor.cs" />
+    <Compile Include="Gui\GuiScreenSelectMap.cs" />
     <Compile Include="Gui\GuiSliderTimeline.cs" />
     <Compile Include="Gui\GuiSlider.cs" />
     <Compile Include="Gui\GuiTextBox.cs" />
@@ -169,6 +170,7 @@
   <ItemGroup>
     <Content Include="Blox Saber.ico" />
     <Content Include="icon.ico" />
+    <None Include="Resources\BackgroundImage.png" />
     <None Include="Resources\icon.ico" />
     <None Include="Resources\logo.png" />
   </ItemGroup>
