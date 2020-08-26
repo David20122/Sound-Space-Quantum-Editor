@@ -14,7 +14,7 @@ namespace Sound_Space_Editor.Gui
 	class GuiScreenEditor : GuiScreen
 	{
 		public GuiScreen GuiScreen { get; private set; }
-        public bool AutoSave = false;
+		public bool AutoSave = false;
 		public readonly GuiGrid Grid = new GuiGrid(300, 300);
 		public readonly GuiTrack Track = new GuiTrack(0, 64);
 		public readonly GuiSlider Tempo;
@@ -23,7 +23,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiSlider BeatSnapDivisor;
 		public readonly GuiSlider Timeline;
 		public readonly GuiSlider NoteAlign;
-        public readonly GuiTextBox Bpm;
+		public readonly GuiTextBox Bpm;
 		public readonly GuiTextBox Offset;
 		public readonly GuiCheckBox Reposition;
 		public readonly GuiCheckBox Autoplay;
@@ -34,7 +34,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiButton BackButton;
 		public readonly GuiButton CopyButton;
 		public readonly GuiButton SetOffset;
-        public float AutoSaveTimer { get; private set; } = 0f;
+		public float AutoSaveTimer { get; private set; } = 0f;
 
 		private readonly GuiLabel _toast;
 		private float _toastTime;
@@ -51,16 +51,17 @@ namespace Sound_Space_Editor.Gui
 					this._textureId = TextureManager.GetOrRegister("bg", img, true);
 				}
 			}
-			
+
 			//working on this rn, just wanted to copy paste this file content
 			if (!File.Exists("settings.txt"))
 			{
-				string path = Path.GetDirectoryName(Application.ExecutablePath) + "\\settings.txt";
-				File.Create(path);
-			} 
-			else if (File.Exists("settings.txt")) 
+				File.AppendAllText("settings.txt", "// Settings for Quantum Editor \n\n// Background dim (0-1) \nDefault: 0.45 \n\n0.45\n\n// Color 1 (Text) \n// You can search for 'rgb color picker' in Google to get rgb color values.\nDefault: Cyan (0,255,200)\n\n0,255,200\n\n// Color 2 (Checkboxes, Sliders, Numbers) \nDefault: Purple (255,0,255)\n\n255,0,255");
+			}
+			if (File.Exists("settings.txt"))
 			{
-
+				string dim = File.ReadLines("settings.txt").Take(6).First();
+				string color1 = File.ReadLines("settings.txt").Take(12).First();
+				string color2 = File.ReadLines("settings.txt").Take(17).First();
 			}
 
 			_toast = new GuiLabel(0, 0, "")
@@ -87,7 +88,7 @@ namespace Sound_Space_Editor.Gui
 			NoteAlign = new GuiSlider(0, 0, 176, 32)
 			{
 				MaxValue = 19,
-                Value = 2
+				Value = 2
 			};
 			Reposition = new GuiCheckBox(1, "Offset Notes", 10, 0, 32, 32, false);
 			BeatSnapDivisor = new GuiSlider(0, 0, 256, 40);
@@ -127,7 +128,7 @@ namespace Sound_Space_Editor.Gui
 			Offset.OnKeyDown(Key.Right, false);
 			Bpm.Focused = false;
 			Offset.Focused = false;
-			
+
 			Buttons.Add(playPause);
 			Buttons.Add(Timeline);
 			Buttons.Add(Tempo);
@@ -176,7 +177,10 @@ namespace Sound_Space_Editor.Gui
 
 			if (bgImg)
 			{
-				GL.Color3(1, 1, 1f);
+				int result;
+				string str = File.ReadLines("settings.txt").Skip(5).Take(6).First();
+				Int32.TryParse(str, out result);
+				Color.FromArgb(result, 255, 255, 255);
 				Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
 			}
 
@@ -193,7 +197,7 @@ namespace Sound_Space_Editor.Gui
 			fr.Render("BPM:", (int)Bpm.ClientRectangle.X, (int)Bpm.ClientRectangle.Y - 24, 24);
 			fr.Render("BPM Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
 			fr.Render("Options:", (int)Autoplay.ClientRectangle.X, (int)Autoplay.ClientRectangle.Y - 26, 24);
-			fr.Render($"Snapping: 3/{(float)(NoteAlign.Value+1)}", (int)Grid.ClientRectangle.X + 405, (int)Grid.ClientRectangle.Y + 70, 24);
+			fr.Render($"Snapping: 3/{(float)(NoteAlign.Value + 1)}", (int)Grid.ClientRectangle.X + 405, (int)Grid.ClientRectangle.Y + 70, 24);
 			var divisor = $"Beat Divisor: {BeatSnapDivisor.Value + 1}";
 			var divisorW = fr.GetWidth(divisor, 24);
 
@@ -230,8 +234,8 @@ namespace Sound_Space_Editor.Gui
 
 			var timeString = $"{time.Minutes}:{time.Seconds:0#}";
 			var currentTimeString = $"{currentTime.Minutes}:{currentTime.Seconds:0#}";
-			var currentMsString = $"{(long) currentTime.TotalMilliseconds:##,###}ms";
-			if ((long) currentTime.TotalMilliseconds == 0)
+			var currentMsString = $"{(long)currentTime.TotalMilliseconds:##,###}ms";
+			if ((long)currentTime.TotalMilliseconds == 0)
 				currentMsString = "0ms";
 
 			var notesString = $"{EditorWindow.Instance.Notes.Count} Notes";
@@ -353,15 +357,15 @@ namespace Sound_Space_Editor.Gui
 					}
 					break;
 				case 4:
-                    try
-                    {
-                        Clipboard.SetText(EditorWindow.Instance.ParseData());
-                        ShowToast("COPIED TO CLIPBOARD", Color.FromArgb(0, 255, 200));
-                    }
-                    catch
-                    {
+					try
+					{
+						Clipboard.SetText(EditorWindow.Instance.ParseData());
+						ShowToast("COPIED TO CLIPBOARD", Color.FromArgb(0, 255, 200));
+					}
+					catch
+					{
 						ShowToast("FAILED TO COPY", Color.FromArgb(255, 200, 0));
-                    }
+					}
 					break;
 				case 5:
 					Settings.Default.Autoplay = Autoplay.Toggle;
@@ -442,7 +446,7 @@ namespace Sound_Space_Editor.Gui
 				var decimalPont = false;
 
 				if (text.Length > 0 && text[text.Length - 1].ToString() ==
-				    CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
+					CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
 				{
 					text = text + 0;
 
