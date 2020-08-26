@@ -51,6 +51,17 @@ namespace Sound_Space_Editor.Gui
 					this._textureId = TextureManager.GetOrRegister("bg", img, true);
 				}
 			}
+			
+			//working on this rn, just wanted to copy paste this file content
+			if (!File.Exists("settings.txt"))
+			{
+				string path = Path.GetDirectoryName(Application.ExecutablePath) + "\\settings.txt";
+				File.Create(path);
+			} 
+			else if (File.Exists("settings.txt")) 
+			{
+
+			}
 
 			_toast = new GuiLabel(0, 0, "")
 			{
