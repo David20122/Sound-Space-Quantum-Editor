@@ -106,7 +106,7 @@ namespace Sound_Space_Editor
 
 			FontRenderer = new FontRenderer("main");
 
-			OpenGuiScreen(new GuiScreenLoadCreate());
+			OpenGuiScreen(new GuiScreenSelectMap());
 
 			SoundPlayer.Cache("hit");
 			SoundPlayer.Cache("click");
@@ -1291,6 +1291,8 @@ namespace Sound_Space_Editor
 			{
 				_file = file;
 				_saved = true;
+
+                Settings.Default.LastFile = file;
 
 				gse.Bpm.Text = "0";
 				GuiTrack.Bpm = 0;

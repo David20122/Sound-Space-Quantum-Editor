@@ -56,11 +56,11 @@ namespace Sound_Space_Editor.Gui
 			}
 
 			var fr = EditorWindow.Instance.FontRenderer;
-			var width = fr.GetWidth(Text, 24);
-			var height = fr.GetHeight(24);
+			var width = fr.GetWidth(Text, (int)ClientRectangle.Height-8);
+			var height = fr.GetHeight((int)ClientRectangle.Height - 8);
 
 			GL.Color3(1f, 1, 1);
-			fr.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), 24);
+			fr.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height - 8);
 		}
 
 		public virtual void OnMouseClick(float x, float y)

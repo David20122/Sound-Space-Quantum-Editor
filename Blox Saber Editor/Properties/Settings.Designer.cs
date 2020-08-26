@@ -94,63 +94,52 @@ namespace Sound_Space_Editor.Properties {
                 this["Autoplay"] = value;
             }
         }
-
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public float BGDim {
+            get {
+                return ((float)(this["BGDim"]));
+            }
+            set {
+                this["BGDim"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastFile {
+            get {
+                return ((string)(this["LastFile"]));
+            }
+            set {
+                this["LastFile"] = value;
+            }
+        }
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Quantum
-        {
-            get
-            {
+        public bool Quantum {
+            get {
                 return ((bool)(this["Quantum"]));
             }
-            set
-            {
+            set {
                 this["Quantum"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoAdvance
-        {
-            get
-            {
+        public bool AutoAdvance {
+            get {
                 return ((bool)(this["AutoAdvance"]));
             }
-            set
-            {
+            set {
                 this["AutoAdvance"] = value;
-            }
-        }
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool DiscordPresence
-        {
-            get
-            {
-                return ((bool)(this["DiscordPresence"]));
-            }
-            set
-            {
-                this["DiscordPresence"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public int NoteAlign
-        {
-            get
-            {
-                return ((int)(this["NoteAlign"]));
-            }
-            set
-            {
-                this["NoteAlign"] = value;
             }
         }
     }
