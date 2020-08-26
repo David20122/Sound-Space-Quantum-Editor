@@ -138,5 +138,20 @@ namespace Sound_Space_Editor.Properties {
                 this["DiscordPresence"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public int NoteAlign
+        {
+            get
+            {
+                return ((int)(this["NoteAlign"]));
+            }
+            set
+            {
+                this["NoteAlign"] = value;
+            }
+        }
     }
 }

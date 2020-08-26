@@ -73,9 +73,10 @@ namespace Sound_Space_Editor.Gui
 				Numeric = true,
 				CanBeNegative = false
 			};
-			NoteAlign = new GuiSlider(0, 0, 128, 32)
+			NoteAlign = new GuiSlider(0, 0, 176, 32)
 			{
-				MaxValue = 1
+				MaxValue = 19,
+                Value = 2
 			};
 			Reposition = new GuiCheckBox(1, "Offset Notes", 10, 0, 32, 32, false);
 			BeatSnapDivisor = new GuiSlider(0, 0, 256, 40);
@@ -139,7 +140,7 @@ namespace Sound_Space_Editor.Gui
 
 			MasterVolume.Value = (int)(Settings.Default.MasterVolume * MasterVolume.MaxValue);
 			SfxVolume.Value = (int)(Settings.Default.SFXVolume * SfxVolume.MaxValue);
-			NoteAlign.Value = (int)(Settings.Default.NoteAlign * NoteAlign.MaxValue);
+			// NoteAlign.Value = (int)(Settings.Default.NoteAlign * NoteAlign.MaxValue);
 
 		}
 
@@ -181,7 +182,7 @@ namespace Sound_Space_Editor.Gui
 			fr.Render("BPM:", (int)Bpm.ClientRectangle.X, (int)Bpm.ClientRectangle.Y - 24, 24);
 			fr.Render("BPM Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
 			fr.Render("Options:", (int)Autoplay.ClientRectangle.X, (int)Autoplay.ClientRectangle.Y - 26, 24);
-			fr.Render("Snapping", (int)Grid.ClientRectangle.X + 405, (int)Grid.ClientRectangle.Y + 70, 24);
+			fr.Render($"Snapping: 3/{(float)(NoteAlign.Value+1)}", (int)Grid.ClientRectangle.X + 405, (int)Grid.ClientRectangle.Y + 70, 24);
 			var divisor = $"Beat Divisor: {BeatSnapDivisor.Value + 1}";
 			var divisorW = fr.GetWidth(divisor, 24);
 
@@ -272,7 +273,6 @@ namespace Sound_Space_Editor.Gui
 		{
 			Bpm.OnMouseClick(x, y);
 			Offset.OnMouseClick(x, y);
-			NoteAlign.OnMouseClick(x, y);
 
 			base.OnMouseClick(x, y);
 		}
@@ -428,21 +428,12 @@ namespace Sound_Space_Editor.Gui
 			if (Bpm.Focused)
 			{
 				var text = Bpm.Text;
-				var text2 = NoteAlign.Text;
 				var decimalPont = false;
 
 				if (text.Length > 0 && text[text.Length - 1].ToString() ==
 				    CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
 				{
 					text = text + 0;
-
-					decimalPont = true;
-				}
-
-				if (text2.Length > 0 && text2[text2.Length - 1].ToString() ==
-					CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
-				{
-					text2 = text2 + 0;
 
 					decimalPont = true;
 				}
@@ -457,17 +448,6 @@ namespace Sound_Space_Editor.Gui
 
 				if (GuiTrack.Bpm > 0 && !decimalPont)
 					Bpm.Text = GuiTrack.Bpm.ToString();
-
-				// notealign
-				decimal.TryParse(text2, out var notealignincrement);
-
-				if (notealignincrement <= 0)
-					notealignincrement = 0;
-				else if (notealignincrement >= 1)
-					notealignincrement = 1;
-
-				if (notealignincrement > 0 && !decimalPont)
-					NoteAlign.Text = notealignincrement.ToString();
 			}
 			if (Offset.Focused)
 			{

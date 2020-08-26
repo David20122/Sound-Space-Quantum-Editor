@@ -335,8 +335,8 @@ namespace Sound_Space_Editor
 					var tick = MathHelper.Clamp(Math.Round((lineSize - (e.Y - rect.Y - rect.Width / 2)) / step), 0, editor.SfxVolume.MaxValue);
 
 					editor.SfxVolume.Value = (int)tick;
-				}
-				if (editor.BeatSnapDivisor.Dragging)
+                }
+                if (editor.BeatSnapDivisor.Dragging)
 				{
 					var rect = editor.BeatSnapDivisor.ClientRectangle;
 					var step = (rect.Width - rect.Height) / editor.BeatSnapDivisor.MaxValue;
@@ -356,9 +356,18 @@ namespace Sound_Space_Editor
 					editor.Tempo.Value = tick;
 
 					MusicPlayer.Tempo = MathHelper.Clamp(0.2f + tick * 0.1f, 0.2f, 1);
-				}
+                }
+                if (editor.NoteAlign.Dragging)
+                {
+                    var rect = editor.NoteAlign.ClientRectangle;
+                    var step = (rect.Width - rect.Height) / editor.NoteAlign.MaxValue;
 
-				if (_draggingNoteGrid)
+                    var tick = (int)MathHelper.Clamp(Math.Round((e.X - rect.X - rect.Height / 2) / step), 0, editor.NoteAlign.MaxValue);
+
+                    editor.NoteAlign.Value = (int)tick;
+                }
+
+                if (_draggingNoteGrid)
 				{
 					OnDraggingGridNote(e.Position);
 				}
@@ -487,6 +496,11 @@ namespace Sound_Space_Editor
 						editor.Tempo.Dragging = true;
 						OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
 					}
+                    else if (editor.NoteAlign.ClientRectangle.Contains(e.Position))
+                    {
+                        editor.NoteAlign.Dragging = true;
+                        OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
+                    }
 					else
 					{
 						SelectedNotes.Clear();
@@ -649,6 +663,7 @@ namespace Sound_Space_Editor
 				editor.SfxVolume.Dragging = false;
 				editor.Timeline.Dragging = false;
 				editor.Tempo.Dragging = false;
+                editor.NoteAlign.Dragging = false;
 			}
 
 			_draggingNoteTimeline = false;
@@ -1194,11 +1209,12 @@ namespace Sound_Space_Editor
 				{
 					if (gse.Quantum.Toggle)
 					{
-						// dragging notes by custom value pog
-                            var vv = float.Parse(gse.NoteAlign.Text, CultureInfo.InvariantCulture.NumberFormat);
+                        // dragging notes by custom value pog
+                        /* //old
+                            var vv = (3f/(float)gse.NoteAlign.Value);
                             var v = 3f / vv;
-							var QGnewX = (int)Math.Floor((pos.X - rect.X) / rect.Width * v);
-							var QGnewY = (int)Math.Floor((pos.Y - rect.Y) / rect.Height * v);
+							var QGnewX = (int)Math.Floor((pos.X - (rect.X)) / rect.Width * v);
+							var QGnewY = (int)Math.Floor((pos.Y - (rect.Y)) / rect.Height * v);
                             var QGMnewX = QGnewX * vv;
                             var QGMnewY = QGnewY * vv;
 
@@ -1210,7 +1226,20 @@ namespace Sound_Space_Editor
 
 							note.X = QGMnewX;
 							note.Y = QGMnewY;
-					}
+                        */
+                        var increment = (float)(gse.NoteAlign.Value+1f) / 3f;
+
+                        var newX = (float)( Math.Floor(((pos.X - (rect.X+(rect.Width/3))) / rect.Width * 3)*increment) /increment );
+                        var newY = (float)( Math.Floor(((pos.Y - (rect.Y+(rect.Height/3))) / rect.Height * 3)*increment) /increment );
+
+                        newX = (float)Math.Max((double)-1.5, (double)newX);
+                        newY = (float)Math.Max((double)-1.5, (double)newY);
+                        newX = (float)Math.Min((double)1.5, (double)newX);
+                        newY = (float)Math.Min((double)1.5, (double)newY);
+
+                        note.X = newX+1;
+                        note.Y = newY+1;
+                    }
 					else
 					{
 						var newX = (int)Math.Floor((pos.X - rect.X) / rect.Width * 3);
