@@ -104,13 +104,11 @@ namespace Sound_Space_Editor.Gui
 				var y = rect.Y + note.Y * cellSize + gap / 2;
 
 				var progress = (float)Math.Pow(1 - Math.Min(1, (note.Ms - audioTime) / 750.0), 2);
-
 				var noteRect = new RectangleF(x, y, noteSize, noteSize);
-				GL.Color4(note.Color.R, note.Color.G, note.Color.B, progress * 0.15f);
+				GL.Color4(note.Color, progress * 0.15f);
 				Glu.RenderQuad(noteRect);
-				GL.Color4(note.Color.R, note.Color.G, note.Color.B, progress);
+				GL.Color4(note.Color, progress);
 				Glu.RenderOutline(noteRect);
-
 				if (editor.ApproachSquares.Toggle)
 				{
 					var outlineSize = 4 + noteSize + noteSize * (1 - progress) * 2;
@@ -153,6 +151,7 @@ namespace Sound_Space_Editor.Gui
 					Glu.RenderOutline(x - 4, y - 4, noteSize + 8, noteSize + 8);
 				}
 			}
+
 
 			//RENDER AUTOPLAY
 			if (editor.Autoplay.Toggle)
