@@ -49,3 +49,20 @@ C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\Sound Space Quantum Editor.
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\Sound Space Quantum Editor.pdb
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Sound Space Quantum Editor.exe
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Sound Space Quantum Editor.pdb
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\x86\bassasio.dll
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\x64\bassasio.dll
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Sound Space Quantum Editor.exe.config
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Sound Space Quantum Editor.exe
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Sound Space Quantum Editor.pdb
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Bass.Net.dll
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\OpenTK.dll
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Bass.Net.xml
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\OpenTK.pdb
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\OpenTK.xml
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Blox Saber Editor.csprojAssemblyReference.cache
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound_Space_Editor.Properties.Resources.resources
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.GenerateResource.cache
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CopyComplete
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound Space Quantum Editor.exe
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound Space Quantum Editor.pdb

@@ -116,7 +116,19 @@ namespace Sound_Space_Editor.Gui
 			if (Centered)
 				GL.Translate(offX, 0, 0);
 
-			GL.Color3(Color.FromArgb(255, 0, 255));
+			// color 1
+
+			string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 12);
+			string[] c1values = rc1.Split(',');
+			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
+
+			//color 2
+
+			string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+			string[] c2values = rc2.Split(',');
+			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
+
+			GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 			fr.Render(renderedText, (int)x, (int)(y - fr.GetHeight(24) / 2f), 24);
 
 			if (Focused)
@@ -129,7 +141,7 @@ namespace Sound_Space_Editor.Gui
 
 				var alpha = (float)(Math.Sin(_timer * MathHelper.TwoPi) + 1) / 2;
 
-				GL.Color4(Color.FromArgb(0, 255, 200));
+				GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 				Glu.RenderQuad(x + textToCursorSize, y - cursorHeight / 2, 1, cursorHeight);
 
 				_timer += delta * 1.25f;

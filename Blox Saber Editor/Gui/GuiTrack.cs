@@ -24,6 +24,18 @@ namespace Sound_Space_Editor.Gui
 
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
+			// color 1
+
+			string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 12);
+			string[] c1values = rc1.Split(',');
+			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
+
+			//color 2
+
+			string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+			string[] c2values = rc2.Split(',');
+			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
+
 			GL.Color3(0.1f, 0.1f, 0.1f);
 
 			var rect = ClientRectangle;
@@ -68,7 +80,7 @@ namespace Sound_Space_Editor.Gui
 
 			//draw start line
 			GL.LineWidth(2);
-			GL.Color4(0f, 1f, 0f, 1);
+			GL.Color4(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 			GL.Begin(PrimitiveType.Lines);
 			GL.Vertex2((int)(ScreenX - posX), rect.Y);
 			GL.Vertex2((int)(ScreenX - posX), rect.Y + rect.Height);
@@ -161,10 +173,10 @@ namespace Sound_Space_Editor.Gui
 
 				var numText = $"{(i + 1):##,###}";
 
-				GL.Color3(Color.FromArgb(0, 255, 200));
+				GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 				fr.Render(numText, (int)x + 3, (int)(rect.Y + rect.Height) + 3, 16);
 
-				GL.Color3(Color.FromArgb(255, 0, 255));
+				GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 				fr.Render($"{note.Ms:##,###}ms", (int)x + 3,
 					(int)(rect.Y + rect.Height + fr.GetHeight(16)) + 3 + 2, 16);
 
@@ -198,7 +210,7 @@ namespace Sound_Space_Editor.Gui
 				//render BPM lines
 				while (lineSpace > 0 && lineX < rect.Width && lineX < endLineX)
 				{
-					GL.Color3(Color.FromArgb(255, 0, 255));
+					GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 					GL.Begin(PrimitiveType.Lines);
 					GL.Vertex2((int)lineX + 0.5f, rect.Bottom);
 					GL.Vertex2((int)lineX + 0.5f, rect.Bottom - 11);
@@ -213,9 +225,9 @@ namespace Sound_Space_Editor.Gui
 							var half = j == BeatDivisor / 2 && BeatDivisor % 2 == 0;
 
 							if (half)
-								GL.Color3(Color.FromArgb(255, 0, 255));
+								GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 							else
-								GL.Color3(Color.FromArgb(0, 255, 200));
+								GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 
 							GL.Begin(PrimitiveType.Lines);
 							GL.Vertex2((int)xo + 0.5f, rect.Bottom - (half ? 7 : 4));

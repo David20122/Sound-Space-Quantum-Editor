@@ -135,8 +135,9 @@ namespace Sound_Space_Editor.Gui
 					break;
 				case 3:
 					var gclipboard = Clipboard.GetText();
-					WebClient client = new WebClient();
-					string reply = client.DownloadString(gclipboard);
+					WebClient wc = new WebClient();
+					string reply = wc.DownloadString(gclipboard);
+					MessageBox.Show(reply, "reply");
 					EditorWindow.Instance.LoadMap(reply);
 					break;
 			}

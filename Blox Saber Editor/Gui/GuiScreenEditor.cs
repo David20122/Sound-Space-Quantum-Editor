@@ -52,6 +52,7 @@ namespace Sound_Space_Editor.Gui
 				}
 			}
 
+
 			_toast = new GuiLabel(0, 0, "")
 			{
 				Centered = true,
@@ -165,20 +166,35 @@ namespace Sound_Space_Editor.Gui
 
 			if (bgImg)
 			{
-				GL.Color3(1, 1, 1f);
+				int res;
+				string bgdim = EditorWindow.Instance.ReadLine("settings.ini", 6);
+				Int32.TryParse(bgdim, out res);
+				GL.Color4(Color.FromArgb(res, 255, 255, 255));
 				Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
 			}
 
 			_toast.ClientRectangle.Y = size.Height - toastOffY * h * 3.25f + h / 2;
 			_toast.Color = Color.FromArgb((int)(Math.Pow(toastOffY, 3) * 255), _toast.Color);
 
-			GL.Color3(Color.FromArgb(0, 255, 200));
+			// color 1
+
+				string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 12);
+				string[] c1values = rc1.Split(',');
+				int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
+
+			//color 2
+
+				string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+				string[] c2values = rc2.Split(',');
+				int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
+
+			GL.Color3(Color.FromArgb(Color1[0],Color1[1],Color1[2]));
 			var zoomW = fr.GetWidth("Zoom: ", 24);
 
 			fr.Render("Zoom: ", (int)Bpm.ClientRectangle.X, (int)Bpm.ClientRectangle.Y - 60, 24);
-			GL.Color3(Color.FromArgb(255, 0, 255));
+			GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 			fr.Render($"{(int)(EditorWindow.Instance.Zoom * 100)}%", (int)Bpm.ClientRectangle.X + zoomW, (int)Bpm.ClientRectangle.Y - 60, 24);
-			GL.Color3(Color.FromArgb(0, 255, 200));
+			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 			fr.Render("BPM:", (int)Bpm.ClientRectangle.X, (int)Bpm.ClientRectangle.Y - 24, 24);
 			fr.Render("BPM Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
 			fr.Render("Options:", (int)Autoplay.ClientRectangle.X, (int)Autoplay.ClientRectangle.Y - 26, 24);
@@ -240,7 +256,6 @@ namespace Sound_Space_Editor.Gui
 			base.Render(delta, mouseX, mouseY);
 
 			_toast.Render(delta, mouseX, mouseY);
-
 			Grid.Render(delta, mouseX, mouseY);
 			Track.Render(delta, mouseX, mouseY);
 			Bpm.Render(delta, mouseX, mouseY);
@@ -338,7 +353,7 @@ namespace Sound_Space_Editor.Gui
 					{
 						EditorWindow.Instance.UndoRedo.Clear();
 						EditorWindow.Instance.MusicPlayer.Reset();
-						EditorWindow.Instance.OpenGuiScreen(new GuiScreenLoadCreate());
+						EditorWindow.Instance.OpenGuiScreen(new GuiScreenSelectMap());
 					}
 					break;
 				case 4:

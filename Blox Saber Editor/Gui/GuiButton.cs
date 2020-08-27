@@ -31,7 +31,16 @@ namespace Sound_Space_Editor.Gui
 
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
-			IsMouseOver = ClientRectangle.Contains(mouseX, mouseY);
+			var IsMouseOverr = ClientRectangle.Contains(mouseX, mouseY);
+			if (IsMouseOver && !IsMouseOverr)
+			{
+				OnMouseLeave(mouseX, mouseY);
+			}
+			else if (!IsMouseOver && IsMouseOverr)
+			{
+				OnMouseEnter(mouseX, mouseY);
+			}
+			IsMouseOver = IsMouseOverr;
 
 			_alpha = MathHelper.Clamp(_alpha + (IsMouseOver ? 10 : -10) * delta, 0, 1);
 
@@ -56,16 +65,16 @@ namespace Sound_Space_Editor.Gui
 			}
 
 			var fr = EditorWindow.Instance.FontRenderer;
-			var width = fr.GetWidth(Text, (int)ClientRectangle.Height-8);
-			var height = fr.GetHeight((int)ClientRectangle.Height - 8);
+			var width = fr.GetWidth(Text, (int)ClientRectangle.Height / 2);
+			var height = fr.GetHeight((int)ClientRectangle.Height / 2);
 
 			GL.Color3(1f, 1, 1);
-			fr.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height - 8);
+			fr.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
 		}
 
-		public virtual void OnMouseClick(float x, float y)
-		{
 
-		}
+		public virtual void OnMouseClick(float x, float y) { }
+		public virtual void OnMouseEnter(float x, float y) { }
+		public virtual void OnMouseLeave(float x, float y) { }
 	}
 }

@@ -106,6 +106,11 @@ namespace Sound_Space_Editor
 
 			FontRenderer = new FontRenderer("main");
 
+			if (!File.Exists("settings.ini"))
+			{
+				File.AppendAllText("settings.ini", "// Settings for Quantum Editor \n\n// Background Opacity (0-255, 0 means invisible) \nDefault: 255 \n\n255\n\n// You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (NoteColor1, Text, BPM Lines) \nDefault: Cyan (0,255,200)\n\n0,255,200\n\n// Color 2 (NoteColor2, Checkboxes, Sliders, Numbers, BPM Lines) \nDefault: Purple (255,0,255)\n\n255,0,255");
+			}
+
 			OpenGuiScreen(new GuiScreenSelectMap());
 
 			SoundPlayer.Cache("hit");
@@ -127,6 +132,26 @@ namespace Sound_Space_Editor
 
 			_processThread = new Thread(ProcessNotes) { IsBackground = true };
 			_processThread.Start();
+		}
+
+		public string ReadLine(string FilePath, int LineNumber)
+		{
+			string result = "";
+			try
+			{
+				if (File.Exists(FilePath))
+				{
+					using (StreamReader _StreamReader = new StreamReader(FilePath))
+					{
+						for (int a = 0; a < LineNumber; a++)
+						{
+							result = _StreamReader.ReadLine();
+						}
+					}
+				}
+			}
+			catch { }
+			return result;
 		}
 
 		private void ProcessNotes()

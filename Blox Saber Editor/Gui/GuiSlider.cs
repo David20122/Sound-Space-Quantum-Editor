@@ -49,10 +49,22 @@ namespace Sound_Space_Editor.Gui
 			GL.Translate(cursorPos.X, cursorPos.Y, 0);
 			GL.Rotate(_alpha * 90, 0, 0, 1);
 
+			// color 1
+
+			string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 12);
+			string[] c1values = rc1.Split(',');
+			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
+
+			//color 2
+
+			string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+			string[] c2values = rc2.Split(',');
+			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
+
 			if (_alpha > 0)
 			{
 				GL.PolygonMode(MaterialFace.Front, PolygonMode.Line);
-				GL.Color4(Color.FromArgb(0, 255, 200));
+				GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 				Glu.RenderCircle(0, 0, 12 * _alpha);
 			}
 
@@ -60,16 +72,22 @@ namespace Sound_Space_Editor.Gui
 			GL.Translate(-cursorPos.X, -cursorPos.Y, 0);
 
 			GL.PolygonMode(MaterialFace.Front, PolygonMode.Fill);
-			GL.Color4(Color.FromArgb(0, 255, 200));
+			GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 			Glu.RenderCircle(cursorPos.X, cursorPos.Y, 4, 16);
 			//GL.LineWidth(1);
 		}
 
 		protected virtual void RenderTimeline(RectangleF rect)
 		{
-			GL.Color4(1, 0, 1, 0.75f);
+			//color 2
+
+			string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+			string[] c2values = rc2.Split(',');
+			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
+
+			GL.Color4(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 			Glu.RenderQuad(rect);
-			GL.Color4(1, 0, 1, 1f);
+			GL.Color4(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 			Glu.RenderOutline(rect);
 		}
 
