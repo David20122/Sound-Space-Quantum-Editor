@@ -97,7 +97,7 @@ namespace Sound_Space_Editor.Gui
 			switch (id)
 			{
 				case 0:
-					EditorWindow.Instance.OpenGuiScreen(new GuiScreenCreate());
+					EditorWindow.Instance.OpenGuiScreen(new GuiScreenSelectMap());
 					break;
 				case 1:
 					var ofd = new OpenFileDialog

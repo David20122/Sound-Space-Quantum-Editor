@@ -37,7 +37,7 @@ namespace Sound_Space_Editor.Gui
 				var x = rect.X + progress * rect.Width;
 				var y = rect.Y + rect.Height / 2f;
 
-				GL.Color4(Color.FromArgb(0, Color1[0], Color1[1], Color1[2]));
+				GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 				Glu.RenderQuad((int)x, y + rect.Height * 2, 1, rect.Height);
 			}
 		}
