@@ -26,8 +26,7 @@ namespace Sound_Space_Editor.Gui
             }
             if (File.Exists(Properties.Settings.Default.LastFile))
             {
-                var widt = fr.GetWidth(Properties.Settings.Default.LastFile, 24);
-                _lastMapButton = new GuiButton(3, 0, 0, widt, 48, Properties.Settings.Default.LastFile);
+                _lastMapButton = new GuiButton(3, 0, 0, 256, 48, "EDIT LAST MAP");
                 Buttons.Add(_lastMapButton);
             }
             _createMapButton = new GuiButton(0, 0, 0, 256, 48, "CREATE NEW MAP");
@@ -71,7 +70,23 @@ namespace Sound_Space_Editor.Gui
             switch (id)
             {
                 case 0:
-
+                    EditorWindow.Instance.OpenGuiScreen(new GuiScreenCreate());
+                    break;
+                case 1:
+                    var dialog = new OpenFileDialog
+                    {
+                        Title = "Select Map File",
+                        Filter = "Text Documents (*.txt)|*.txt"
+                    };
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        EditorWindow.Instance.LoadFile(dialog.FileName);
+                    }
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    EditorWindow.Instance.LoadFile(Properties.Settings.Default.LastFile);
                     break;
             }
             base.OnButtonClicked(id);
