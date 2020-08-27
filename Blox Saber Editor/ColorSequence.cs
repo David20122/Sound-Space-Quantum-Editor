@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using OpenTK.Graphics.OpenGL;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Sound_Space_Editor
 {
@@ -24,7 +26,7 @@ namespace Sound_Space_Editor
 			string[] c2values = rc2.Split(',');
 			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 
-			_colors = new[] { Color.FromArgb(Color2[0], Color2[1], Color2[2]), Color.FromArgb(Color1[0], Color1[1], Color1[2]) };
+			var colors = new[] { GL.Color3(Color2[0] / 255, Color2[1] / 255, Color2[2] / 255), GL.Color3(Color1[0] / 255, Color1[1] / 255, Color1[2] / 255) };
 		}
 
 		public Color Next()
