@@ -44,11 +44,13 @@ namespace Sound_Space_Editor.Gui
 		public GuiTextBox(float x, float y, float sx, float sy) : base(x, y, sx, sy)
 		{
 		}
-
+		// 0 bug go away
 		private void OnFocus(bool flag)
 		{
 			if (flag)
 				return;
+
+			var hasDecimalPoint = _text.Contains(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
 
 			if (Numeric)
 			{
@@ -59,35 +61,26 @@ namespace Sound_Space_Editor.Gui
 				}
 				if (Decimal)
 				{
-                    var text = Text.Trim('0');
-                
-					if (text.Length > 0 && text[text.Length - 1].ToString() == CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator)
+					if (hasDecimalPoint)
 					{
-						text += 0;
-					}
-					if (decimal.TryParse(text, NumberStyles.AllowDecimalPoint, null, out var parsed))
-					{
-						Text = parsed.ToString();
-                    }
-                }
-                else
-                {
-                    var text = Text.Trim('0');
+						var text = Text.Trim('0');
 
-                    if (text.Length > 0 && text[text.Length - 1].ToString() == CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator)
-                    {
-                        text += 0;
-                    }
-                    if (decimal.TryParse(text, NumberStyles.Integer, null, out var parsed))
-                    {
-                        Text = parsed.ToString();
-                    }
-                }
-                if (decimal.TryParse(_text, out var num) && num == (long)num)
-                {
-                    Text = ((long)num).ToString();
-                }
-            }
+						if (text.Length > 0 && text[text.Length - 1].ToString() == CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
+						{
+							text += 0;
+						}
+
+						if (decimal.TryParse(text, out var parsed))
+						{
+							Text = parsed.ToString();
+						}
+					}
+					if (decimal.TryParse(_text, out var num) && num == (long)num)
+					{
+						Text = ((long)num).ToString();
+					}
+				}
+			}
 		}
 
 		public override void Render(float delta, float mouseX, float mouseY)
