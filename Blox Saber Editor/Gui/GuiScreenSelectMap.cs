@@ -41,11 +41,11 @@ namespace Sound_Space_Editor.Gui
         public override void Render(float delta, float mouseX, float mouseY)
         {
             var size = EditorWindow.Instance.ClientSize;
-            Glu.RenderTexturedQuad(ClientRectangle.Width / 2 - 400 / 2, -72, 400, 400, 0, 0, 1, 1, logoTxt);
+            Glu.RenderTexturedQuad(ClientRectangle.Width / 2 - 400 / 2, -42, 400, 400, 0, 0, 1, 1, logoTxt);
             var widt1 = fr.GetWidth("QUANTUM MAP", 22);
             var widt2 = fr.GetWidth("EDITOR", 22);
-            fr.Render("QUANTUM MAP", size.Width / 2 - widt1 / 2, 248, 22);
-            fr.Render("EDITOR", size.Width / 2 - widt2 / 2, 272, 22);
+            fr.Render("QUANTUM MAP", size.Width / 2 - widt1 / 2, 268, 22);
+            fr.Render("EDITOR", size.Width / 2 - widt2 / 2, 292, 22);
             base.Render(delta, mouseX, mouseY);
         }
 

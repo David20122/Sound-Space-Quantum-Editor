@@ -338,7 +338,7 @@ namespace Sound_Space_Editor.Gui
 					{
 						EditorWindow.Instance.UndoRedo.Clear();
 						EditorWindow.Instance.MusicPlayer.Reset();
-						EditorWindow.Instance.OpenGuiScreen(new GuiScreenLoadCreate());
+						EditorWindow.Instance.OpenGuiScreen(new GuiScreenSelectMap());
 					}
 					break;
 				case 4:
