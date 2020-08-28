@@ -51,16 +51,16 @@ namespace Sound_Space_Editor.Gui
         public override void OnResize(Size size)
         {
             ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
-            _createMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - _createMapButton.ClientRectangle.Width - 2;
-            _createMapButton.ClientRectangle.Y = ClientRectangle.Height / 2;
-            _loadMapButton.ClientRectangle.X = ClientRectangle.Width / 2 + 2;
-            _loadMapButton.ClientRectangle.Y = ClientRectangle.Height / 2;
-            _importButton.ClientRectangle.X = ClientRectangle.Width / 2 - _importButton.ClientRectangle.Width / 2;
-            _importButton.ClientRectangle.Y = ClientRectangle.Height / 2 + 52;
+            _createMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 518;
+            _createMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
+            _loadMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 258;
+            _loadMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
+            _importButton.ClientRectangle.X = ClientRectangle.Width / 2 + 258;
+            _importButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
             if (!(_lastMapButton == null))
             {
-                _lastMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - _lastMapButton.ClientRectangle.Width / 2;
-                _lastMapButton.ClientRectangle.Y = ClientRectangle.Height / 2 + 104;
+                _lastMapButton.ClientRectangle.X = ClientRectangle.Width / 2 + 518;
+                _lastMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
             }
             base.OnResize(size);
         }
