@@ -43,15 +43,14 @@ namespace Sound_Space_Editor.Gui
         {
             var size = EditorWindow.Instance.ClientSize;
             Glu.RenderTexturedQuad(ClientRectangle.Width / 2 - 400 / 2, -42, 400, 400, 0, 0, 1, 1, logoTxt);
-            var widt1 = fr.GetWidth("QUANTUM MAP", 22);
-            var widt2 = fr.GetWidth("EDITOR", 22);
-            fr.Render("QUANTUM MAP", size.Width / 2 - widt1 / 2, 268, 22);
-            fr.Render("EDITOR", size.Width / 2 - widt2 / 2, 292, 22);
+            var widt1 = fr.GetWidth("QUANTUM MAP EDITOR", 22);
+            fr.Render("QUANTUM MAP EDITOR", size.Width / 2 - widt1 / 2, 268, 22);
             base.Render(delta, mouseX, mouseY);
         }
 
         public override void OnResize(Size size)
         {
+            ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
             _createMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - _createMapButton.ClientRectangle.Width - 2;
             _createMapButton.ClientRectangle.Y = ClientRectangle.Height / 2;
             _loadMapButton.ClientRectangle.X = ClientRectangle.Width / 2 + 2;
