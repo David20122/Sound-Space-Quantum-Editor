@@ -55,11 +55,11 @@ namespace Sound_Space_Editor.Gui
             _createMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
             _loadMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 258;
             _loadMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
-            _importButton.ClientRectangle.X = ClientRectangle.Width / 2 + 258;
+            _importButton.ClientRectangle.X = ClientRectangle.Width / 2 + 2;
             _importButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
             if (!(_lastMapButton == null))
             {
-                _lastMapButton.ClientRectangle.X = ClientRectangle.Width / 2 + 518;
+                _lastMapButton.ClientRectangle.X = ClientRectangle.Width / 2 + 262;
                 _lastMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
             }
             base.OnResize(size);
