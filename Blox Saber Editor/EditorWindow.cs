@@ -108,7 +108,7 @@ namespace Sound_Space_Editor
 
 			if (!File.Exists("settings.ini"))
 			{
-				File.AppendAllText("settings.ini", "// Settings for Quantum Editor \n\n// Background Opacity (0-255, 0 means invisible) \nDefault: 255 \n\n255\n\n// You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (NoteColor1, Text, BPM Lines) \nDefault: Cyan (0,255,200)\n\n0,255,200\n\n// Color 2 (NoteColor2, Checkboxes, Sliders, Numbers, BPM Lines) \nDefault: Purple (255,0,255)\n\n255,0,255");
+				File.AppendAllText("settings.ini", "\n// Background Opacity (0-255, 0 means invisible)\n\n255\n\n// Track Opacity\n\n255\n\n// Grid Opacity\n\n255\n\n // You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (Text, BPM Lines)\n\n0,255,200\n\n// Color 2 (Checkboxes, Sliders, Numbers, BPM Lines)\n\n255,0,255\n\n// Note Colors\n\n255,0,255\n0,255,200");
 			}
 
 			OpenGuiScreen(new GuiScreenSelectMap());
@@ -749,6 +749,12 @@ namespace Sound_Space_Editor
 				}
 			}
 
+			// color 1
+
+			string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+			string[] c1values = rc1.Split(',');
+			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
+
 			if (GuiScreen is GuiScreenEditor editor)
 			{
 				if ((e.Key == Key.Left || e.Key == Key.Right) && SelectedNotes.Count == 0)
@@ -786,7 +792,7 @@ namespace Sound_Space_Editor
 						{
 							_saved = true;
 
-							editor.ShowToast("SAVED", Color.FromArgb(255, 255, 255));
+							editor.ShowToast("SAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 						}
 
 						if (wasPlaying)
@@ -798,7 +804,7 @@ namespace Sound_Space_Editor
 						{
 							_saved = true;
 
-							editor.ShowToast("SAVED", Color.FromArgb(255, 255, 255));
+							editor.ShowToast("SAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 						}
 					}
 
@@ -833,11 +839,11 @@ namespace Sound_Space_Editor
 
 							Clipboard.SetData("notes", copied);
 
-							editor.ShowToast("COPIED NOTES", Color.FromArgb(0, 255, 200));
+							editor.ShowToast("COPIED NOTES", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 						}
 						catch
 						{
-                            editor.ShowToast("FAILED TO COPY", Color.FromArgb(255, 200, 0));
+                            editor.ShowToast("FAILED TO COPY", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 						}
 					}
 					else if (e.Key == Key.V)
@@ -893,7 +899,7 @@ namespace Sound_Space_Editor
                         }
                         catch
                         {
-                            editor.ShowToast("FAILED TO COPY", Color.FromArgb(255, 200, 0));
+                            editor.ShowToast("FAILED TO COPY", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
                         }
                     }
 				}

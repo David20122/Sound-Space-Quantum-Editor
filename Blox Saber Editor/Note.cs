@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK.Graphics;
+using System;
 using System.Drawing;
 
 namespace Sound_Space_Editor
@@ -11,7 +12,7 @@ namespace Sound_Space_Editor
 		public long Ms;
 		public long DragStartMs;
 
-		public Color Color;
+		public Color4 Color;
 
 		public Note(float x, float y, long ms)
 		{

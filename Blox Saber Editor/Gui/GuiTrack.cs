@@ -24,19 +24,25 @@ namespace Sound_Space_Editor.Gui
 
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
+			// track transparency
+
+			int res;
+			string trackdim = EditorWindow.Instance.ReadLine("settings.ini", 8);
+			Int32.TryParse(trackdim, out res);
+
 			// color 1
 
-			string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 12);
+			string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
 			string[] c1values = rc1.Split(',');
 			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
 
 			//color 2
 
-			string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+			string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 21);
 			string[] c2values = rc2.Split(',');
 			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 
-			GL.Color3(0.1f, 0.1f, 0.1f);
+			GL.Color4(Color.FromArgb(res, 36, 35, 33));
 
 			var rect = ClientRectangle;
 
@@ -143,7 +149,7 @@ namespace Sound_Space_Editor.Gui
 					Glu.RenderOutline((int)(x - 4), (int)(y - 4), (int)(noteSize + 8), (int)(noteSize + 8));
 				}
 
-				var c = Color.FromArgb((int)(15 * alphaMult), note.Color);
+				var c = Color.FromArgb((int)(15 * alphaMult), (int)note.Color.R, (int)note.Color.G, (int)note.Color.B);
 
 				GL.Color4(c);
 				Glu.RenderQuad((int)x, (int)y, (int)noteSize, (int)noteSize);

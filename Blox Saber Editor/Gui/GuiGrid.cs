@@ -25,8 +25,12 @@ namespace Sound_Space_Editor.Gui
 
 			var rect = ClientRectangle;
 			var mouseOver = false;
+			// grid transparency
+			int res;
+			string griddim = EditorWindow.Instance.ReadLine("settings.ini", 12);
+			Int32.TryParse(griddim, out res);
 
-			GL.Color3(0.1f, 0.1f, 0.1f);
+			GL.Color4(Color.FromArgb(res, 36, 35, 33));
 			Glu.RenderQuad(rect.X, rect.Y, rect.Width, rect.Height);
 
 			var cellSize = rect.Width / 3f;
@@ -105,9 +109,11 @@ namespace Sound_Space_Editor.Gui
 
 				var progress = (float)Math.Pow(1 - Math.Min(1, (note.Ms - audioTime) / 750.0), 2);
 				var noteRect = new RectangleF(x, y, noteSize, noteSize);
-				GL.Color4(note.Color, progress * 0.15f);
+				OpenTK.Graphics.Color4 colora = new OpenTK.Graphics.Color4(note.Color.R, note.Color.G, note.Color.B, progress * 0.15f);
+				GL.Color4(colora);
 				Glu.RenderQuad(noteRect);
-				GL.Color4(note.Color, progress);
+				OpenTK.Graphics.Color4 color = new OpenTK.Graphics.Color4(note.Color.R, note.Color.G, note.Color.B, progress);
+				GL.Color4(color);
 				Glu.RenderOutline(noteRect);
 				if (editor.ApproachSquares.Toggle)
 				{

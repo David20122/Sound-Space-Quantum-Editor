@@ -73,7 +73,7 @@ namespace Sound_Space_Editor.Gui
 
 					break;
 				case 1:
-					EditorWindow.Instance.OpenGuiScreen(new GuiScreenLoadCreate());
+					EditorWindow.Instance.OpenGuiScreen(new GuiScreenSelectMap());
 					break;
 			}
 		}

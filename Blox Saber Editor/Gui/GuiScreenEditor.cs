@@ -167,7 +167,7 @@ namespace Sound_Space_Editor.Gui
 			if (bgImg)
 			{
 				int res;
-				string bgdim = EditorWindow.Instance.ReadLine("settings.ini", 6);
+				string bgdim = EditorWindow.Instance.ReadLine("settings.ini", 4);
 				Int32.TryParse(bgdim, out res);
 				GL.Color4(Color.FromArgb(res, 255, 255, 255));
 				Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
@@ -178,13 +178,13 @@ namespace Sound_Space_Editor.Gui
 
 			// color 1
 
-				string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 12);
+				string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
 				string[] c1values = rc1.Split(',');
 				int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
 
 			//color 2
 
-				string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+				string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 21);
 				string[] c2values = rc2.Split(',');
 				int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 
@@ -248,7 +248,7 @@ namespace Sound_Space_Editor.Gui
 
 			fr.Render(notesString, (int)(rect.X + rect.Width / 2 - notesW / 2f), (int)(rect.Y + timelinePos.Y + 12), 24);
 
-			GL.Color3(Color.FromArgb(0, 255, 200));
+			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 			fr.Render(timeString, (int)(rect.X + timelinePos.X - timeW / 2f + rect.Width - rect.Height), (int)(rect.Y + timelinePos.Y + 12), 20);
 			fr.Render(currentTimeString, (int)(rect.X + timelinePos.X - currentTimeW / 2f), (int)(rect.Y + timelinePos.Y + 12), 20);
 			fr.Render(currentMsString, (int)(rect.X + rect.Height / 2 + (rect.Width - rect.Height) * Timeline.Progress - currentMsW / 2f), (int)rect.Y, 20);
