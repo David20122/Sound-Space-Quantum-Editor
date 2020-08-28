@@ -32,7 +32,7 @@ namespace Sound_Space_Editor.Gui
             }
             _createMapButton = new GuiButton(0, 0, 0, 256, 48, "CREATE NEW MAP");
             _loadMapButton = new GuiButton(1, 0, 0, 256, 48, "EDIT EXISTING MAP");
-            _importButton = new GuiButton(2, 0, 0, 256, 48, "IMPORT FROM GITHUB");
+            _importButton = new GuiButton(2, 0, 0, 256, 48, "IMPORT MAP");
             Buttons.Add(_createMapButton);
             Buttons.Add(_loadMapButton);
             Buttons.Add(_importButton);
@@ -42,25 +42,31 @@ namespace Sound_Space_Editor.Gui
         public override void Render(float delta, float mouseX, float mouseY)
         {
             var size = EditorWindow.Instance.ClientSize;
-            Glu.RenderTexturedQuad(ClientRectangle.Width / 2 - 400 / 2, 20, 400, 400, 0, 0, 1, 1, logoTxt);
-            //var widt1 = fr.GetWidth("QUANTUM MAP EDITOR", 22);
-            //fr.Render("QUANTUM MAP EDITOR", size.Width / 2 - widt1 / 2, 268, 22);
+            Glu.RenderTexturedQuad(ClientRectangle.Width / 2 - 400 / 2, ClientRectangle.Height / 2 - 200, 400, 400, 0, 0, 1, 1, logoTxt);
             base.Render(delta, mouseX, mouseY);
         }
 
         public override void OnResize(Size size)
         {
             ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
-            _createMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 518;
-            _createMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
-            _loadMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 258;
-            _loadMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
-            _importButton.ClientRectangle.X = ClientRectangle.Width / 2 + 2;
-            _importButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
             if (!(_lastMapButton == null))
             {
+                _createMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 518;
+                _createMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
+                _loadMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 258;
+                _loadMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
+                _importButton.ClientRectangle.X = ClientRectangle.Width / 2 + 2;
+                _importButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
                 _lastMapButton.ClientRectangle.X = ClientRectangle.Width / 2 + 262;
                 _lastMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
+            } else
+            {
+                _createMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 390;
+                _createMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
+                _loadMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 130;
+                _loadMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
+                _importButton.ClientRectangle.X = ClientRectangle.Width / 2 + 386;
+                _importButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
             }
             base.OnResize(size);
         }
