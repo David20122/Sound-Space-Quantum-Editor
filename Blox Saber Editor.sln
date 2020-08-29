@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Blend for Visual Studio Version 16
-VisualStudioVersion = 16.0.30002.166
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blox Saber Editor", "Blox Saber Editor\Blox Saber Editor.csproj", "{9A405608-105F-473A-8F17-9D8C05FB3FD2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Map Player", "Map Player\Map Player.csproj", "{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,18 @@ Global
 		{9A405608-105F-473A-8F17-9D8C05FB3FD2}.Release|x64.Build.0 = Release|x64
 		{9A405608-105F-473A-8F17-9D8C05FB3FD2}.Release|x86.ActiveCfg = Release|x86
 		{9A405608-105F-473A-8F17-9D8C05FB3FD2}.Release|x86.Build.0 = Release|x86
+		{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}.Debug|x64.Build.0 = Debug|Any CPU
+		{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}.Debug|x86.Build.0 = Debug|Any CPU
+		{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}.Release|x64.ActiveCfg = Release|Any CPU
+		{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}.Release|x64.Build.0 = Release|Any CPU
+		{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}.Release|x86.ActiveCfg = Release|Any CPU
+		{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
