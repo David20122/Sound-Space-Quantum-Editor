@@ -18,7 +18,10 @@ namespace Sound_Space_Editor.Gui
 		{
 			foreach (var button in Buttons)
 			{
-				button.Render(delta, mouseX, mouseY);
+                if (button.Visible)
+                {
+                    button.Render(delta, mouseX, mouseY);
+                }
 			}
 		}
 

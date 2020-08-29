@@ -74,7 +74,7 @@ namespace Sound_Space_Editor.Gui
 				Numeric = true,
 				CanBeNegative = false
 			};
-			NoteAlign = new GuiSlider(0, 0, 176, 32)
+			NoteAlign = new GuiSlider(0, 0, 256, 40)
 			{
 				MaxValue = 29,
                 Value = 2
@@ -198,13 +198,15 @@ namespace Sound_Space_Editor.Gui
 			fr.Render("BPM:", (int)Bpm.ClientRectangle.X, (int)Bpm.ClientRectangle.Y - 24, 24);
 			fr.Render("BPM Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
 			fr.Render("Options:", (int)Autoplay.ClientRectangle.X, (int)Autoplay.ClientRectangle.Y - 26, 24);
-			fr.Render($"Snapping: 3/{(float)(NoteAlign.Value+1)}", (int)Grid.ClientRectangle.X + 405, (int)Grid.ClientRectangle.Y + 70, 24);
 			var divisor = $"Beat Divisor: {BeatSnapDivisor.Value + 1}";
 			var divisorW = fr.GetWidth(divisor, 24);
+            var align = $"Snapping: 3/{(float)(NoteAlign.Value + 1)}";
+            var alignW = fr.GetWidth(align, 24);
 
-			fr.Render(divisor, (int)(BeatSnapDivisor.ClientRectangle.X + BeatSnapDivisor.ClientRectangle.Width / 2 - divisorW / 2f), (int)BeatSnapDivisor.ClientRectangle.Y - 20, 24);
+            fr.Render(divisor, (int)(BeatSnapDivisor.ClientRectangle.X + BeatSnapDivisor.ClientRectangle.Width / 2 - divisorW / 2f), (int)BeatSnapDivisor.ClientRectangle.Y - 20, 24);
+            fr.Render(align, (int)(NoteAlign.ClientRectangle.X + NoteAlign.ClientRectangle.Width / 2 - alignW / 2f), (int)NoteAlign.ClientRectangle.Y - 20, 24);
 
-			var tempo = $"TEMPO - {Tempo.Value * 10 + 20}%";
+            var tempo = $"TEMPO - {Tempo.Value * 10 + 20}%";
 			var tempoW = fr.GetWidth(tempo, 24);
 
 			fr.Render(tempo, (int)(Tempo.ClientRectangle.X + Tempo.ClientRectangle.Width / 2 - tempoW / 2f), (int)Tempo.ClientRectangle.Bottom - 24, 24);
@@ -402,12 +404,12 @@ namespace Sound_Space_Editor.Gui
 			// sm
 			Bpm.ClientRectangle.Y = Grid.ClientRectangle.Y + 28;
 			Offset.ClientRectangle.Y = Bpm.ClientRectangle.Bottom + 5 + 24 + 10;
-			NoteAlign.ClientRectangle.Y = Grid.ClientRectangle.Y + 100;
 			SetOffset.ClientRectangle.Y = Offset.ClientRectangle.Y;
 			Reposition.ClientRectangle.Y = Offset.ClientRectangle.Bottom + 10;
 			BeatSnapDivisor.ClientRectangle.Y = Bpm.ClientRectangle.Y;
+            NoteAlign.ClientRectangle.Y = BeatSnapDivisor.ClientRectangle.Bottom + 5 + 24 + 10;
 
-			Autoplay.ClientRectangle.Y = Reposition.ClientRectangle.Bottom + 32 + 20;
+            Autoplay.ClientRectangle.Y = Reposition.ClientRectangle.Bottom + 32 + 20;
 			ApproachSquares.ClientRectangle.Y = Autoplay.ClientRectangle.Bottom + 10;
 			GridNumbers.ClientRectangle.Y = ApproachSquares.ClientRectangle.Bottom + 10;
 			Quantum.ClientRectangle.Y = GridNumbers.ClientRectangle.Bottom + 10;
@@ -416,7 +418,7 @@ namespace Sound_Space_Editor.Gui
 			Bpm.ClientRectangle.X = 10;
 			Offset.ClientRectangle.X = Bpm.ClientRectangle.X;
 			SetOffset.ClientRectangle.X = Bpm.ClientRectangle.Right + 5;
-			NoteAlign.ClientRectangle.X = Grid.ClientRectangle.X + 390;
+			NoteAlign.ClientRectangle.X = BeatSnapDivisor.ClientRectangle.X;
 			Reposition.ClientRectangle.X = Bpm.ClientRectangle.X;
 
 			Autoplay.ClientRectangle.X = Bpm.ClientRectangle.X;
