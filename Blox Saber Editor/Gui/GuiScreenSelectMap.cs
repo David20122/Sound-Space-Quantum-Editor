@@ -18,6 +18,9 @@ namespace Sound_Space_Editor.Gui
         private GuiButton _loadMapButton;
         private GuiButton _lastMapButton;
         private GuiButton _importButton;
+        private GuiButton _pasteDataButton;
+        private GuiButton _githubButton;
+        private bool importmapclicked = false;
 
         public GuiScreenSelectMap() : base(0, 0, EditorWindow.Instance.ClientSize.Width, EditorWindow.Instance.ClientSize.Height)
         {
@@ -33,16 +36,20 @@ namespace Sound_Space_Editor.Gui
             _createMapButton = new GuiButton(0, 0, 0, 256, 48, "CREATE NEW MAP");
             _loadMapButton = new GuiButton(1, 0, 0, 256, 48, "EDIT EXISTING MAP");
             _importButton = new GuiButton(2, 0, 0, 256, 48, "IMPORT MAP");
+            _pasteDataButton = new GuiButton(4, 0, 0, 256, 48, "PASTE DATA");
+            _githubButton = new GuiButton(5, 0, 0, 256, 48, "GITHUB LINK");
             Buttons.Add(_createMapButton);
             Buttons.Add(_loadMapButton);
             Buttons.Add(_importButton);
+            Buttons.Add(_pasteDataButton);
+            Buttons.Add(_githubButton);
             OnResize(EditorWindow.Instance.ClientSize);
         }
 
         public override void Render(float delta, float mouseX, float mouseY)
         {
             var size = EditorWindow.Instance.ClientSize;
-            Glu.RenderTexturedQuad(ClientRectangle.Width / 2 - 400 / 2, ClientRectangle.Height / 2 - 200, 400, 400, 0, 0, 1, 1, logoTxt);
+            Glu.RenderTexturedQuad(ClientRectangle.Width / 2 - 400 / 2, ClientRectangle.Height / 2 - 300, 400, 400, 0, 0, 1, 1, logoTxt);
             base.Render(delta, mouseX, mouseY);
         }
 
@@ -59,14 +66,24 @@ namespace Sound_Space_Editor.Gui
                 _importButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
                 _lastMapButton.ClientRectangle.X = ClientRectangle.Width / 2 + 262;
                 _lastMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
+                _pasteDataButton.ClientRectangle.X = 123456;
+                _pasteDataButton.ClientRectangle.Y = 123456;
+                _githubButton.ClientRectangle.X = 123456;
+                _githubButton.ClientRectangle.Y = 123456;
+
             } else
             {
+
                 _createMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 390;
                 _createMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
                 _loadMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 130;
                 _loadMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
                 _importButton.ClientRectangle.X = ClientRectangle.Width / 2 + 386;
                 _importButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
+                _pasteDataButton.ClientRectangle.X = 123456;
+                _pasteDataButton.ClientRectangle.Y = 123456;
+                _githubButton.ClientRectangle.X = 123456;
+                _githubButton.ClientRectangle.Y = 123456;
             }
             base.OnResize(size);
         }
@@ -89,13 +106,34 @@ namespace Sound_Space_Editor.Gui
                     }
                     break;
                 case 2:
-                    var gclipboard = Clipboard.GetText();
-                    WebClient wc = new WebClient();
-                    string reply = wc.DownloadString(gclipboard);
-                    EditorWindow.Instance.LoadMap(reply);
+                    if (importmapclicked == false)
+                    {
+                        importmapclicked = true;
+                        _pasteDataButton.ClientRectangle.X = ClientRectangle.Width / 2 + 2;
+                        _pasteDataButton.ClientRectangle.Y = ClientRectangle.Height * 0.71f;
+                        _githubButton.ClientRectangle.X = ClientRectangle.Width / 2 + 2;
+                        _githubButton.ClientRectangle.Y = ClientRectangle.Height * 0.64f;
+                    } else
+                    {
+                        importmapclicked = false;
+                        _pasteDataButton.ClientRectangle.X = 123456;
+                        _pasteDataButton.ClientRectangle.Y = 123456;
+                        _githubButton.ClientRectangle.X = 123456;
+                        _githubButton.ClientRectangle.Y = 123456;
+                    }
                     break;
                 case 3:
                     EditorWindow.Instance.LoadFile(Properties.Settings.Default.LastFile);
+                    break;
+                case 4:
+                    var clipboard = Clipboard.GetText();
+                    EditorWindow.Instance.LoadMap(clipboard);
+                    break;
+                case 5:
+                    var gclipboard = Clipboard.GetText();
+                    WebClient wc = new WebClient();
+                    var reply = wc.DownloadString(gclipboard);
+                    EditorWindow.Instance.LoadMap(reply);
                     break;
             }
             base.OnButtonClicked(id);
