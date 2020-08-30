@@ -43,6 +43,14 @@ namespace Map_Player
         }
         protected override void OnRenderFrame(FrameEventArgs e)
         {
+            if (this.Focused && !Paused)
+            {
+                this.CursorVisible = false;
+            } else
+            {
+                this.CursorVisible = true;
+            }
+
             GL.LoadIdentity();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.Translate(0, 0, 0);
