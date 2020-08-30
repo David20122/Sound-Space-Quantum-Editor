@@ -1,0 +1,13 @@
+C:\Dev\SoundSpaceQuantum\Map Player\bin\Debug\Map Player.exe.config
+C:\Dev\SoundSpaceQuantum\Map Player\bin\Debug\Map Player.exe
+C:\Dev\SoundSpaceQuantum\Map Player\bin\Debug\Map Player.pdb
+C:\Dev\SoundSpaceQuantum\Map Player\bin\Debug\Bass.Net.dll
+C:\Dev\SoundSpaceQuantum\Map Player\bin\Debug\OpenTK.dll
+C:\Dev\SoundSpaceQuantum\Map Player\bin\Debug\Bass.Net.xml
+C:\Dev\SoundSpaceQuantum\Map Player\bin\Debug\OpenTK.pdb
+C:\Dev\SoundSpaceQuantum\Map Player\bin\Debug\OpenTK.xml
+C:\Dev\SoundSpaceQuantum\Map Player\obj\Debug\Map Player.csprojAssemblyReference.cache
+C:\Dev\SoundSpaceQuantum\Map Player\obj\Debug\Map Player.csproj.CoreCompileInputs.cache
+C:\Dev\SoundSpaceQuantum\Map Player\obj\Debug\Map Player.csproj.CopyComplete
+C:\Dev\SoundSpaceQuantum\Map Player\obj\Debug\Map Player.exe
+C:\Dev\SoundSpaceQuantum\Map Player\obj\Debug\Map Player.pdb

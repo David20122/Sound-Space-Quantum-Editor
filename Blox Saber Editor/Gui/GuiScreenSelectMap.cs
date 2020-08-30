@@ -122,14 +122,28 @@ namespace Sound_Space_Editor.Gui
                     EditorWindow.Instance.LoadFile(Properties.Settings.Default.LastFile);
                     break;
                 case 4:
-                    var clipboard = Clipboard.GetText();
-                    EditorWindow.Instance.LoadMap(clipboard);
+                    try
+                    {
+                        var clipboard = Clipboard.GetText();
+                        EditorWindow.Instance.LoadMap(clipboard);
+                    }
+                    catch
+                    {
+                        return;
+                    }
                     break;
                 case 5:
-                    var gclipboard = Clipboard.GetText();
-                    WebClient wc = new WebClient();
-                    var reply = wc.DownloadString(gclipboard);
-                    EditorWindow.Instance.LoadMap(reply);
+                    try
+                    {
+                        var gclipboard = Clipboard.GetText();
+                        WebClient wc = new WebClient();
+                        var reply = wc.DownloadString(gclipboard);
+                        EditorWindow.Instance.LoadMap(reply);
+                    }
+                    catch
+                    {
+                        return;
+                    }
                     break;
             }
             base.OnButtonClicked(id);

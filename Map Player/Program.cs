@@ -10,17 +10,19 @@ namespace Map_Player
     {
         static int Main(string[] args)
         {
-            if (args.Length != 2)
-            {
-                return 0;
-            }
+            Console.Title = "Map Player";
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("attempting to run the map player");
+            Player player;
             try
             {
-
+                player = new Player(/*args[0]*/"");
+                player.Run();
             }
             catch
             {
-                return 0;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("error");
             }
             return 0;
         }
