@@ -1467,6 +1467,7 @@ namespace Sound_Space_Editor
 				WriteFile(sfd.FileName);
 
 				_file = sfd.FileName;
+                Settings.Default.LastFile = _file;
 
 				return true;
 			}

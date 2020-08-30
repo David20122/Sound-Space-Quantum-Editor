@@ -55,11 +55,17 @@ namespace Map_Player
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.Translate(0, 0, 0);
 
-            GL.Begin(PrimitiveType.Quads);
-            GL.Vertex3(1, 1, -5);
-            GL.Vertex3(-1, 1, -5);
-            GL.Vertex3(-1, -1, -5);
-            GL.Vertex3(1, -1, -5);
+            // render grid
+            GL.Color4(0.8f, 0.8f, 0.8f, 0.4f);
+            GL.Begin(PrimitiveType.Lines);
+            GL.Vertex3(-1.5, 0.5, -5);
+            GL.Vertex3(1.5, 0.5, -5);
+            GL.Vertex3(-0.5, -1.5, -5);
+            GL.Vertex3(-0.5, 1.5, -5);
+            GL.Vertex3(-1.5, -0.5, -5);
+            GL.Vertex3(1.5, -0.5, -5);
+            GL.Vertex3(0.5, -1.5, -5);
+            GL.Vertex3(0.5, 1.5, -5);
             GL.End();
 
             Context.SwapBuffers();
@@ -72,7 +78,7 @@ namespace Map_Player
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             Matrix4 matrix;
-            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45), this.Width / this.Height, 1f, 100f, out matrix); 
+            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(56), this.Width / this.Height, 1f, 100f, out matrix); 
             GL.LoadMatrix(ref matrix);
             GL.MatrixMode(MatrixMode.Modelview);
 
@@ -81,6 +87,14 @@ namespace Map_Player
         protected override void OnUnload(EventArgs e)
         {
             base.OnUnload(e);
+        }
+        protected override void OnKeyDown(KeyboardKeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                Paused = !Paused;
+            }
+            base.OnKeyDown(e);
         }
     }
     class Note
