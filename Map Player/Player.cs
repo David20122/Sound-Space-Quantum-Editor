@@ -16,9 +16,10 @@ namespace Map_Player
     {
         private List<Note> Notes = new List<Note>();
         private MusicPlayer MusicPlayer;
-        private bool Loaded = false;
-        private bool Playing = false;
-        private bool Paused = false;
+        private Camera camera;
+        public bool Loaded = false;
+        public bool Playing = false;
+        public bool Paused = false;
 
         public Player(String file) : base(800, 600, new GraphicsMode(32, 8, 0, 8), "Map Player")
         {
@@ -38,6 +39,7 @@ namespace Map_Player
         {
             GL.ClearColor(0, 0, 0, 1);
             GL.Enable(EnableCap.DepthTest);
+            camera = new Camera(this);
             
             base.OnLoad(e);
         }
@@ -53,7 +55,7 @@ namespace Map_Player
 
             GL.LoadIdentity();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.Translate(0, 0, 0);
+            camera.Update();
 
             // render grid
             GL.Color4(0.8f, 0.8f, 0.8f, 0.4f);
@@ -77,10 +79,12 @@ namespace Map_Player
             GL.Viewport(0, 0, this.Width, this.Height);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            Matrix4 matrix;
-            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(56), this.Width / this.Height, 1f, 100f, out matrix); 
+            Matrix4 matrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(56), Width / Height, 1, 100);
             GL.LoadMatrix(ref matrix);
             GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+            ref Matrix4 matrix1 = ref camera.matrix;
+            GL.LoadMatrix(ref matrix1);
 
             base.OnResize(e);
         }
@@ -95,6 +99,15 @@ namespace Map_Player
                 Paused = !Paused;
             }
             base.OnKeyDown(e);
+        }
+        protected override void OnMouseMove(MouseMoveEventArgs e)
+        {
+            if (Focused && !Paused)
+            {
+                camera.MouseUpdate(e);
+                Mouse.SetPosition(X + Width / 2f, Y + Height / 2f);
+            }
+            base.OnMouseMove(e);
         }
     }
     class Note

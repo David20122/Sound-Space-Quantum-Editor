@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Camera.cs" />
     <Compile Include="MusicPlayer.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
