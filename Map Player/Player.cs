@@ -16,8 +16,6 @@ namespace Map_Player
     {
         private List<Note> Notes = new List<Note>();
         private MusicPlayer MusicPlayer;
-        private int VBO;
-        private int VAO;
         private bool Loaded = false;
         private bool Playing = false;
         private bool Paused = false;
@@ -39,18 +37,21 @@ namespace Map_Player
         protected override void OnLoad(EventArgs e)
         {
             GL.ClearColor(0, 0, 0, 1);
+            GL.Enable(EnableCap.DepthTest);
             
             base.OnLoad(e);
         }
         protected override void OnRenderFrame(FrameEventArgs e)
         {
-            GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.LoadIdentity();
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.Translate(0, 0, 0);
 
-            GL.Begin(PrimitiveType.Triangles);
-            GL.Vertex3(1.0, 1.0, 0);
-            GL.Vertex3(1.0, 0, 0);
-            GL.Vertex3(0, 0, 0);
+            GL.Begin(PrimitiveType.Quads);
+            GL.Vertex3(1, 1, -5);
+            GL.Vertex3(-1, 1, -5);
+            GL.Vertex3(-1, -1, -5);
+            GL.Vertex3(1, -1, -5);
             GL.End();
 
             Context.SwapBuffers();
@@ -62,7 +63,8 @@ namespace Map_Player
             GL.Viewport(0, 0, this.Width, this.Height);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            Matrix4 matrix = Matrix4.CreatePerspectiveFieldOfView(45, this.Width / this.Height, 1, 100);
+            Matrix4 matrix;
+            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45), this.Width / this.Height, 1f, 100f, out matrix); 
             GL.LoadMatrix(ref matrix);
             GL.MatrixMode(MatrixMode.Modelview);
 
