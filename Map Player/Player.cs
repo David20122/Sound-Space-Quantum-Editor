@@ -45,11 +45,12 @@ namespace Map_Player
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.LoadIdentity();
 
             GL.Begin(PrimitiveType.Triangles);
-            GL.Vertex2(1.0, 1.0);
-            GL.Vertex2(1.0, 0);
-            GL.Vertex2(0, 0);
+            GL.Vertex3(1.0, 1.0, 0);
+            GL.Vertex3(1.0, 0, 0);
+            GL.Vertex3(0, 0, 0);
             GL.End();
 
             Context.SwapBuffers();
@@ -61,6 +62,9 @@ namespace Map_Player
             GL.Viewport(0, 0, this.Width, this.Height);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
+            Matrix4 matrix = Matrix4.CreatePerspectiveFieldOfView(45, this.Width / this.Height, 1, 100);
+            GL.LoadMatrix(ref matrix);
+            GL.MatrixMode(MatrixMode.Modelview);
 
             base.OnResize(e);
         }
