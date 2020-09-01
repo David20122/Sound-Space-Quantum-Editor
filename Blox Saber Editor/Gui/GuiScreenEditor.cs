@@ -76,7 +76,7 @@ namespace Sound_Space_Editor.Gui
 			};
 			NoteAlign = new GuiSlider(0, 0, 256, 40)
 			{
-				MaxValue = 29,
+				MaxValue = 59,
                 Value = 2
 			};
 			Reposition = new GuiCheckBox(1, "Offset Notes", 10, 0, 32, 32, false);
