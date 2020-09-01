@@ -11,3 +11,16 @@ C:\Dev\SoundSpaceQuantum\Map Player\obj\Debug\Map Player.csproj.CoreCompileInput
 C:\Dev\SoundSpaceQuantum\Map Player\obj\Debug\Map Player.csproj.CopyComplete
 C:\Dev\SoundSpaceQuantum\Map Player\obj\Debug\Map Player.exe
 C:\Dev\SoundSpaceQuantum\Map Player\obj\Debug\Map Player.pdb
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\bin\Debug\Map Player.exe.config
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\bin\Debug\Map Player.exe
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\bin\Debug\Map Player.pdb
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\bin\Debug\Bass.Net.dll
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\bin\Debug\OpenTK.dll
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\bin\Debug\Bass.Net.xml
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\bin\Debug\OpenTK.pdb
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\bin\Debug\OpenTK.xml
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\obj\Debug\Map Player.csprojAssemblyReference.cache
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\obj\Debug\Map Player.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\obj\Debug\Map Player.csproj.CopyComplete
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\obj\Debug\Map Player.exe
+C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Map Player\obj\Debug\Map Player.pdb

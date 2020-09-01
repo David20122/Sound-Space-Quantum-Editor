@@ -1263,10 +1263,10 @@ namespace Sound_Space_Editor
                         var newX = (float)( Math.Floor(((pos.X - (rect.X+(rect.Width/3))) / rect.Width * 3)*increment) /increment );
                         var newY = (float)( Math.Floor(((pos.Y - (rect.Y+(rect.Height/3))) / rect.Height * 3)*increment) /increment );
 
-                        newX = (float)Math.Max((double)-1.5, (double)newX);
-                        newY = (float)Math.Max((double)-1.5, (double)newY);
-                        newX = (float)Math.Min((double)1.5, (double)newX);
-                        newY = (float)Math.Min((double)1.5, (double)newY);
+                        newX = (float)Math.Max((double)-1.850, (double)newX);
+                        newY = (float)Math.Max((double)-1.850, (double)newY);
+                        newX = (float)Math.Min((double)1.850, (double)newX);
+                        newY = (float)Math.Min((double)1.850, (double)newY);
 
                         note.X = newX+1;
                         note.Y = newY+1;
