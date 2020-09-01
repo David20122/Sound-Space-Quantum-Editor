@@ -142,6 +142,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="SoundPlayer.cs" />
     <Compile Include="TextureManager.cs" />
     <Compile Include="UndoRedo.cs" />
