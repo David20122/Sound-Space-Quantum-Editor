@@ -125,7 +125,7 @@ namespace Sound_Space_Editor.Gui
                     try
                     {
                         var clipboard = Clipboard.GetText();
-                        EditorWindow.Instance.LoadMap(clipboard);
+                        EditorWindow.Instance.LoadMap(clipboard, false);
                     }
                     catch
                     {
@@ -138,7 +138,7 @@ namespace Sound_Space_Editor.Gui
                         var gclipboard = Clipboard.GetText();
                         WebClient wc = new WebClient();
                         var reply = wc.DownloadString(gclipboard);
-                        EditorWindow.Instance.LoadMap(reply);
+                        EditorWindow.Instance.LoadMap(reply, false);
                     }
                     catch
                     {

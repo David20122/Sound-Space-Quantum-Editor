@@ -32,10 +32,8 @@ namespace Sound_Space_Editor
 		public MusicPlayer MusicPlayer;
 		public SoundPlayer SoundPlayer;
 
-        public Discord.Discord discord = new Discord.Discord(751010237388947517, (UInt64)Discord.CreateFlags.Default);
+        public Discord.Discord discord;
         public Discord.ActivityManager activityManager;
-        public Discord.ApplicationManager applicationManager;
-        public Discord.RelationshipManager relationshipManager;
         public Discord.UserManager userManager;
         public Discord.NetworkManager networkManager;
         public Discord.LobbyManager lobbyManager;
@@ -101,56 +99,81 @@ namespace Sound_Space_Editor
 
 		public float CubeStep => 50 * 10 * Zoom;
 
-		public EditorWindow(long offset) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor")
-		{
-			Instance = this;
-			this.WindowState = OpenTK.WindowState.Maximized;
-			Icon = Resources.icon;
-			VSync = VSyncMode.On;
+        public EditorWindow(long offset) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor")
+        {
+            Instance = this;
+            this.WindowState = OpenTK.WindowState.Maximized;
+            Icon = Resources.icon;
+            VSync = VSyncMode.On;
+            TargetUpdatePeriod = 1.0 / 20.0;
 
-			//TargetRenderFrequency = 60;
+            //TargetRenderFrequency = 60;
 
-			MusicPlayer = new MusicPlayer { Volume = 0.25f };
-			SoundPlayer = new SoundPlayer();
+            MusicPlayer = new MusicPlayer { Volume = 0.25f };
+            SoundPlayer = new SoundPlayer();
 
-			FontRenderer = new FontRenderer("main");
+            FontRenderer = new FontRenderer("main");
 
-			if (!File.Exists("settings.ini"))
-			{
-				File.AppendAllText("settings.ini", "\n// Background Opacity (0-255, 0 means invisible)\n\n255\n\n// Track Opacity\n\n255\n\n// Grid Opacity\n\n255\n\n // You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (Text, BPM Lines)\n\n0,255,200\n\n// Color 2 (Checkboxes, Sliders, Numbers, BPM Lines)\n\n255,0,255\n\n// Note Colors\n\n255,0,255\n0,255,200");
-			}
-
-			OpenGuiScreen(new GuiScreenSelectMap());
-
-			SoundPlayer.Cache("hit");
-			SoundPlayer.Cache("click");
-
-			KeyMapping.Add(Key.Q, new Tuple<int, int>(0, 0));
-			KeyMapping.Add(Key.W, new Tuple<int, int>(1, 0));
-			KeyMapping.Add(Key.E, new Tuple<int, int>(2, 0));
-
-			KeyMapping.Add(Key.A, new Tuple<int, int>(0, 1));
-			KeyMapping.Add(Key.S, new Tuple<int, int>(1, 1));
-			KeyMapping.Add(Key.D, new Tuple<int, int>(2, 1));
-
-			KeyMapping.Add(Key.Y, new Tuple<int, int>(0, 2)); KeyMapping.Add(Key.Z, new Tuple<int, int>(0, 2));
-			KeyMapping.Add(Key.X, new Tuple<int, int>(1, 2));
-			KeyMapping.Add(Key.C, new Tuple<int, int>(2, 2));
-
-			_playbackOffset = offset;
-
-			_processThread = new Thread(ProcessNotes) { IsBackground = true };
-			_processThread.Start();
-
-            void LogProblemsFunction(Discord.LogLevel level, string message)
+            if (!File.Exists("settings.ini"))
             {
-                Console.WriteLine("Discord:{0} - {1}", level, message);
+                File.AppendAllText("settings.ini", "\n// Background Opacity (0-255, 0 means invisible)\n\n255\n\n// Track Opacity\n\n255\n\n// Grid Opacity\n\n255\n\n // You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (Text, BPM Lines)\n\n0,255,200\n\n// Color 2 (Checkboxes, Sliders, Numbers, BPM Lines)\n\n255,0,255\n\n// Note Colors\n\n255,0,255\n0,255,200");
             }
 
-            discord.SetLogHook(Discord.LogLevel.Debug, LogProblemsFunction);
+            OpenGuiScreen(new GuiScreenSelectMap());
+
+            SoundPlayer.Cache("hit");
+            SoundPlayer.Cache("click");
+
+            KeyMapping.Add(Key.Q, new Tuple<int, int>(0, 0));
+            KeyMapping.Add(Key.W, new Tuple<int, int>(1, 0));
+            KeyMapping.Add(Key.E, new Tuple<int, int>(2, 0));
+
+            KeyMapping.Add(Key.A, new Tuple<int, int>(0, 1));
+            KeyMapping.Add(Key.S, new Tuple<int, int>(1, 1));
+            KeyMapping.Add(Key.D, new Tuple<int, int>(2, 1));
+
+            KeyMapping.Add(Key.Y, new Tuple<int, int>(0, 2)); KeyMapping.Add(Key.Z, new Tuple<int, int>(0, 2));
+            KeyMapping.Add(Key.X, new Tuple<int, int>(1, 2));
+            KeyMapping.Add(Key.C, new Tuple<int, int>(2, 2));
+
+            _playbackOffset = offset;
+
+            _processThread = new Thread(ProcessNotes) { IsBackground = true };
+            _processThread.Start();
+
+            discord = new Discord.Discord((Int64)751010237388947517, (UInt64)Discord.CreateFlags.Default);
+            activityManager = discord.GetActivityManager();
+            userManager = discord.GetUserManager();
+            networkManager = discord.GetNetworkManager();
+            lobbyManager = discord.GetLobbyManager();
         }
 
-		public string ReadLine(string FilePath, int LineNumber)
+        void UpdateActivity(Discord.Discord discord, String state)
+        {
+            var activity = new Discord.Activity
+            {
+                State = state,
+                Details = "Version 1.6pre1",
+                Timestamps =
+                {
+                    Start = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                },
+                Instance = true,
+            };
+            discord.ActivityManagerInstance.UpdateActivity(activity, (result) =>
+            {
+                if (result == Discord.Result.Ok)
+                {
+                    Console.WriteLine("Success!");
+                }
+                else
+                {
+                    Console.WriteLine("Failed");
+                }
+            });
+        }
+
+        public string ReadLine(string FilePath, int LineNumber)
 		{
 			string result = "";
 			try
@@ -244,7 +267,9 @@ namespace Sound_Space_Editor
 
 			GL.Enable(EnableCap.Texture2D);
 			GL.ActiveTexture(TextureUnit.Texture0);
-		}
+
+            UpdateActivity(discord, "Sitting in the menu");
+        }
 
 		protected override void OnRenderFrame(FrameEventArgs e)
 		{
@@ -318,8 +343,8 @@ namespace Sound_Space_Editor
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            discord.RunCallbacks();
-            base.OnUpdateFrame(e);
+            try { discord.RunCallbacks(); }
+            catch { }
         }
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
@@ -1340,7 +1365,7 @@ namespace Sound_Space_Editor
 		{
 			var data = File.ReadAllText(file);
 
-			if (LoadMap(data) && GuiScreen is GuiScreenEditor gse)
+			if (LoadMap(data, true) && GuiScreen is GuiScreenEditor gse)
 			{
 				_file = file;
 				_saved = true;
@@ -1351,6 +1376,8 @@ namespace Sound_Space_Editor
 				GuiTrack.Bpm = 0;
 				gse.Offset.Text = "0";
 				GuiTrack.BpmOffset = 0;
+
+                UpdateActivity(discord, Path.GetFileName(_file));
 
 				var ini = Path.ChangeExtension(file, "ini");
 
@@ -1389,10 +1416,10 @@ namespace Sound_Space_Editor
 						}
 					}
 				}
-			}
+            }
 		}
 
-		public bool LoadMap(string data)
+		public bool LoadMap(string data, bool fromFile)
 		{
 			Notes.Clear();
 
@@ -1404,6 +1431,11 @@ namespace Sound_Space_Editor
 
 			_draggedNote = null;
 			_lastPlayedNote = null;
+
+            if (!fromFile)
+            {
+                UpdateActivity(discord, "Untitled");
+            }
 
 			var splits = Regex.Matches(data, "([^,]+)");
 
@@ -1432,7 +1464,7 @@ namespace Sound_Space_Editor
 
 					var gui = new GuiScreenEditor();
 
-					OpenGuiScreen(gui);
+                    OpenGuiScreen(gui);
 				}
 				else
 					_soundId = -1;
@@ -1452,7 +1484,7 @@ namespace Sound_Space_Editor
 
 		public void CreateMap(long id)
 		{
-			LoadMap(id.ToString());
+			LoadMap(id.ToString(), false);
 		}
 
 		private bool PromptSave()
@@ -1491,7 +1523,7 @@ namespace Sound_Space_Editor
 				_file = sfd.FileName;
                 Settings.Default.LastFile = _file;
 
-				return true;
+                return true;
 			}
 
 			return false;
