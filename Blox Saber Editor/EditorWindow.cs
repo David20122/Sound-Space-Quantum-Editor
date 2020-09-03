@@ -17,6 +17,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using KeyPressEventArgs = OpenTK.KeyPressEventArgs;
+using Discord;
 
 namespace Sound_Space_Editor
 {
@@ -30,6 +31,8 @@ namespace Sound_Space_Editor
 
 		public MusicPlayer MusicPlayer;
 		public SoundPlayer SoundPlayer;
+
+        public Discord.Discord discord = new Discord.Discord(751010237388947517, (UInt64)Discord.CreateFlags.Default);
 
 		public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
 
@@ -300,7 +303,13 @@ namespace Sound_Space_Editor
 			OnRenderFrame(new FrameEventArgs());
 		}
 
-		protected override void OnMouseMove(MouseMoveEventArgs e)
+        protected override void OnUpdateFrame(FrameEventArgs e)
+        {
+            discord.RunCallbacks();
+            base.OnUpdateFrame(e);
+        }
+
+        protected override void OnMouseMove(MouseMoveEventArgs e)
 		{
 			_lastMouse = e.Position;
 

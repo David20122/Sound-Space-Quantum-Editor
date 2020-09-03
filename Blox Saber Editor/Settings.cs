@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sound_Space_Editor
 {
-    static class Settinga
+    static class Setting
     {
         private static List<Property> Properties = new List<Property>();
 
