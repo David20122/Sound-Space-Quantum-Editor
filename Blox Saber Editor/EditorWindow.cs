@@ -33,8 +33,14 @@ namespace Sound_Space_Editor
 		public SoundPlayer SoundPlayer;
 
         public Discord.Discord discord = new Discord.Discord(751010237388947517, (UInt64)Discord.CreateFlags.Default);
+        public Discord.ActivityManager activityManager;
+        public Discord.ApplicationManager applicationManager;
+        public Discord.RelationshipManager relationshipManager;
+        public Discord.UserManager userManager;
+        public Discord.NetworkManager networkManager;
+        public Discord.LobbyManager lobbyManager;
 
-		public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
+        public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
 
 		//private readonly GuiScreenEditor _screenEditor;
 
@@ -135,7 +141,14 @@ namespace Sound_Space_Editor
 
 			_processThread = new Thread(ProcessNotes) { IsBackground = true };
 			_processThread.Start();
-		}
+
+            void LogProblemsFunction(Discord.LogLevel level, string message)
+            {
+                Console.WriteLine("Discord:{0} - {1}", level, message);
+            }
+
+            discord.SetLogHook(Discord.LogLevel.Debug, LogProblemsFunction);
+        }
 
 		public string ReadLine(string FilePath, int LineNumber)
 		{
