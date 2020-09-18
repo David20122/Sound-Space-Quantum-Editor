@@ -1544,7 +1544,7 @@ namespace Sound_Space_Editor
 				{
 					using (var wc = new SecureWebClient())
 					{
-						wc.DownloadFile("https://assetgame.roblox.com/asset/?id=" + id, "assets/cached/" + id + ".asset");
+						wc.DownloadFile("https://assetdelivery.roblox.com/v1/asset/?id=" + id, "assets/cached/" + id + ".asset");
 					}
 				}
 
