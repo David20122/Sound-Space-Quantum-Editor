@@ -130,7 +130,7 @@ namespace Sound_Space_Editor.Gui
 
 					if (!string.IsNullOrWhiteSpace(clipboard))
 					{
-						EditorWindow.Instance.LoadMap(clipboard);
+						EditorWindow.Instance.LoadMap(clipboard, false);
 					}
 					break;
 				case 3:
@@ -138,7 +138,7 @@ namespace Sound_Space_Editor.Gui
 					WebClient wc = new WebClient();
 					string reply = wc.DownloadString(gclipboard);
 					MessageBox.Show(reply, "reply");
-					EditorWindow.Instance.LoadMap(reply);
+					EditorWindow.Instance.LoadMap(reply, false);
 					break;
 			}
 		}

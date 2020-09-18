@@ -43,7 +43,6 @@ C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Sound_Space_Editor.Properti
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.GenerateResource.cache
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CoreCompileInputs.cache
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CopyComplete
-C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csprojAssemblyReference.cache
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\Sound Space Quantum Editor.exe.config
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\Sound Space Quantum Editor.exe
 C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Debug\Sound Space Quantum Editor.pdb
