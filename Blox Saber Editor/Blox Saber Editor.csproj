@@ -113,13 +113,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColorSequence.cs" />
-    <Compile Include="DiscordGameSDK\ActivityManager.cs" />
-    <Compile Include="DiscordGameSDK\Constants.cs" />
-    <Compile Include="DiscordGameSDK\Core.cs" />
-    <Compile Include="DiscordGameSDK\ImageManager.cs" />
-    <Compile Include="DiscordGameSDK\LobbyManager.cs" />
-    <Compile Include="DiscordGameSDK\StorageManager.cs" />
-    <Compile Include="DiscordGameSDK\StoreManager.cs" />
     <Compile Include="EditorWindow.cs" />
     <Compile Include="FreeType.cs" />
     <Compile Include="FtFont.cs" />

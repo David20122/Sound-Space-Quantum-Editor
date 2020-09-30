@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blox Saber Editor", "Blox Saber Editor\Blox Saber Editor.csproj", "{9A405608-105F-473A-8F17-9D8C05FB3FD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Map Player", "Map Player\Map Player.csproj", "{3F986D26-DBBD-40F0-84DD-81AFD64D4FFC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
