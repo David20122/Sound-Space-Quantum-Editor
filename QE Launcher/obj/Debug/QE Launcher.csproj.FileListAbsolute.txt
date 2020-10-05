@@ -1,0 +1,7 @@
+C:\Users\Lenovo\source\repos\QE Launcher\QE Launcher\bin\Debug\QE Launcher.exe.config
+C:\Users\Lenovo\source\repos\QE Launcher\QE Launcher\bin\Debug\QE Launcher.exe
+C:\Users\Lenovo\source\repos\QE Launcher\QE Launcher\bin\Debug\QE Launcher.pdb
+C:\Users\Lenovo\source\repos\QE Launcher\QE Launcher\obj\Debug\QE Launcher.csprojAssemblyReference.cache
+C:\Users\Lenovo\source\repos\QE Launcher\QE Launcher\obj\Debug\QE Launcher.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\source\repos\QE Launcher\QE Launcher\obj\Debug\QE Launcher.exe
+C:\Users\Lenovo\source\repos\QE Launcher\QE Launcher\obj\Debug\QE Launcher.pdb
