@@ -17,7 +17,6 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using KeyPressEventArgs = OpenTK.KeyPressEventArgs;
-using Discord;
 
 namespace Sound_Space_Editor
 {
@@ -31,12 +30,6 @@ namespace Sound_Space_Editor
 
 		public MusicPlayer MusicPlayer;
 		public SoundPlayer SoundPlayer;
-
-        public Discord.Discord discord;
-        public Discord.ActivityManager activityManager;
-        public Discord.UserManager userManager;
-        public Discord.NetworkManager networkManager;
-        public Discord.LobbyManager lobbyManager;
 
         public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
 
@@ -140,37 +133,6 @@ namespace Sound_Space_Editor
 
             _processThread = new Thread(ProcessNotes) { IsBackground = true };
             _processThread.Start();
-
-            discord = new Discord.Discord((Int64)751010237388947517, (UInt64)Discord.CreateFlags.Default);
-            activityManager = discord.GetActivityManager();
-            userManager = discord.GetUserManager();
-            networkManager = discord.GetNetworkManager();
-            lobbyManager = discord.GetLobbyManager();
-        }
-
-        void UpdateActivity(Discord.Discord discord, String state)
-        {
-            var activity = new Discord.Activity
-            {
-                State = state,
-                Details = "Version 1.6pre1",
-                Timestamps =
-                {
-                    Start = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                },
-                Instance = true,
-            };
-            discord.ActivityManagerInstance.UpdateActivity(activity, (result) =>
-            {
-                if (result == Discord.Result.Ok)
-                {
-                    Console.WriteLine("Success!");
-                }
-                else
-                {
-                    Console.WriteLine("Failed");
-                }
-            });
         }
 
         public string ReadLine(string FilePath, int LineNumber)
@@ -268,7 +230,6 @@ namespace Sound_Space_Editor
 			GL.Enable(EnableCap.Texture2D);
 			GL.ActiveTexture(TextureUnit.Texture0);
 
-            UpdateActivity(discord, "Sitting in the menu");
         }
 
 		protected override void OnRenderFrame(FrameEventArgs e)
@@ -340,12 +301,6 @@ namespace Sound_Space_Editor
 
 			OnRenderFrame(new FrameEventArgs());
 		}
-
-        protected override void OnUpdateFrame(FrameEventArgs e)
-        {
-            try { discord.RunCallbacks(); }
-            catch { }
-        }
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
 		{
@@ -1377,7 +1332,6 @@ namespace Sound_Space_Editor
 				gse.Offset.Text = "0";
 				GuiTrack.BpmOffset = 0;
 
-                UpdateActivity(discord, Path.GetFileName(_file));
 
 				var ini = Path.ChangeExtension(file, "ini");
 
@@ -1432,10 +1386,6 @@ namespace Sound_Space_Editor
 			_draggedNote = null;
 			_lastPlayedNote = null;
 
-            if (!fromFile)
-            {
-                UpdateActivity(discord, "Untitled");
-            }
 
 			var splits = Regex.Matches(data, "([^,]+)");
 

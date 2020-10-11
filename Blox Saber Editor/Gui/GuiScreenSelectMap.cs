@@ -74,11 +74,11 @@ namespace Sound_Space_Editor.Gui
                 _githubButton.ClientRectangle.Y = 123456;
             } else
             {
-                _createMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 390;
+                _createMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 518;
                 _createMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
-                _loadMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 130;
+                _loadMapButton.ClientRectangle.X = ClientRectangle.Width / 2 - 258;
                 _loadMapButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
-                _importButton.ClientRectangle.X = ClientRectangle.Width / 2 + 386;
+                _importButton.ClientRectangle.X = ClientRectangle.Width / 2 + 2;
                 _importButton.ClientRectangle.Y = ClientRectangle.Height * 0.8f;
             }
             _pasteDataButton.ClientRectangle.X = _importButton.ClientRectangle.X;
