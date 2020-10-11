@@ -26,7 +26,7 @@ namespace Sound_Space_Editor
 			string[] c2values = rc2.Split(',');
 			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 
-            _colors = new Color[] { Color.FromArgb(Color1[0], Color1[1], Color1[2]), Color.FromArgb(Color2[0], Color2[1], Color2[2]) };
+			_colors = new Color[] { Color.FromArgb(Color1[0], Color1[1], Color1[2]), Color.FromArgb(Color2[0], Color2[1], Color2[2]) };
 		}
 
 		public Color Next()
