@@ -1,0 +1,10 @@
+C:\Dev\SoundSpaceQuantum\Launcher\obj\Debug\Launcher.csprojAssemblyReference.cache
+C:\Dev\SoundSpaceQuantum\Launcher\obj\Debug\Launcher.Main.resources
+C:\Dev\SoundSpaceQuantum\Launcher\obj\Debug\Launcher.Properties.Resources.resources
+C:\Dev\SoundSpaceQuantum\Launcher\obj\Debug\Launcher.csproj.GenerateResource.cache
+C:\Dev\SoundSpaceQuantum\Launcher\obj\Debug\Launcher.csproj.CoreCompileInputs.cache
+C:\Dev\SoundSpaceQuantum\Launcher\bin\Debug\Launcher.exe.config
+C:\Dev\SoundSpaceQuantum\Launcher\bin\Debug\Launcher.exe
+C:\Dev\SoundSpaceQuantum\Launcher\bin\Debug\Launcher.pdb
+C:\Dev\SoundSpaceQuantum\Launcher\obj\Debug\Launcher.exe
+C:\Dev\SoundSpaceQuantum\Launcher\obj\Debug\Launcher.pdb
