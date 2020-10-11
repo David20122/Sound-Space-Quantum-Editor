@@ -148,7 +148,7 @@ namespace Sound_Space_Editor
             lobbyManager = discord.GetLobbyManager();
         }
 
-        void UpdateActivity(Discord.Discord discord, String state)
+        public void UpdateActivity(String state)
         {
             var activity = new Discord.Activity
             {
@@ -160,7 +160,7 @@ namespace Sound_Space_Editor
                 },
                 Instance = true,
             };
-            discord.ActivityManagerInstance.UpdateActivity(activity, (result) =>
+            this.discord.ActivityManagerInstance.UpdateActivity(activity, (result) =>
             {
                 if (result == Discord.Result.Ok)
                 {
@@ -268,7 +268,7 @@ namespace Sound_Space_Editor
 			GL.Enable(EnableCap.Texture2D);
 			GL.ActiveTexture(TextureUnit.Texture0);
 
-            UpdateActivity(discord, "Sitting in the menu");
+            UpdateActivity("Sitting in the menu");
         }
 
 		protected override void OnRenderFrame(FrameEventArgs e)
@@ -1377,7 +1377,7 @@ namespace Sound_Space_Editor
 				gse.Offset.Text = "0";
 				GuiTrack.BpmOffset = 0;
 
-                UpdateActivity(discord, Path.GetFileName(_file));
+                UpdateActivity(Path.GetFileName(_file));
 
 				var ini = Path.ChangeExtension(file, "ini");
 
@@ -1434,7 +1434,7 @@ namespace Sound_Space_Editor
 
             if (!fromFile)
             {
-                UpdateActivity(discord, "Untitled");
+                UpdateActivity("Untitled");
             }
 
 			var splits = Regex.Matches(data, "([^,]+)");
