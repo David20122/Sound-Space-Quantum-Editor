@@ -38,6 +38,8 @@ namespace Sound_Space_Editor
         public Discord.NetworkManager networkManager;
         public Discord.LobbyManager lobbyManager;
 
+		public string version = "1.6";
+
         public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
 
 		//private readonly GuiScreenEditor _screenEditor;
@@ -99,7 +101,7 @@ namespace Sound_Space_Editor
 
 		public float CubeStep => 50 * 10 * Zoom;
 
-        public EditorWindow(long offset) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor")
+        public EditorWindow(long offset) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor "+this.version)
         {
             Instance = this;
             this.WindowState = OpenTK.WindowState.Maximized;
@@ -153,7 +155,7 @@ namespace Sound_Space_Editor
             var activity = new Discord.Activity
             {
                 State = state,
-                Details = "Version 1.6pre1",
+                Details = "Version "+this.version,
                 Timestamps =
                 {
                     Start = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
