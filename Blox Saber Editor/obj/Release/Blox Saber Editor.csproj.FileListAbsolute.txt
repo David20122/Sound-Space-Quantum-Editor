@@ -1,0 +1,17 @@
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Release\x86\bassasio.dll
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Release\x64\bassasio.dll
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Release\Sound Space Quantum Editor.exe.config
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Release\Sound Space Quantum Editor.exe
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Release\Sound Space Quantum Editor.pdb
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Release\Bass.Net.dll
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Release\OpenTK.dll
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Release\Bass.Net.xml
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Release\OpenTK.pdb
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\bin\Release\OpenTK.xml
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Release\Blox Saber Editor.csprojAssemblyReference.cache
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Release\Sound_Space_Editor.Properties.Resources.resources
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Release\Blox Saber Editor.csproj.GenerateResource.cache
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Release\Blox Saber Editor.csproj.CoreCompileInputs.cache
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Release\Blox Saber Editor.csproj.CopyComplete
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Release\Sound Space Quantum Editor.exe
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Release\Sound Space Quantum Editor.pdb

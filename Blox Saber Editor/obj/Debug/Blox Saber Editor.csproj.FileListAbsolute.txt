@@ -65,3 +65,4 @@ C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\ob
 C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CopyComplete
 C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound Space Quantum Editor.exe
 C:\Users\Lenovo\Documents\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound Space Quantum Editor.pdb
+C:\Dev\SoundSpaceQuantum\Blox Saber Editor\obj\Debug\Blox Saber Editor.csprojAssemblyReference.cache

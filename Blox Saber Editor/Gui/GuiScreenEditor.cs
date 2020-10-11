@@ -356,6 +356,7 @@ namespace Sound_Space_Editor.Gui
 						EditorWindow.Instance.UndoRedo.Clear();
 						EditorWindow.Instance.MusicPlayer.Reset();
 						EditorWindow.Instance.OpenGuiScreen(new GuiScreenSelectMap());
+						EditorWindow.Instance.UpdateActivity("Sitting in the menu");
 					}
 					break;
 				case 4:
