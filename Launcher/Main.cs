@@ -89,7 +89,8 @@ namespace Launcher
                     DownloadInfo.Text = "Unzipping";
                     var zip = ZipFile.Read(tempFile);
                     zip.ExtractProgress += Zip_ExtractProgress;
-                    zip.ExtractAll(Path.Combine(ssqeDir, "Versions"));
+                    zip.ExtractAll(Path.Combine(ssqeDir, "Versions"), ExtractExistingFileAction.OverwriteSilently);
+                    File.Delete(tempFile);
                     if (Directory.Exists(verDir) && File.Exists(Path.Combine(verDir, "Sound Space Quantum Editor.exe")))
                     {
                         DownloadInfo.Text = "Version exists, running";
