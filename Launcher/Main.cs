@@ -83,13 +83,14 @@ namespace Launcher
                     dl.Headers.Add("User-Agent: krmeet");
                     DownloadInfo.Text = "Downloading version "+release.name;
                     dl.DownloadProgressChanged += Dl_DownloadProgressChanged;
-                    var tempFile = Path.Combine(ssqeDir, "dltemp_" + release.name + "._temp");
+                    var tempFile = Path.Combine(Path.GetTempPath(), "dl_" + release.name + "._temp");
                     await dl.DownloadFileTaskAsync(new Uri(release.assets.First().browser_download_url), tempFile);
                     DownloadProgress.Value = 0;
                     DownloadInfo.Text = "Unzipping";
                     var zip = ZipFile.Read(tempFile);
                     zip.ExtractProgress += Zip_ExtractProgress;
                     zip.ExtractAll(Path.Combine(ssqeDir, "Versions"), ExtractExistingFileAction.OverwriteSilently);
+                    zip.Dispose();
                     File.Delete(tempFile);
                     if (Directory.Exists(verDir) && File.Exists(Path.Combine(verDir, "Sound Space Quantum Editor.exe")))
                     {
@@ -113,11 +114,11 @@ namespace Launcher
 
         private void Zip_ExtractProgress(object sender, ExtractProgressEventArgs e)
         {
-            if (e.TotalBytesToTransfer > 0)
+            if (e.EntriesTotal > 0)
             {
-                DownloadProgress.Value = (int)e.BytesTransferred / (int)e.TotalBytesToTransfer;
+                DownloadProgress.Value = e.EntriesExtracted * 100 / e.EntriesTotal;
+                DownloadInfo.Text = "Unzipping " + (e.EntriesExtracted * 100 / e.EntriesTotal).ToString() + "%";
             }
-            DownloadInfo.Text = "Unzipping " + DownloadProgress.Value.ToString() + "%";
         }
 
         private void Dl_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
