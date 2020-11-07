@@ -20,12 +20,13 @@ namespace Sound_Space_Editor
 			{
 				long offset = 0;
 
-				if (args.Length >= 2 && args[0] == "-o")
-				{
-					long.TryParse(args[1], out offset);
-				}
+				var launcherDir = Environment.CurrentDirectory;
+				if (args.Length > 0)
+                {
+					launcherDir = args[0];
+                }
 
-				w = new EditorWindow(offset);
+				w = new EditorWindow(offset, launcherDir);
 			}
 			catch(Exception e)
 			{

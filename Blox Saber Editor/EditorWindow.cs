@@ -101,7 +101,7 @@ namespace Sound_Space_Editor
 
 		public float CubeStep => 50 * 10 * Zoom;
 
-        public EditorWindow(long offset) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor "+this.version)
+        public EditorWindow(long offset, string launcherDir) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor "+this.version)
         {
             Instance = this;
             this.WindowState = OpenTK.WindowState.Maximized;
