@@ -9,7 +9,6 @@ namespace Sound_Space_Editor.Gui
 		public bool IsMouseOver { get; protected set; }
 		public int Id;
 		public string Text = " ";
-        public bool Visible = true;
 
 		protected int Texture;
 

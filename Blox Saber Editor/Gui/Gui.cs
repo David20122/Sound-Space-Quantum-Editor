@@ -5,6 +5,7 @@ namespace Sound_Space_Editor.Gui
 	class Gui
 	{
 		public RectangleF ClientRectangle;
+		public bool Visible = true;
 
 		protected Gui(float x, float y, float sx, float sy)
 		{

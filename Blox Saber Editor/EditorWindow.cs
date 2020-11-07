@@ -23,6 +23,7 @@ namespace Sound_Space_Editor
 {
 	class EditorWindow : GameWindow
 	{
+		private bool discordEnabled = false;
 		public static EditorWindow Instance;
 		public FontRenderer FontRenderer;
 		public bool IsPaused { get; private set; }
@@ -38,7 +39,7 @@ namespace Sound_Space_Editor
         public Discord.NetworkManager networkManager;
         public Discord.LobbyManager lobbyManager;
 
-		public string version = "1.6";
+		public static string version = "1.6";
 
         public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
 
@@ -101,7 +102,7 @@ namespace Sound_Space_Editor
 
 		public float CubeStep => 50 * 10 * Zoom;
 
-        public EditorWindow(long offset, string launcherDir) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor "+this.version)
+        public EditorWindow(long offset, string launcherDir) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor "+version)
         {
             Instance = this;
             this.WindowState = OpenTK.WindowState.Maximized;
@@ -143,19 +144,26 @@ namespace Sound_Space_Editor
             _processThread = new Thread(ProcessNotes) { IsBackground = true };
             _processThread.Start();
 
-            discord = new Discord.Discord((Int64)751010237388947517, (UInt64)Discord.CreateFlags.Default);
-            activityManager = discord.GetActivityManager();
-            userManager = discord.GetUserManager();
-            networkManager = discord.GetNetworkManager();
-            lobbyManager = discord.GetLobbyManager();
+			if (discordEnabled)
+			{
+				discord = new Discord.Discord((Int64)751010237388947517, (UInt64)Discord.CreateFlags.NoRequireDiscord);
+				activityManager = discord.GetActivityManager();
+				userManager = discord.GetUserManager();
+				networkManager = discord.GetNetworkManager();
+				lobbyManager = discord.GetLobbyManager();
+			}
         }
 
         public void UpdateActivity(String state)
         {
+			if (!discordEnabled)
+            {
+				return;
+            }
             var activity = new Discord.Activity
             {
                 State = state,
-                Details = "Version "+this.version,
+                Details = "Version "+version,
                 Timestamps =
                 {
                     Start = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
@@ -345,8 +353,11 @@ namespace Sound_Space_Editor
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            try { discord.RunCallbacks(); }
-            catch { }
+			if (discordEnabled)
+			{
+				try { discord.RunCallbacks(); }
+				catch { }
+			}
         }
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
