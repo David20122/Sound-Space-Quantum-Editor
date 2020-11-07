@@ -17,25 +17,57 @@ namespace Launcher
 {
     public partial class Main : Form
     {
-        private WebClient wc = new WebClient();
+        public List<Release> releaseList;
+        public List<String> modList = new List<String>();
+        public string appdata;
+        public string ssqeDir;
+
+        private readonly WebClient wc = new WebClient();
         public Main()
         {
-            InitializeComponent();
-        }
-
-        public List<Release> releaseList;
-
-        private void Main_Load(object sender, EventArgs e)
-        {
+            appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            ssqeDir = Path.Combine(appdata, "SSQE");
+            if (!Directory.Exists(ssqeDir))
+            {
+                Directory.CreateDirectory(ssqeDir);
+                Directory.CreateDirectory(Path.Combine(ssqeDir, "versions"));
+                Directory.CreateDirectory(Path.Combine(ssqeDir, "mods"));
+            }
+            else
+            {
+                if (!Directory.Exists(Path.Combine(ssqeDir, "versions")))
+                {
+                    Directory.CreateDirectory(Path.Combine(ssqeDir, "versions"));
+                }
+                if (!Directory.Exists(Path.Combine(ssqeDir, "mods")))
+                {
+                    Directory.CreateDirectory(Path.Combine(ssqeDir, "mods"));
+                }
+            }
             wc.Headers.Add("User-Agent: krmeet");
             var releases = wc.DownloadString("https://api.github.com/repos/David20122/Sound-Space-Quantum-Editor/releases");
             releaseList = JsonSerializer.Deserialize<List<Release>>(releases);
+            foreach (string dir in Directory.GetDirectories(Path.Combine(ssqeDir, "mods")))
+            {
+                if (File.Exists(Path.Combine(dir, "Sound Space Quantum Editor.exe"))){
+                    modList.Add(Path.GetDirectoryName(dir));
+                }
+            }
+            InitializeComponent();
+        }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
             VersionSelect.Items.Clear();
             VersionSelect.Items.Add("Latest");
             VersionSelect.Text = "Latest";
             foreach (var release in releaseList)
             {
                 VersionSelect.Items.Add(release.name);
+            }
+            foreach (string mod in modList)
+            {
+                VersionSelect.Items.Add("MOD/ " + mod);
             }
         }
 
@@ -48,26 +80,9 @@ namespace Launcher
             DownloadProgress.Visible = true;
             LaunchButton.Enabled = false;
             VersionSelect.Enabled = false;
+            var verDir = Path.Combine(ssqeDir, "versions/" + release.name);
             try
             {
-                DownloadInfo.Text = "Getting SSQE directory";
-                var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                var ssqeDir = Path.Combine(appdata, "SSQE");
-                var verDir = Path.Combine(ssqeDir, "Versions/" + release.name);
-                if (!Directory.Exists(ssqeDir))
-                {
-                    DownloadInfo.Text = "Creating new SSQE directory";
-                    Directory.CreateDirectory(ssqeDir);
-                    Directory.CreateDirectory(Path.Combine(ssqeDir, "Versions"));
-                }
-                else
-                {
-                    if (!Directory.Exists(Path.Combine(ssqeDir, "Versions")))
-                    {
-                        DownloadInfo.Text = "Creating new versions directory";
-                        Directory.CreateDirectory(Path.Combine(ssqeDir, "Versions"));
-                    }
-                }
                 DownloadInfo.Text = "Checking if version exists";
                 if (Directory.Exists(verDir) && File.Exists(Path.Combine(verDir,"Sound Space Quantum Editor.exe")))
                 {
@@ -75,6 +90,7 @@ namespace Launcher
                     var startInfo = new ProcessStartInfo();
                     startInfo.FileName = Path.Combine(verDir, "Sound Space Quantum Editor.exe");
                     startInfo.WorkingDirectory = verDir;
+                    startInfo.Arguments = ssqeDir;
                     Process.Start(startInfo);
                     Close();
                 } else
@@ -89,7 +105,7 @@ namespace Launcher
                     DownloadInfo.Text = "Unzipping";
                     var zip = ZipFile.Read(tempFile);
                     zip.ExtractProgress += Zip_ExtractProgress;
-                    zip.ExtractAll(Path.Combine(ssqeDir, "Versions"), ExtractExistingFileAction.OverwriteSilently);
+                    zip.ExtractAll(Path.Combine(ssqeDir, "versions"), ExtractExistingFileAction.OverwriteSilently);
                     zip.Dispose();
                     File.Delete(tempFile);
                     if (Directory.Exists(verDir) && File.Exists(Path.Combine(verDir, "Sound Space Quantum Editor.exe")))
@@ -98,6 +114,7 @@ namespace Launcher
                         var startInfo = new ProcessStartInfo();
                         startInfo.FileName = Path.Combine(verDir, "Sound Space Quantum Editor.exe");
                         startInfo.WorkingDirectory = verDir;
+                        startInfo.Arguments = ssqeDir;
                         Process.Start(startInfo);
                         Close();
                     }
@@ -105,6 +122,47 @@ namespace Launcher
             } catch (Exception e) {
                 throw e;
             }
+            NoTasks.Visible = true;
+            DownloadInfo.Visible = false;
+            DownloadProgress.Visible = false;
+            LaunchButton.Enabled = true;
+            VersionSelect.Enabled = true;
+        }
+
+        private void LaunchMod(string mod)
+        {
+            DownloadInfo.Text = "";
+            DownloadProgress.Value = 0;
+            NoTasks.Visible = false;
+            DownloadInfo.Visible = true;
+            DownloadProgress.Visible = true;
+            LaunchButton.Enabled = false;
+            VersionSelect.Enabled = false;
+
+            var verDir = Path.Combine(ssqeDir, "mods/" + mod);
+            try
+            {
+                DownloadInfo.Text = "Checking if version exists";
+                if (Directory.Exists(verDir) && File.Exists(Path.Combine(verDir, "Sound Space Quantum Editor.exe")))
+                {
+                    DownloadInfo.Text = "Version exists, running";
+                    var startInfo = new ProcessStartInfo();
+                    startInfo.FileName = Path.Combine(verDir, "Sound Space Quantum Editor.exe");
+                    startInfo.WorkingDirectory = verDir;
+                    startInfo.Arguments = ssqeDir;
+                    Process.Start(startInfo);
+                    Close();
+                }
+                else
+                {
+                    throw new Exception("bro you cant just delete a mod and then try to run it");
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
             NoTasks.Visible = true;
             DownloadInfo.Visible = false;
             DownloadProgress.Visible = false;
@@ -124,7 +182,7 @@ namespace Launcher
         private void Dl_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             DownloadProgress.Value = e.ProgressPercentage;
-            DownloadInfo.Text = "Downloading release from GitHub " + e.ProgressPercentage.ToString() + "% (" + e.BytesReceived.ToString() + "B/" + e.TotalBytesToReceive.ToString() + "B)";
+            DownloadInfo.Text = "Downloading release from GitHub " + e.ProgressPercentage.ToString() + "% (" + (e.BytesReceived / 1000).ToString() + "kB/" + (e.TotalBytesToReceive / 1000).ToString() + "kB)";
         }
 
         private void LaunchButton_Click(object sender, EventArgs e)
@@ -139,6 +197,14 @@ namespace Launcher
                     if (release.name == VersionSelect.Text)
                     {
                         DownloadRelease(release);
+                        break;
+                    }
+                }
+                foreach (string mod in modList)
+                {
+                    if ("MOD/ " + mod == VersionSelect.Text)
+                    {
+                        LaunchMod(mod);
                         break;
                     }
                 }
