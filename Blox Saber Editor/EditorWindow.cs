@@ -122,9 +122,9 @@ namespace Sound_Space_Editor
 
             FontRenderer = new FontRenderer("main");
 
-            if (!File.Exists("settings.ini"))
+            if (!File.Exists(Path.Combine(LauncherDir,"settings.ini")))
             {
-                File.AppendAllText("settings.ini", "\n// Background Opacity (0-255, 0 means invisible)\n\n255\n\n// Track Opacity\n\n255\n\n// Grid Opacity\n\n255\n\n // You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (Text, BPM Lines)\n\n0,255,200\n\n// Color 2 (Checkboxes, Sliders, Numbers, BPM Lines)\n\n255,0,255\n\n// Note Colors\n\n255,0,255\n0,255,200");
+                File.AppendAllText(Path.Combine(LauncherDir,"settings.ini"), "\n// Background Opacity (0-255, 0 means invisible)\n\n255\n\n// Track Opacity\n\n255\n\n// Grid Opacity\n\n255\n\n // You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (Text, BPM Lines)\n\n0,255,200\n\n// Color 2 (Checkboxes, Sliders, Numbers, BPM Lines)\n\n255,0,255\n\n// Note Colors\n\n255,0,255\n0,255,200");
             }
 
             OpenGuiScreen(new GuiScreenSelectMap());
@@ -816,7 +816,7 @@ namespace Sound_Space_Editor
 
 			// color 1
 
-			string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+			string rc1 = EditorWindow.Instance.ReadLine(Path.Combine(LauncherDir,"settings.ini"), 17);
 			string[] c1values = rc1.Split(',');
 			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
 
