@@ -102,8 +102,13 @@ namespace Sound_Space_Editor
 
 		public float CubeStep => 50 * 10 * Zoom;
 
+		private string LauncherDir;
+		public string cacheFolder;
+
         public EditorWindow(long offset, string launcherDir) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor "+version)
         {
+			LauncherDir = launcherDir;
+			cacheFolder = Path.Combine(launcherDir, "cached/");
             Instance = this;
             this.WindowState = OpenTK.WindowState.Maximized;
             Icon = Resources.icon;
@@ -1473,7 +1478,7 @@ namespace Sound_Space_Editor
 				}
 				if (long.TryParse(id.Value, out _soundId) && LoadSound(_soundId))
 				{
-					MusicPlayer.Load("assets/cached/" + _soundId + ".asset");
+					MusicPlayer.Load(cacheFolder + _soundId + ".asset");
 
 					var gui = new GuiScreenEditor();
 
@@ -1604,14 +1609,14 @@ namespace Sound_Space_Editor
 		{
 			try
 			{
-				if (!Directory.Exists("assets/cached"))
-					Directory.CreateDirectory("assets/cached");
+				if (!Directory.Exists(cacheFolder))
+					Directory.CreateDirectory(cacheFolder);
 
-				if (!File.Exists("assets/cached/" + id + ".asset"))
+				if (!File.Exists(cacheFolder + id + ".asset"))
 				{
 					using (var wc = new SecureWebClient())
 					{
-						wc.DownloadFile("https://assetdelivery.roblox.com/v1/asset/?id=" + id, "assets/cached/" + id + ".asset");
+						wc.DownloadFile("https://assetdelivery.roblox.com/v1/asset/?id=" + id, cacheFolder + id + ".asset");
 					}
 				}
 
