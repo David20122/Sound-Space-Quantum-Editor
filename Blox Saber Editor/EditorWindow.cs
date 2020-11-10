@@ -815,7 +815,6 @@ namespace Sound_Space_Editor
 			}
 
 			// color 1
-
 			string rc1 = EditorWindow.Instance.ReadLine(Path.Combine(LauncherDir,"settings.ini"), 17);
 			string[] c1values = rc1.Split(',');
 			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
