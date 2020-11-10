@@ -58,6 +58,7 @@ namespace Launcher
 
         private void Main_Load(object sender, EventArgs e)
         {
+            Changelog.Url = new Uri("https://krmeet.github.io/ssqe/changelog");
             VersionSelect.Items.Clear();
             VersionSelect.Items.Add("Latest");
             VersionSelect.Text = "Latest";
