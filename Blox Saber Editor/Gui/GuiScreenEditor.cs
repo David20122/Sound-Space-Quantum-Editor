@@ -43,10 +43,10 @@ namespace Sound_Space_Editor.Gui
 
 		public GuiScreenEditor() : base(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64)
 		{
-			if (File.Exists("background.png"))
+			if (File.Exists(Path.Combine(EditorWindow.Instance.LauncherDir, "background.png")))
 			{
 				this.bgImg = true;
-				using (Bitmap img = new Bitmap("background.png"))
+				using (Bitmap img = new Bitmap(Path.Combine(EditorWindow.Instance.LauncherDir, "background.png")))
 				{
 					this._textureId = TextureManager.GetOrRegister("bg", img, true);
 				}

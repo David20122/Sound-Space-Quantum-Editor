@@ -23,7 +23,19 @@ namespace Sound_Space_Editor
 				var launcherDir = Environment.CurrentDirectory;
 				if (args.Length > 0)
                 {
-					launcherDir = args[0];
+					launcherDir = "";
+					var i = 0;
+					foreach (string argument in args.ToList<string>())
+                    {
+						i++;
+						if (i == 1)
+                        {
+							launcherDir = argument;
+                        } else
+                        {
+							launcherDir += " " + argument;
+                        }
+                    }
                 }
 
 				w = new EditorWindow(offset, launcherDir);
