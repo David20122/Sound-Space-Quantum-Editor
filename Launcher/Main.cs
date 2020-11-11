@@ -25,9 +25,13 @@ namespace Launcher
         private readonly WebClient wc = new WebClient();
         public Main()
         {
+            InitializeComponent();
+        }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
             try
             {
-                InitializeComponent();
                 appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 ssqeDir = Path.Combine(appdata, "SSQE");
                 if (!Directory.Exists(ssqeDir))
@@ -71,16 +75,14 @@ namespace Launcher
                 }
                 Show();
                 Focus();
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 File.WriteAllText("error.log", e.Message);
-                MessageBox.Show("The launcher failed, view details in 'error.log' file","SSQE Failure");
+                MessageBox.Show("The launcher failed, view details in 'error.log' file", "SSQE Failure");
                 throw new ApplicationException("hi smile");
             }
         }
-
-        private void Main_Load(object sender, EventArgs e)
-        {}
 
         private async void DownloadRelease(Release release)
         {
