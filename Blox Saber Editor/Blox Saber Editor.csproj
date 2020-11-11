@@ -160,6 +160,8 @@
     <None Include="Help\BassNet.chm" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
+    <None Include="ProgramDependencies\assets\fonts\main.ttf" />
+    <None Include="ProgramDependencies\assets\fonts\SourceSans.ttf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -176,14 +178,30 @@
   <ItemGroup>
     <Content Include="Blox Saber.ico" />
     <Content Include="icon.ico" />
+    <None Include="ProgramDependencies\assets\sounds\click.wav" />
+    <None Include="ProgramDependencies\assets\sounds\hit.wav" />
+    <None Include="ProgramDependencies\assets\textures\widgets.png" />
+    <None Include="ProgramDependencies\bass.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ProgramDependencies\bassasio.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ProgramDependencies\bass_fx.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ProgramDependencies\discord_game_sdk.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ProgramDependencies\freetype.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\logo.png" />
     <None Include="Resources\funny_logo.jpg" />
     <None Include="Resources\BackgroundImage.png" />
     <None Include="Resources\icon.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="runtime_stuff\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
