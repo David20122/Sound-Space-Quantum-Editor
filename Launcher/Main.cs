@@ -28,7 +28,7 @@ namespace Launcher
             InitializeComponent();
         }
 
-        private void Main_Load(object sender, EventArgs e)
+        private void Main_Load(object sender, EventArgs ea)
         {
             try
             {
