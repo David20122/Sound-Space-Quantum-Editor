@@ -25,46 +25,57 @@ namespace Launcher
         private readonly WebClient wc = new WebClient();
         public Main()
         {
-            InitializeComponent();
-            appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            ssqeDir = Path.Combine(appdata, "SSQE");
-            if (!Directory.Exists(ssqeDir))
+            try
             {
-                Directory.CreateDirectory(ssqeDir);
-                Directory.CreateDirectory(Path.Combine(ssqeDir, "versions"));
-                Directory.CreateDirectory(Path.Combine(ssqeDir, "mods"));
-            }
-            else
-            {
-                if (!Directory.Exists(Path.Combine(ssqeDir, "versions")))
+                InitializeComponent();
+                appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                ssqeDir = Path.Combine(appdata, "SSQE");
+                if (!Directory.Exists(ssqeDir))
                 {
+                    Directory.CreateDirectory(ssqeDir);
                     Directory.CreateDirectory(Path.Combine(ssqeDir, "versions"));
-                }
-                if (!Directory.Exists(Path.Combine(ssqeDir, "mods")))
-                {
                     Directory.CreateDirectory(Path.Combine(ssqeDir, "mods"));
                 }
-            }
-            wc.Headers.Add("User-Agent: krmeet");
-            var releases = wc.DownloadString("https://api.github.com/repos/David20122/Sound-Space-Quantum-Editor/releases");
-            releaseList = JsonSerializer.Deserialize<List<Release>>(releases);
-            foreach (string dir in Directory.GetDirectories(Path.Combine(ssqeDir, "mods")))
-            {
-                if (File.Exists(Path.Combine(dir, "Sound Space Quantum Editor.exe"))){
-                    modList.Add(Path.GetDirectoryName(dir));
+                else
+                {
+                    if (!Directory.Exists(Path.Combine(ssqeDir, "versions")))
+                    {
+                        Directory.CreateDirectory(Path.Combine(ssqeDir, "versions"));
+                    }
+                    if (!Directory.Exists(Path.Combine(ssqeDir, "mods")))
+                    {
+                        Directory.CreateDirectory(Path.Combine(ssqeDir, "mods"));
+                    }
                 }
-            }
-            Changelog.Url = new Uri("https://krmeet.github.io/ssqe/changelog");
-            VersionSelect.Items.Clear();
-            VersionSelect.Items.Add("Latest");
-            VersionSelect.Text = "Latest";
-            foreach (var release in releaseList)
+                wc.Headers.Add("User-Agent: krmeet");
+                var releases = wc.DownloadString("https://api.github.com/repos/David20122/Sound-Space-Quantum-Editor/releases");
+                releaseList = JsonSerializer.Deserialize<List<Release>>(releases);
+                foreach (string dir in Directory.GetDirectories(Path.Combine(ssqeDir, "mods")))
+                {
+                    if (File.Exists(Path.Combine(dir, "Sound Space Quantum Editor.exe")))
+                    {
+                        modList.Add(Path.GetDirectoryName(dir));
+                    }
+                }
+                Changelog.Url = new Uri("https://krmeet.github.io/ssqe/changelog");
+                VersionSelect.Items.Clear();
+                VersionSelect.Items.Add("Latest");
+                VersionSelect.Text = "Latest";
+                foreach (var release in releaseList)
+                {
+                    VersionSelect.Items.Add(release.name);
+                }
+                foreach (string mod in modList)
+                {
+                    VersionSelect.Items.Add("MOD/ " + mod);
+                }
+                Show();
+                Focus();
+            } catch (Exception e)
             {
-                VersionSelect.Items.Add(release.name);
-            }
-            foreach (string mod in modList)
-            {
-                VersionSelect.Items.Add("MOD/ " + mod);
+                File.WriteAllText("error.log", e.Message);
+                MessageBox.Show("The launcher failed, view details in 'error.log' file","SSQE Failure");
+                throw new ApplicationException("hi smile");
             }
         }
 
