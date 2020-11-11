@@ -25,6 +25,7 @@ namespace Launcher
         private readonly WebClient wc = new WebClient();
         public Main()
         {
+            InitializeComponent();
             appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             ssqeDir = Path.Combine(appdata, "SSQE");
             if (!Directory.Exists(ssqeDir))
@@ -53,11 +54,6 @@ namespace Launcher
                     modList.Add(Path.GetDirectoryName(dir));
                 }
             }
-            InitializeComponent();
-        }
-
-        private void Main_Load(object sender, EventArgs e)
-        {
             Changelog.Url = new Uri("https://krmeet.github.io/ssqe/changelog");
             VersionSelect.Items.Clear();
             VersionSelect.Items.Add("Latest");
@@ -71,6 +67,9 @@ namespace Launcher
                 VersionSelect.Items.Add("MOD/ " + mod);
             }
         }
+
+        private void Main_Load(object sender, EventArgs e)
+        {}
 
         private async void DownloadRelease(Release release)
         {
