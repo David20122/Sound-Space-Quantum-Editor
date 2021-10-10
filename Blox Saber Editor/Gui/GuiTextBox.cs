@@ -23,11 +23,21 @@ namespace Sound_Space_Editor.Gui
 
 		private float _timer;
 
+		public event EventHandler<string> OnChanged;
+
 		public string Text
 		{
 			get => _text;
 
-			set => _cursorPos = Math.Min(_cursorPos, (_text = value).Length);
+			set
+			{
+				var last = _text;
+
+				if (last != value)
+					OnChanged?.Invoke(null, Text);
+
+				_cursorPos = Math.Min(_cursorPos, (_text = value).Length);
+			}
 		}
 
 		public bool Focused
@@ -35,15 +45,20 @@ namespace Sound_Space_Editor.Gui
 			get => _focused;
 			set
 			{
+				var last = _focused;
 				_focused = value;
 
 				OnFocus(value);
+
+				if (last != value)
+					OnChanged?.Invoke(null, Text);
 			}
 		}
 
 		public GuiTextBox(float x, float y, float sx, float sy) : base(x, y, sx, sy)
 		{
 		}
+
 		// 0 bug go away
 		private void OnFocus(bool flag)
 		{
@@ -72,11 +87,15 @@ namespace Sound_Space_Editor.Gui
 
 						if (decimal.TryParse(text, out var parsed))
 						{
+							var old = Text;
+
 							Text = parsed.ToString();
 						}
 					}
 					if (decimal.TryParse(_text, out var num) && num == (long)num)
 					{
+						var old = Text;
+
 						Text = ((long)num).ToString();
 					}
 				}
@@ -240,6 +259,14 @@ namespace Sound_Space_Editor.Gui
 
 						}
 					}
+					break;
+				case Key.Enter:
+				case Key.KeypadEnter:
+					if (!Focused)
+						OnChanged?.Invoke(null, Text);
+					else
+						Focused = false;
+
 					break;
 			}
 		}
