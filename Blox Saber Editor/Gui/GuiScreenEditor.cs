@@ -25,6 +25,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiSlider NoteAlign;
         public readonly GuiTextBox Bpm;
 		public readonly GuiTextBox Offset;
+		public readonly GuiTextBox SfxOffset;
 		public readonly GuiCheckBox Reposition;
 		public readonly GuiCheckBox Autoplay;
 		public readonly GuiCheckBox ApproachSquares;
@@ -52,7 +53,6 @@ namespace Sound_Space_Editor.Gui
 				}
 			}
 
-
 			_toast = new GuiLabel(0, 0, "")
 			{
 				Centered = true,
@@ -73,6 +73,13 @@ namespace Sound_Space_Editor.Gui
 				Centered = true,
 				Numeric = true,
 				CanBeNegative = false
+			};
+			SfxOffset = new GuiTextBox(EditorWindow.Instance.ClientSize.Width - 128, 0, 128, 32)
+			{
+				Text = "0",
+				Centered = true,
+				Numeric = true,
+				CanBeNegative = true
 			};
 			NoteAlign = new GuiSlider(0, 0, 256, 40)
 			{
@@ -113,11 +120,16 @@ namespace Sound_Space_Editor.Gui
 
 			Bpm.Focused = true;
 			Offset.Focused = true;
+			SfxOffset.Focused = true;
+
 			Bpm.OnKeyDown(Key.Right, false);
 			Offset.OnKeyDown(Key.Right, false);
+			SfxOffset.OnKeyDown(Key.Right, false);
+
 			Bpm.Focused = false;
 			Offset.Focused = false;
-			
+			SfxOffset.Focused = false;
+
 			Buttons.Add(playPause);
 			Buttons.Add(Timeline);
 			Buttons.Add(Tempo);
@@ -139,10 +151,15 @@ namespace Sound_Space_Editor.Gui
 
 			EditorWindow.Instance.MusicPlayer.Volume = (float)Settings.Default.MasterVolume;
 
+			SfxOffset.Text = Settings.Default.SfxOffset;
 			MasterVolume.Value = (int)(Settings.Default.MasterVolume * MasterVolume.MaxValue);
 			SfxVolume.Value = (int)(Settings.Default.SFXVolume * SfxVolume.MaxValue);
 			// NoteAlign.Value = (int)(Settings.Default.NoteAlign * NoteAlign.MaxValue);
 
+			SfxOffset.OnChanged += (_, value) =>
+			{
+				Settings.Default.SfxOffset = SfxOffset.Text;
+			};
 		}
 
 		public override void Render(float delta, float mouseX, float mouseY)
@@ -197,6 +214,7 @@ namespace Sound_Space_Editor.Gui
 			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 			fr.Render("BPM:", (int)Bpm.ClientRectangle.X, (int)Bpm.ClientRectangle.Y - 24, 24);
 			fr.Render("BPM Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
+			fr.Render("SFX Offset[ms]:", (int)SfxOffset.ClientRectangle.X, (int)SfxOffset.ClientRectangle.Y - 34, 24);
 			fr.Render("Options:", (int)Autoplay.ClientRectangle.X, (int)Autoplay.ClientRectangle.Y - 26, 24);
 			var divisor = $"Beat Divisor: {BeatSnapDivisor.Value + 1}";
 			var divisorW = fr.GetWidth(divisor, 24);
@@ -263,17 +281,19 @@ namespace Sound_Space_Editor.Gui
 			Bpm.Render(delta, mouseX, mouseY);
 			NoteAlign.Render(delta, mouseX, mouseY);
 			Offset.Render(delta, mouseX, mouseY);
+			SfxOffset.Render(delta, mouseX, mouseY);
 		}
 
 		public override bool AllowInput()
 		{
-			return !Bpm.Focused && !Offset.Focused;
+			return !Bpm.Focused && !Offset.Focused && !SfxOffset.Focused;
 		}
 
 		public override void OnKeyTyped(char key)
 		{
 			Bpm.OnKeyTyped(key);
 			Offset.OnKeyTyped(key);
+			SfxOffset.OnKeyTyped(key);
 
 			UpdateTrack();
 		}
@@ -282,6 +302,7 @@ namespace Sound_Space_Editor.Gui
 		{
 			Bpm.OnKeyDown(key, control);
 			Offset.OnKeyDown(key, control);
+			SfxOffset.OnKeyDown(key, control);
 
 			UpdateTrack();
 		}
@@ -290,6 +311,7 @@ namespace Sound_Space_Editor.Gui
 		{
 			Bpm.OnMouseClick(x, y);
 			Offset.OnMouseClick(x, y);
+			SfxOffset.OnMouseClick(x, y);
 
 			base.OnMouseClick(x, y);
 		}
@@ -354,6 +376,8 @@ namespace Sound_Space_Editor.Gui
 					if (EditorWindow.Instance.WillClose())
 					{
 						EditorWindow.Instance.UndoRedo.Clear();
+						EditorWindow.Instance.Notes.Clear();
+						EditorWindow.Instance.SelectedNotes.Clear();
 						EditorWindow.Instance.MusicPlayer.Reset();
 						EditorWindow.Instance.OpenGuiScreen(new GuiScreenSelectMap());
 						EditorWindow.Instance.UpdateActivity("Sitting in the menu");
@@ -376,6 +400,7 @@ namespace Sound_Space_Editor.Gui
 					Settings.Default.GridNumbers = GridNumbers.Toggle;
 					Settings.Default.Quantum = Quantum.Toggle;
 					Settings.Default.AutoAdvance = AutoAdvance.Toggle;
+					Settings.Default.SfxOffset = SfxOffset.Text;
 					Settings.Default.Save();
 					break;
 			}
@@ -405,10 +430,11 @@ namespace Sound_Space_Editor.Gui
 			// sm
 			Bpm.ClientRectangle.Y = Grid.ClientRectangle.Y + 28;
 			Offset.ClientRectangle.Y = Bpm.ClientRectangle.Bottom + 5 + 24 + 10;
+			SfxOffset.ClientRectangle.Y = size.Height - SfxOffset.ClientRectangle.Height - 55;
 			SetOffset.ClientRectangle.Y = Offset.ClientRectangle.Y;
 			Reposition.ClientRectangle.Y = Offset.ClientRectangle.Bottom + 10;
 			BeatSnapDivisor.ClientRectangle.Y = Bpm.ClientRectangle.Y;
-            NoteAlign.ClientRectangle.Y = BeatSnapDivisor.ClientRectangle.Bottom + 5 + 24 + 10;
+            NoteAlign.ClientRectangle.Y = BeatSnapDivisor.ClientRectangle.Bottom + 5 + 24;
 
             Autoplay.ClientRectangle.Y = Reposition.ClientRectangle.Bottom + 32 + 20;
 			ApproachSquares.ClientRectangle.Y = Autoplay.ClientRectangle.Bottom + 10;
@@ -418,6 +444,7 @@ namespace Sound_Space_Editor.Gui
 
 			Bpm.ClientRectangle.X = 10;
 			Offset.ClientRectangle.X = Bpm.ClientRectangle.X;
+			SfxOffset.ClientRectangle.X = Tempo.ClientRectangle.X + Tempo.ClientRectangle.Width / 2 - SfxOffset.ClientRectangle.Width / 2;
 			SetOffset.ClientRectangle.X = Bpm.ClientRectangle.Right + 5;
 			NoteAlign.ClientRectangle.X = BeatSnapDivisor.ClientRectangle.X;
 			Reposition.ClientRectangle.X = Bpm.ClientRectangle.X;
@@ -475,6 +502,11 @@ namespace Sound_Space_Editor.Gui
 
 				if (offset > 0)
 					Offset.Text = offset.ToString();
+			}
+			if (SfxOffset.Focused)
+			{
+				if (long.TryParse(SfxOffset.Text, out var sfxOffset))
+					SfxOffset.Text = sfxOffset.ToString();
 			}
 		}
 
