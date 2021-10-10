@@ -1,11 +1,12 @@
 ﻿using System;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Fx;
-
+using Un4seen.Bass.Misc;
 namespace Sound_Space_Editor
 {
 	class MusicPlayer : IDisposable
 	{
+
 		private object locker = new object();
 
 		private int streamID;
@@ -15,7 +16,9 @@ namespace Sound_Space_Editor
 			Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
 		}
 
-		public void Load(string file)
+		public float originval;
+
+        public void Load(string file)
 		{
 			var stream = Bass.BASS_StreamCreateFile(file, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_STREAM_PRESCAN | BASSFlag.BASS_FX_FREESOURCE);
 			var volume = Volume;
@@ -31,11 +34,15 @@ namespace Sound_Space_Editor
 			Volume = volume;
 			Tempo = tempo;
 
+			Bass.BASS_ChannelGetAttribute(streamID, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, ref originval);
+
 			Reset();
 		}
 
 		public void Play()
 		{
+			Bass.BASS_SetDevice(1);
+			Bass.BASS_Start();
 			Bass.BASS_ChannelPlay(streamID, false);
 		}
 
@@ -57,12 +64,12 @@ namespace Sound_Space_Editor
 
 		public float Tempo
 		{
-			set => Bass.BASS_ChannelSetAttribute(streamID, BASSAttribute.BASS_ATTRIB_TEMPO, value * 100 - 100);
+			set => Bass.BASS_ChannelSetAttribute(streamID, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, originval * value);
 			get
 			{
 				float val = 0;
 
-				Bass.BASS_ChannelGetAttribute(streamID, BASSAttribute.BASS_ATTRIB_TEMPO, ref val);
+				Bass.BASS_ChannelGetAttribute(streamID, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, ref val);
 
 				return -(val + 95) / 100;
 			}
@@ -84,10 +91,9 @@ namespace Sound_Space_Editor
 		public void Reset()
 		{
 			Stop();
-
 			CurrentTime = TimeSpan.Zero;
 		}
-		
+
 		public bool IsPlaying => Bass.BASS_ChannelIsActive(streamID) == BASSActive.BASS_ACTIVE_PLAYING;
 		public bool IsPaused => Bass.BASS_ChannelIsActive(streamID) == BASSActive.BASS_ACTIVE_PAUSED;
 
@@ -137,5 +143,7 @@ namespace Sound_Space_Editor
 		{
 			Bass.BASS_Free();
 		}
+
 	}
+
 }

@@ -21,19 +21,18 @@ namespace Sound_Space_Editor.Gui
 		{
 			Text = text;
 		}
-
+		string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+		string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 21);
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
 
 			// color 1
 
-			string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
 			string[] c1values = rc1.Split(',');
 			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
 
 			//color 2
 
-			string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 21);
 			string[] c2values = rc2.Split(',');
 			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 

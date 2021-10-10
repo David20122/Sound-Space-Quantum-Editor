@@ -104,6 +104,7 @@ namespace Sound_Space_Editor.Gui
                     {
                         EditorWindow.Instance.LoadFile(dialog.FileName);
                     }
+                    dialog.Dispose();
                     break;
                 case 2:
                     if (importmapclicked == false)

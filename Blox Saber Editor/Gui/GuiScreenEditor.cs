@@ -144,7 +144,9 @@ namespace Sound_Space_Editor.Gui
 			// NoteAlign.Value = (int)(Settings.Default.NoteAlign * NoteAlign.MaxValue);
 
 		}
-
+		string bgdim = EditorWindow.Instance.ReadLine("settings.ini", 4);
+		string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+		string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 21);
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
 			_toastTime = Math.Min(2, _toastTime + delta);
@@ -167,7 +169,6 @@ namespace Sound_Space_Editor.Gui
 			if (bgImg)
 			{
 				int res;
-				string bgdim = EditorWindow.Instance.ReadLine("settings.ini", 4);
 				Int32.TryParse(bgdim, out res);
 				GL.Color4(Color.FromArgb(res, 255, 255, 255));
 				Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
@@ -178,13 +179,11 @@ namespace Sound_Space_Editor.Gui
 
 			// color 1
 
-				string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
 				string[] c1values = rc1.Split(',');
 				int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
 
 			//color 2
 
-				string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 21);
 				string[] c2values = rc2.Split(',');
 				int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 
@@ -216,8 +215,6 @@ namespace Sound_Space_Editor.Gui
 
 			var masterP = $"{(int)(MasterVolume.Value * 100f) / MasterVolume.MaxValue}";
 			var sfxP = $"{(int)(SfxVolume.Value * 100f) / SfxVolume.MaxValue}";
-			// ya my brain isn't working properly rn
-			//var notealignP = $"{(int)(NoteAlign.Value * 100f / NoteAlign.MaxValue)}";
 
 			var masterPw = fr.GetWidth(masterP, 18);
 			var sfxPw = fr.GetWidth(sfxP, 18);
@@ -227,7 +224,6 @@ namespace Sound_Space_Editor.Gui
 
 			fr.Render(masterP, (int)(MasterVolume.ClientRectangle.X + SfxVolume.ClientRectangle.Width / 2 - masterPw / 2f), (int)MasterVolume.ClientRectangle.Bottom - 16, 18);
 			fr.Render(sfxP, (int)(SfxVolume.ClientRectangle.X + SfxVolume.ClientRectangle.Width / 2 - sfxPw / 2f), (int)SfxVolume.ClientRectangle.Bottom - 16, 18);
-			//fr.Render(notealignP, (int)(Grid.ClientRectangle.X + 390), (int)Grid.ClientRectangle.Y + 100, 18);
 
 			var rect = Timeline.ClientRectangle;
 

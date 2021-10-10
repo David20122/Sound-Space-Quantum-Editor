@@ -18,6 +18,8 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using KeyPressEventArgs = OpenTK.KeyPressEventArgs;
 using Discord;
+using System.Reflection;
+using System.Diagnostics;
 
 namespace Sound_Space_Editor
 {
@@ -39,7 +41,7 @@ namespace Sound_Space_Editor
         public Discord.NetworkManager networkManager;
         public Discord.LobbyManager lobbyManager;
 
-		public static string version = "1.5.2";
+		public static string version = "1.6";
 
         public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
 
@@ -106,7 +108,7 @@ namespace Sound_Space_Editor
 		public string cacheFolder;
 		public string settingsFile;
 
-        public EditorWindow(long offset, string launcherDir) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor "+version)
+        public EditorWindow(long offset, string launcherDir) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor " + version)
         {
 			LauncherDir = launcherDir;
 			cacheFolder = Path.Combine(launcherDir, "cached/");
@@ -116,10 +118,29 @@ namespace Sound_Space_Editor
             Icon = Resources.icon;
             VSync = VSyncMode.On;
             TargetUpdatePeriod = 1.0 / 20.0;
+			WebClient wc = new WebClient();
+			wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
 
-            //TargetRenderFrequency = 60;
+			var assembly = Assembly.GetExecutingAssembly();
+			var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+			string version = fvi.FileVersion;
+			var r = new DialogResult();
+			var reply = wc.DownloadString("https://raw.githubusercontent.com/David20122/ssqever/main/ver");
+			string trimmedReply = reply.TrimEnd();
+			if (version != trimmedReply)
+            {
+				r = MessageBox.Show("Editor has updated!\n\nCurrent version: " + version + "\nNew version: " + trimmedReply + "\n\nUpdate now?", "New version", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
-            MusicPlayer = new MusicPlayer { Volume = 0.25f };
+            }
+
+			if (r == DialogResult.Yes)
+            {
+
+            }
+
+			//TargetRenderFrequency = 60;
+
+			MusicPlayer = new MusicPlayer { Volume = 0.25f };
             SoundPlayer = new SoundPlayer();
 
             FontRenderer = new FontRenderer("main");
@@ -970,6 +991,69 @@ namespace Sound_Space_Editor
                     }
 				}
 
+				if (e.Shift)
+                {
+					if (e.Key == Key.H)
+                    {
+						foreach (var node in SelectedNotes)
+						{
+							node.X = 2 - node.X;
+							editor.ShowToast("Horizontal Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+						}
+
+						var saveState = _saved;
+						UndoRedo.AddUndoRedo("HORIZONTAL FLIP", () =>
+						{
+							foreach (var node in SelectedNotes)
+							{
+								node.X = 2 - node.X;
+							}
+
+							_saved = saveState;
+						}, () =>
+						{
+							foreach (var node in SelectedNotes)
+							{
+								node.X = 2 - node.X;
+								editor.ShowToast("Horizontal Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							}
+							_saved = false;
+						});
+
+						_saved = false;
+					} 
+
+					if (e.Key == Key.V)
+                    {
+						foreach (var node in SelectedNotes)
+						{
+							node.Y = 2 - node.Y;
+							editor.ShowToast("Vertical Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+						}
+
+						var saveState = _saved;
+						UndoRedo.AddUndoRedo("VERTICAL FLIP", () =>
+						{
+							foreach (var node in SelectedNotes)
+							{
+								node.Y = 2 - node.Y;
+							}
+
+							_saved = saveState;
+						}, () =>
+						{
+							foreach (var node in SelectedNotes)
+							{
+								node.Y = 2 - node.Y;
+								editor.ShowToast("Vertical Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							}
+							_saved = false;
+						});
+
+						_saved = false;
+					}
+                }
+
 				//make sure to not register input while we're typing into a text box
 
 				if (!MusicPlayer.IsPlaying && SelectedNotes.Count > 0 && _draggingNoteTimeline)
@@ -1137,14 +1221,17 @@ namespace Sound_Space_Editor
 			Settings.Default.Save();
 
 			if (GuiScreen is GuiScreenEditor)
+			{
 				WriteIniFile();
-
+				Notes.Clear();
+			}	
 			e.Cancel = !WillClose();
 
 			if (!e.Cancel)
 			{
 				MusicPlayer.Dispose();
 				SoundPlayer.Dispose();
+				Notes.Clear();
 			}
 		}
 
@@ -1163,7 +1250,7 @@ namespace Sound_Space_Editor
 					ToggleFullscreen();
 				}
 
-				var r = MessageBox.Show("oh hey there\nnice map\nwant to save it?", "Close", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+				var r = MessageBox.Show("nice map\nwant to save it?", "Close", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
 				if (wasFullscreen)
 				{
@@ -1171,7 +1258,9 @@ namespace Sound_Space_Editor
 				}
 
 				if (r == DialogResult.Yes)
+				{
 					PromptSave();
+				}
 
 				if (r == DialogResult.Cancel)
 				{
@@ -1182,8 +1271,9 @@ namespace Sound_Space_Editor
 
 					return false;
 				}
-			}
 
+			}
+			Notes.Clear();
 			return true;
 		}
 

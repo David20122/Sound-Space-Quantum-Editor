@@ -53,7 +53,8 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Sound_Space_Editor.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -112,6 +113,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BassManager.cs" />
     <Compile Include="ColorSequence.cs" />
     <Compile Include="DiscordGameSDK\ActivityManager.cs" />
     <Compile Include="DiscordGameSDK\Constants.cs" />
