@@ -141,6 +141,9 @@
     <Compile Include="Gui\GuiSlider.cs" />
     <Compile Include="Gui\GuiTextBox.cs" />
     <Compile Include="Gui\GuiTrack.cs" />
+    <Compile Include="IModelRaw.cs" />
+    <Compile Include="ModelManager.cs" />
+    <Compile Include="ModelRaw.cs" />
     <Compile Include="MusicPlayer.cs" />
     <Compile Include="Note.cs" />
     <Compile Include="Program.cs" />
@@ -150,6 +153,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="BassManager.cs" />
     <Compile Include="SoundPlayer.cs" />
     <Compile Include="TextureManager.cs" />
     <Compile Include="UndoRedo.cs" />

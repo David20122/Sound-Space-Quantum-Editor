@@ -35,15 +35,15 @@ namespace Sound_Space_Editor
 		public MusicPlayer MusicPlayer;
 		public SoundPlayer SoundPlayer;
 
-        public Discord.Discord discord;
-        public Discord.ActivityManager activityManager;
-        public Discord.UserManager userManager;
-        public Discord.NetworkManager networkManager;
-        public Discord.LobbyManager lobbyManager;
+		public Discord.Discord discord;
+		public Discord.ActivityManager activityManager;
+		public Discord.UserManager userManager;
+		public Discord.NetworkManager networkManager;
+		public Discord.LobbyManager lobbyManager;
 
 		public static string version = "1.6";
 
-        public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
+		public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
 
 		//private readonly GuiScreenEditor _screenEditor;
 
@@ -57,7 +57,6 @@ namespace Sound_Space_Editor
 		public List<Note> SelectedNotes = new List<Note>();
 		private List<Note> _draggedNotes = new List<Note>();
 		private Note _draggedNote;
-		private Note _lastPlayedNote;
 
 		private Point _clickedMouse;
 		private Point _lastMouse;
@@ -74,10 +73,12 @@ namespace Sound_Space_Editor
 		private float _dragStartIndexX;
 		private float _dragStartIndexY;
 
+		private long _mouseDownMs;
+
 		private bool _saved;
 		private bool _rightDown;
 		private bool _controlDown;
-        private bool _altDown;
+		private bool _altDown;
 		private bool _draggingNoteTimeline;
 		private bool _draggingNoteGrid;
 		private bool _draggingTimeline;
@@ -86,15 +87,12 @@ namespace Sound_Space_Editor
 
 		private string _file;
 
-		private readonly long _playbackOffset = 0;
-
 		private long _soundId = -1;
 
 		public NoteList Notes = new NoteList();
 
 		private float _zoom = 1;
 
-		private readonly Thread _processThread;
 		public bool draggingoi = false;
 		public float Zoom
 		{
@@ -108,8 +106,8 @@ namespace Sound_Space_Editor
 		public string cacheFolder;
 		public string settingsFile;
 
-        public EditorWindow(long offset, string launcherDir) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor " + version)
-        {
+		public EditorWindow(long offset, string launcherDir) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor " + version)
+		{
 			LauncherDir = launcherDir;
 			cacheFolder = Path.Combine(launcherDir, "cached/");
 			settingsFile = Path.Combine(launcherDir, "settings.ini");
@@ -118,100 +116,76 @@ namespace Sound_Space_Editor
             Icon = Resources.icon;
             VSync = VSyncMode.On;
             TargetUpdatePeriod = 1.0 / 20.0;
-			WebClient wc = new WebClient();
-			wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
 
-			var assembly = Assembly.GetExecutingAssembly();
-			var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-			string version = fvi.FileVersion;
-			var r = new DialogResult();
-			var reply = wc.DownloadString("https://raw.githubusercontent.com/David20122/ssqever/main/ver");
-			string trimmedReply = reply.TrimEnd();
-			if (version != trimmedReply)
-            {
-				r = MessageBox.Show("Editor has updated!\n\nCurrent version: " + version + "\nNew version: " + trimmedReply + "\n\nUpdate now?", "New version", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            //TargetRenderFrequency = 60;
 
-            }
-
-			if (r == DialogResult.Yes)
-            {
-
-            }
-
-			//TargetRenderFrequency = 60;
-
-			MusicPlayer = new MusicPlayer { Volume = 0.25f };
+            MusicPlayer = new MusicPlayer { Volume = 0.25f };
             SoundPlayer = new SoundPlayer();
 
-            FontRenderer = new FontRenderer("main");
+			FontRenderer = new FontRenderer("main");
 
-            if (!File.Exists(settingsFile))
-            {
-                File.AppendAllText(settingsFile, "\n// Background Opacity (0-255, 0 means invisible)\n\n255\n\n// Track Opacity\n\n255\n\n// Grid Opacity\n\n255\n\n // You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (Text, BPM Lines)\n\n0,255,200\n\n// Color 2 (Checkboxes, Sliders, Numbers, BPM Lines)\n\n255,0,255\n\n// Note Colors\n\n255,0,255\n0,255,200");
-            }
+			if (!File.Exists(settingsFile))
+			{
+				File.AppendAllText(settingsFile, "\n// Background Opacity (0-255, 0 means invisible)\n\n255\n\n// Track Opacity\n\n255\n\n// Grid Opacity\n\n255\n\n // You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (Text, BPM Lines)\n\n0,255,200\n\n// Color 2 (Checkboxes, Sliders, Numbers, BPM Lines)\n\n255,0,255\n\n// Note Colors\n\n255,0,255\n0,255,200");
+			}
 
-            OpenGuiScreen(new GuiScreenSelectMap());
+			OpenGuiScreen(new GuiScreenSelectMap());
 
-            SoundPlayer.Cache("hit");
-            SoundPlayer.Cache("click");
+			SoundPlayer.Cache("hit");
+			SoundPlayer.Cache("click");
 
-            KeyMapping.Add(Key.Q, new Tuple<int, int>(0, 0));
-            KeyMapping.Add(Key.W, new Tuple<int, int>(1, 0));
-            KeyMapping.Add(Key.E, new Tuple<int, int>(2, 0));
+			KeyMapping.Add(Key.Q, new Tuple<int, int>(0, 0));
+			KeyMapping.Add(Key.W, new Tuple<int, int>(1, 0));
+			KeyMapping.Add(Key.E, new Tuple<int, int>(2, 0));
 
-            KeyMapping.Add(Key.A, new Tuple<int, int>(0, 1));
-            KeyMapping.Add(Key.S, new Tuple<int, int>(1, 1));
-            KeyMapping.Add(Key.D, new Tuple<int, int>(2, 1));
+			KeyMapping.Add(Key.A, new Tuple<int, int>(0, 1));
+			KeyMapping.Add(Key.S, new Tuple<int, int>(1, 1));
+			KeyMapping.Add(Key.D, new Tuple<int, int>(2, 1));
 
-            KeyMapping.Add(Key.Y, new Tuple<int, int>(0, 2)); KeyMapping.Add(Key.Z, new Tuple<int, int>(0, 2));
-            KeyMapping.Add(Key.X, new Tuple<int, int>(1, 2));
-            KeyMapping.Add(Key.C, new Tuple<int, int>(2, 2));
-
-            _playbackOffset = offset;
-
-            _processThread = new Thread(ProcessNotes) { IsBackground = true };
-            _processThread.Start();
+			KeyMapping.Add(Key.Y, new Tuple<int, int>(0, 2)); KeyMapping.Add(Key.Z, new Tuple<int, int>(0, 2));
+			KeyMapping.Add(Key.X, new Tuple<int, int>(1, 2));
+			KeyMapping.Add(Key.C, new Tuple<int, int>(2, 2));
 
 			if (discordEnabled)
 			{
-				discord = new Discord.Discord((Int64)751010237388947517, (UInt64)Discord.CreateFlags.NoRequireDiscord);
+				discord = new Discord.Discord(751010237388947517L, (ulong)Discord.CreateFlags.NoRequireDiscord);
 				activityManager = discord.GetActivityManager();
 				userManager = discord.GetUserManager();
 				networkManager = discord.GetNetworkManager();
 				lobbyManager = discord.GetLobbyManager();
 			}
-        }
+		}
 
-        public void UpdateActivity(String state)
-        {
+		public void UpdateActivity(string state)
+		{
 			if (!discordEnabled)
-            {
+			{
 				return;
-            }
-            var activity = new Discord.Activity
-            {
-                State = state,
-                Details = "Version "+version,
-                Timestamps =
-                {
-                    Start = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                },
-                Instance = true,
-            };
-            this.discord.ActivityManagerInstance.UpdateActivity(activity, (result) =>
-            {
-                if (result == Discord.Result.Ok)
-                {
-                    Console.WriteLine("Success!");
-                }
-                else
-                {
-                    Console.WriteLine("Failed");
-                }
-            });
-        }
+			}
+			var activity = new Discord.Activity
+			{
+				State = state,
+				Details = "Version " + version,
+				Timestamps =
+				{
+					Start = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+				},
+				Instance = true,
+			};
+			this.discord.ActivityManagerInstance.UpdateActivity(activity, (result) =>
+			{
+				if (result == Discord.Result.Ok)
+				{
+					Console.WriteLine("Success!");
+				}
+				else
+				{
+					Console.WriteLine("Failed");
+				}
+			});
+		}
 
-        public string ReadLine(string FilePath, int LineNumber)
+		public string ReadLine(string FilePath, int LineNumber)
 		{
 			string result = "";
 			try
@@ -229,46 +203,6 @@ namespace Sound_Space_Editor
 			}
 			catch { }
 			return result;
-		}
-
-		private void ProcessNotes()
-		{
-			var last = DateTime.Now;
-			var period = 5;
-
-			while (true)
-			{
-				var time = DateTime.Now - TimeSpan.FromMilliseconds(period);
-
-				var delta = time - last;
-
-				last = time;
-
-				if (GuiScreen is GuiScreenEditor gse)
-				{
-					gse.Timeline.Progress = (float)MusicPlayer.Progress;
-
-					if (MusicPlayer.IsPlaying)
-					{
-						var closest = Notes.LastOrDefault(n => n.Ms <= (long)(MusicPlayer.CurrentTime.TotalMilliseconds + delta.TotalMilliseconds + _playbackOffset));
-
-						if (_lastPlayedNote != closest)
-						{
-							_lastPlayedNote = closest;
-
-							if (closest != null)
-							{
-								//Console.WriteLine((long)(closest.Ms - MusicPlayer.CurrentTime.TotalMilliseconds));
-
-								SoundPlayer.Play("hit", gse.SfxVolume.Value / (float)gse.SfxVolume.MaxValue);//, (float)_rand.NextDouble() * 0.075f + 1.05f);
-
-							}
-						}
-					}
-				}
-
-				Thread.Sleep(period);
-			}
 		}
 
 		public void ToggleFullscreen()
@@ -306,8 +240,8 @@ namespace Sound_Space_Editor
 			GL.Enable(EnableCap.Texture2D);
 			GL.ActiveTexture(TextureUnit.Texture0);
 
-            UpdateActivity("Sitting in the menu");
-        }
+			UpdateActivity("Sitting in the menu");
+		}
 
 		protected override void OnRenderFrame(FrameEventArgs e)
 		{
@@ -322,37 +256,51 @@ namespace Sound_Space_Editor
 
 			GuiScreen?.Render((float)e.Time, _lastMouse.X, _lastMouse.Y);
 
-			if (_draggingNoteTimeline && GuiScreen is GuiScreenEditor editor)
+			if (GuiScreen is GuiScreenEditor editor)
 			{
-				var rect = editor.Track.ClientRectangle;
+				editor.Timeline.Progress = (float)MusicPlayer.Progress;
 
-				foreach (var draggedNote in _draggedNotes)
+				if (_draggingNoteTimeline)
 				{
-					var posX = MusicPlayer.CurrentTime.TotalSeconds * CubeStep;
-					var noteX = editor.Track.ScreenX - posX + draggedNote.DragStartMs / 1000f * CubeStep;
+					var rect = editor.Track.ClientRectangle;
 
-					GL.Color3(0.75f, 0.75f, 0.75f);
-					Glu.RenderQuad((int)noteX, (int)rect.Y, 1, rect.Height);
+					foreach (var draggedNote in _draggedNotes)
+					{
+						var posX = MusicPlayer.CurrentTime.TotalSeconds * CubeStep;
+						var noteX = editor.Track.ScreenX - posX + draggedNote.DragStartMs / 1000f * CubeStep;
+
+						GL.Color3(0.75f, 0.75f, 0.75f);
+						Glu.RenderQuad((int)noteX, (int)rect.Y, 1, rect.Height);
+					}
 				}
-			}
 
-			if (_rightDown && GuiScreen is GuiScreenEditor g)
-			{
-				if (g.Track.ClientRectangle.Contains(_clickedMouse))
+				if (_rightDown)
 				{
-					var x = Math.Min(_lastMouse.X, _clickedMouse.X);
+					if (editor.Track.ClientRectangle.Contains(_clickedMouse))
+					{/*
+					var startX = _clickedMouse.X;
+
+					var time = (long)MusicPlayer.CurrentTime.TotalMilliseconds;
+					var over = _mouseDownMs - time;
+					var offset = over / 1000M * (decimal)CubeStep;
+
+					startX += (int)offset;
+
+					var x = Math.Min(_lastMouse.X, startX);
 					var y = Math.Min(_lastMouse.Y, _clickedMouse.Y);
 
-					var w = Math.Max(_lastMouse.X, _clickedMouse.X) - x;
+					var w = Math.Max(_lastMouse.X, startX) - x;
 					var h = Math.Min((int)g.Track.ClientRectangle.Height, Math.Max(_lastMouse.Y, _clickedMouse.Y)) - y;
+					*/
+						var rect = UpdateSelection(editor);
 
-					GL.Color4(0, 1, 0.2f, 0.2f);
-					Glu.RenderQuad(x, y, w, h);
-					GL.Color4(0, 1, 0.2f, 1);
-					Glu.RenderOutline(x, y, w, h);
+						GL.Color4(0, 1, 0.2f, 0.2f);
+						Glu.RenderQuad(rect.X, rect.Y, rect.Width, rect.Height);
+						GL.Color4(0, 1, 0.2f, 1);
+						Glu.RenderOutline(rect.X, rect.Y, rect.Width, rect.Height);
+					}
 				}
 			}
-
 			GL.PopMatrix();
 			SwapBuffers();
 		}
@@ -379,16 +327,16 @@ namespace Sound_Space_Editor
 			OnRenderFrame(new FrameEventArgs());
 		}
 
-        protected override void OnUpdateFrame(FrameEventArgs e)
-        {
+		protected override void OnUpdateFrame(FrameEventArgs e)
+		{
 			if (discordEnabled)
 			{
 				try { discord.RunCallbacks(); }
 				catch { }
 			}
-        }
+		}
 
-        protected override void OnMouseMove(MouseMoveEventArgs e)
+		protected override void OnMouseMove(MouseMoveEventArgs e)
 		{
 			_lastMouse = e.Position;
 
@@ -396,18 +344,7 @@ namespace Sound_Space_Editor
 
 			if (_rightDown && GuiScreen is GuiScreenEditor g)
 			{
-				var x = Math.Min(_lastMouse.X, _clickedMouse.X);
-				var y = Math.Min(_lastMouse.Y, _clickedMouse.Y);
-
-				var w = Math.Max(_lastMouse.X, _clickedMouse.X) - x;
-				var h = Math.Min((int)g.Track.ClientRectangle.Height, Math.Max(_lastMouse.Y, _clickedMouse.Y)) - y;
-
-				var rect = new Rectangle(x, y, w, h);
-
-				var list = g.Track.GetNotesInRect(rect);
-
-				SelectedNotes = list;
-				_draggedNotes = new List<Note>(list);
+				UpdateSelection(g);
 			}
 
 			if (GuiScreen is GuiScreenEditor editor)
@@ -448,8 +385,8 @@ namespace Sound_Space_Editor
 					var tick = MathHelper.Clamp(Math.Round((lineSize - (e.Y - rect.Y - rect.Width / 2)) / step), 0, editor.SfxVolume.MaxValue);
 
 					editor.SfxVolume.Value = (int)tick;
-                }
-                if (editor.BeatSnapDivisor.Dragging)
+				}
+				if (editor.BeatSnapDivisor.Dragging)
 				{
 					var rect = editor.BeatSnapDivisor.ClientRectangle;
 					var step = (rect.Width - rect.Height) / editor.BeatSnapDivisor.MaxValue;
@@ -469,18 +406,18 @@ namespace Sound_Space_Editor
 					editor.Tempo.Value = tick;
 
 					MusicPlayer.Tempo = MathHelper.Clamp(0.2f + tick * 0.1f, 0.2f, 1);
-                }
-                if (editor.NoteAlign.Dragging)
-                {
-                    var rect = editor.NoteAlign.ClientRectangle;
-                    var step = (rect.Width - rect.Height) / editor.NoteAlign.MaxValue;
+				}
+				if (editor.NoteAlign.Dragging)
+				{
+					var rect = editor.NoteAlign.ClientRectangle;
+					var step = (rect.Width - rect.Height) / editor.NoteAlign.MaxValue;
 
-                    var tick = (int)MathHelper.Clamp(Math.Round((e.X - rect.X - rect.Height / 2) / step), 0, editor.NoteAlign.MaxValue);
+					var tick = (int)MathHelper.Clamp(Math.Round((e.X - rect.X - rect.Height / 2) / step), 0, editor.NoteAlign.MaxValue);
 
-                    editor.NoteAlign.Value = (int)tick;
-                }
+					editor.NoteAlign.Value = (int)tick;
+				}
 
-                if (_draggingNoteGrid)
+				if (_draggingNoteGrid)
 				{
 					OnDraggingGridNote(e.Position);
 				}
@@ -512,6 +449,7 @@ namespace Sound_Space_Editor
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
 			_clickedMouse = e.Position;
+			_mouseDownMs = (long)MusicPlayer.CurrentTime.TotalMilliseconds;
 
 			if (e.Button == MouseButton.Right)
 				_rightDown = true;
@@ -609,11 +547,11 @@ namespace Sound_Space_Editor
 						editor.Tempo.Dragging = true;
 						OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
 					}
-                    else if (editor.NoteAlign.ClientRectangle.Contains(e.Position))
-                    {
-                        editor.NoteAlign.Dragging = true;
-                        OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
-                    }
+					else if (editor.NoteAlign.ClientRectangle.Contains(e.Position))
+					{
+						editor.NoteAlign.Dragging = true;
+						OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
+					}
 					else
 					{
 						SelectedNotes.Clear();
@@ -650,9 +588,6 @@ namespace Sound_Space_Editor
 			if (_draggingNoteTimeline)
 			{
 				MusicPlayer.Pause();
-
-				_lastPlayedNote = Notes.LastOrDefault(n =>
-					n.Ms <= Math.Floor(MusicPlayer.CurrentTime.TotalMilliseconds));
 
 				if (_draggedNotes.Count > 0)
 				{
@@ -747,9 +682,6 @@ namespace Sound_Space_Editor
 				MusicPlayer.Stop();
 				OnDraggingTimeline(e.X);
 
-				_lastPlayedNote = Notes.LastOrDefault(n =>
-					n.Ms <= Math.Floor(MusicPlayer.CurrentTime.TotalMilliseconds));
-
 				if (_wasPlaying)
 					MusicPlayer.Play();
 			}
@@ -776,7 +708,7 @@ namespace Sound_Space_Editor
 				editor.SfxVolume.Dragging = false;
 				editor.Timeline.Dragging = false;
 				editor.Tempo.Dragging = false;
-                editor.NoteAlign.Dragging = false;
+				editor.NoteAlign.Dragging = false;
 			}
 
 			_draggingNoteTimeline = false;
@@ -793,18 +725,18 @@ namespace Sound_Space_Editor
 		{
 			_controlDown = e.Control || Keyboard.GetState().IsKeyDown(Key.ControlLeft) ||
 									   Keyboard.GetState().IsKeyDown(Key.LControl);
-            _altDown = e.Alt || Keyboard.GetState().IsKeyDown(Key.AltLeft) ||
-                                       Keyboard.GetState().IsKeyDown(Key.LAlt);
-        }
+			_altDown = e.Alt || Keyboard.GetState().IsKeyDown(Key.AltLeft) ||
+									   Keyboard.GetState().IsKeyDown(Key.LAlt);
+		}
 
 		protected override void OnKeyDown(KeyboardKeyEventArgs e)
 		{
 			_controlDown = e.Control || Keyboard.GetState().IsKeyDown(Key.ControlLeft) ||
 						   Keyboard.GetState().IsKeyDown(Key.LControl);
-            _altDown = e.Alt || Keyboard.GetState().IsKeyDown(Key.AltLeft) ||
-                           Keyboard.GetState().IsKeyDown(Key.LAlt);
+			_altDown = e.Alt || Keyboard.GetState().IsKeyDown(Key.AltLeft) ||
+						   Keyboard.GetState().IsKeyDown(Key.LAlt);
 
-            if (e.Key == Key.F11)
+			if (e.Key == Key.F11)
 			{
 				ToggleFullscreen();
 
@@ -831,7 +763,8 @@ namespace Sound_Space_Editor
 				if (draggingoi == false)
 				{
 					draggingoi = true;
-				} else
+				}
+				else
 				{
 					draggingoi = false;
 				}
@@ -930,7 +863,7 @@ namespace Sound_Space_Editor
 						}
 						catch
 						{
-                            editor.ShowToast("FAILED TO COPY", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							editor.ShowToast("FAILED TO COPY", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 						}
 					}
 					else if (e.Key == Key.V)
@@ -991,69 +924,6 @@ namespace Sound_Space_Editor
                     }
 				}
 
-				if (e.Shift)
-                {
-					if (e.Key == Key.H)
-                    {
-						foreach (var node in SelectedNotes)
-						{
-							node.X = 2 - node.X;
-							editor.ShowToast("Horizontal Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-						}
-
-						var saveState = _saved;
-						UndoRedo.AddUndoRedo("HORIZONTAL FLIP", () =>
-						{
-							foreach (var node in SelectedNotes)
-							{
-								node.X = 2 - node.X;
-							}
-
-							_saved = saveState;
-						}, () =>
-						{
-							foreach (var node in SelectedNotes)
-							{
-								node.X = 2 - node.X;
-								editor.ShowToast("Horizontal Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-							}
-							_saved = false;
-						});
-
-						_saved = false;
-					} 
-
-					if (e.Key == Key.V)
-                    {
-						foreach (var node in SelectedNotes)
-						{
-							node.Y = 2 - node.Y;
-							editor.ShowToast("Vertical Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-						}
-
-						var saveState = _saved;
-						UndoRedo.AddUndoRedo("VERTICAL FLIP", () =>
-						{
-							foreach (var node in SelectedNotes)
-							{
-								node.Y = 2 - node.Y;
-							}
-
-							_saved = saveState;
-						}, () =>
-						{
-							foreach (var node in SelectedNotes)
-							{
-								node.Y = 2 - node.Y;
-								editor.ShowToast("Vertical Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-							}
-							_saved = false;
-						});
-
-						_saved = false;
-					}
-                }
-
 				//make sure to not register input while we're typing into a text box
 
 				if (!MusicPlayer.IsPlaying && SelectedNotes.Count > 0 && _draggingNoteTimeline)
@@ -1112,7 +982,8 @@ namespace Sound_Space_Editor
 								{
 									return;
 
-								} else
+								}
+								else
 								{
 									var beatDivisor = editor.Track.BeatDivisor;
 
@@ -1145,7 +1016,7 @@ namespace Sound_Space_Editor
 						_saved = false;
 					}
 
-						if (e.Key == Key.Delete && SelectedNotes.Count > 0)
+					if (e.Key == Key.Delete && SelectedNotes.Count > 0)
 					{
 						var toRemove = new List<Note>(SelectedNotes);
 
@@ -1182,11 +1053,11 @@ namespace Sound_Space_Editor
 				{
 					Zoom += e.DeltaPrecise * 0.1f;
 				}
-                else if (_altDown)
-                {
-                    editor.BeatSnapDivisor.Value += (int)e.DeltaPrecise;
-                    editor.BeatSnapDivisor.Value = MathHelper.Clamp(editor.BeatSnapDivisor.Value, 0, editor.BeatSnapDivisor.MaxValue);
-                }
+				else if (_altDown)
+				{
+					editor.BeatSnapDivisor.Value += (int)e.DeltaPrecise;
+					editor.BeatSnapDivisor.Value = MathHelper.Clamp(editor.BeatSnapDivisor.Value, 0, editor.BeatSnapDivisor.MaxValue);
+				}
 				else
 				{
 					MusicPlayer.Pause();
@@ -1231,7 +1102,6 @@ namespace Sound_Space_Editor
 			{
 				MusicPlayer.Dispose();
 				SoundPlayer.Dispose();
-				Notes.Clear();
 			}
 		}
 
@@ -1396,8 +1266,8 @@ namespace Sound_Space_Editor
 				{
 					if (gse.Quantum.Toggle)
 					{
-                        // dragging notes by custom value pog
-                        /* //old
+						// dragging notes by custom value pog
+						/* //old
                             var vv = (3f/(float)gse.NoteAlign.Value);
                             var v = 3f / vv;
 							var QGnewX = (int)Math.Floor((pos.X - (rect.X)) / rect.Width * v);
@@ -1414,30 +1284,51 @@ namespace Sound_Space_Editor
 							note.X = QGMnewX;
 							note.Y = QGMnewY;
                         */
-                        var increment = (float)(gse.NoteAlign.Value+1f) / 3f;
+						/*
+												var align = gse.NoteAlign.Value;
+												var increment = (align + 1) / 3f;
 
-                        var newX = (float)( Math.Floor(((pos.X - (rect.X+(rect.Width/3))) / rect.Width * 3)*increment) /increment );
-                        var newY = (float)( Math.Floor(((pos.Y - (rect.Y+(rect.Height/3))) / rect.Height * 3)*increment) /increment );
+												var x = (int)Math.Floor((pos.X - rect.X) / rect.Width * 2.5 * increment) / increment;
+												var y = (int)Math.Floor((pos.Y - rect.Y) / rect.Height * 2.5 * increment) / increment;
 
-                        newX = (float)Math.Max((double)-1.850, (double)newX);
-                        newY = (float)Math.Max((double)-1.850, (double)newY);
-                        newX = (float)Math.Min((double)1.850, (double)newX);
-                        newY = (float)Math.Min((double)1.850, (double)newY);
+												//var x = pos.X - rect.X + _lastMouse.X - _clickedMouse.X;
+												//var y = pos.Y - rect.Y + _lastMouse.Y - _clickedMouse.Y;
 
-                        note.X = newX+1;
-                        note.Y = newY+1;
-                    }
+												var cellSize = 1 / 3 * increment;
+
+												x = (float)Math.Floor(x / cellSize + 0.5) * cellSize;
+												y = (float)Math.Floor(y / cellSize + 0.5) * cellSize;
+												*/
+						var increment = (float)(gse.NoteAlign.Value + 1f) / 3f;
+
+						var newX = (float)(Math.Floor(((pos.X - (rect.X + (rect.Width / 3))) / rect.Width * 3) * increment) / increment);
+						var newY = (float)(Math.Floor(((pos.Y - (rect.Y + (rect.Height / 3))) / rect.Height * 3) * increment) / increment);
+
+						newX = (float)Math.Max((double)-1.850, (double)newX);
+						newY = (float)Math.Max((double)-1.850, (double)newY);
+						newX = (float)Math.Min((double)1.850, (double)newX);
+						newY = (float)Math.Min((double)1.850, (double)newY);
+
+						note.X = newX + 1;
+						note.Y = newY + 1;
+
+						newX = (float)Math.Max(-1.850, newX);
+						newY = (float)Math.Max(-1.850, newY);
+						newX = (float)Math.Min(1.850, newX);
+						newY = (float)Math.Min(1.850, newY);
+
+						note.X = newX + 1;
+						note.Y = newY + 1;
+					}
 					else
 					{
 						var newX = (int)Math.Floor((pos.X - rect.X) / rect.Width * 3);
 						var newY = (int)Math.Floor((pos.Y - rect.Y) / rect.Height * 3);
 
-
 						if (newX < 0 || newX > 2 || newY < 0 || newY > 2)
 						{
 							return;
 						}
-
 
 						note.X = newX;
 						note.Y = newY;
@@ -1470,6 +1361,32 @@ namespace Sound_Space_Editor
 			}
 		}
 
+		private Rectangle UpdateSelection(GuiScreenEditor gse)
+		{
+			var startX = _clickedMouse.X;
+
+			var time = (long)MusicPlayer.CurrentTime.TotalMilliseconds;
+			var over = _mouseDownMs - time;
+			var offset = over / 1000M * (decimal)CubeStep;
+
+			startX += (int)offset;
+
+			var x = Math.Min(_lastMouse.X, startX);
+			var y = Math.Min(_lastMouse.Y, _clickedMouse.Y);
+
+			var w = Math.Max(_lastMouse.X, startX) - x;
+			var h = Math.Min((int)gse.Track.ClientRectangle.Height, Math.Max(_lastMouse.Y, _clickedMouse.Y)) - y;
+
+			var rect = new Rectangle(x, y, w, h);
+
+			var list = gse.Track.GetNotesInRect(rect);
+
+			SelectedNotes = list;
+			_draggedNotes = new List<Note>(list);
+
+			return rect;
+		}
+
 		public void LoadFile(string file)
 		{
 			var data = File.ReadAllText(file);
@@ -1479,14 +1396,14 @@ namespace Sound_Space_Editor
 				_file = file;
 				_saved = true;
 
-                Settings.Default.LastFile = file;
+				Settings.Default.LastFile = file;
 
 				gse.Bpm.Text = "0";
 				GuiTrack.Bpm = 0;
 				gse.Offset.Text = "0";
 				GuiTrack.BpmOffset = 0;
 
-                UpdateActivity(Path.GetFileName(_file));
+				UpdateActivity(Path.GetFileName(_file));
 
 				var ini = Path.ChangeExtension(file, "ini");
 
@@ -1519,13 +1436,14 @@ namespace Sound_Space_Editor
 								}
 								else if (property == "time" && long.TryParse(value, out var time))
 								{
+									//gse.Timeline.Value = (int)(time / MusicPlayer.TotalTime.TotalMilliseconds);
 									MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(time);
 								}
 							}
 						}
 					}
 				}
-            }
+			}
 		}
 
 		public bool LoadMap(string data, bool fromFile)
@@ -1539,12 +1457,11 @@ namespace Sound_Space_Editor
 			_draggingNoteTimeline = false;
 
 			_draggedNote = null;
-			_lastPlayedNote = null;
 
-            if (!fromFile)
-            {
-                UpdateActivity("Untitled");
-            }
+			if (!fromFile)
+			{
+				UpdateActivity("Untitled");
+			}
 
 			var splits = Regex.Matches(data, "([^,]+)");
 
@@ -1573,7 +1490,7 @@ namespace Sound_Space_Editor
 
 					var gui = new GuiScreenEditor();
 
-                    OpenGuiScreen(gui);
+					OpenGuiScreen(gui);
 				}
 				else
 					_soundId = -1;
@@ -1598,41 +1515,42 @@ namespace Sound_Space_Editor
 
 		private bool PromptSave()
 		{
-			SaveFileDialog sfd = new SaveFileDialog
+			using (var sfd = new SaveFileDialog
 			{
 				Title = "Save map",
 				Filter = "Text Documents (*.txt)|*.txt"
-			};
-
-			if (_file != null)
+			})
 			{
-				sfd.InitialDirectory = Path.GetDirectoryName(_file);
+				if (_file != null)
+				{
+					sfd.InitialDirectory = Path.GetDirectoryName(_file);
 
-				sfd.FileName = Path.GetFileNameWithoutExtension(_file);
-			}
+					sfd.FileName = Path.GetFileNameWithoutExtension(_file);
+				}
 
-			var wasFullscreen = IsFullscreen;
+				var wasFullscreen = IsFullscreen;
 
-			if (IsFullscreen)
-			{
-				ToggleFullscreen();
-			}
+				if (IsFullscreen)
+				{
+					ToggleFullscreen();
+				}
 
-			var result = sfd.ShowDialog();
+				var result = sfd.ShowDialog();
 
-			if (wasFullscreen)
-			{
-				ToggleFullscreen();
-			}
+				if (wasFullscreen)
+				{
+					ToggleFullscreen();
+				}
 
-			if (result == DialogResult.OK)
-			{
-				WriteFile(sfd.FileName);
+				if (result == DialogResult.OK)
+				{
+					WriteFile(sfd.FileName);
 
-				_file = sfd.FileName;
-                Settings.Default.LastFile = _file;
+					_file = sfd.FileName;
+					Settings.Default.LastFile = _file;
 
-                return true;
+					return true;
+				}
 			}
 
 			return false;
@@ -1728,12 +1646,11 @@ namespace Sound_Space_Editor
 			{
 				_brightness = 0;
 				_draggedNote = null;
-				_lastPlayedNote = null;
 
 				_saved = false;
 				_rightDown = false;
 				_controlDown = false;
-                _altDown = false;
+				_altDown = false;
 				_draggingNoteTimeline = false;
 				_draggingNoteGrid = false;
 				_draggingTimeline = false;

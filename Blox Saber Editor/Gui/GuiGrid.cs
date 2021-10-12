@@ -19,7 +19,6 @@ namespace Sound_Space_Editor.Gui
 
 		}
 
-		string griddim = EditorWindow.Instance.ReadLine("settings.ini", 12);
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
 			var editor = (GuiScreenEditor)EditorWindow.Instance.GuiScreen;
@@ -28,7 +27,8 @@ namespace Sound_Space_Editor.Gui
 			var mouseOver = false;
 			// grid transparency
 			int res;
-			Int32.TryParse(griddim, out res);
+			string griddim = EditorWindow.Instance.ReadLine("settings.ini", 12);
+			int.TryParse(griddim, out res);
 
 			GL.Color4(Color.FromArgb(res, 36, 35, 33));
 			Glu.RenderQuad(rect.X, rect.Y, rect.Width, rect.Height);
@@ -54,6 +54,27 @@ namespace Sound_Space_Editor.Gui
 				var lx = x * cellSize;
 
 				Glu.RenderQuad((int)(rect.X + lx), (int)(rect.Y), 1, rect.Height + 1);
+			}
+
+			if (editor.NoteAlign.Value != 1)
+			{
+				GL.Color3(0f, 0.35f, 0.35f);
+				GL.Begin(PrimitiveType.Lines);
+
+				var div = editor.NoteAlign.Value + 1;
+
+				for (int i = 1; i < div; i++)
+				{
+					//GL.Vertex2(rect.X + rect.Width / div * i, rect.Y);
+					//GL.Vertex2(rect.X + rect.Width / div * i, rect.Y + rect.Height / div * i);
+
+					GL.Vertex2(rect.X + rect.Width / div * i, rect.Y);
+					GL.Vertex2(rect.X + rect.Width / div * i, rect.Y + rect.Height);
+
+					GL.Vertex2(rect.X, rect.Y + rect.Height / div * i);
+					GL.Vertex2(rect.X + rect.Width, rect.Y + rect.Height / div * i);
+				}
+				GL.End();
 			}
 
 			var fr = EditorWindow.Instance.FontRenderer;
@@ -157,7 +178,6 @@ namespace Sound_Space_Editor.Gui
 					Glu.RenderOutline(x - 4, y - 4, noteSize + 8, noteSize + 8);
 				}
 			}
-
 
 			//RENDER AUTOPLAY
 			if (editor.Autoplay.Toggle)
