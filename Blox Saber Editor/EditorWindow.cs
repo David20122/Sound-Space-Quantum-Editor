@@ -39,7 +39,7 @@ namespace Sound_Space_Editor
 		public Discord.NetworkManager networkManager;
 		public Discord.LobbyManager lobbyManager;
 
-		public static string version = "1.5.2";
+		public static string version = "1.6";
 
 		public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
 
