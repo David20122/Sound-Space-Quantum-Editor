@@ -75,7 +75,7 @@ namespace Sound_Space_Editor
 				WaveModel?.Dispose();
 
 				var wf = new WaveForm(file);
-				wf.FrameResolution = 0.0065;
+				wf.FrameResolution = 0.005;
 				
 				if (wf.RenderStart(false, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_STREAM_PRESCAN | BASSFlag.BASS_FX_FREESOURCE))
 				{
