@@ -18,8 +18,6 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using KeyPressEventArgs = OpenTK.KeyPressEventArgs;
 using Discord;
-using System.Reflection;
-using System.Diagnostics;
 
 namespace Sound_Space_Editor
 {
@@ -41,7 +39,7 @@ namespace Sound_Space_Editor
 		public Discord.NetworkManager networkManager;
 		public Discord.LobbyManager lobbyManager;
 
-		public static string version = "1.6";
+		public static string version = "1.5.2";
 
 		public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
 
@@ -111,22 +109,22 @@ namespace Sound_Space_Editor
 			LauncherDir = launcherDir;
 			cacheFolder = Path.Combine(launcherDir, "cached/");
 			settingsFile = Path.Combine(launcherDir, "settings.ini");
-            Instance = this;
-            this.WindowState = OpenTK.WindowState.Maximized;
-            Icon = Resources.icon;
-            VSync = VSyncMode.On;
-            TargetUpdatePeriod = 1.0 / 20.0;
+			Instance = this;
+			this.WindowState = OpenTK.WindowState.Maximized;
+			Icon = Resources.icon;
+			VSync = VSyncMode.On;
+			TargetUpdatePeriod = 1.0 / 20.0;
 
-            //TargetRenderFrequency = 60;
+			//TargetRenderFrequency = 60;
 
-            MusicPlayer = new MusicPlayer { Volume = 0.25f };
-            SoundPlayer = new SoundPlayer();
+			MusicPlayer = new MusicPlayer { Volume = 0.25f };
+			SoundPlayer = new SoundPlayer();
 
 			FontRenderer = new FontRenderer("main");
 
 			if (!File.Exists(settingsFile))
 			{
-				File.AppendAllText(settingsFile, "\n// Background Opacity (0-255, 0 means invisible)\n\n255\n\n// Track Opacity\n\n255\n\n// Grid Opacity\n\n255\n\n // You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (Text, BPM Lines)\n\n0,255,200\n\n// Color 2 (Checkboxes, Sliders, Numbers, BPM Lines)\n\n255,0,255\n\n// Note Colors\n\n255,0,255\n0,255,200");
+				File.AppendAllText(settingsFile, "\n// Background Opacity (0-255, 0 means invisible)\n\n255\n\n// Track Opacity\n\n255\n\n// Grid Opacity\n\n255\n\n // You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (Text, BPM Lines)\n\n0,255,200\n\n// Color 2 (Checkboxes, Sliders, Numbers, BPM Lines)\n\n255,0,255\n\n// Note Colors\n\n255,0,255\n0,255,200\n\n//Waveform (true or false)\n\ntrue");
 			}
 
 			OpenGuiScreen(new GuiScreenSelectMap());
@@ -660,18 +658,18 @@ namespace Sound_Space_Editor
 					var saveState = _saved;
 
 					UndoRedo.AddUndoRedo("REPOSITION NOTE", () =>
-					 {
-						 note2.X = startX;
-						 note2.Y = startY;
+					{
+						note2.X = startX;
+						note2.Y = startY;
 
-						 _saved = saveState;
-					 }, () =>
-					 {
-						 note2.X = newX;
-						 note2.Y = newY;
+						_saved = saveState;
+					}, () =>
+					{
+						note2.X = newX;
+						note2.Y = newY;
 
-						 _saved = false;
-					 });
+						_saved = false;
+					});
 
 					_saved = false;
 				}
@@ -916,12 +914,72 @@ namespace Sound_Space_Editor
 
 								_saved = false;
 							}
-                        }
-                        catch
-                        {
-                            editor.ShowToast("FAILED TO COPY", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-                        }
-                    }
+						}
+						catch
+						{
+							editor.ShowToast("FAILED TO COPY", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+						}
+					}
+				}
+
+				if (e.Shift)
+				{
+					if (e.Key == Key.H)
+					{
+						foreach (var node in SelectedNotes)
+						{
+							node.X = 2 - node.X;
+							editor.ShowToast("Horizontal Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+						}
+
+						var saveState = _saved;
+						UndoRedo.AddUndoRedo("HORIZONTAL FLIP", () =>
+						{
+							foreach (var node in SelectedNotes)
+							{
+								node.X = 2 - node.X;
+							}
+
+						}, () =>
+						{
+							foreach (var node in SelectedNotes)
+							{
+								node.X = 2 - node.X;
+							}
+
+						});
+
+						_saved = false;
+					}
+
+					if (e.Key == Key.V)
+					{
+						foreach (var node in SelectedNotes)
+						{
+							node.Y = 2 - node.Y;
+							editor.ShowToast("Vertical Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+						}
+
+						var saveState = _saved;
+						UndoRedo.AddUndoRedo("VERTICAL FLIP", () =>
+						{
+							foreach (var node in SelectedNotes)
+							{
+								node.Y = 2 - node.Y;
+							}
+
+						}, () =>
+						{
+							foreach (var node in SelectedNotes)
+							{
+								node.Y = 2 - node.Y;
+							}
+
+						});
+
+						_saved = false;
+					}
+
 				}
 
 				//make sure to not register input while we're typing into a text box
@@ -1092,16 +1150,14 @@ namespace Sound_Space_Editor
 			Settings.Default.Save();
 
 			if (GuiScreen is GuiScreenEditor)
-			{
 				WriteIniFile();
-				Notes.Clear();
-			}	
+
 			e.Cancel = !WillClose();
 
 			if (!e.Cancel)
 			{
-				MusicPlayer.Dispose();
-				SoundPlayer.Dispose();
+				BassManager.Dispose();
+				ModelManager.Cleanup();
 			}
 		}
 
@@ -1120,7 +1176,7 @@ namespace Sound_Space_Editor
 					ToggleFullscreen();
 				}
 
-				var r = MessageBox.Show("nice map\nwant to save it?", "Close", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+				var r = MessageBox.Show("oh hey there\nnice map\nwant to save it?", "Close", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
 				if (wasFullscreen)
 				{
@@ -1128,9 +1184,7 @@ namespace Sound_Space_Editor
 				}
 
 				if (r == DialogResult.Yes)
-				{
 					PromptSave();
-				}
 
 				if (r == DialogResult.Cancel)
 				{
@@ -1141,7 +1195,6 @@ namespace Sound_Space_Editor
 
 					return false;
 				}
-
 			}
 			Notes.Clear();
 			return true;

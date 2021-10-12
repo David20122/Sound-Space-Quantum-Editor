@@ -58,7 +58,6 @@ namespace Sound_Space_Editor.Gui
 
 			if (editor.NoteAlign.Value != 1)
 			{
-				GL.Color3(0f, 0.35f, 0.35f);
 				GL.Begin(PrimitiveType.Lines);
 
 				var div = editor.NoteAlign.Value + 1;

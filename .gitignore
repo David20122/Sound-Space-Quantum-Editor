@@ -1,5 +1,5 @@
-/.vs
-/.git
+.vs/
+.vscode/
 *.exe
 *.asset
 *.pdb

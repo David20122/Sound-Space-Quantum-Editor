@@ -16,6 +16,7 @@ namespace Sound_Space_Editor.Gui
 
 		public static float Bpm = 0;//150;
 		public static long BpmOffset = 0; //in ms
+		public static string wv = null;
 		public int BeatDivisor = 8;
 
 		public GuiTrack(float y, float sy) : base(0, y, EditorWindow.Instance.ClientSize.Width, sy)
@@ -45,6 +46,17 @@ namespace Sound_Space_Editor.Gui
 			string[] c2values = rc2.Split(',');
 			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 
+			// waveform
+
+			try
+			{
+				wv = editor.ReadLine("settings.ini", 30);
+
+			} catch
+            {
+				
+            }
+
 			GL.Color4(Color.FromArgb(res, 36, 35, 33));
 
 			var rect = ClientRectangle;
@@ -73,30 +85,33 @@ namespace Sound_Space_Editor.Gui
 			if (lineX < 0)
 				lineX %= lineSpace;
 
-			GL.Color3(0.35f, 0.35f, 0.35f);
-			GL.PushMatrix();
-			GL.BindVertexArray(editor.MusicPlayer.WaveModel.VaoID);
-			GL.EnableVertexAttribArray(0);
+			if (wv == "true")
+            {
+				GL.Color3(0.35f, 0.35f, 0.35f);
+				GL.PushMatrix();
+				GL.BindVertexArray(editor.MusicPlayer.WaveModel.VaoID);
+				GL.EnableVertexAttribArray(0);
 
-			var p = posX / maxX;
-			var total = zoomLvl * maxX;
+				var p = posX / maxX;
+				var total = zoomLvl * maxX;
 
-			var waveX = -posX + ScreenX + maxX / 2;
-			var scale = maxX;//;total;
+				var waveX = -posX + ScreenX + maxX / 2;
+				var scale = maxX;//;total;
 
-			GL.Translate(waveX, rect.Height * 0.5, 0);
-			GL.Scale(scale / 100000.0, -rect.Height, 1);
-			GL.Translate(-50000, -0.5, 0);
-			GL.LineWidth(2);
-			editor.MusicPlayer.WaveModel.Render(PrimitiveType.LineStrip);
-			GL.LineWidth(1);
-			GL.Translate(50000 * scale, 0.5, 0);
-			GL.Scale(1 / scale * 100000.0, -1.0 / rect.Height, 1);
-			GL.Translate(-waveX, -rect.Height * 0.5, 0);
+				GL.Translate(waveX, rect.Height * 0.5, 0);
+				GL.Scale(scale / 100000.0, -rect.Height, 1);
+				GL.Translate(-50000, -0.5, 0);
+				GL.LineWidth(2);
+				editor.MusicPlayer.WaveModel.Render(PrimitiveType.LineStrip);
+				GL.LineWidth(1);
+				GL.Translate(50000 * scale, 0.5, 0);
+				GL.Scale(1 / scale * 100000.0, -1.0 / rect.Height, 1);
+				GL.Translate(-waveX, -rect.Height * 0.5, 0);
 
-			GL.DisableVertexAttribArray(0);
-			GL.BindVertexArray(0);
-			GL.PopMatrix();
+				GL.DisableVertexAttribArray(0);
+				GL.BindVertexArray(0);
+				GL.PopMatrix();
+			}
 			/*
 			GL.Begin(PrimitiveType.LineStrip);
 
@@ -174,7 +189,7 @@ namespace Sound_Space_Editor.Gui
 
 				if (audioTime - 1 > note.Ms)//(x <= ScreenX)
 				{
-					alphaMult = 0.45f;
+					alphaMult = 0.35f;
 				}
 
 				var y = rect.Y + gap / 2;
@@ -197,46 +212,23 @@ namespace Sound_Space_Editor.Gui
 						GL.Color3(0, 0.5f, 1);
 					}
 
-					Glu.RenderOutline((int)(x + 1), (int)(y - 4), (int)(noteSize + 8), (int)(noteSize + 8));
+					Glu.RenderOutline((int)(x - 4), (int)(y - 4), (int)(noteSize + 8), (int)(noteSize + 8));
 				}
+				var c = Color.FromArgb((int)(15 * alphaMult), (int)note.Color.R, (int)note.Color.G, (int)note.Color.B);
 
-				//var c = Color.FromArgb((int)alphaMult, (int)(note.Color.R * 255), (int)(note.Color.G * 255), (int)(note.Color.B * 255));
-
-				//GL.Color4(c);
-				//Glu.RenderLine((int)x, (int)y, (int)x, (int)(y + noteSize));
-				//Glu.RenderQuad((int)x, (int)y, (int)noteSize, (int)noteSize);
-				//GL.Color4(note.Color.R, note.Color.G, note.Color.B, alphaMult);
-				//Glu.RenderOutline((int)x, (int)y, (int)noteSize, (int)noteSize);
-
-				var margin = 5;
-				var gridGap = 2;
-
-				var boxX = (int)x + margin * 2;
-				var boxY = (int)y + margin;
-
-				var boxSize = noteSize - margin * 2;
-
-				GL.Color4(note.Color.R, note.Color.G, note.Color.B, alphaMult * 0.3f);
-				Glu.RenderQuad(boxX - 1, boxY - 1, (int)boxSize + 2, (int)boxSize + 2);
-				GL.Color4(note.Color.R, note.Color.G, note.Color.B, alphaMult * 0.45f);
-				Glu.RenderOutline(boxX - 1, boxY - 1, (int)boxSize + 2, (int)boxSize + 2);
-
-				var gridX = (int)(x + note.X * (9 + gridGap) + margin * 2);
-				var gridY = (int)(y + note.Y * (9 + gridGap) + margin);
-
-				GL.Color4(note.Color.R, note.Color.G, note.Color.B, alphaMult * 0.4f);
-				Glu.RenderQuad(gridX, gridY, 9, 9);
+				GL.Color4(c);
+				Glu.RenderQuad((int)x, (int)y, (int)noteSize, (int)noteSize);
 				GL.Color4(note.Color.R, note.Color.G, note.Color.B, alphaMult);
-				Glu.RenderOutline(gridX, gridY, 9, 9);
-				//Glu.RenderQuad(gridX + 1, gridY + 1, 7, 7);
-				/*
+				Glu.RenderOutline((int)x, (int)y, (int)noteSize, (int)noteSize);
+
+				var gridGap = 2;
 				for (int j = 0; j < 9; j++)
 				{
 					var indexX = 2 - j % 3;
 					var indexY = 2 - j / 3;
 
-					var gridX = (int)x + indexX * (9 + gridGap) + margin;
-					var gridY = (int)y + indexY * (9 + gridGap) + margin;
+					var gridX = (int)x + indexX * (9 + gridGap) + 5;
+					var gridY = (int)y + indexY * (9 + gridGap) + 5;
 
 					if (note.X == indexX && note.Y == indexY)
 					{
@@ -248,7 +240,7 @@ namespace Sound_Space_Editor.Gui
 						GL.Color4(note.Color.R, note.Color.G, note.Color.B, alphaMult * 0.45);
 						Glu.RenderOutline(gridX, gridY, 9, 9);
 					}
-				}*/
+				}
 
 				var numText = $"{(i + 1):##,###}";
 
@@ -265,25 +257,6 @@ namespace Sound_Space_Editor.Gui
 				GL.Vertex2((int)x + 0.5f, rect.Y + rect.Height + 3);
 				GL.Vertex2((int)x + 0.5f, rect.Y + rect.Height + 28);
 				GL.End();
-
-				//draw line
-				var length = 8;
-
-				GL.Begin(PrimitiveType.Lines);
-
-				//GL.Color4(note.Color.R, note.Color.G, note.Color.B, alphaMult);
-				//GL.Vertex2((int)x + 0.5f, rect.Y);
-				//GL.Vertex2((int)x + 0.5f, rect.Y + length);
-
-				GL.Color4(note.Color.R, note.Color.G, note.Color.B, alphaMult * 0.3f);
-				GL.Vertex2((int)x + 0.5f, rect.Y);
-				GL.Vertex2((int)x + 0.5f, rect.Y + rect.Height - length);
-
-				GL.Color4(note.Color.R, note.Color.G, note.Color.B, alphaMult);
-				GL.Vertex2((int)x + 0.5f, rect.Y + rect.Height - length);
-				GL.Vertex2((int)x + 0.5f, rect.Y + rect.Height);
-
-				GL.End();
 			}
 
 			if (_lastPlayedNote != closest)
@@ -292,7 +265,7 @@ namespace Sound_Space_Editor.Gui
 
 				if (closest != null && editor.MusicPlayer.IsPlaying && editor.GuiScreen is GuiScreenEditor gse)
 				{
-					editor.SoundPlayer.Play("hit", gse.SfxVolume.Value / (float)gse.SfxVolume.MaxValue);
+					editor.SoundPlayer.Play("hit", gse.SfxVolume.Value / (float)gse.SfxVolume.MaxValue, editor.MusicPlayer.Tempo);
 				}
 			}
 
@@ -349,7 +322,7 @@ namespace Sound_Space_Editor.Gui
 			}
 
 			//draw screen line
-			GL.Color4(1f, 0.8f, 0, 0.75);
+			GL.Color4(1f, 1, 1, 0.75);
 			GL.Begin(PrimitiveType.Lines);
 			GL.Vertex2((int)(rect.X + ScreenX) + 0.5, rect.Y + 4);
 			GL.Vertex2((int)(rect.X + ScreenX) + 0.5, rect.Y + rect.Height - 4);
@@ -385,12 +358,25 @@ namespace Sound_Space_Editor.Gui
 			for (int i = 0; i < EditorWindow.Instance.Notes.Count; i++)
 			{
 				Note note = EditorWindow.Instance.Notes[i];
+				Note closest = null;
+
+				if (EditorWindow.Instance.GuiScreen is GuiScreenEditor gse)
+				{
+					var offset = 0L;
+					long.TryParse(gse.SfxOffset.Text, out offset);
+
+					if (note.Ms <= (long)(EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds - offset))
+					{
+						closest = note;
+					}
+				}
+
 				note.Color = _cs.Next();
 
 				float x = ScreenX - posX + note.Ms / 1000f * cubeStep;
 
-				//if (x < rect.X - noteSize || x > rect.Width)
-				//continue;
+				if (x < rect.X - noteSize || x > rect.Width)
+					continue;
 
 				float y = rect.Y + gap / 2;
 
