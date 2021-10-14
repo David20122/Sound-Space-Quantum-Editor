@@ -85,7 +85,7 @@ namespace Logic
                 }
                 using (Process myProcess = new Process())
                 {
-                    string Arg = @"/K " + gamePath + @" -play """ + MapPath + @"""";
+                    string Arg = @"/C " + gamePath + @" -play """ + MapPath + @"""";
                     Console.WriteLine(newPath + "\n" + Arg);
                     myProcess.StartInfo.UseShellExecute = false;
                     myProcess.StartInfo.FileName = "cmd.exe";
