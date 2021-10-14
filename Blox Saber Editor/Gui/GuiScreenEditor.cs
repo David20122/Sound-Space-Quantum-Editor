@@ -8,6 +8,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System.IO;
+using Logic;
 
 namespace Sound_Space_Editor.Gui
 {
@@ -34,7 +35,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiCheckBox AutoAdvance;
 		public readonly GuiButton BackButton;
 		public readonly GuiButton CopyButton;
-                Public readonly GuiButton PlayButton;
+        public readonly GuiButton PlayButton;
 		public readonly GuiButton SetOffset;
         public float AutoSaveTimer { get; private set; } = 0f;
 
@@ -111,9 +112,9 @@ namespace Sound_Space_Editor.Gui
 
 			SetOffset = new GuiButton(2, 0, 0, 64, 32, "SET");
 			BackButton = new GuiButton(3, 0, 0, Grid.ClientRectangle.Width + 1, 42, "BACK TO MENU");
-			CopyButton = new GuiButton(4, Grid.ClientRectangle.Width, 0, (Grid.ClientRectangle.Width + 1)/2, 42, "COPY MAP DATA");
-                        PlayButton = new GuiButton(6, 0, 0, (Grid.ClientRectangle.Width + 1/2, 42, "PLAY MAP");
-//4
+			CopyButton = new GuiButton(4, Grid.ClientRectangle.Width, 0, (Grid.ClientRectangle.Width-5)/2, 42, "COPY MAP DATA");
+            PlayButton = new GuiButton(6, Grid.ClientRectangle.Width, 0, (Grid.ClientRectangle.Width-5)/2, 42, "PLAY MAP");
+
 			Autoplay = new GuiCheckBox(5, "Autoplay", 0, 0, 32, 32, Settings.Default.Autoplay);
 			ApproachSquares = new GuiCheckBox(5, "Approach Squares", 0, 0, 32, 32, Settings.Default.ApproachSquares);
 			GridNumbers = new GuiCheckBox(5, "Grid Numbers", 0, 0, 32, 32, Settings.Default.GridNumbers);
@@ -148,7 +149,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(SetOffset);
 			Buttons.Add(BackButton);
 			Buttons.Add(CopyButton);
-                        Buttons.Add(PlayButton);
+            Buttons.Add(PlayButton);
 
 			OnResize(EditorWindow.Instance.ClientSize);
 
@@ -404,9 +405,18 @@ namespace Sound_Space_Editor.Gui
 					break;
 
 				case 6:
-					startGame(EditorWindow.Instance.ParseData());
+					using (var dialog = new OpenFileDialog
+					{
+						Title = "Select Game Executable",
+						Filter = "Executables (*.exe)|*.exe"
+					})
+					{
+						if (dialog.ShowDialog() == DialogResult.OK)
+						{
+							Game.TryStart(dialog.FileName, EditorWindow.Instance.ParseData());
+						}
+					}
 					break;
-
 			}
 		}
 
@@ -426,7 +436,8 @@ namespace Sound_Space_Editor.Gui
 
 			Grid.ClientRectangle = new RectangleF((int)(size.Width / 2f - Grid.ClientRectangle.Width / 2), (int)((size.Height + Track.ClientRectangle.Height - 64) / 2 - Grid.ClientRectangle.Height / 2), Grid.ClientRectangle.Width, Grid.ClientRectangle.Height);
 			BackButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Bottom + 5 + 1 + 33);
-			CopyButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 30);
+			CopyButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X + 150, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 30);
+			PlayButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - PlayButton.ClientRectangle.Height - 30);
 			BeatSnapDivisor.ClientRectangle.Location = new PointF(EditorWindow.Instance.ClientSize.Width - BeatSnapDivisor.ClientRectangle.Width, Bpm.ClientRectangle.Y);
 			Timeline.ClientRectangle = new RectangleF(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64);
 			Tempo.ClientRectangle = new RectangleF(EditorWindow.Instance.ClientSize.Width - 512, EditorWindow.Instance.ClientSize.Height - 64, 512, 64);
