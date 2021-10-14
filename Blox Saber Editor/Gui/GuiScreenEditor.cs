@@ -34,6 +34,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiCheckBox AutoAdvance;
 		public readonly GuiButton BackButton;
 		public readonly GuiButton CopyButton;
+                Public readonly GuiButton PlayButton;
 		public readonly GuiButton SetOffset;
         public float AutoSaveTimer { get; private set; } = 0f;
 
@@ -110,8 +111,9 @@ namespace Sound_Space_Editor.Gui
 
 			SetOffset = new GuiButton(2, 0, 0, 64, 32, "SET");
 			BackButton = new GuiButton(3, 0, 0, Grid.ClientRectangle.Width + 1, 42, "BACK TO MENU");
-			CopyButton = new GuiButton(4, 0, 0, Grid.ClientRectangle.Width + 1, 42, "COPY MAP DATA");
-
+			CopyButton = new GuiButton(4, 0, 0, (Grid.ClientRectangle.Width + 1)/2, 42, "COPY MAP DATA");
+                        PlayButton = new GuiButton(6, 0, 0, (Grid.ClientRectangle.Width + 1/2, 42, "PLAY MAP");
+//4
 			Autoplay = new GuiCheckBox(5, "Autoplay", 0, 0, 32, 32, Settings.Default.Autoplay);
 			ApproachSquares = new GuiCheckBox(5, "Approach Squares", 0, 0, 32, 32, Settings.Default.ApproachSquares);
 			GridNumbers = new GuiCheckBox(5, "Grid Numbers", 0, 0, 32, 32, Settings.Default.GridNumbers);
@@ -146,6 +148,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(SetOffset);
 			Buttons.Add(BackButton);
 			Buttons.Add(CopyButton);
+                        Buttons.Add(PlayButton);
 
 			OnResize(EditorWindow.Instance.ClientSize);
 
@@ -399,6 +402,11 @@ namespace Sound_Space_Editor.Gui
 					Settings.Default.SfxOffset = SfxOffset.Text;
 					Settings.Default.Save();
 					break;
+
+				case 6:
+					startGame(EditorWindow.Instance.ParseData());
+					break;
+
 			}
 		}
 
