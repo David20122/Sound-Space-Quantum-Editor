@@ -113,7 +113,7 @@ namespace Sound_Space_Editor.Gui
 			SetOffset = new GuiButton(2, 0, 0, 64, 32, "SET");
 			BackButton = new GuiButton(3, 0, 0, Grid.ClientRectangle.Width + 1, 42, "BACK TO MENU");
 			CopyButton = new GuiButton(4, Grid.ClientRectangle.Width, 0, (Grid.ClientRectangle.Width-5)/2, 42, "COPY MAP DATA");
-            PlayButton = new GuiButton(6, Grid.ClientRectangle.Width, 0, (Grid.ClientRectangle.Width-5)/2, 42, "PLAY MAP");
+            PlayButton = new GuiButton(99, Grid.ClientRectangle.Width, 0, (Grid.ClientRectangle.Width-5)/2, 42, "PLAY MAP");
 
 			Autoplay = new GuiCheckBox(5, "Autoplay", 0, 0, 32, 32, Settings.Default.Autoplay);
 			ApproachSquares = new GuiCheckBox(5, "Approach Squares", 0, 0, 32, 32, Settings.Default.ApproachSquares);
@@ -404,7 +404,7 @@ namespace Sound_Space_Editor.Gui
 					Settings.Default.Save();
 					break;
 
-				case 6:
+				case 99:
 					using (var dialog = new OpenFileDialog
 					{
 						Title = "Select Game Executable",
