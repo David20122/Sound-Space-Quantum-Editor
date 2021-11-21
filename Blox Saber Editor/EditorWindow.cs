@@ -92,6 +92,7 @@ namespace Sound_Space_Editor
 		private float _zoom = 1;
 
 		public bool draggingoi = false;
+		public string inputState = null;
 		public float Zoom
 		{
 			get => _zoom;
@@ -132,6 +133,8 @@ namespace Sound_Space_Editor
 			SoundPlayer.Cache("hit");
 			SoundPlayer.Cache("click");
 
+			inputState = "keyboard";
+
 			KeyMapping.Add(Key.Q, new Tuple<int, int>(0, 0));
 			KeyMapping.Add(Key.W, new Tuple<int, int>(1, 0));
 			KeyMapping.Add(Key.E, new Tuple<int, int>(2, 0));
@@ -153,6 +156,47 @@ namespace Sound_Space_Editor
 				lobbyManager = discord.GetLobbyManager();
 			}
 		}
+
+		public void ChangeKeyMapping(string input)
+        {
+			if (input == "keyboard")
+            {
+				inputState = "keyboard";
+
+				KeyMapping.Clear();
+
+				KeyMapping.Add(Key.Q, new Tuple<int, int>(0, 0));
+				KeyMapping.Add(Key.W, new Tuple<int, int>(1, 0));
+				KeyMapping.Add(Key.E, new Tuple<int, int>(2, 0));
+
+				KeyMapping.Add(Key.A, new Tuple<int, int>(0, 1));
+				KeyMapping.Add(Key.S, new Tuple<int, int>(1, 1));
+				KeyMapping.Add(Key.D, new Tuple<int, int>(2, 1));
+
+				KeyMapping.Add(Key.Y, new Tuple<int, int>(0, 2)); KeyMapping.Add(Key.Z, new Tuple<int, int>(0, 2));
+				KeyMapping.Add(Key.X, new Tuple<int, int>(1, 2));
+				KeyMapping.Add(Key.C, new Tuple<int, int>(2, 2));
+
+			} else if (input == "numpad")
+            {
+				inputState = "numpad";
+
+				KeyMapping.Clear();
+
+				KeyMapping.Add(Key.Keypad7, new Tuple<int, int>(0, 0));
+				KeyMapping.Add(Key.Keypad8, new Tuple<int, int>(1, 0));
+				KeyMapping.Add(Key.Keypad9, new Tuple<int, int>(2, 0));
+
+				KeyMapping.Add(Key.Keypad4, new Tuple<int, int>(0, 1));
+				KeyMapping.Add(Key.Keypad5, new Tuple<int, int>(1, 1));
+				KeyMapping.Add(Key.Keypad6, new Tuple<int, int>(2, 1));
+
+				KeyMapping.Add(Key.Keypad1, new Tuple<int, int>(0, 2));
+				KeyMapping.Add(Key.Keypad2, new Tuple<int, int>(1, 2));
+				KeyMapping.Add(Key.Keypad3, new Tuple<int, int>(2, 2));
+
+			}
+        }
 
 		public void UpdateActivity(string state)
 		{
@@ -290,6 +334,7 @@ namespace Sound_Space_Editor
 					var w = Math.Max(_lastMouse.X, startX) - x;
 					var h = Math.Min((int)g.Track.ClientRectangle.Height, Math.Max(_lastMouse.Y, _clickedMouse.Y)) - y;
 					*/
+
 						var rect = UpdateSelection(editor);
 
 						GL.Color4(0, 1, 0.2f, 0.2f);
@@ -342,7 +387,10 @@ namespace Sound_Space_Editor
 
 			if (_rightDown && GuiScreen is GuiScreenEditor g)
 			{
-				UpdateSelection(g);
+				if (g.Track.ClientRectangle.Contains(_clickedMouse))
+                {
+					UpdateSelection(g);
+				}
 			}
 
 			if (GuiScreen is GuiScreenEditor editor)
@@ -482,6 +530,7 @@ namespace Sound_Space_Editor
 							SelectedNotes.Clear();
 
 							SelectedNotes.Add(tn);
+							Console.WriteLine(SelectedNotes.Count);
 						}
 
 						foreach (var note in _draggedNotes)
@@ -795,7 +844,13 @@ namespace Sound_Space_Editor
 						long closestBeat =
 							GetClosestBeat((long)(MusicPlayer.CurrentTime.TotalMilliseconds + stepSmall));
 
-						MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
+                        try
+                        {
+							MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
+						} catch
+                        {
+
+                        }
 					}
 				}
 				else if (e.Key == Key.S && e.Control)
@@ -1050,8 +1105,13 @@ namespace Sound_Space_Editor
 
 									long closestBeat =
 										GetClosestBeat((long)(MusicPlayer.CurrentTime.TotalMilliseconds + stepSmall));
+                                    try
+                                    {
+										MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
+									} catch
+                                    {
 
-									MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
+                                    }
 								}
 							}
 							else
@@ -1435,6 +1495,7 @@ namespace Sound_Space_Editor
 			var list = gse.Track.GetNotesInRect(rect);
 
 			SelectedNotes = list;
+			Console.WriteLine(SelectedNotes.Count);
 			_draggedNotes = new List<Note>(list);
 
 			return rect;

@@ -40,6 +40,20 @@ namespace Sound_Space_Editor.Gui
 
 			var audioTime = EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds;
 
+			if (editor.Numpad.Toggle)
+            {
+				if (EditorWindow.Instance.inputState == "keyboard")
+                {
+					EditorWindow.Instance.ChangeKeyMapping("numpad");
+                }
+            } else
+            {
+				if (EditorWindow.Instance.inputState == "numpad")
+				{
+					EditorWindow.Instance.ChangeKeyMapping("keyboard");
+				}
+			}
+
 			GL.Color3(0.2, 0.2, 0.2f);
 
 			for (float y = 0; y <= 3; y++)
@@ -85,6 +99,9 @@ namespace Sound_Space_Editor.Gui
 					continue;
 
 				var letter = pair.Key == Key.Z ? "Y/Z" : pair.Key.ToString();
+
+				if (letter.Length > 1) letter = letter.Replace("Keypad", "");
+
 				var tuple = pair.Value;
 
 				var x = rect.X + tuple.Item1 * cellSize + cellSize / 2;

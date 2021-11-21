@@ -21,6 +21,8 @@ namespace Sound_Space_Editor.Gui
 		private GuiButton _pasteDataButton;
 		private GuiButton _githubButton;
 		private bool importmapclicked = false;
+		//private readonly int _textureId;
+		//private bool bgImg = false;
 
 		public GuiScreenSelectMap() : base(0, 0, EditorWindow.Instance.ClientSize.Width, EditorWindow.Instance.ClientSize.Height)
 		{
@@ -28,6 +30,17 @@ namespace Sound_Space_Editor.Gui
 			{
 				logoTxt = TextureManager.GetOrRegister("logo", img, true);
 			}
+			/* 
+			if (File.Exists(Path.Combine(EditorWindow.Instance.LauncherDir, "background_menu.png")))
+			{
+				bgImg = true;
+				using (Bitmap img = new Bitmap(Path.Combine(EditorWindow.Instance.LauncherDir, "background_menu.png")))
+				{
+					_textureId = TextureManager.GetOrRegister("bg", img, true);
+				}
+			}
+			 */
+
 			if (File.Exists(Properties.Settings.Default.LastFile))
 			{
 				_lastMapButton = new GuiButton(3, 0, 0, 256, 48, "EDIT LAST MAP");
@@ -50,7 +63,16 @@ namespace Sound_Space_Editor.Gui
 
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
+
 			var size = EditorWindow.Instance.ClientSize;
+			/*
+			if (bgImg)
+			{
+				GL.Color4(Color.FromArgb(255, 255, 255, 255));
+				Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
+			}
+			*/
+
 			Glu.RenderTexturedQuad(ClientRectangle.Width / 2 - 400 / 2, ClientRectangle.Height / 2 - 300, 400, 400, 0, 0, 1, 1, logoTxt);
 			base.Render(delta, mouseX, mouseY);
 		}

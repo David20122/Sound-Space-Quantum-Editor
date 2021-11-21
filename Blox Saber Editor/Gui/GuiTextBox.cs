@@ -59,7 +59,6 @@ namespace Sound_Space_Editor.Gui
 		{
 		}
 
-		// 0 bug go away
 		private void OnFocus(bool flag)
 		{
 			if (flag)

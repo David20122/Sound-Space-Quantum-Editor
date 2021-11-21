@@ -31,6 +31,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiCheckBox ApproachSquares;
 		public readonly GuiCheckBox GridNumbers;
 		public readonly GuiCheckBox Quantum;
+		public readonly GuiCheckBox Numpad;
 		public readonly GuiCheckBox AutoAdvance;
 		public readonly GuiButton BackButton;
 		public readonly GuiButton CopyButton;
@@ -117,6 +118,7 @@ namespace Sound_Space_Editor.Gui
 			GridNumbers = new GuiCheckBox(5, "Grid Numbers", 0, 0, 32, 32, Settings.Default.GridNumbers);
 			Quantum = new GuiCheckBox(5, "Quantum", 0, 0, 32, 32, Settings.Default.Quantum);
 			AutoAdvance = new GuiCheckBox(5, "Auto-Advance", 0, 0, 32, 32, Settings.Default.AutoAdvance);
+			Numpad = new GuiCheckBox(5, "Use Numpad", 0, 0, 32, 32, Settings.Default.Numpad);
 
 			Bpm.Focused = true;
 			Offset.Focused = true;
@@ -143,6 +145,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(GridNumbers);
 			Buttons.Add(Quantum);
 			Buttons.Add(AutoAdvance);
+			Buttons.Add(Numpad);
 			Buttons.Add(SetOffset);
 			Buttons.Add(BackButton);
 			Buttons.Add(CopyButton);
@@ -213,7 +216,7 @@ namespace Sound_Space_Editor.Gui
 			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 			fr.Render("BPM:", (int)Bpm.ClientRectangle.X, (int)Bpm.ClientRectangle.Y - 24, 24);
 			fr.Render("BPM Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
-			fr.Render("SFX Offset[ms]:", (int)SfxOffset.ClientRectangle.X, (int)SfxOffset.ClientRectangle.Y - 34, 24);
+			fr.Render("SFX Offset[ms]:", (int)SfxOffset.ClientRectangle.X - 10, (int)SfxOffset.ClientRectangle.Y - 34, 24);
 			fr.Render("Options:", (int)Autoplay.ClientRectangle.X, (int)Autoplay.ClientRectangle.Y - 26, 24);
 			var divisor = $"Beat Divisor: {BeatSnapDivisor.Value + 1}";
 			var divisorW = fr.GetWidth(divisor, 24);
@@ -396,6 +399,7 @@ namespace Sound_Space_Editor.Gui
 					Settings.Default.GridNumbers = GridNumbers.Toggle;
 					Settings.Default.Quantum = Quantum.Toggle;
 					Settings.Default.AutoAdvance = AutoAdvance.Toggle;
+					Settings.Default.Numpad = Numpad.Toggle;
 					Settings.Default.SfxOffset = SfxOffset.Text;
 					Settings.Default.Save();
 					break;
@@ -436,6 +440,7 @@ namespace Sound_Space_Editor.Gui
 			ApproachSquares.ClientRectangle.Y = Autoplay.ClientRectangle.Bottom + 10;
 			GridNumbers.ClientRectangle.Y = ApproachSquares.ClientRectangle.Bottom + 10;
 			Quantum.ClientRectangle.Y = GridNumbers.ClientRectangle.Bottom + 10;
+			Numpad.ClientRectangle.Y = Quantum.ClientRectangle.Bottom + 10;
 			AutoAdvance.ClientRectangle.Y = CopyButton.ClientRectangle.Y - 10;
 
 			Bpm.ClientRectangle.X = 10;
@@ -449,6 +454,7 @@ namespace Sound_Space_Editor.Gui
 			ApproachSquares.ClientRectangle.X = Bpm.ClientRectangle.X;
 			GridNumbers.ClientRectangle.X = Bpm.ClientRectangle.X;
 			Quantum.ClientRectangle.X = Bpm.ClientRectangle.X;
+			Numpad.ClientRectangle.X = Bpm.ClientRectangle.X;
 			AutoAdvance.ClientRectangle.X = BeatSnapDivisor.ClientRectangle.X + 20;
 
 			_toast.ClientRectangle.X = size.Width / 2f;

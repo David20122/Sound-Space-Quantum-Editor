@@ -375,8 +375,10 @@ namespace Sound_Space_Editor.Gui
 
 				float x = ScreenX - posX + note.Ms / 1000f * cubeStep;
 
+				/*
 				if (x < rect.X - noteSize || x > rect.Width)
 					continue;
+				*/
 
 				float y = rect.Y + gap / 2;
 

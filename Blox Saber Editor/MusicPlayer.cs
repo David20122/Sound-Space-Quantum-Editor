@@ -15,6 +15,8 @@ namespace Sound_Space_Editor
 		private int streamFileID;
 		private int streamID;
 		private string lastFile;
+		public float originval;
+
 		//private float[] samples;
 
 		public ModelRaw WaveModel;
@@ -124,6 +126,8 @@ namespace Sound_Space_Editor
 
 			Tempo = 1;
 
+			Bass.BASS_ChannelGetAttribute(streamID, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, ref originval);
+
 			Reset();
 		}
 
@@ -185,7 +189,7 @@ namespace Sound_Space_Editor
 			{
 				CheckDevice();
 
-				Bass.BASS_ChannelSetAttribute(streamID, BASSAttribute.BASS_ATTRIB_FREQ, value * 44100);
+				Bass.BASS_ChannelSetAttribute(streamID, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, originval * value);
 			}
 			get
 			{
@@ -193,9 +197,9 @@ namespace Sound_Space_Editor
 
 				float val = 0;
 
-				Bass.BASS_ChannelGetAttribute(streamID, BASSAttribute.BASS_ATTRIB_FREQ, ref val);
+				Bass.BASS_ChannelGetAttribute(streamID, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, ref val);
 
-				return val / 44100;
+				return -(val + 95) / 100;
 			}
 		}
 

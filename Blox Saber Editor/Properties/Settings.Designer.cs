@@ -154,5 +154,20 @@ namespace Sound_Space_Editor.Properties {
                 this["SfxOffset"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Numpad
+        {
+            get
+            {
+                return ((bool)(this["Numpad"]));
+            }
+            set
+            {
+                this["Numpad"] = value;
+            }
+        }
     }
 }
