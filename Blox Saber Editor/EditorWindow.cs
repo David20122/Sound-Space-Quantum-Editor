@@ -1135,7 +1135,7 @@ namespace Sound_Space_Editor
 						_saved = false;
 					}
 
-					if (e.Key == Key.Delete && SelectedNotes.Count > 0)
+					if ((e.Key == Key.Delete || e.Key == Key.BackSpace) && SelectedNotes.Count > 0)
 					{
 						var toRemove = new List<Note>(SelectedNotes);
 
