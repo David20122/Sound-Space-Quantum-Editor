@@ -70,7 +70,7 @@ namespace Sound_Space_Editor.Gui
 				Glu.RenderQuad((int)(rect.X + lx), (int)(rect.Y), 1, rect.Height + 1);
 			}
 
-			if (editor.NoteAlign.Value != 1)
+			if (editor.NoteAlign.Value != 1 && editor.QuantumGridLines.Toggle)
 			{
 				GL.Begin(PrimitiveType.Lines);
 

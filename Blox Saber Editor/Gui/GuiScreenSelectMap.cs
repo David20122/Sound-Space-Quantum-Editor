@@ -132,7 +132,7 @@ namespace Sound_Space_Editor.Gui
 					}
 					break;
 				case 2:
-					if (importmapclicked == false)
+					/*if (importmapclicked == false)
 					{
 						importmapclicked = true;
 						_pasteDataButton.Visible = true;
@@ -143,7 +143,29 @@ namespace Sound_Space_Editor.Gui
 						importmapclicked = false;
 						_pasteDataButton.Visible = false;
 						_githubButton.Visible = false;
+					}*/
+
+					try
+                    {
+						var clipboard = Clipboard.GetText();
+						SecureWebClient wc = new SecureWebClient();
+						try
+						{
+							while (true)
+							{
+								clipboard = wc.DownloadString(clipboard);
+							}
+						}
+						catch
+						{
+							EditorWindow.Instance.LoadMap(clipboard, false);
+						}
 					}
+					catch
+                    {
+
+                    }
+					
 					break;
 				case 3:
 					EditorWindow.Instance.LoadFile(Properties.Settings.Default.LastFile);

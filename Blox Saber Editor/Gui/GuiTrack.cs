@@ -12,6 +12,8 @@ namespace Sound_Space_Editor.Gui
 		private Note _lastPlayedNote;
 		public Note MouseOverNote;
 
+		private double _lastPlayedMS;
+
 		public float ScreenX = 300;
 
 		public static float Bpm = 0;//150;
@@ -303,6 +305,7 @@ namespace Sound_Space_Editor.Gui
 
 						if (j < BeatDivisor && xo < endLineX)
 						{
+
 							var half = j == BeatDivisor / 2 && BeatDivisor % 2 == 0;
 
 							if (half)
@@ -318,6 +321,27 @@ namespace Sound_Space_Editor.Gui
 					}
 
 					lineX += lineSpace;
+				}
+			}
+
+			if (Bpm > 0)
+            {
+				if (editor.GuiScreen is GuiScreenEditor gse && gse.Metronome.Toggle)
+                {
+					var offset = 0L;
+					long.TryParse(gse.SfxOffset.Text, out offset);
+
+					float ms = (float)editor.MusicPlayer.CurrentTime.TotalMilliseconds - offset;
+					float interval = 60000 / (Bpm * BeatDivisor);
+					float remainder = (ms - BpmOffset) % interval;
+					float closestMS = ms - BpmOffset - remainder;
+
+					if (_lastPlayedMS != closestMS && remainder >= 0 && editor.MusicPlayer.IsPlaying)
+					{
+						_lastPlayedMS = closestMS;
+
+						editor.SoundPlayer.Play("metronome", gse.SfxVolume.Value / (float)gse.SfxVolume.MaxValue, editor.MusicPlayer.Tempo);
+					}
 				}
 			}
 

@@ -39,7 +39,7 @@ namespace Sound_Space_Editor
 		public Discord.NetworkManager networkManager;
 		public Discord.LobbyManager lobbyManager;
 
-		public static string version = "1.6";
+		public static string version = "1.6.1";
 
 		public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
 
@@ -132,6 +132,7 @@ namespace Sound_Space_Editor
 
 			SoundPlayer.Cache("hit");
 			SoundPlayer.Cache("click");
+			SoundPlayer.Cache("metronome");
 
 			inputState = "keyboard";
 
@@ -451,7 +452,7 @@ namespace Sound_Space_Editor
 
 					editor.Tempo.Value = tick;
 
-					MusicPlayer.Tempo = MathHelper.Clamp(0.2f + tick * 0.1f, 0.2f, 1);
+					MusicPlayer.Tempo = MathHelper.Clamp(0.2f + tick * 0.05f, 0.2f, 1);
 				}
 				if (editor.NoteAlign.Dragging)
 				{
@@ -1414,8 +1415,14 @@ namespace Sound_Space_Editor
 												*/
 						var increment = (float)(gse.NoteAlign.Value + 1f) / 3f;
 
-						var newX = (float)(Math.Floor(((pos.X - (rect.X + (rect.Width / 3))) / rect.Width * 3) * increment) / increment);
-						var newY = (float)(Math.Floor(((pos.Y - (rect.Y + (rect.Height / 3))) / rect.Height * 3) * increment) / increment);
+						var newX = (float)((pos.X - (rect.X + (rect.Width / 2))) / rect.Width * 3);
+						var newY = (float)((pos.Y - (rect.Y + (rect.Height / 2))) / rect.Height * 3);
+
+						if (editor.QuantumGridSnap.Toggle)
+                        {
+							newX = (float)(Math.Floor(newX * increment) / increment);
+							newY = (float)(Math.Floor(newY * increment) / increment);
+						}
 
 						newX = (float)Math.Max((double)-1.850, (double)newX);
 						newY = (float)Math.Max((double)-1.850, (double)newY);
