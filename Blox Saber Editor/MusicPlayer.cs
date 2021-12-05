@@ -120,12 +120,13 @@ namespace Sound_Space_Editor
 			}
 
 			var stream = Bass.BASS_StreamCreateFile(file, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_STREAM_PRESCAN | BASSFlag.BASS_FX_FREESOURCE);
+			var tempo = Tempo;
 
 			streamFileID = stream;
 			streamID = BassFx.BASS_FX_TempoCreate(streamFileID, BASSFlag.BASS_STREAM_PRESCAN);
 
-			Tempo = 1;
-
+			Tempo = tempo;
+			
 			Bass.BASS_ChannelGetAttribute(streamID, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, ref originval);
 
 			Reset();

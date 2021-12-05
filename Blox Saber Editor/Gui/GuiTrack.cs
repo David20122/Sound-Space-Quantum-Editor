@@ -19,7 +19,7 @@ namespace Sound_Space_Editor.Gui
 		public static float Bpm = 0;//150;
 		public static long BpmOffset = 0; //in ms
 		public static string wv = null;
-		public int BeatDivisor = 8;
+		public static int BeatDivisor = 4;
 
 		public GuiTrack(float y, float sy) : base(0, y, EditorWindow.Instance.ClientSize.Width, sy)
 		{
@@ -324,7 +324,7 @@ namespace Sound_Space_Editor.Gui
 				}
 			}
 
-			if (Bpm > 0)
+			if (Bpm > 33)
             {
 				if (editor.GuiScreen is GuiScreenEditor gse && gse.Metronome.Toggle)
                 {
@@ -395,7 +395,8 @@ namespace Sound_Space_Editor.Gui
 					}
 				}
 
-				note.Color = _cs.Next();
+				//caused flashing
+				//note.Color = _cs.Next();
 
 				float x = ScreenX - posX + note.Ms / 1000f * cubeStep;
 

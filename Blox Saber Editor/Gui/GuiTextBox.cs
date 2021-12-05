@@ -37,6 +37,7 @@ namespace Sound_Space_Editor.Gui
 					OnChanged?.Invoke(null, Text);
 
 				_cursorPos = Math.Min(_cursorPos, (_text = value).Length);
+				
 			}
 		}
 
@@ -77,7 +78,7 @@ namespace Sound_Space_Editor.Gui
 				{
 					if (hasDecimalPoint)
 					{
-						var text = Text.Trim('0');
+						var text = Text;
 
 						if (text.Length > 0 && text[text.Length - 1].ToString() == CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
 						{
@@ -90,6 +91,7 @@ namespace Sound_Space_Editor.Gui
 
 							Text = parsed.ToString();
 						}
+
 					}
 					if (decimal.TryParse(_text, out var num) && num == (long)num)
 					{
@@ -172,6 +174,16 @@ namespace Sound_Space_Editor.Gui
 				Focused = false;
 				return;
 			}
+
+			var textwidth = EditorWindow.Instance.FontRenderer.GetWidth(_text, 24);
+			var posX = x - ClientRectangle.X - (ClientRectangle.Width - textwidth) / 2;
+			var letterwidth = textwidth / _text.Length;
+
+			posX = Math.Max(0, posX);
+			posX = Math.Min(textwidth, posX);
+			posX = (float)Math.Floor(posX / letterwidth + 0.3);
+
+			_cursorPos = (int)posX;
 
 			Focused = true;
 		}

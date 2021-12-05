@@ -67,7 +67,7 @@ namespace Sound_Space_Editor.Gui
 			IsMouseOver = IsMouseOverr;
 
 			_alpha = MathHelper.Clamp(_alpha + (IsMouseOver ? 10 : -10) * delta, 0, 1);
-
+			
 			if (Texture > 0)
 			{
 				if (IsMouseOver)

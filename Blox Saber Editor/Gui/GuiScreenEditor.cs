@@ -27,6 +27,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiTextBox Offset;
 		public readonly GuiTextBox SfxOffset;
 		public readonly GuiTextBox JumpMSBox;
+		public readonly GuiTextBox RotateBox;
 		public readonly GuiCheckBox Reposition;
 		public readonly GuiCheckBox Autoplay;
 		public readonly GuiCheckBox ApproachSquares;
@@ -41,6 +42,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiButton CopyButton;
 		public readonly GuiButton SetOffset;
 		public readonly GuiButton JumpMSButton;
+		public readonly GuiButton RotateButton;
         public float AutoSaveTimer { get; private set; } = 0f;
 
 		private readonly GuiLabel _toast;
@@ -87,6 +89,13 @@ namespace Sound_Space_Editor.Gui
 				Numeric = true,
 				CanBeNegative = false,
 			};
+			RotateBox = new GuiTextBox(0, 0, 128, 32)
+			{
+				Text = "0",
+				Centered = true,
+				Numeric = true,
+				CanBeNegative = false,
+			};
 			SfxOffset = new GuiTextBox(EditorWindow.Instance.ClientSize.Width - 128, 0, 128, 32)
 			{
 				Text = "0",
@@ -109,8 +118,8 @@ namespace Sound_Space_Editor.Gui
 			};
 
 			Timeline.Snap = false;
-			BeatSnapDivisor.Value = Track.BeatDivisor - 1;
-			BeatSnapDivisor.MaxValue = 23;
+			BeatSnapDivisor.Value = GuiTrack.BeatDivisor - 1;
+			BeatSnapDivisor.MaxValue = 31;
 
 			MasterVolume = new GuiSlider(0, 0, 40, 256)
 			{
@@ -126,6 +135,7 @@ namespace Sound_Space_Editor.Gui
 			CopyButton = new GuiButton(4, 0, 0, Grid.ClientRectangle.Width + 1, 42, "COPY MAP DATA");
 
 			JumpMSButton = new GuiButton(6, 0, 0, 64, 32, "JUMP");
+			RotateButton = new GuiButton(7, 0, 0, 64, 32, "ROTATE");
 
 			Autoplay = new GuiCheckBox(5, "Autoplay", 0, 0, 32, 32, Settings.Default.Autoplay);
 			ApproachSquares = new GuiCheckBox(5, "Approach Squares", 0, 0, 32, 32, Settings.Default.ApproachSquares);
@@ -141,16 +151,19 @@ namespace Sound_Space_Editor.Gui
 			Offset.Focused = true;
 			SfxOffset.Focused = true;
 			JumpMSBox.Focused = true;
+			RotateBox.Focused = true;
 
 			Bpm.OnKeyDown(Key.Right, false);
 			Offset.OnKeyDown(Key.Right, false);
 			SfxOffset.OnKeyDown(Key.Right, false);
 			JumpMSBox.OnKeyDown(Key.Right, false);
+			RotateBox.OnKeyDown(Key.Right, false);
 
 			Bpm.Focused = false;
 			Offset.Focused = false;
 			SfxOffset.Focused = false;
 			JumpMSBox.Focused = false;
+			RotateBox.Focused = false;
 
 			Buttons.Add(playPause);
 			Buttons.Add(Timeline);
@@ -173,6 +186,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(BackButton);
 			Buttons.Add(CopyButton);
 			Buttons.Add(JumpMSButton);
+			Buttons.Add(RotateButton);
 
 			OnResize(EditorWindow.Instance.ClientSize);
 
@@ -242,6 +256,7 @@ namespace Sound_Space_Editor.Gui
 			fr.Render("BPM Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
 			fr.Render("SFX Offset[ms]:", (int)SfxOffset.ClientRectangle.X - 10, (int)SfxOffset.ClientRectangle.Y - 34, 24);
 			fr.Render("Jump to MS:", (int)JumpMSBox.ClientRectangle.X, (int)JumpMSBox.ClientRectangle.Y - 34, 24);
+			fr.Render("Rotate by Degrees:", (int)RotateBox.ClientRectangle.X, (int)RotateBox.ClientRectangle.Y - 34, 24);
 			fr.Render("Options:", (int)Autoplay.ClientRectangle.X, (int)Autoplay.ClientRectangle.Y - 26, 24);
 			var divisor = $"Beat Divisor: {BeatSnapDivisor.Value + 1}";
 			var divisorW = fr.GetWidth(divisor, 24);
@@ -307,11 +322,12 @@ namespace Sound_Space_Editor.Gui
 			Offset.Render(delta, mouseX, mouseY);
 			SfxOffset.Render(delta, mouseX, mouseY);
 			JumpMSBox.Render(delta, mouseX, mouseY);
+			RotateBox.Render(delta, mouseX, mouseY);
 		}
 
 		public override bool AllowInput()
 		{
-			return !Bpm.Focused && !Offset.Focused && !SfxOffset.Focused && !JumpMSBox.Focused;
+			return !Bpm.Focused && !Offset.Focused && !SfxOffset.Focused && !JumpMSBox.Focused && !RotateBox.Focused;
 		}
 
 		public override void OnKeyTyped(char key)
@@ -320,6 +336,7 @@ namespace Sound_Space_Editor.Gui
 			Offset.OnKeyTyped(key);
 			SfxOffset.OnKeyTyped(key);
 			JumpMSBox.OnKeyTyped(key);
+			RotateBox.OnKeyTyped(key);
 
 			UpdateTrack();
 		}
@@ -330,6 +347,7 @@ namespace Sound_Space_Editor.Gui
 			Offset.OnKeyDown(key, control);
 			SfxOffset.OnKeyDown(key, control);
 			JumpMSBox.OnKeyDown(key, control);
+			RotateBox.OnKeyDown(key, control);
 
 			UpdateTrack();
 		}
@@ -340,6 +358,7 @@ namespace Sound_Space_Editor.Gui
 			Offset.OnMouseClick(x, y);
 			SfxOffset.OnMouseClick(x, y);
 			JumpMSBox.OnMouseClick(x, y);
+			RotateBox.OnMouseClick(x, y);
 
 			base.OnMouseClick(x, y);
 		}
@@ -440,6 +459,44 @@ namespace Sound_Space_Editor.Gui
 					if (time <= EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds)
 						EditorWindow.Instance.MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(time);
 					break;
+				case 7:
+					var degrees = float.Parse(RotateBox.Text);
+
+					foreach (var node in EditorWindow.Instance.SelectedNotes)
+                    {
+						var angle = MathHelper.RadiansToDegrees(Math.Atan2(node.Y - 1, node.X - 1));
+						var distance = Math.Sqrt(Math.Pow(node.X - 1, 2) + Math.Pow(node.Y - 1, 2));
+						var finalradians = MathHelper.DegreesToRadians(angle + degrees);
+
+						node.X = (float)(Math.Cos(finalradians) * distance + 1);
+						node.Y = (float)(Math.Sin(finalradians) * distance + 1);
+                    }
+					EditorWindow.Instance.UndoRedo.AddUndoRedo("ROTATE " + degrees.ToString(), () =>
+					{
+						var undodeg = 360 - degrees;
+
+						foreach (var node in EditorWindow.Instance.SelectedNotes)
+						{
+							var angle = MathHelper.RadiansToDegrees(Math.Atan2(node.Y - 1, node.X - 1));
+							var distance = Math.Sqrt(Math.Pow(node.X - 1, 2) + Math.Pow(node.Y - 1, 2));
+							var finalradians = MathHelper.DegreesToRadians(angle + undodeg);
+
+							node.X = (float)(Math.Cos(finalradians) * distance + 1);
+							node.Y = (float)(Math.Sin(finalradians) * distance + 1);
+						}
+					}, () =>
+					{
+						foreach (var node in EditorWindow.Instance.SelectedNotes)
+						{
+							var angle = MathHelper.RadiansToDegrees(Math.Atan2(node.Y - 1, node.X - 1));
+							var distance = Math.Sqrt(Math.Pow(node.X - 1, 2) + Math.Pow(node.Y - 1, 2));
+							var finalradians = MathHelper.DegreesToRadians(angle + degrees);
+
+							node.X = (float)(Math.Cos(finalradians) * distance + 1);
+							node.Y = (float)(Math.Sin(finalradians) * distance + 1);
+						}
+					});
+					break;
 			}
 		}
 
@@ -458,8 +515,8 @@ namespace Sound_Space_Editor.Gui
 			SfxVolume.ClientRectangle.Location = new PointF(MasterVolume.ClientRectangle.X - 64, EditorWindow.Instance.ClientSize.Height - SfxVolume.ClientRectangle.Height - 64);
 
 			Grid.ClientRectangle = new RectangleF((int)(size.Width / 2f - Grid.ClientRectangle.Width / 2), (int)((size.Height + Track.ClientRectangle.Height - 64) / 2 - Grid.ClientRectangle.Height / 2), Grid.ClientRectangle.Width, Grid.ClientRectangle.Height);
-			BackButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Bottom + 5 + 1 + 33);
-			CopyButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 30);
+			BackButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Bottom + 5 + 1 + 78);
+			CopyButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 75);
 			BeatSnapDivisor.ClientRectangle.Location = new PointF(EditorWindow.Instance.ClientSize.Width - BeatSnapDivisor.ClientRectangle.Width, Bpm.ClientRectangle.Y);
 			Timeline.ClientRectangle = new RectangleF(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64);
 			Tempo.ClientRectangle = new RectangleF(EditorWindow.Instance.ClientSize.Width - 512, EditorWindow.Instance.ClientSize.Height - 64, 512, 64);
@@ -474,6 +531,8 @@ namespace Sound_Space_Editor.Gui
 			Reposition.ClientRectangle.Y = Offset.ClientRectangle.Bottom + 10;
 			BeatSnapDivisor.ClientRectangle.Y = Bpm.ClientRectangle.Y;
             NoteAlign.ClientRectangle.Y = BeatSnapDivisor.ClientRectangle.Bottom + 5 + 24;
+			RotateBox.ClientRectangle.Y = JumpMSBox.ClientRectangle.Y - 80;
+			RotateButton.ClientRectangle.Y = RotateBox.ClientRectangle.Y;
 
             Autoplay.ClientRectangle.Y = Reposition.ClientRectangle.Bottom + 32 + 20;
 			ApproachSquares.ClientRectangle.Y = Autoplay.ClientRectangle.Bottom + 10;
@@ -481,7 +540,7 @@ namespace Sound_Space_Editor.Gui
 			Quantum.ClientRectangle.Y = GridNumbers.ClientRectangle.Bottom + 10;
 			Numpad.ClientRectangle.Y = Quantum.ClientRectangle.Bottom + 10;
 			QuantumGridLines.ClientRectangle.Y = Numpad.ClientRectangle.Bottom + 10;
-			AutoAdvance.ClientRectangle.Y = CopyButton.ClientRectangle.Y - 10;
+			AutoAdvance.ClientRectangle.Y = CopyButton.ClientRectangle.Y + 35;
 			QuantumGridSnap.ClientRectangle.Y = QuantumGridLines.ClientRectangle.Bottom + 10;
 			Metronome.ClientRectangle.Y = QuantumGridSnap.ClientRectangle.Bottom + 10;
 
@@ -493,6 +552,8 @@ namespace Sound_Space_Editor.Gui
 			SetOffset.ClientRectangle.X = Bpm.ClientRectangle.Right + 5;
 			NoteAlign.ClientRectangle.X = BeatSnapDivisor.ClientRectangle.X;
 			Reposition.ClientRectangle.X = Bpm.ClientRectangle.X;
+			RotateBox.ClientRectangle.X = JumpMSBox.ClientRectangle.X;
+			RotateButton.ClientRectangle.X = JumpMSButton.ClientRectangle.X;
 
 			Autoplay.ClientRectangle.X = Bpm.ClientRectangle.X;
 			ApproachSquares.ClientRectangle.X = Bpm.ClientRectangle.X;
@@ -532,6 +593,11 @@ namespace Sound_Space_Editor.Gui
 					decimalPont = true;
 				}
 
+				if (text.Contains(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator))
+                {
+					decimalPont = true;
+                }
+
 				decimal.TryParse(text, out var bpm);
 
 				if (bpm < 0)
@@ -562,7 +628,7 @@ namespace Sound_Space_Editor.Gui
 				if (long.TryParse(JumpMSBox.Text, out var jumpMS))
 					if (jumpMS > EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds)
 						jumpMS = (long)EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds;
-					JumpMSBox.Text = jumpMS.ToString();
+				JumpMSBox.Text = jumpMS.ToString();
 			}
 		}
 
