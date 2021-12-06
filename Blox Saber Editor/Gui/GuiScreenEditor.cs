@@ -628,7 +628,8 @@ namespace Sound_Space_Editor.Gui
 				if (long.TryParse(JumpMSBox.Text, out var jumpMS))
 					if (jumpMS > EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds)
 						jumpMS = (long)EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds;
-				JumpMSBox.Text = jumpMS.ToString();
+				if (jumpMS.ToString() != "0")
+					JumpMSBox.Text = jumpMS.ToString();
 			}
 		}
 
