@@ -536,27 +536,7 @@ namespace Sound_Space_Editor.Gui
 					GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
 					break;
 				case 9:
-					for (int i = 0; i < GuiTrack.BPMs.Count; i++)
-                    {
-						var bpm = GuiTrack.BPMs[i];
-						if (bpm.bpm == GuiTrack.TextBpm && bpm.Ms == GuiTrack.BpmOffset)
-                        {
-							GuiTrack.BPMs.RemoveAt(i);
-                        }
-                    }
-					if (GuiTrack.BPMs.Count == 0)
-                    {
-						GuiTrack.TextBpm = 0;
-						GuiTrack.BpmOffset = 0;
-                    }
-					else
-                    {
-						var currentbpm = EditorWindow.Instance.GetCurrentBpm();
-						GuiTrack.TextBpm = currentbpm.bpm;
-						GuiTrack.BpmOffset = currentbpm.Ms;
-                    }
-					Bpm.Text = GuiTrack.TextBpm.ToString();
-					Offset.Text = GuiTrack.BpmOffset.ToString();
+					GuiTrack.BPMs.Remove(EditorWindow.Instance.GetCurrentBpm());
 					GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
 					break;
 				case 10:
@@ -564,20 +544,20 @@ namespace Sound_Space_Editor.Gui
 					Offset.Text = GuiTrack.BpmOffset.ToString();
 					break;
 				case 11:
-					var curbpm = EditorWindow.Instance.GetCurrentBpm();
-					GuiTrack.TextBpm = curbpm.bpm;
-					GuiTrack.BpmOffset = curbpm.Ms;
+					var currentbpm = EditorWindow.Instance.GetCurrentBpm();
+					GuiTrack.TextBpm = currentbpm.bpm;
+					GuiTrack.BpmOffset = currentbpm.Ms;
 					Bpm.Text = GuiTrack.TextBpm.ToString();
 					Offset.Text = GuiTrack.BpmOffset.ToString();
 					break;
 				case 12:
 					var currentBpm = EditorWindow.Instance.GetCurrentBpm();
-					if (float.TryParse(Bpm.Text, out float bPM) && long.TryParse(Offset.Text, out long offsetms))
+					if (float.TryParse(Bpm.Text, out float bPM) && long.TryParse(Offset.Text, out long ms))
                     {
 						currentBpm.bpm = bPM;
-						currentBpm.Ms = offsetms;
+						currentBpm.Ms = ms;
 						GuiTrack.TextBpm = bPM;
-						GuiTrack.BpmOffset = offsetms;
+						GuiTrack.BpmOffset = ms;
                     }
 					break;
 			}
