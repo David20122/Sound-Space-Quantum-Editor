@@ -143,11 +143,11 @@ namespace Sound_Space_Editor.Gui
 			JumpMSButton = new GuiButton(6, 0, 0, 64, 32, "JUMP");
 			RotateButton = new GuiButton(7, 0, 0, 64, 32, "ROTATE");
 
-			UpdateBpm = new GuiButton(12, 0, 0, 160, 32, "UPDATE BPM");
-			AddBpm = new GuiButton(8, 0, 0, 160, 32, "ADD BPM");
-			RemoveBpm = new GuiButton(9, 0, 0, 160, 32, "REMOVE BPM");
-			SetOffsetAtMS = new GuiButton(10, 0, 0, 160, 32, "SET HERE");
-			CopyCurrentBpm = new GuiButton(11, 0, 0, 160, 32, "GET CURRENT BPM");
+			UpdateBpm = new GuiButton(12, 0, 0, 180, 32, "UPDATE CURRENT BPM");
+			AddBpm = new GuiButton(8, 0, 0, 180, 32, "ADD BPM");
+			RemoveBpm = new GuiButton(9, 0, 0, 180, 32, "REMOVE CURRENT BPM");
+			SetOffsetAtMS = new GuiButton(10, 0, 0, 180, 32, "SET OFFSET HERE");
+			CopyCurrentBpm = new GuiButton(11, 0, 0, 180, 32, "GET CURRENT BPM");
 
 			Autoplay = new GuiCheckBox(5, "Autoplay", 0, 0, 32, 32, Settings.Default.Autoplay);
 			ApproachSquares = new GuiCheckBox(5, "Approach Squares", 0, 0, 32, 32, Settings.Default.ApproachSquares);
