@@ -43,6 +43,12 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiButton SetOffset;
 		public readonly GuiButton JumpMSButton;
 		public readonly GuiButton RotateButton;
+
+		public readonly GuiButton UpdateBpm;
+		public readonly GuiButton AddBpm;
+		public readonly GuiButton RemoveBpm;
+		public readonly GuiButton SetOffsetAtMS;
+		public readonly GuiButton CopyCurrentBpm;
         public float AutoSaveTimer { get; private set; } = 0f;
 
 		private readonly GuiLabel _toast;
@@ -137,6 +143,12 @@ namespace Sound_Space_Editor.Gui
 			JumpMSButton = new GuiButton(6, 0, 0, 64, 32, "JUMP");
 			RotateButton = new GuiButton(7, 0, 0, 64, 32, "ROTATE");
 
+			UpdateBpm = new GuiButton(12, 0, 0, 160, 32, "UPDATE BPM");
+			AddBpm = new GuiButton(8, 0, 0, 160, 32, "ADD BPM");
+			RemoveBpm = new GuiButton(9, 0, 0, 160, 32, "REMOVE BPM");
+			SetOffsetAtMS = new GuiButton(10, 0, 0, 160, 32, "SET HERE");
+			CopyCurrentBpm = new GuiButton(11, 0, 0, 160, 32, "GET CURRENT BPM");
+
 			Autoplay = new GuiCheckBox(5, "Autoplay", 0, 0, 32, 32, Settings.Default.Autoplay);
 			ApproachSquares = new GuiCheckBox(5, "Approach Squares", 0, 0, 32, 32, Settings.Default.ApproachSquares);
 			GridNumbers = new GuiCheckBox(5, "Grid Numbers", 0, 0, 32, 32, Settings.Default.GridNumbers);
@@ -187,6 +199,11 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(CopyButton);
 			Buttons.Add(JumpMSButton);
 			Buttons.Add(RotateButton);
+			Buttons.Add(UpdateBpm);
+			Buttons.Add(AddBpm);
+			Buttons.Add(RemoveBpm);
+			Buttons.Add(SetOffsetAtMS);
+			Buttons.Add(CopyCurrentBpm);
 
 			OnResize(EditorWindow.Instance.ClientSize);
 
@@ -461,8 +478,9 @@ namespace Sound_Space_Editor.Gui
 					break;
 				case 7:
 					var degrees = float.Parse(RotateBox.Text);
+					var nodes = EditorWindow.Instance.SelectedNotes.ToList();
 
-					foreach (var node in EditorWindow.Instance.SelectedNotes)
+					foreach (var node in nodes)
                     {
 						var angle = MathHelper.RadiansToDegrees(Math.Atan2(node.Y - 1, node.X - 1));
 						var distance = Math.Sqrt(Math.Pow(node.X - 1, 2) + Math.Pow(node.Y - 1, 2));
@@ -475,7 +493,7 @@ namespace Sound_Space_Editor.Gui
 					{
 						var undodeg = 360 - degrees;
 
-						foreach (var node in EditorWindow.Instance.SelectedNotes)
+						foreach (var node in nodes)
 						{
 							var angle = MathHelper.RadiansToDegrees(Math.Atan2(node.Y - 1, node.X - 1));
 							var distance = Math.Sqrt(Math.Pow(node.X - 1, 2) + Math.Pow(node.Y - 1, 2));
@@ -486,7 +504,7 @@ namespace Sound_Space_Editor.Gui
 						}
 					}, () =>
 					{
-						foreach (var node in EditorWindow.Instance.SelectedNotes)
+						foreach (var node in nodes)
 						{
 							var angle = MathHelper.RadiansToDegrees(Math.Atan2(node.Y - 1, node.X - 1));
 							var distance = Math.Sqrt(Math.Pow(node.X - 1, 2) + Math.Pow(node.Y - 1, 2));
@@ -496,6 +514,71 @@ namespace Sound_Space_Editor.Gui
 							node.Y = (float)(Math.Sin(finalradians) * distance + 1);
 						}
 					});
+					break;
+				case 8:
+					if (float.TryParse(Bpm.Text, out var BPM) && BPM > 33 && long.TryParse(Offset.Text, out var offset))
+                    {
+						if (ContainsOffset(offset))
+                        {
+							foreach (var bpm in GuiTrack.BPMs)
+                            {
+								if (bpm.Ms == offset)
+                                {
+									bpm.bpm = BPM;
+                                }
+                            }
+                        }
+						else
+                        {
+							GuiTrack.BPMs.Add(new BPM(BPM, offset));
+						}
+					}
+					GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
+					break;
+				case 9:
+					for (int i = 0; i < GuiTrack.BPMs.Count; i++)
+                    {
+						var bpm = GuiTrack.BPMs[i];
+						if (bpm.bpm == GuiTrack.TextBpm && bpm.Ms == GuiTrack.BpmOffset)
+                        {
+							GuiTrack.BPMs.RemoveAt(i);
+                        }
+                    }
+					if (GuiTrack.BPMs.Count == 0)
+                    {
+						GuiTrack.TextBpm = 0;
+						GuiTrack.BpmOffset = 0;
+                    }
+					else
+                    {
+						var currentbpm = EditorWindow.Instance.GetCurrentBpm();
+						GuiTrack.TextBpm = currentbpm.bpm;
+						GuiTrack.BpmOffset = currentbpm.Ms;
+                    }
+					Bpm.Text = GuiTrack.TextBpm.ToString();
+					Offset.Text = GuiTrack.BpmOffset.ToString();
+					GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
+					break;
+				case 10:
+					GuiTrack.BpmOffset = (long)EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds;
+					Offset.Text = GuiTrack.BpmOffset.ToString();
+					break;
+				case 11:
+					var curbpm = EditorWindow.Instance.GetCurrentBpm();
+					GuiTrack.TextBpm = curbpm.bpm;
+					GuiTrack.BpmOffset = curbpm.Ms;
+					Bpm.Text = GuiTrack.TextBpm.ToString();
+					Offset.Text = GuiTrack.BpmOffset.ToString();
+					break;
+				case 12:
+					var currentBpm = EditorWindow.Instance.GetCurrentBpm();
+					if (float.TryParse(Bpm.Text, out float bPM) && long.TryParse(Offset.Text, out long offsetms))
+                    {
+						currentBpm.bpm = bPM;
+						currentBpm.Ms = offsetms;
+						GuiTrack.TextBpm = bPM;
+						GuiTrack.BpmOffset = offsetms;
+                    }
 					break;
 			}
 		}
@@ -534,6 +617,12 @@ namespace Sound_Space_Editor.Gui
 			RotateBox.ClientRectangle.Y = JumpMSBox.ClientRectangle.Y - 80;
 			RotateButton.ClientRectangle.Y = RotateBox.ClientRectangle.Y;
 
+			SetOffsetAtMS.ClientRectangle.Y = SetOffset.ClientRectangle.Y;
+			CopyCurrentBpm.ClientRectangle.Y = SetOffsetAtMS.ClientRectangle.Y + 40;
+			RemoveBpm.ClientRectangle.Y = SetOffsetAtMS.ClientRectangle.Y - 40;
+			AddBpm.ClientRectangle.Y = RemoveBpm.ClientRectangle.Y - 40;
+			UpdateBpm.ClientRectangle.Y = AddBpm.ClientRectangle.Y - 40;
+
             Autoplay.ClientRectangle.Y = Reposition.ClientRectangle.Bottom + 32 + 20;
 			ApproachSquares.ClientRectangle.Y = Autoplay.ClientRectangle.Bottom + 10;
 			GridNumbers.ClientRectangle.Y = ApproachSquares.ClientRectangle.Bottom + 10;
@@ -554,6 +643,12 @@ namespace Sound_Space_Editor.Gui
 			Reposition.ClientRectangle.X = Bpm.ClientRectangle.X;
 			RotateBox.ClientRectangle.X = JumpMSBox.ClientRectangle.X;
 			RotateButton.ClientRectangle.X = JumpMSButton.ClientRectangle.X;
+
+			UpdateBpm.ClientRectangle.X = SetOffset.ClientRectangle.Right + 10;
+			AddBpm.ClientRectangle.X = UpdateBpm.ClientRectangle.X;
+			RemoveBpm.ClientRectangle.X = AddBpm.ClientRectangle.X;
+			SetOffsetAtMS.ClientRectangle.X = RemoveBpm.ClientRectangle.X;
+			CopyCurrentBpm.ClientRectangle.X = SetOffsetAtMS.ClientRectangle.X;
 
 			Autoplay.ClientRectangle.X = Bpm.ClientRectangle.X;
 			ApproachSquares.ClientRectangle.X = Bpm.ClientRectangle.X;
@@ -577,6 +672,21 @@ namespace Sound_Space_Editor.Gui
 			NoteAlign.Dragging = false;
 			BeatSnapDivisor.Dragging = false;
 		}
+
+		private bool ContainsOffset(long ms)
+        {
+			bool containsoffset = false;
+
+			foreach (var bpm in GuiTrack.BPMs)
+            {
+				if (ms == bpm.Ms)
+                {
+					containsoffset = true;
+                }
+            }
+
+			return containsoffset;
+        }
 
 		private void UpdateTrack()
 		{
@@ -604,10 +714,8 @@ namespace Sound_Space_Editor.Gui
 					bpm = 0;
 				else if (bpm > 5000)
 					bpm = 5000;
-				GuiTrack.Bpm = (float)bpm;
-
-				if (GuiTrack.Bpm > 0 && !decimalPont)
-					Bpm.Text = GuiTrack.Bpm.ToString();
+				if (!decimalPont && bpm > 0)
+					Bpm.Text = bpm.ToString();
 			}
 			if (Offset.Focused)
 			{

@@ -743,7 +743,7 @@ namespace Sound_Space_Editor
 
 			if (_draggingTimeline)
 			{
-				MusicPlayer.Stop();
+				MusicPlayer.Pause();
 				OnDraggingTimeline(e.X);
 
 				if (_wasPlaying)
@@ -846,7 +846,7 @@ namespace Sound_Space_Editor
 					if (MusicPlayer.IsPlaying)
 						MusicPlayer.Pause();
 
-					var bpm = GuiTrack.Bpm;
+					var bpm = GetCurrentBpm().bpm;
 
 					if (bpm > 0)
 					{
@@ -859,7 +859,7 @@ namespace Sound_Space_Editor
 							stepSmall = -stepSmall;
 
 						long closestBeat =
-							GetClosestBeat((long)(MusicPlayer.CurrentTime.TotalMilliseconds + stepSmall));
+							GetClosestBeat((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, stepSmall < 0);
 
                         try
                         {
@@ -1107,7 +1107,7 @@ namespace Sound_Space_Editor
 						{
 							if (gse.AutoAdvance.Toggle)
 							{
-								var bpm = GuiTrack.Bpm;
+								var bpm = GetCurrentBpm().bpm;
 								if (bpm < 1)
 								{
 									return;
@@ -1121,7 +1121,7 @@ namespace Sound_Space_Editor
 									var stepSmall = lineSpace / beatDivisor * 1000;
 
 									long closestBeat =
-										GetClosestBeat((long)(MusicPlayer.CurrentTime.TotalMilliseconds + stepSmall));
+										GetClosestBeat((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
                                     try
                                     {
 										MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
@@ -1201,13 +1201,14 @@ namespace Sound_Space_Editor
 					MusicPlayer.Pause();
 					var time = (long)MusicPlayer.CurrentTime.TotalMilliseconds;
 					var maxTime = (long)MusicPlayer.TotalTime.TotalMilliseconds;
-					MusicPlayer.Stop();
 
-					if (GuiTrack.Bpm > 33)
+					var bpm = GetCurrentBpm();
+
+					if (bpm.bpm > 33)
 					{
-						var bpmDivided = 60 / GuiTrack.Bpm * 1000 / GuiTrack.BeatDivisor;
+						var bpmDivided = 60 / bpm.bpm * 1000 / GuiTrack.BeatDivisor;
 
-						var offset = (bpmDivided + GuiTrack.BpmOffset) % bpmDivided;
+						var offset = (bpmDivided + bpm.Ms) % bpmDivided;
 
 						time += (long)(e.DeltaPrecise * bpmDivided);
 
@@ -1280,8 +1281,9 @@ namespace Sound_Space_Editor
 			return true;
 		}
 
-		private long GetClosestBeat(long ms)
+		private long GetClosestBeat(long ms, bool next, bool negative)
 		{
+			/* wayyyy too much going on here
 			var lastDiffMs = long.MaxValue;
 			var closestMs = long.MaxValue;
 
@@ -1343,6 +1345,23 @@ namespace Sound_Space_Editor
 			}
 
 			return closestMs;
+			*/
+
+			var currentbpm = GetCurrentBpm();
+			float interval = 60000 / currentbpm.bpm / GuiTrack.BeatDivisor;
+			float remainder = (ms - currentbpm.Ms) % interval;
+			float closestms = ms - remainder;
+
+			if (remainder > interval / 2)
+				closestms += interval;
+
+			if (next)
+				if (negative)
+					closestms -= interval;
+				else
+					closestms += interval;
+
+			return (long)closestms;
 		}
 
 		private void OnDraggingTimelineNotes(int mouseX)
@@ -1358,9 +1377,9 @@ namespace Sound_Space_Editor
 				var clickOff = clickMs - _dragNoteStartMs;
 				var cursorMs = (int)(Math.Max(0, mouseX - gui.Track.ScreenX + audioTime / 1000 * CubeStep) / CubeStep * 1000) - clickOff;
 
-				if (_draggedNotes.Count > 0 && GuiTrack.Bpm > 0)
+				if (_draggedNotes.Count > 0 && GetCurrentBpm().bpm > 0)
 				{
-					var lineSpace = 60 / GuiTrack.Bpm * CubeStep;
+					var lineSpace = 60 / GetCurrentBpm().bpm * CubeStep;
 					var stepSmall = lineSpace / GuiTrack.BeatDivisor;
 					var snap = stepSmall / 1.75f;
 
@@ -1368,10 +1387,10 @@ namespace Sound_Space_Editor
 
 					if (snap < 1)
 						threshold = 1;
-					else if (snap > 6)
-						threshold = 6;
+					else if (snap > 12)
+						threshold = 12;
 
-					var snappedMs = GetClosestBeat(_draggedNote.Ms);
+					var snappedMs = GetClosestBeat(_draggedNote.Ms, false, false);
 
 					if (Math.Abs(snappedMs - cursorMs) / 1000f * CubeStep <= threshold) //8 pixels
 						msDiff = -(_draggedNote.DragStartMs - snappedMs);
@@ -1540,11 +1559,13 @@ namespace Sound_Space_Editor
 
 				time = (int)Math.Max(0, Math.Min(MusicPlayer.TotalTime.TotalMilliseconds, time));
 
-				if (GuiTrack.Bpm > 33 && time >= GuiTrack.BpmOffset && time < MusicPlayer.TotalTime.TotalMilliseconds)
-				{
-					var bpmDivided = 60 / GuiTrack.Bpm * 1000 / GuiTrack.BeatDivisor;
+				var bpm = GetCurrentBpm();
 
-					var offset = (bpmDivided + GuiTrack.BpmOffset) % bpmDivided;
+				if (bpm.bpm > 33 && time >= bpm.Ms && time < MusicPlayer.TotalTime.TotalMilliseconds)
+				{
+					var bpmDivided = 60 / bpm.bpm * 1000 / GuiTrack.BeatDivisor;
+
+					var offset = (bpmDivided + bpm.Ms) % bpmDivided;
 
 					time = (long)((long)(time / (decimal)bpmDivided) * bpmDivided + offset);
 				}
@@ -1605,7 +1626,7 @@ namespace Sound_Space_Editor
 				Settings.Default.LastFile = file;
 
 				gse.Bpm.Text = "0";
-				GuiTrack.Bpm = 0;
+				GuiTrack.BPMs.Clear();
 				gse.Offset.Text = "0";
 				GuiTrack.BpmOffset = 0;
 				gse.BeatSnapDivisor.Value = 3;
@@ -1630,17 +1651,32 @@ namespace Sound_Space_Editor
 								var property = splits[0].Trim().ToLower();
 								var value = splits[1].Trim().ToLower();
 
-								if (property == "bpm" && decimal.TryParse(value, out var bpm))
+								if (property == "bpm" /*&& decimal.TryParse(value, out var bpm)*/)
 								{
-									gse.Bpm.Text = bpm.ToString();
+									gse.Bpm.Text = value;
+									var bpmsplit = value.Split(',');
+									foreach (var item in bpmsplit)
+                                    {
+										var bpmms = item.Split('|');
+										if (bpmms.Count() > 1)
+                                        {
+											if (float.TryParse(bpmms[0], out var bpm) && int.TryParse(bpmms[1], out var ms))
+											{
+												GuiTrack.BPMs.Add(new BPM(bpm, ms));
+											}
+										}
+										else
+                                        {
+											if (float.TryParse(bpmms[0], out var bpm))
+                                            {
+												GuiTrack.BPMs.Add(new BPM(bpm, 0));
+                                            }
+                                        }
+										
+										GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
+                                    }
 
-									GuiTrack.Bpm = (float)bpm;
-								}
-								else if (property == "offset" && long.TryParse(value, out var offset))
-								{
-									gse.Offset.Text = offset.ToString();
-
-									GuiTrack.BpmOffset = offset;
+									//GuiTrack.Bpm = (float)bpm;
 								}
 								else if (property == "time" && long.TryParse(value, out var time))
 								{
@@ -1657,6 +1693,10 @@ namespace Sound_Space_Editor
 						}
 					}
 				}
+
+				var Bpm = GetCurrentBpm();
+				gse.Bpm.Text = Bpm.bpm.ToString();
+				gse.Offset.Text = Bpm.Ms.ToString();
 			}
 		}
 
@@ -1709,8 +1749,9 @@ namespace Sound_Space_Editor
 				else
 					_soundId = -1;
 
+				GuiTrack.BPMs.Clear();
 				GuiTrack.BpmOffset = 0;
-				GuiTrack.Bpm = 0;
+				GuiTrack.TextBpm = 0;
 			}
 			catch (Exception e)
 			{
@@ -1726,6 +1767,22 @@ namespace Sound_Space_Editor
 		{
 			LoadMap(id.ToString(), false);
 		}
+
+		public BPM GetCurrentBpm()
+        {
+			var curms = MusicPlayer.CurrentTime.TotalMilliseconds;
+			BPM closestbpm = new BPM(0,0);
+
+			foreach (var bpm in GuiTrack.BPMs)
+            {
+				if (bpm.Ms <= curms)
+                {
+					closestbpm = bpm;
+                }
+            }
+
+			return closestbpm;
+        }
 
 		private bool PromptSave()
 		{
@@ -1818,6 +1875,21 @@ namespace Sound_Space_Editor
 			return true;
 		}
 
+		private string BpmsToString()
+        {
+			string final = "";
+
+			foreach (var bpm in GuiTrack.BPMs)
+            {
+				final += $",{bpm.bpm}|{bpm.Ms}";
+            }
+
+			if (final.Length > 0)
+				final = final.Substring(1, final.Length - 1);
+
+			return final;
+        }
+
 		private void WriteIniFile()
 		{
 			if (_file == null)
@@ -1825,7 +1897,7 @@ namespace Sound_Space_Editor
 
 			var iniFile = Path.ChangeExtension(_file, ".ini");
 
-			File.WriteAllLines(iniFile, new[] { $@"BPM={GuiTrack.Bpm}", $@"Offset={GuiTrack.BpmOffset}", $@"Time={(long)MusicPlayer.CurrentTime.TotalMilliseconds}", $@"Divisor={GuiTrack.BeatDivisor}" }, Encoding.UTF8);
+			File.WriteAllLines(iniFile, new[] { $@"BPM={BpmsToString()}", $@"Time={(long)MusicPlayer.CurrentTime.TotalMilliseconds}", $@"Divisor={GuiTrack.BeatDivisor}" }, Encoding.UTF8);
 		}
 
 		private bool LoadSound(long id)

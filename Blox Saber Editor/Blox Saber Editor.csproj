@@ -114,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BassManager.cs" />
+    <Compile Include="BPM.cs" />
     <Compile Include="ColorSequence.cs" />
     <Compile Include="DiscordGameSDK\ActivityManager.cs" />
     <Compile Include="DiscordGameSDK\Constants.cs" />
