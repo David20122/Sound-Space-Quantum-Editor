@@ -40,6 +40,19 @@ namespace Sound_Space_Editor.Gui
 				GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 				Glu.RenderQuad((int)x, y + rect.Height * 2, 1, rect.Height);
 			}
+
+			for (int i = 0; i < GuiTrack.BPMs.Count; i++)
+            {
+				var bpm = GuiTrack.BPMs[i];
+
+				var progress = bpm.Ms / EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds;
+
+				var x = rect.X + progress * rect.Width - 1;
+				var y = rect.Y - rect.Height / 2f;
+
+				GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+				Glu.RenderQuad((int)x, y - rect.Height * 4, 2, rect.Height * 2);
+            }
 		}
 	}
 }

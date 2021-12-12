@@ -108,9 +108,12 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.DirectoryServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BassManager.cs" />
@@ -156,12 +159,21 @@
     </Compile>
     <Compile Include="SoundPlayer.cs" />
     <Compile Include="TextureManager.cs" />
+    <Compile Include="Timing Setup Panel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Timing Setup Panel.Designer.cs">
+      <DependentUpon>Timing Setup Panel.cs</DependentUpon>
+    </Compile>
     <Compile Include="UndoRedo.cs" />
     <Compile Include="UndoRedoAction.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Timing Setup Panel.resx">
+      <DependentUpon>Timing Setup Panel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Help\BassNet.chm" />
     <None Include="OpenTK.dll.config" />

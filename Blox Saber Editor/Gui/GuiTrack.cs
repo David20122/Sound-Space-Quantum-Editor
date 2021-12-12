@@ -234,7 +234,7 @@ namespace Sound_Space_Editor.Gui
 					var gridX = (int)x + indexX * (9 + gridGap) + 5;
 					var gridY = (int)y + indexY * (9 + gridGap) + 5;
 
-					if (note.X == indexX && note.Y == indexY)
+					if (Math.Round(note.X, 3) == indexX && Math.Round(note.Y, 3) == indexY)
 					{
 						GL.Color4(note.Color.R, note.Color.G, note.Color.B, alphaMult);
 						Glu.RenderQuad(gridX, gridY, 9, 9);
@@ -304,15 +304,27 @@ namespace Sound_Space_Editor.Gui
 					if (nextLineX < 0)
 						nextLineX %= lineSpace;
 
-					if (lineSpace > 0 && lineX < rect.Width)
+					if (lineSpace > 0 && lineX < rect.Width && lineX > 0)
 					{
 						//draw offset start line
 						GL.Color4(Color.FromArgb(255, 0, 0));
 						GL.Begin(PrimitiveType.Lines);
 						GL.Vertex2((int)lineX + 0.5f, 0);
-						GL.Vertex2((int)lineX + 0.5f, rect.Bottom);
+						GL.Vertex2((int)lineX + 0.5f, rect.Bottom + 56);
 						GL.End();
 					}
+
+					//draw timing point info
+					var x = Math.Round(ScreenX - posX + Bpm.Ms / 1000f * cubeStep);
+
+					var numText = $"{Bpm.bpm:##,###}";
+
+					GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+					fr.Render(numText, (int)x + 3, (int)(rect.Y + rect.Height) + 3 + 28, 16);
+
+					GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+					fr.Render($"{Bpm.Ms:##,###}ms", (int)x + 3,
+						(int)(rect.Y + rect.Height + fr.GetHeight(16)) + 3 + 2 + 28, 16);
 
 					//render BPM lines
 					while (lineSpace > 0 && lineX < rect.Width && lineX < endLineX && lineX < nextLineX)
@@ -354,9 +366,7 @@ namespace Sound_Space_Editor.Gui
 				double.TryParse(gse1.SfxOffset.Text, out var offset);
 
 				var ms = editor.MusicPlayer.CurrentTime.TotalMilliseconds - offset;
-				var bpm = editor.GetCurrentBpm();
-				Console.WriteLine(bpm.bpm);
-				Console.WriteLine(bpm.Ms);
+				var bpm = editor.GetCurrentBpm(editor.MusicPlayer.CurrentTime.TotalMilliseconds);
 				double interval = 60000 / bpm.bpm / BeatDivisor;
 				double remainder = (ms - bpm.Ms) % interval;
 				double closestMS = ms - remainder;

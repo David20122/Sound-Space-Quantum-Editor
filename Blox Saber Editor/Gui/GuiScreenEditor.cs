@@ -23,12 +23,10 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiSlider BeatSnapDivisor;
 		public readonly GuiSlider Timeline;
 		public readonly GuiSlider NoteAlign;
-        public readonly GuiTextBox Bpm;
 		public readonly GuiTextBox Offset;
 		public readonly GuiTextBox SfxOffset;
 		public readonly GuiTextBox JumpMSBox;
 		public readonly GuiTextBox RotateBox;
-		public readonly GuiCheckBox Reposition;
 		public readonly GuiCheckBox Autoplay;
 		public readonly GuiCheckBox ApproachSquares;
 		public readonly GuiCheckBox GridNumbers;
@@ -44,17 +42,18 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiButton JumpMSButton;
 		public readonly GuiButton RotateButton;
 
-		public readonly GuiButton UpdateBpm;
-		public readonly GuiButton AddBpm;
-		public readonly GuiButton RemoveBpm;
-		public readonly GuiButton SetOffsetAtMS;
-		public readonly GuiButton CopyCurrentBpm;
+		public readonly GuiButton OpenTimings;
+		public readonly GuiButton UseCurrentMs;
+
         public float AutoSaveTimer { get; private set; } = 0f;
 
 		private readonly GuiLabel _toast;
 		private float _toastTime;
 		private readonly int _textureId;
 		private bool bgImg = false;
+
+		private object TimingPanel;
+		private Type TimingType = Type.GetType("Sound_Space_Editor.TimingsWindow");
 
 		public GuiScreenEditor() : base(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64)
 		{
@@ -74,13 +73,6 @@ namespace Sound_Space_Editor.Gui
 			};
 
 			var playPause = new GuiButtonPlayPause(0, EditorWindow.Instance.ClientSize.Width - 512 - 64, EditorWindow.Instance.ClientSize.Height - 64, 64, 64);
-			Bpm = new GuiTextBox(0, 0, 128, 32)
-			{
-				Text = "0",
-				Centered = true,
-				Numeric = true,
-				Decimal = true
-			};
 			Offset = new GuiTextBox(0, 0, 128, 32)
 			{
 				Text = "0",
@@ -114,7 +106,6 @@ namespace Sound_Space_Editor.Gui
 				MaxValue = 59,
                 Value = 2
 			};
-			Reposition = new GuiCheckBox(1, "Offset Notes", 10, 0, 32, 32, false);
 			BeatSnapDivisor = new GuiSlider(0, 0, 256, 40);
 			Timeline = new GuiSliderTimeline(0, 0, EditorWindow.Instance.ClientSize.Width, 64);
 			Tempo = new GuiSlider(0, 0, 512, 64)
@@ -143,11 +134,8 @@ namespace Sound_Space_Editor.Gui
 			JumpMSButton = new GuiButton(6, 0, 0, 64, 32, "JUMP");
 			RotateButton = new GuiButton(7, 0, 0, 64, 32, "ROTATE");
 
-			UpdateBpm = new GuiButton(12, 0, 0, 180, 32, "UPDATE CURRENT BPM");
-			AddBpm = new GuiButton(8, 0, 0, 180, 32, "ADD BPM");
-			RemoveBpm = new GuiButton(9, 0, 0, 180, 32, "REMOVE CURRENT BPM");
-			SetOffsetAtMS = new GuiButton(10, 0, 0, 180, 32, "SET OFFSET HERE");
-			CopyCurrentBpm = new GuiButton(11, 0, 0, 180, 32, "GET CURRENT BPM");
+			OpenTimings = new GuiButton(8, 0, 0, 200, 32, "OPEN TIMING SETUP PANEL");
+			UseCurrentMs = new GuiButton(9, 0, 0, 200, 32, "USE CURRENT MS");
 
 			Autoplay = new GuiCheckBox(5, "Autoplay", 0, 0, 32, 32, Settings.Default.Autoplay);
 			ApproachSquares = new GuiCheckBox(5, "Approach Squares", 0, 0, 32, 32, Settings.Default.ApproachSquares);
@@ -159,19 +147,16 @@ namespace Sound_Space_Editor.Gui
 			QuantumGridSnap = new GuiCheckBox(5, "Snap to Grid", 0, 0, 32, 32, Settings.Default.QuantumGridSnap);
 			Metronome = new GuiCheckBox(5, "Metronome", 0, 0, 32, 32, Settings.Default.Metronome);
 
-			Bpm.Focused = true;
 			Offset.Focused = true;
 			SfxOffset.Focused = true;
 			JumpMSBox.Focused = true;
 			RotateBox.Focused = true;
 
-			Bpm.OnKeyDown(Key.Right, false);
 			Offset.OnKeyDown(Key.Right, false);
 			SfxOffset.OnKeyDown(Key.Right, false);
 			JumpMSBox.OnKeyDown(Key.Right, false);
 			RotateBox.OnKeyDown(Key.Right, false);
 
-			Bpm.Focused = false;
 			Offset.Focused = false;
 			SfxOffset.Focused = false;
 			JumpMSBox.Focused = false;
@@ -184,7 +169,6 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(MasterVolume);
 			Buttons.Add(SfxVolume);
 			Buttons.Add(BeatSnapDivisor);
-			Buttons.Add(Reposition);
 			Buttons.Add(Autoplay);
 			Buttons.Add(ApproachSquares);
 			Buttons.Add(GridNumbers);
@@ -199,11 +183,8 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(CopyButton);
 			Buttons.Add(JumpMSButton);
 			Buttons.Add(RotateButton);
-			Buttons.Add(UpdateBpm);
-			Buttons.Add(AddBpm);
-			Buttons.Add(RemoveBpm);
-			Buttons.Add(SetOffsetAtMS);
-			Buttons.Add(CopyCurrentBpm);
+			Buttons.Add(OpenTimings);
+			Buttons.Add(UseCurrentMs);
 
 			OnResize(EditorWindow.Instance.ClientSize);
 
@@ -265,12 +246,11 @@ namespace Sound_Space_Editor.Gui
 			GL.Color3(Color.FromArgb(Color1[0],Color1[1],Color1[2]));
 			var zoomW = fr.GetWidth("Zoom: ", 24);
 
-			fr.Render("Zoom: ", (int)Bpm.ClientRectangle.X, (int)Bpm.ClientRectangle.Y - 60, 24);
+			fr.Render("Zoom: ", 10, (int)Grid.ClientRectangle.Y + 28 - 60, 24);
 			GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
-			fr.Render($"{(int)(EditorWindow.Instance.Zoom * 100)}%", (int)Bpm.ClientRectangle.X + zoomW, (int)Bpm.ClientRectangle.Y - 60, 24);
+			fr.Render($"{(int)(EditorWindow.Instance.Zoom * 100)}%", 10 + zoomW, (int)Grid.ClientRectangle.Y + 28 - 60, 24);
 			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-			fr.Render("BPM:", (int)Bpm.ClientRectangle.X, (int)Bpm.ClientRectangle.Y - 24, 24);
-			fr.Render("BPM Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
+			fr.Render("Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
 			fr.Render("SFX Offset[ms]:", (int)SfxOffset.ClientRectangle.X - 10, (int)SfxOffset.ClientRectangle.Y - 34, 24);
 			fr.Render("Jump to MS:", (int)JumpMSBox.ClientRectangle.X, (int)JumpMSBox.ClientRectangle.Y - 34, 24);
 			fr.Render("Rotate by Degrees:", (int)RotateBox.ClientRectangle.X, (int)RotateBox.ClientRectangle.Y - 34, 24);
@@ -334,7 +314,6 @@ namespace Sound_Space_Editor.Gui
 			_toast.Render(delta, mouseX, mouseY);
 			Grid.Render(delta, mouseX, mouseY);
 			Track.Render(delta, mouseX, mouseY);
-			Bpm.Render(delta, mouseX, mouseY);
 			NoteAlign.Render(delta, mouseX, mouseY);
 			Offset.Render(delta, mouseX, mouseY);
 			SfxOffset.Render(delta, mouseX, mouseY);
@@ -344,12 +323,11 @@ namespace Sound_Space_Editor.Gui
 
 		public override bool AllowInput()
 		{
-			return !Bpm.Focused && !Offset.Focused && !SfxOffset.Focused && !JumpMSBox.Focused && !RotateBox.Focused;
+			return !Offset.Focused && !SfxOffset.Focused && !JumpMSBox.Focused && !RotateBox.Focused;
 		}
 
 		public override void OnKeyTyped(char key)
 		{
-			Bpm.OnKeyTyped(key);
 			Offset.OnKeyTyped(key);
 			SfxOffset.OnKeyTyped(key);
 			JumpMSBox.OnKeyTyped(key);
@@ -360,7 +338,6 @@ namespace Sound_Space_Editor.Gui
 
 		public override void OnKeyDown(Key key, bool control)
 		{
-			Bpm.OnKeyDown(key, control);
 			Offset.OnKeyDown(key, control);
 			SfxOffset.OnKeyDown(key, control);
 			JumpMSBox.OnKeyDown(key, control);
@@ -371,7 +348,6 @@ namespace Sound_Space_Editor.Gui
 
 		public override void OnMouseClick(float x, float y)
 		{
-			Bpm.OnMouseClick(x, y);
 			Offset.OnMouseClick(x, y);
 			SfxOffset.OnMouseClick(x, y);
 			JumpMSBox.OnMouseClick(x, y);
@@ -395,7 +371,6 @@ namespace Sound_Space_Editor.Gui
 
 					long.TryParse(Offset.Text, out var newOffset);
 
-					var toggle = Reposition.Toggle;
 					var change = newOffset - oldOffset;
 
 					void Redo()
@@ -403,14 +378,11 @@ namespace Sound_Space_Editor.Gui
 						Offset.Focused = false;
 						Offset.Text = newOffset.ToString();
 
-						if (toggle)
-						{
-							var list = EditorWindow.Instance.Notes.ToList();
+						var list = EditorWindow.Instance.Notes.ToList();
 
-							foreach (var note in list)
-							{
-								note.Ms += change;
-							}
+						foreach (var note in list)
+						{
+							note.Ms += change;
 						}
 
 						GuiTrack.BpmOffset = newOffset;
@@ -423,14 +395,11 @@ namespace Sound_Space_Editor.Gui
 						Offset.Focused = false;
 						Offset.Text = oldOffset.ToString();
 
-						if (toggle)
-						{
-							var list = EditorWindow.Instance.Notes.ToList();
+						var list = EditorWindow.Instance.Notes.ToList();
 
-							foreach (var note in list)
-							{
-								note.Ms -= change;
-							}
+						foreach (var note in list)
+						{
+							note.Ms -= change;
 						}
 
 						GuiTrack.BpmOffset = oldOffset;
@@ -516,49 +485,15 @@ namespace Sound_Space_Editor.Gui
 					});
 					break;
 				case 8:
-					if (float.TryParse(Bpm.Text, out var BPM) && BPM > 33 && long.TryParse(Offset.Text, out var offset))
+					if (TimingPanel != null)
                     {
-						if (ContainsOffset(offset))
-                        {
-							foreach (var bpm in GuiTrack.BPMs)
-                            {
-								if (bpm.Ms == offset)
-                                {
-									bpm.bpm = BPM;
-                                }
-                            }
-                        }
-						else
-                        {
-							GuiTrack.BPMs.Add(new BPM(BPM, offset));
-						}
-					}
-					GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
+						(TimingPanel as Form).Close();
+                    }
+					TimingPanel = Activator.CreateInstance(TimingType);
+					(TimingPanel as Form).Show();
 					break;
 				case 9:
-					GuiTrack.BPMs.Remove(EditorWindow.Instance.GetCurrentBpm());
-					GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
-					break;
-				case 10:
-					GuiTrack.BpmOffset = (long)EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds;
-					Offset.Text = GuiTrack.BpmOffset.ToString();
-					break;
-				case 11:
-					var currentbpm = EditorWindow.Instance.GetCurrentBpm();
-					GuiTrack.TextBpm = currentbpm.bpm;
-					GuiTrack.BpmOffset = currentbpm.Ms;
-					Bpm.Text = GuiTrack.TextBpm.ToString();
-					Offset.Text = GuiTrack.BpmOffset.ToString();
-					break;
-				case 12:
-					var currentBpm = EditorWindow.Instance.GetCurrentBpm();
-					if (float.TryParse(Bpm.Text, out float bPM) && long.TryParse(Offset.Text, out long ms))
-                    {
-						currentBpm.bpm = bPM;
-						currentBpm.Ms = ms;
-						GuiTrack.TextBpm = bPM;
-						GuiTrack.BpmOffset = ms;
-                    }
+					Offset.Text = ((long)EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds).ToString();
 					break;
 			}
 		}
@@ -580,30 +515,24 @@ namespace Sound_Space_Editor.Gui
 			Grid.ClientRectangle = new RectangleF((int)(size.Width / 2f - Grid.ClientRectangle.Width / 2), (int)((size.Height + Track.ClientRectangle.Height - 64) / 2 - Grid.ClientRectangle.Height / 2), Grid.ClientRectangle.Width, Grid.ClientRectangle.Height);
 			BackButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Bottom + 5 + 1 + 78);
 			CopyButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 75);
-			BeatSnapDivisor.ClientRectangle.Location = new PointF(EditorWindow.Instance.ClientSize.Width - BeatSnapDivisor.ClientRectangle.Width, Bpm.ClientRectangle.Y);
+			BeatSnapDivisor.ClientRectangle.Location = new PointF(EditorWindow.Instance.ClientSize.Width - BeatSnapDivisor.ClientRectangle.Width, Grid.ClientRectangle.Y + 28);
 			Timeline.ClientRectangle = new RectangleF(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64);
 			Tempo.ClientRectangle = new RectangleF(EditorWindow.Instance.ClientSize.Width - 512, EditorWindow.Instance.ClientSize.Height - 64, 512, 64);
 
 			// sm
-			Bpm.ClientRectangle.Y = Grid.ClientRectangle.Y + 28;
-			Offset.ClientRectangle.Y = Bpm.ClientRectangle.Bottom + 5 + 24 + 10;
+			Offset.ClientRectangle.Y = Grid.ClientRectangle.Y + 28 + Offset.ClientRectangle.Height / 2 + 5;
 			SfxOffset.ClientRectangle.Y = size.Height - SfxOffset.ClientRectangle.Height - 55;
 			JumpMSBox.ClientRectangle.Y = SfxOffset.ClientRectangle.Y;
 			JumpMSButton.ClientRectangle.Y = JumpMSBox.ClientRectangle.Y;
 			SetOffset.ClientRectangle.Y = Offset.ClientRectangle.Y;
-			Reposition.ClientRectangle.Y = Offset.ClientRectangle.Bottom + 10;
-			BeatSnapDivisor.ClientRectangle.Y = Bpm.ClientRectangle.Y;
+			UseCurrentMs.ClientRectangle.Y = SetOffset.ClientRectangle.Y;
+			OpenTimings.ClientRectangle.Y = UseCurrentMs.ClientRectangle.Bottom + 5;
+			BeatSnapDivisor.ClientRectangle.Y = Grid.ClientRectangle.Y + 28;
             NoteAlign.ClientRectangle.Y = BeatSnapDivisor.ClientRectangle.Bottom + 5 + 24;
 			RotateBox.ClientRectangle.Y = JumpMSBox.ClientRectangle.Y - 80;
 			RotateButton.ClientRectangle.Y = RotateBox.ClientRectangle.Y;
 
-			SetOffsetAtMS.ClientRectangle.Y = SetOffset.ClientRectangle.Y;
-			CopyCurrentBpm.ClientRectangle.Y = SetOffsetAtMS.ClientRectangle.Y + 40;
-			RemoveBpm.ClientRectangle.Y = SetOffsetAtMS.ClientRectangle.Y - 40;
-			AddBpm.ClientRectangle.Y = RemoveBpm.ClientRectangle.Y - 40;
-			UpdateBpm.ClientRectangle.Y = AddBpm.ClientRectangle.Y - 40;
-
-            Autoplay.ClientRectangle.Y = Reposition.ClientRectangle.Bottom + 32 + 20;
+            Autoplay.ClientRectangle.Y = Offset.ClientRectangle.Bottom + 32 + 20;
 			ApproachSquares.ClientRectangle.Y = Autoplay.ClientRectangle.Bottom + 10;
 			GridNumbers.ClientRectangle.Y = ApproachSquares.ClientRectangle.Bottom + 10;
 			Quantum.ClientRectangle.Y = GridNumbers.ClientRectangle.Bottom + 10;
@@ -613,29 +542,23 @@ namespace Sound_Space_Editor.Gui
 			QuantumGridSnap.ClientRectangle.Y = QuantumGridLines.ClientRectangle.Bottom + 10;
 			Metronome.ClientRectangle.Y = QuantumGridSnap.ClientRectangle.Bottom + 10;
 
-			Bpm.ClientRectangle.X = 10;
-			Offset.ClientRectangle.X = Bpm.ClientRectangle.X;
+			Offset.ClientRectangle.X = 10;
 			SfxOffset.ClientRectangle.X = Tempo.ClientRectangle.X + Tempo.ClientRectangle.Width / 2 - SfxOffset.ClientRectangle.Width / 2;
 			JumpMSBox.ClientRectangle.X = Timeline.ClientRectangle.Right + 34;
 			JumpMSButton.ClientRectangle.X = JumpMSBox.ClientRectangle.Right + 5;
-			SetOffset.ClientRectangle.X = Bpm.ClientRectangle.Right + 5;
+			SetOffset.ClientRectangle.X = Offset.ClientRectangle.Right + 5;
+			UseCurrentMs.ClientRectangle.X = SetOffset.ClientRectangle.Right + 5;
+			OpenTimings.ClientRectangle.X = UseCurrentMs.ClientRectangle.X;
 			NoteAlign.ClientRectangle.X = BeatSnapDivisor.ClientRectangle.X;
-			Reposition.ClientRectangle.X = Bpm.ClientRectangle.X;
 			RotateBox.ClientRectangle.X = JumpMSBox.ClientRectangle.X;
 			RotateButton.ClientRectangle.X = JumpMSButton.ClientRectangle.X;
 
-			UpdateBpm.ClientRectangle.X = SetOffset.ClientRectangle.Right + 10;
-			AddBpm.ClientRectangle.X = UpdateBpm.ClientRectangle.X;
-			RemoveBpm.ClientRectangle.X = AddBpm.ClientRectangle.X;
-			SetOffsetAtMS.ClientRectangle.X = RemoveBpm.ClientRectangle.X;
-			CopyCurrentBpm.ClientRectangle.X = SetOffsetAtMS.ClientRectangle.X;
-
-			Autoplay.ClientRectangle.X = Bpm.ClientRectangle.X;
-			ApproachSquares.ClientRectangle.X = Bpm.ClientRectangle.X;
-			GridNumbers.ClientRectangle.X = Bpm.ClientRectangle.X;
-			Quantum.ClientRectangle.X = Bpm.ClientRectangle.X;
-			Numpad.ClientRectangle.X = Bpm.ClientRectangle.X;
-			QuantumGridLines.ClientRectangle.X = Bpm.ClientRectangle.X;
+			Autoplay.ClientRectangle.X = Offset.ClientRectangle.X;
+			ApproachSquares.ClientRectangle.X = Offset.ClientRectangle.X;
+			GridNumbers.ClientRectangle.X = Offset.ClientRectangle.X;
+			Quantum.ClientRectangle.X = Offset.ClientRectangle.X;
+			Numpad.ClientRectangle.X = Offset.ClientRectangle.X;
+			QuantumGridLines.ClientRectangle.X = Offset.ClientRectangle.X;
 			AutoAdvance.ClientRectangle.X = BeatSnapDivisor.ClientRectangle.X + 20;
 			QuantumGridSnap.ClientRectangle.X = QuantumGridLines.ClientRectangle.X;
 			Metronome.ClientRectangle.X = QuantumGridSnap.ClientRectangle.X;
@@ -653,23 +576,9 @@ namespace Sound_Space_Editor.Gui
 			BeatSnapDivisor.Dragging = false;
 		}
 
-		private bool ContainsOffset(long ms)
-        {
-			bool containsoffset = false;
-
-			foreach (var bpm in GuiTrack.BPMs)
-            {
-				if (ms == bpm.Ms)
-                {
-					containsoffset = true;
-                }
-            }
-
-			return containsoffset;
-        }
-
 		private void UpdateTrack()
 		{
+			/*
 			if (Bpm.Focused)
 			{
 				var text = Bpm.Text;
@@ -697,6 +606,7 @@ namespace Sound_Space_Editor.Gui
 				if (!decimalPont && bpm > 0)
 					Bpm.Text = bpm.ToString();
 			}
+			*/
 			if (Offset.Focused)
 			{
 				long.TryParse(Offset.Text, out var offset);
