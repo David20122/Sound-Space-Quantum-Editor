@@ -20,7 +20,7 @@ namespace Sound_Space_Editor.Gui
 		private GuiButton _importButton;
 		private GuiButton _pasteDataButton;
 		private GuiButton _githubButton;
-		private bool importmapclicked = false;
+		//private bool importmapclicked = false;
 		//private readonly int _textureId;
 		//private bool bgImg = false;
 
@@ -149,16 +149,28 @@ namespace Sound_Space_Editor.Gui
                     {
 						var clipboard = Clipboard.GetText();
 						SecureWebClient wc = new SecureWebClient();
-						try
-						{
-							while (true)
-							{
-								clipboard = wc.DownloadString(clipboard);
+						if (clipboard.Contains("gist") || clipboard.Contains("github"))
+                        {
+							try
+                            {
+								var reply = wc.DownloadString(clipboard);
+								EditorWindow.Instance.LoadMap(reply, false);
 							}
-						}
-						catch
-						{
-							EditorWindow.Instance.LoadMap(clipboard, false);
+							catch
+							{
+								MessageBox.Show("Error while loading map data from link.\nIs it valid?");
+							}
+                        } 
+						else
+                        {
+							try
+							{
+								EditorWindow.Instance.LoadMap(clipboard, false);
+							}
+							catch
+							{
+								MessageBox.Show("Error while loading map data.\nIs it valid?");
+							}
 						}
 					}
 					catch
@@ -170,6 +182,7 @@ namespace Sound_Space_Editor.Gui
 				case 3:
 					EditorWindow.Instance.LoadFile(Properties.Settings.Default.LastFile);
 					break;
+				/*
 				case 4:
 					try
 					{
@@ -194,6 +207,7 @@ namespace Sound_Space_Editor.Gui
 						MessageBox.Show("Couldn't read map data from the link. Do you have it copied?");
 					}
 					break;
+				*/
 			}
 			base.OnButtonClicked(id);
 		}

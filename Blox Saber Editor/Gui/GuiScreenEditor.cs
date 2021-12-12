@@ -8,6 +8,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System.IO;
+using System.Threading;
 
 namespace Sound_Space_Editor.Gui
 {
@@ -52,7 +53,8 @@ namespace Sound_Space_Editor.Gui
 		private readonly int _textureId;
 		private bool bgImg = false;
 
-		private object TimingPanel;
+		//private object TimingPanel;
+		TimingPoints TimingPoints;
 		private Type TimingType = Type.GetType("Sound_Space_Editor.TimingsWindow");
 
 		public GuiScreenEditor() : base(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64)
@@ -485,12 +487,27 @@ namespace Sound_Space_Editor.Gui
 					});
 					break;
 				case 8:
+					/*
 					if (TimingPanel != null)
                     {
 						(TimingPanel as Form).Close();
                     }
 					TimingPanel = Activator.CreateInstance(TimingType);
 					(TimingPanel as Form).Show();
+					break;
+					*/
+
+					void openGui()
+					{
+						if (TimingPoints == null)
+						{
+							TimingPoints = new TimingPoints();
+							TimingPoints.Run();
+						}
+					}
+
+					Thread t = new Thread(new ThreadStart(openGui));
+					t.Start();
 					break;
 				case 9:
 					Offset.Text = ((long)EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds).ToString();
