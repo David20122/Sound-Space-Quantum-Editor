@@ -13,7 +13,6 @@ namespace Sound_Space_Editor.Gui
 	class GuiScreenSelectMap : GuiScreen
 	{
 		private int logoTxt;
-		private FontRenderer fr = EditorWindow.Instance.FontRenderer;
 		private GuiButton _createMapButton;
 		private GuiButton _loadMapButton;
 		private GuiButton _lastMapButton;
