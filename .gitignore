@@ -1,7 +1,5 @@
 .vs/
 .vscode/
-obj/
-bin/
 *.exe
 *.asset
 *.pdb
