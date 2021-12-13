@@ -112,7 +112,7 @@ namespace Sound_Space_Editor.Gui
 			Timeline = new GuiSliderTimeline(0, 0, EditorWindow.Instance.ClientSize.Width, 64);
 			Tempo = new GuiSlider(0, 0, 512, 64)
 			{
-				MaxValue = 16,
+				MaxValue = 26,
 				Value = 16
 			};
 
@@ -265,7 +265,10 @@ namespace Sound_Space_Editor.Gui
             fr.Render(divisor, (int)(BeatSnapDivisor.ClientRectangle.X + BeatSnapDivisor.ClientRectangle.Width / 2 - divisorW / 2f), (int)BeatSnapDivisor.ClientRectangle.Y - 20, 24);
             fr.Render(align, (int)(NoteAlign.ClientRectangle.X + NoteAlign.ClientRectangle.Width / 2 - alignW / 2f), (int)NoteAlign.ClientRectangle.Y - 20, 24);
 
-            var tempo = $"TEMPO - {Tempo.Value * 5 + 20}%";
+			var tempoval = Tempo.Value;
+			if (tempoval > 15)
+				tempoval = (tempoval - 16) * 2 + 16;
+            var tempo = $"TEMPO - {tempoval * 5 + 20}%";
 			var tempoW = fr.GetWidth(tempo, 24);
 
 			fr.Render(tempo, (int)(Tempo.ClientRectangle.X + Tempo.ClientRectangle.Width / 2 - tempoW / 2f), (int)Tempo.ClientRectangle.Bottom - 24, 24);
@@ -499,11 +502,12 @@ namespace Sound_Space_Editor.Gui
 
 					void openGui()
 					{
-						if (TimingPoints == null)
-						{
-							TimingPoints = new TimingPoints();
-							TimingPoints.Run();
-						}
+						if (TimingPoints != null)
+                        {
+							TimingPoints.Close();
+                        }
+						TimingPoints = new TimingPoints();
+						TimingPoints.Run();
 					}
 
 					Thread t = new Thread(new ThreadStart(openGui));

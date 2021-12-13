@@ -454,7 +454,10 @@ namespace Sound_Space_Editor
 
 					editor.Tempo.Value = tick;
 
-					MusicPlayer.Tempo = MathHelper.Clamp(0.2f + tick * 0.05f, 0.2f, 1);
+					if (tick > 15)
+						tick = (tick - 16) * 2 + 16;
+
+					MusicPlayer.Tempo = MathHelper.Clamp(0.2f + tick * 0.05f, 0.2f, 2);
 				}
 				if (editor.NoteAlign.Dragging)
 				{

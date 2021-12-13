@@ -118,6 +118,7 @@
   <ItemGroup>
     <Compile Include="BassManager.cs" />
     <Compile Include="BPM.cs" />
+    <Compile Include="Gui\GuiScreenTimings.cs" />
     <Compile Include="TimingPoints.cs" />
     <Compile Include="ColorSequence.cs" />
     <Compile Include="DiscordGameSDK\ActivityManager.cs" />
