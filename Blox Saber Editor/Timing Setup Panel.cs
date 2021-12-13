@@ -108,5 +108,5 @@ namespace Sound_Space_Editor
                 OffsetBox.Text = point.Ms.ToString();
             }
         }
-    }
+	}
 }
