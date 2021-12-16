@@ -490,15 +490,15 @@ namespace Sound_Space_Editor.Gui
 					});
 					break;
 				case 8:
-					/*
-					if (TimingPanel != null)
-                    {
-						(TimingPanel as Form).Close();
-                    }
-					TimingPanel = Activator.CreateInstance(TimingType);
-					(TimingPanel as Form).Show();
-					break;
-					*/
+					if (File.Exists("uselegacybpm"))
+					{
+						if ((TimingsWindow.inst != null) && TimingsWindow.inst.Visible)
+						{
+							TimingsWindow.inst.Close();
+						}
+						new TimingsWindow().Show();
+						break;
+					}
 
 					void openGui()
 					{

@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
 			this.PointList = new System.Windows.Forms.DataGridView();
+			this.BPM = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Offset = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.RemoveButton = new System.Windows.Forms.Button();
 			this.UpdateButton = new System.Windows.Forms.Button();
 			this.AddButton = new System.Windows.Forms.Button();
@@ -36,8 +38,7 @@
 			this.OffsetLabel = new System.Windows.Forms.Label();
 			this.OffsetBox = new System.Windows.Forms.TextBox();
 			this.BPMBox = new System.Windows.Forms.TextBox();
-			this.BPM = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Offset = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.CurrentButton = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.PointList)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -56,10 +57,27 @@
 			this.PointList.MultiSelect = false;
 			this.PointList.Name = "PointList";
 			this.PointList.ReadOnly = true;
+			this.PointList.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.PointList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.PointList.Size = new System.Drawing.Size(326, 435);
 			this.PointList.TabIndex = 9;
 			this.PointList.SelectionChanged += new System.EventHandler(this.PointList_SelectionChanged);
+			// 
+			// BPM
+			// 
+			this.BPM.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.BPM.HeaderText = "BPM";
+			this.BPM.Name = "BPM";
+			this.BPM.ReadOnly = true;
+			this.BPM.ToolTipText = "The BPM of the point";
+			// 
+			// Offset
+			// 
+			this.Offset.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.Offset.HeaderText = "Position (ms)";
+			this.Offset.Name = "Offset";
+			this.Offset.ReadOnly = true;
+			this.Offset.ToolTipText = "The position of the point in milliseconds";
 			// 
 			// RemoveButton
 			// 
@@ -75,7 +93,7 @@
 			// UpdateButton
 			// 
 			this.UpdateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-			this.UpdateButton.Location = new System.Drawing.Point(158, 470);
+			this.UpdateButton.Location = new System.Drawing.Point(247, 471);
 			this.UpdateButton.Name = "UpdateButton";
 			this.UpdateButton.Size = new System.Drawing.Size(88, 22);
 			this.UpdateButton.TabIndex = 4;
@@ -126,21 +144,16 @@
 			this.BPMBox.Size = new System.Drawing.Size(72, 20);
 			this.BPMBox.TabIndex = 1;
 			// 
-			// BPM
+			// CurrentButton
 			// 
-			this.BPM.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.BPM.HeaderText = "BPM";
-			this.BPM.Name = "BPM";
-			this.BPM.ReadOnly = true;
-			this.BPM.ToolTipText = "The BPM of the point";
-			// 
-			// Offset
-			// 
-			this.Offset.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.Offset.HeaderText = "Position (ms)";
-			this.Offset.Name = "Offset";
-			this.Offset.ReadOnly = true;
-			this.Offset.ToolTipText = "The position of the point in milliseconds";
+			this.CurrentButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+			this.CurrentButton.Location = new System.Drawing.Point(158, 471);
+			this.CurrentButton.Name = "CurrentButton";
+			this.CurrentButton.Size = new System.Drawing.Size(88, 22);
+			this.CurrentButton.TabIndex = 4;
+			this.CurrentButton.Text = "Current Pos";
+			this.CurrentButton.UseVisualStyleBackColor = true;
+			this.CurrentButton.Click += new System.EventHandler(this.CurrentButton_Click);
 			// 
 			// TimingsWindow
 			// 
@@ -152,6 +165,7 @@
 			this.Controls.Add(this.OffsetLabel);
 			this.Controls.Add(this.BPMLabel);
 			this.Controls.Add(this.AddButton);
+			this.Controls.Add(this.CurrentButton);
 			this.Controls.Add(this.UpdateButton);
 			this.Controls.Add(this.RemoveButton);
 			this.Controls.Add(this.PointList);
@@ -177,5 +191,6 @@
         private System.Windows.Forms.TextBox BPMBox;
 		private System.Windows.Forms.DataGridViewTextBoxColumn BPM;
 		private System.Windows.Forms.DataGridViewTextBoxColumn Offset;
+		private System.Windows.Forms.Button CurrentButton;
 	}
 }

@@ -7,8 +7,10 @@ namespace Sound_Space_Editor
 {
     public partial class TimingsWindow : Form
     {
+        public static TimingsWindow inst;
         public TimingsWindow()
         {
+            inst = this;
             InitializeComponent();
             ResetList(0);
         }
@@ -73,9 +75,14 @@ namespace Sound_Space_Editor
                     }
                 }
             }
-        }
+    }
 
-        public void ResetList(int index)
+    private void CurrentButton_Click(object sender, EventArgs e)
+    {
+      OffsetBox.Text = EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds.ToString();
+    }
+
+    public void ResetList(int index)
         {
             if (index < 0)
                 index = 0;
