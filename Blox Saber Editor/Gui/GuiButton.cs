@@ -112,15 +112,27 @@ namespace Sound_Space_Editor.Gui
 				Glu.RenderOutline(ClientRectangle);
 			}
 
-			var fr = EditorWindow.Instance.FontRenderer;
+			if (Font == "squareo")
+			{
+				fr = EditorWindow.Instance.SquareOFontRenderer;
+			}
+			else if (Font == "square")
+			{
+				fr = EditorWindow.Instance.SquareFontRenderer;
+			}
+			else if (Font == "main")
+			{
+				fr = EditorWindow.Instance.FontRenderer;
+			}
+
 			var width = fr.GetWidth(Text, (int)ClientRectangle.Height / 2);
 			var height = fr.GetHeight((int)ClientRectangle.Height / 2);
 
 			GL.Color3(color1,color2,color3);
-			if (!Timings)
-				fr.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
-			else
-				TimingPoints.Instance.FontRenderer.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
+			//if (!Timings)
+			//	fr.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
+			//else
+			TimingPoints.Instance.FontRenderer.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
 		}
 
 
