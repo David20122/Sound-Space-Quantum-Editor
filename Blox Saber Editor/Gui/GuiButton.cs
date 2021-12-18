@@ -12,7 +12,8 @@ namespace Sound_Space_Editor.Gui
 		public float color2;
 		public float color3;
 		public string Text = " ";
-		public bool Timings;
+		public string Font;
+		public FontRenderer fr;
 
 		protected int Texture;
 
@@ -36,14 +37,24 @@ namespace Sound_Space_Editor.Gui
 			Texture = texture;
 		}
 
-		public GuiButton(int id, float x, float y, float sx, float sy, string text, bool timings) : this(id, x, y, sx, sy)
+		public GuiButton(int id, float x, float y, float sx, float sy, string text) : this(id, x, y, sx, sy)
 		{
 			color1 = 1f;
 			color2 = 1;
 			color3 = 1;
 
 			Text = text;
-			Timings = timings;
+			Font = "main";
+		}
+
+		public GuiButton(int id, float x, float y, float sx, float sy, string text, string font) : this(id, x, y, sx, sy)
+		{
+			color1 = 1f;
+			color2 = 1;
+			color3 = 1;
+
+			Text = text;
+			Font = font;
 		}
 
 		public GuiButton(int id, float x, float y, float sx, float sy, string text, float cr, float cg, float cb) : this(id, x, y, sx, sy)
@@ -53,6 +64,17 @@ namespace Sound_Space_Editor.Gui
 			color3 = cb;
 
 			Text = text;
+			Font = "main";
+		}
+
+		public GuiButton(int id, float x, float y, float sx, float sy, string text, string font, float cr, float cg, float cb) : this(id, x, y, sx, sy)
+		{
+			color1 = cr;
+			color2 = cg;
+			color3 = cb;
+
+			Text = text;
+			Font = font;
 		}
 
 		public override void Render(float delta, float mouseX, float mouseY)
