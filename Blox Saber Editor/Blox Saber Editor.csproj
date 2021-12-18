@@ -143,6 +143,7 @@
     <Compile Include="Gui\GuiScreen.cs" />
     <Compile Include="Gui\GuiScreenCreate.cs" />
     <Compile Include="Gui\GuiScreenEditor.cs" />
+    <Compile Include="Gui\GuiScreenMenu.cs" />
     <Compile Include="Gui\GuiScreenSelectMap.cs" />
     <Compile Include="Gui\GuiSliderTimeline.cs" />
     <Compile Include="Gui\GuiSlider.cs" />

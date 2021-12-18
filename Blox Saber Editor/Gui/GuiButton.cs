@@ -14,6 +14,7 @@ namespace Sound_Space_Editor.Gui
 		public string Text = " ";
 		public string Font;
 		public FontRenderer fr;
+		public bool Timings;
 
 		protected int Texture;
 
@@ -44,6 +45,17 @@ namespace Sound_Space_Editor.Gui
 			color3 = 1;
 
 			Text = text;
+			Font = "main";
+		}
+
+		public GuiButton(int id, float x, float y, float sx, float sy, string text, bool timings) : this(id, x, y, sx, sy)
+		{
+			color1 = 1f;
+			color2 = 1;
+			color3 = 1;
+
+			Text = text;
+			Timings = timings;
 			Font = "main";
 		}
 
@@ -129,10 +141,10 @@ namespace Sound_Space_Editor.Gui
 			var height = fr.GetHeight((int)ClientRectangle.Height / 2);
 
 			GL.Color3(color1,color2,color3);
-			//if (!Timings)
-			//	fr.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
-			//else
-			TimingPoints.Instance.FontRenderer.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
+			if (!Timings)
+				fr.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
+			else
+				TimingPoints.Instance.FontRenderer.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
 		}
 
 
