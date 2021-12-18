@@ -17,17 +17,17 @@ namespace Sound_Space_Editor.Gui
         public GuiButton AddPoint;
         public GuiButton RemovePoint;
         public GuiButton UpdatePoint;
-        public GuiLabel BPMLabel = new GuiLabel(0, 0, "BPM:");
-        public GuiLabel OffsetLabel = new GuiLabel(0, 0, "Offset[ms]:");
+        public GuiLabel BPMLabel = new GuiLabel(0, 0, "BPM:", "main");
+        public GuiLabel OffsetLabel = new GuiLabel(0, 0, "Offset[ms]:", "main");
 
         public GuiScreenTimings() : base(0, 0, 0, 0)
         {
             BPMBox = new GuiTextBox(0, 0, 256, 48) { Text = "0", Centered = true, Numeric = true, CanBeNegative = false };
             OffsetBox = new GuiTextBox(0, 0, 256, 48) { Text = "0", Centered = true, Numeric = true, CanBeNegative = false };
 
-            AddPoint = new GuiButton(0, 0, 0, 256, 48, "ADD POINT");
-            RemovePoint = new GuiButton(1, 0, 0, 256, 48, "REMOVE POINT");
-            UpdatePoint = new GuiButton(2, 0, 0, 256, 48, "UPDATE POINT");
+            AddPoint = new GuiButton(0, 0, 0, 200, 32, "ADD POINT");
+            RemovePoint = new GuiButton(1, 0, 0, 200, 32, "REMOVE POINT");
+            UpdatePoint = new GuiButton(2, 0, 0, 200, 32, "UPDATE POINT");
 
             BPMLabel.Color = Color.FromArgb(255, 255, 255);
             OffsetLabel.Color = Color.FromArgb(255, 255, 255);

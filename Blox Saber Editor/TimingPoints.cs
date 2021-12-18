@@ -19,6 +19,7 @@ namespace Sound_Space_Editor
         private Point _clickedMouse;
         private Point _lastMouse;
         public static TimingPoints Instance;
+        public FontRenderer FontRenderer;
 
 
         public TimingPoints() : base(800, 600, new OpenTK.Graphics.GraphicsMode(32, 8, 0, 8), "Timing Setup Panel")
@@ -26,7 +27,8 @@ namespace Sound_Space_Editor
             Instance = this;
             OpenGuiScreen(new GuiScreenTimings());
             Icon = Resources.icon;
-        }
+            FontRenderer = new FontRenderer("thing");
+        } 
 
         protected override void OnLoad(EventArgs e)
         {

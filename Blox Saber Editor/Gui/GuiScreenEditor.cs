@@ -68,7 +68,7 @@ namespace Sound_Space_Editor.Gui
 				}
 			}
 
-			_toast = new GuiLabel(0, 0, "")
+			_toast = new GuiLabel(0, 0, "", "main")
 			{
 				Centered = true,
 				FontSize = 36
@@ -540,7 +540,6 @@ namespace Sound_Space_Editor.Gui
 			Timeline.ClientRectangle = new RectangleF(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64);
 			Tempo.ClientRectangle = new RectangleF(EditorWindow.Instance.ClientSize.Width - 512, EditorWindow.Instance.ClientSize.Height - 64, 512, 64);
 
-			// sm
 			Offset.ClientRectangle.Y = Grid.ClientRectangle.Y + 28 + Offset.ClientRectangle.Height / 2 + 5;
 			SfxOffset.ClientRectangle.Y = size.Height - SfxOffset.ClientRectangle.Height - 55;
 			JumpMSBox.ClientRectangle.Y = SfxOffset.ClientRectangle.Y;

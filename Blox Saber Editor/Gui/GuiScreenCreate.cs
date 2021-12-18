@@ -9,7 +9,7 @@ namespace Sound_Space_Editor.Gui
 		private readonly GuiTextBox _tb;
 		private readonly GuiButton _btnCreate;
 		private readonly GuiButton _btnBack;
-		private readonly GuiLabel _lbl = new GuiLabel(0, 0, "i need audio id") { Centered = true };
+		private readonly GuiLabel _lbl = new GuiLabel(0, 0, "i need audio id", "main") { Centered = true };
 
 		public GuiScreenCreate() : base(0, 0, 0, 0)
 		{

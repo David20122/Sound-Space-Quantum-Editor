@@ -12,6 +12,8 @@ namespace Sound_Space_Editor.Gui
 		public float color2;
 		public float color3;
 		public string Text = " ";
+		public string Font;
+		public FontRenderer fr;
 
 		protected int Texture;
 
@@ -42,6 +44,17 @@ namespace Sound_Space_Editor.Gui
 			color3 = 1;
 
 			Text = text;
+			Font = "main";
+		}
+
+		public GuiButton(int id, float x, float y, float sx, float sy, string text, string font) : this(id, x, y, sx, sy)
+		{
+			color1 = 1f;
+			color2 = 1;
+			color3 = 1;
+
+			Text = text;
+			Font = font;
 		}
 
 		public GuiButton(int id, float x, float y, float sx, float sy, string text, float cr, float cg, float cb) : this(id, x, y, sx, sy)
@@ -51,6 +64,17 @@ namespace Sound_Space_Editor.Gui
 			color3 = cb;
 
 			Text = text;
+			Font = "main";
+		}
+
+		public GuiButton(int id, float x, float y, float sx, float sy, string text, string font, float cr, float cg, float cb) : this(id, x, y, sx, sy)
+		{
+			color1 = cr;
+			color2 = cg;
+			color3 = cb;
+
+			Text = text;
+			Font = font;
 		}
 
 		public override void Render(float delta, float mouseX, float mouseY)
@@ -88,7 +112,19 @@ namespace Sound_Space_Editor.Gui
 				Glu.RenderOutline(ClientRectangle);
 			}
 
-			var fr = EditorWindow.Instance.FontRenderer;
+			if (Font == "squareo")
+			{
+				fr = EditorWindow.Instance.SquareOFontRenderer;
+			}
+			else if (Font == "square")
+			{
+				fr = EditorWindow.Instance.SquareFontRenderer;
+			}
+			else if (Font == "main")
+			{
+				fr = EditorWindow.Instance.FontRenderer;
+			}
+
 			var width = fr.GetWidth(Text, (int)ClientRectangle.Height / 2);
 			var height = fr.GetHeight((int)ClientRectangle.Height / 2);
 
