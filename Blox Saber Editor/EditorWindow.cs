@@ -25,7 +25,11 @@ namespace Sound_Space_Editor
 	{
 		private bool discordEnabled = false;
 		public static EditorWindow Instance;
+
 		public FontRenderer FontRenderer;
+		public FontRenderer SquareOFontRenderer;
+		public FontRenderer SquareFontRenderer;
+
 		public bool IsPaused { get; private set; }
 
 		public GuiScreen GuiScreen { get; private set; }
@@ -126,13 +130,15 @@ namespace Sound_Space_Editor
 			SoundPlayer = new SoundPlayer();
 
 			FontRenderer = new FontRenderer("main");
+			SquareOFontRenderer = new FontRenderer("Squareo");
+			SquareFontRenderer = new FontRenderer("Square");
 
 			if (!File.Exists(settingsFile))
 			{
 				File.AppendAllText(settingsFile, "\n// Background Opacity (0-255, 0 means invisible)\n\n255\n\n// Track Opacity\n\n255\n\n// Grid Opacity\n\n255\n\n // You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (Text, BPM Lines)\n\n0,255,200\n\n// Color 2 (Checkboxes, Sliders, Numbers, BPM Lines)\n\n255,0,255\n\n// Note Colors\n\n255,0,255\n0,255,200\n\n//Waveform (true or false)\n\ntrue");
 			}
 
-			OpenGuiScreen(new GuiScreenSelectMap());
+			OpenGuiScreen(new GuiScreenMenu());
 
 			SoundPlayer.Cache("hit");
 			SoundPlayer.Cache("click");

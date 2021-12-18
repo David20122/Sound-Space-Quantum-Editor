@@ -9,13 +9,13 @@ namespace Sound_Space_Editor.Gui
 		private readonly GuiTextBox _tb;
 		private readonly GuiButton _btnCreate;
 		private readonly GuiButton _btnBack;
-		private readonly GuiLabel _lbl = new GuiLabel(0, 0, "i need audio id", false) { Centered = true };
+		private readonly GuiLabel _lbl = new GuiLabel(0, 0, "i need audio id", "main") { Centered = true };
 
 		public GuiScreenCreate() : base(0, 0, 0, 0)
 		{
 			_tb = new GuiTextBox(0, 0, 256, 64) { Centered = true, Focused = true };
-			_btnCreate = new GuiButton(0, 0, 0, 256, 64, "CREATE", false);
-			_btnBack = new GuiButton(1, 0, 0, 256, 64, "BACK", false);
+			_btnCreate = new GuiButton(0, 0, 0, 256, 64, "CREATE");
+			_btnBack = new GuiButton(1, 0, 0, 256, 64, "BACK");
 
 			_lbl.Color = Color.FromArgb(255, 255, 255);
 
