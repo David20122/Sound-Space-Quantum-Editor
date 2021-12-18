@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using OpenTK.Graphics.OpenGL;
+using Sound_Space_Editor.Properties;
 
 namespace Sound_Space_Editor.Gui
 {
@@ -11,6 +12,7 @@ namespace Sound_Space_Editor.Gui
 
 		private Note _lastPlayedNote;
 		public Note MouseOverNote;
+		public BPM MouseOverPoint;
 
 		private double _lastPlayedMS;
 
@@ -18,7 +20,9 @@ namespace Sound_Space_Editor.Gui
 
 		//public static float Bpm = 0;//150;
 		public static List<BPM> BPMs = new List<BPM>();
-		public static long BpmOffset = 0; //in ms
+		public static float Bpm = 0;
+		public static long NoteOffset = 0; //in ms
+		public static long BpmOffset = 0;
 		public static float TextBpm = 0;
 		public static string wv = null;
 		public static int BeatDivisor = 4;
@@ -161,7 +165,10 @@ namespace Sound_Space_Editor.Gui
 			GL.LineWidth(1);
 
 			MouseOverNote = null;
+			MouseOverPoint = null;
 			Note closest = null;
+
+			var y = rect.Y + gap / 2;
 
 			_cs.Reset();
 			for (int i = 0; i < editor.Notes.Count; i++)
@@ -196,7 +203,6 @@ namespace Sound_Space_Editor.Gui
 					alphaMult = 0.35f;
 				}
 
-				var y = rect.Y + gap / 2;
 
 				var noteRect = new RectangleF((int)x, (int)y, noteSize, noteSize);
 
@@ -218,6 +224,7 @@ namespace Sound_Space_Editor.Gui
 
 					Glu.RenderOutline((int)(x - 4), (int)(y - 4), (int)(noteSize + 8), (int)(noteSize + 8));
 				}
+
 				var c = Color.FromArgb((int)(15 * alphaMult), (int)note.Color.R, (int)note.Color.G, (int)note.Color.B);
 
 				GL.Color4(c);
@@ -272,37 +279,130 @@ namespace Sound_Space_Editor.Gui
 					editor.SoundPlayer.Play("hit", gse.SfxVolume.Value / (float)gse.SfxVolume.MaxValue, editor.MusicPlayer.Tempo);
 				}
 			}
-
-			for (var i = 0; i < BPMs.Count; i++ )
+			
+			if (!Settings.Default.LegacyBPM)
             {
-				var Bpm = BPMs[i];
-				double nextoffset = 0;
-				double nextLineX = endLineX;
-				double currentoffset = Bpm.Ms;
-				double offsetint = 60000 / Bpm.bpm / BeatDivisor;
-
-				if (i + 1 < BPMs.Count)
-                {
-					nextoffset = BPMs[i + 1].Ms;
-                }
-				else
-                {
-					nextoffset = editor.MusicPlayer.TotalTime.TotalMilliseconds * 2;
-                }
-
-				if (Bpm.bpm > 33)
+				for (var i = 0; i < BPMs.Count; i++)
 				{
-					lineSpace = 60 / Bpm.bpm * cubeStep;
-					var stepSmall = lineSpace / BeatDivisor;
-
-					lineX = ScreenX - posX + Bpm.Ms / 1000f * cubeStep;
-					if (lineX < 0)
-						lineX %= lineSpace;
+					var Bpm = BPMs[i];
+					double nextoffset = 0;
+					double nextLineX = endLineX;
+					double currentoffset = Bpm.Ms;
+					double offsetint = 60000 / Bpm.bpm / BeatDivisor;
 
 					if (i + 1 < BPMs.Count)
-						nextLineX = ScreenX - posX + nextoffset / 1000f * cubeStep;
-					if (nextLineX < 0)
-						nextLineX %= lineSpace;
+					{
+						nextoffset = BPMs[i + 1].Ms;
+					}
+					else
+					{
+						nextoffset = editor.MusicPlayer.TotalTime.TotalMilliseconds * 2;
+					}
+
+					if (Bpm.bpm > 33)
+					{
+						lineSpace = 60 / Bpm.bpm * cubeStep;
+						var stepSmall = lineSpace / BeatDivisor;
+
+						lineX = ScreenX - posX + Bpm.Ms / 1000f * cubeStep;
+						if (lineX < 0)
+							lineX %= lineSpace;
+
+						if (i + 1 < BPMs.Count)
+							nextLineX = ScreenX - posX + nextoffset / 1000f * cubeStep;
+						if (nextLineX < 0)
+							nextLineX %= lineSpace;
+
+						if (lineSpace > 0 && lineX < rect.Width && lineX > 0)
+						{
+							//draw offset start line
+							GL.Color4(Color.FromArgb(255, 0, 0));
+							GL.Begin(PrimitiveType.Lines);
+							GL.Vertex2((int)lineX + 0.5f, 0);
+							GL.Vertex2((int)lineX + 0.5f, rect.Bottom + 56);
+							GL.End();
+						}
+
+						//draw timing point info
+						var x = Math.Round(ScreenX - posX + Bpm.Ms / 1000f * cubeStep);
+
+						var numText = $"{Bpm.bpm:##,###}";
+
+						GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+						fr.Render(numText, (int)x + 3, (int)(rect.Y + rect.Height) + 3 + 28, 16);
+
+						GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+						fr.Render($"{Bpm.Ms:##,###}ms", (int)x + 3,
+							(int)(rect.Y + rect.Height + fr.GetHeight(16)) + 3 + 2 + 28, 16);
+
+						//render BPM lines
+						while (lineSpace > 0 && lineX < rect.Width && lineX < endLineX && lineX < nextLineX)
+						{
+							GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+							GL.Begin(PrimitiveType.Lines);
+							GL.Vertex2((int)lineX + 0.5f, rect.Bottom);
+							GL.Vertex2((int)lineX + 0.5f, rect.Bottom - 11);
+							GL.End();
+
+							for (int j = 1; j <= BeatDivisor; j++)
+							{
+								var xo = lineX + j * stepSmall;
+
+								if (j < BeatDivisor && xo < endLineX && xo < nextLineX)
+								{
+
+									var half = j == BeatDivisor / 2 && BeatDivisor % 2 == 0;
+
+									if (half)
+										GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+									else
+										GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+
+									GL.Begin(PrimitiveType.Lines);
+									GL.Vertex2((int)xo + 0.5f, rect.Bottom - (half ? 7 : 4));
+									GL.Vertex2((int)xo + 0.5f, rect.Bottom);
+									GL.End();
+								}
+							}
+
+							lineX += lineSpace;
+						}
+
+						var w = Math.Max(fr.GetWidth($"{Bpm.Ms:##,###}ms", 16), fr.GetWidth($"{Bpm.bpm:##,###}", 16));
+						var pointRect = new RectangleF((int)x, rect.Bottom, w + 3, 56);
+
+						var g = MouseOverPoint == null && pointRect.Contains(mouseX, mouseY);
+
+						if (g || EditorWindow.Instance._draggedPoint == Bpm &&
+							!EditorWindow.Instance.IsDraggingPointOnTimeline)
+						{
+							if (g)
+							{
+								MouseOverPoint = Bpm;
+								GL.Color3(0, 1, 0.25f);
+							}
+							else
+							{
+								GL.Color3(0, 0.5f, 1);
+							}
+
+							Glu.RenderOutline((int)(x - 4), rect.Bottom, w + 3 + 8, 56 + 4);
+						}
+					}
+				}
+			}
+			else
+            {
+				double offsetint = 60000 / Bpm / BeatDivisor;
+
+				if (Bpm > 33)
+				{
+					lineSpace = 60 / Bpm * cubeStep;
+					var stepSmall = lineSpace / BeatDivisor;
+
+					lineX = ScreenX - posX + BpmOffset / 1000f * cubeStep;
+					if (lineX < 0)
+						lineX %= lineSpace;
 
 					if (lineSpace > 0 && lineX < rect.Width && lineX > 0)
 					{
@@ -315,19 +415,19 @@ namespace Sound_Space_Editor.Gui
 					}
 
 					//draw timing point info
-					var x = Math.Round(ScreenX - posX + Bpm.Ms / 1000f * cubeStep);
+					var x = Math.Round(ScreenX - posX + BpmOffset / 1000f * cubeStep);
 
-					var numText = $"{Bpm.bpm:##,###}";
-
-					GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
-					fr.Render(numText, (int)x + 3, (int)(rect.Y + rect.Height) + 3 + 28, 16);
+					var numText = $"{Bpm:##,###}";
 
 					GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-					fr.Render($"{Bpm.Ms:##,###}ms", (int)x + 3,
+					fr.Render(numText, (int)x + 3, (int)(rect.Y + rect.Height) + 3 + 28, 16);
+
+					GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+					fr.Render($"{BpmOffset:##,###}ms", (int)x + 3,
 						(int)(rect.Y + rect.Height + fr.GetHeight(16)) + 3 + 2 + 28, 16);
 
 					//render BPM lines
-					while (lineSpace > 0 && lineX < rect.Width && lineX < endLineX && lineX < nextLineX)
+					while (lineSpace > 0 && lineX < rect.Width && lineX < endLineX)
 					{
 						GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 						GL.Begin(PrimitiveType.Lines);
@@ -339,7 +439,7 @@ namespace Sound_Space_Editor.Gui
 						{
 							var xo = lineX + j * stepSmall;
 
-							if (j < BeatDivisor && xo < endLineX && xo < nextLineX)
+							if (j < BeatDivisor && xo < endLineX)
 							{
 
 								var half = j == BeatDivisor / 2 && BeatDivisor % 2 == 0;

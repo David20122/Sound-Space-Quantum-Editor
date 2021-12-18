@@ -162,21 +162,12 @@
     </Compile>
     <Compile Include="SoundPlayer.cs" />
     <Compile Include="TextureManager.cs" />
-    <Compile Include="Timing Setup Panel.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Timing Setup Panel.Designer.cs">
-      <DependentUpon>Timing Setup Panel.cs</DependentUpon>
-    </Compile>
     <Compile Include="UndoRedo.cs" />
     <Compile Include="UndoRedoAction.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Timing Setup Panel.resx">
-      <DependentUpon>Timing Setup Panel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Help\BassNet.chm" />
     <None Include="OpenTK.dll.config" />

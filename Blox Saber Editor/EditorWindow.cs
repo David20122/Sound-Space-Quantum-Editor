@@ -52,9 +52,11 @@ namespace Sound_Space_Editor
 		public readonly UndoRedo UndoRedo = new UndoRedo();
 
 		public bool IsDraggingNoteOnTimeLine => _draggingNoteTimeline && _draggedNotes.FirstOrDefault() is Note n && n.DragStartMs != n.Ms;
+		public bool IsDraggingPointOnTimeline => _draggingPointTimeline && _draggedPoint is BPM n && n.DragStartMs != n.Ms;
 		public List<Note> SelectedNotes = new List<Note>();
 		private List<Note> _draggedNotes = new List<Note>();
 		private Note _draggedNote;
+		public BPM _draggedPoint;
 
 		private Point _clickedMouse;
 		private Point _lastMouse;
@@ -67,6 +69,7 @@ namespace Sound_Space_Editor
 		private int _dragStartX;
 		private long _dragStartMs;
 		private long _dragNoteStartMs;
+		private long _dragPointStartMs;
 
 		private float _dragStartIndexX;
 		private float _dragStartIndexY;
@@ -78,6 +81,7 @@ namespace Sound_Space_Editor
 		private bool _controlDown;
 		private bool _altDown;
 		private bool _draggingNoteTimeline;
+		private bool _draggingPointTimeline;
 		private bool _draggingNoteGrid;
 		private bool _draggingTimeline;
 
@@ -317,6 +321,17 @@ namespace Sound_Space_Editor
 					}
 				}
 
+				if (_draggingPointTimeline && _draggedPoint != null)
+                {
+					var rect = editor.Track.ClientRectangle;
+
+					var posX = MusicPlayer.CurrentTime.TotalSeconds * CubeStep;
+					var pointX = editor.Track.ScreenX - posX + _draggedPoint.DragStartMs / 1000f * CubeStep;
+
+					GL.Color3(0.75f, 0.75f, 0.75f);
+					Glu.RenderQuad((int)pointX, (int)rect.Y, 1, rect.Height);
+                }
+
 				if (_rightDown)
 				{
 					if (editor.Track.ClientRectangle.Contains(_clickedMouse))
@@ -404,6 +419,12 @@ namespace Sound_Space_Editor
 					//OnDraggingTimelineNotes(x);
 					OnDraggingTimelineNotes(x);
 				}
+				if (_draggingPointTimeline)
+                {
+					var x = Math.Abs(e.X - _dragStartX) >= 5 ? e.X : _dragStartX;
+
+					OnDraggingTimelinePoint(x);
+                }
 				if (editor.Timeline.Dragging)
 				{
 					editor.Timeline.Progress = Math.Max(0, Math.Min(1, (e.X - editor.ClientRectangle.Height / 2f) /
@@ -511,6 +532,7 @@ namespace Sound_Space_Editor
 				if (!_rightDown)
 				{
 					_draggedNote = null;
+					_draggedPoint = null;
 
 					if (editor.Track.MouseOverNote is Note tn)
 					{
@@ -575,6 +597,19 @@ namespace Sound_Space_Editor
 							SelectedNotes.Add(gn);
 						}
 					}
+					else if (editor.Track.MouseOverPoint is BPM pn)
+                    {
+						MusicPlayer.Pause();
+
+						_draggingPointTimeline = true;
+
+						_dragStartX = e.X;
+						pn.DragStartMs = pn.Ms;
+
+						_draggedPoint = pn;
+
+						_dragPointStartMs = pn.Ms;
+                    }
 					else if (editor.Track.ClientRectangle.Contains(e.Position))
 					{
 						_wasPlaying = MusicPlayer.IsPlaying;
@@ -612,6 +647,7 @@ namespace Sound_Space_Editor
 					}
 					else if (!editor.RotateButton.ClientRectangle.Contains(e.Position))
 					{
+						SelectedNotes.Clear();
 						_draggedNotes.Clear();
 
 						_draggingNoteGrid = false;
@@ -707,6 +743,37 @@ namespace Sound_Space_Editor
 				}
 			}
 
+			if (_draggingPointTimeline)
+            {
+				MusicPlayer.Pause();
+
+				if (_draggedPoint != null && _draggedPoint is BPM point)
+                {
+					var start = point.DragStartMs;
+					var diff = point.Ms - start;
+
+					if (diff != 0)
+                    {
+						var saveState = _saved;
+
+						UndoRedo.AddUndoRedo("MOVE POINT", () =>
+						{
+							point.Ms = start;
+							GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
+							_saved = false;
+						}, () =>
+						{
+							point.Ms = start + diff;
+							GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
+							_saved = false;
+						});
+
+						_saved = false;
+						GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
+					}
+                }
+            }
+
 			if (_draggingNoteGrid && _draggedNotes.FirstOrDefault() is Note note2)
 			{
 				MusicPlayer.Pause();
@@ -779,6 +846,7 @@ namespace Sound_Space_Editor
 			}
 
 			_draggingNoteTimeline = false;
+			_draggingPointTimeline = false;
 			_draggingNoteGrid = false;
 			_draggingTimeline = false;
 		}
@@ -1231,6 +1299,9 @@ namespace Sound_Space_Editor
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
+			if (TimingPoints.Instance != null)
+				TimingPoints.Instance.Close();
+
 			Settings.Default.Save();
 
 			if (GuiScreen is GuiScreenEditor)
@@ -1411,6 +1482,29 @@ namespace Sound_Space_Editor
 				Notes.Sort();
 			}
 		}
+
+		private void OnDraggingTimelinePoint(int mouseX)
+        {
+			var pixels = mouseX - _dragStartX;
+			var msDiff = pixels / CubeStep * 1000;
+
+			//var audioTime = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
+
+			if (GuiScreen is GuiScreenEditor gui && _draggedPoint != null)
+            {
+				//var clickMs = (int)(Math.Max(0, _clickedMouse.X - gui.Track.ScreenX + audioTime / 1000 * CubeStep) / CubeStep * 1000);
+				//var clickOff = clickMs - _dragPointStartMs;
+				//var cursorMs = (int)(Math.Max(0, mouseX - gui.Track.ScreenX + audioTime / 1000 * CubeStep) / CubeStep * 1000) - clickOff;
+
+				var time = _draggedPoint.DragStartMs + (int)msDiff;
+
+				time = (int)Math.Max(0, Math.Min(MusicPlayer.TotalTime.TotalMilliseconds, time));
+
+				_draggedPoint.Ms = time;
+
+				GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
+			}
+        }
 
 		private void OnDraggingGridNote(Point pos)
 		{
@@ -1630,7 +1724,7 @@ namespace Sound_Space_Editor
 
 				GuiTrack.BPMs.Clear();
 				gse.Offset.Text = "0";
-				GuiTrack.BpmOffset = 0;
+				GuiTrack.NoteOffset = 0;
 				gse.BeatSnapDivisor.Value = 3;
 				GuiTrack.BeatDivisor = 4;
 
@@ -1641,6 +1735,7 @@ namespace Sound_Space_Editor
 				if (File.Exists(ini))
 				{
 					var lines = File.ReadAllLines(ini);
+					var oldformat = false;
 
 					foreach (var line in lines)
 					{
@@ -1668,6 +1763,7 @@ namespace Sound_Space_Editor
 										}
 										else
                                         {
+											oldformat = true;
 											if (float.TryParse(bpmms[0], out var bpm))
                                             {
 												GuiTrack.BPMs.Add(new BPM(bpm, 0));
@@ -1692,16 +1788,26 @@ namespace Sound_Space_Editor
                                 }
 								else if (property == "offset" && long.TryParse(value, out var offset))
                                 {
-									GuiTrack.BpmOffset = offset;
+									if (oldformat)
+                                    {
+										GuiTrack.BPMs[0].Ms = offset;
+										offset = 0;
+                                    }
+									GuiTrack.NoteOffset = offset;
 									gse.Offset.Text = offset.ToString();
+								}
+								else if (property == "legacybpm" && float.TryParse(value, out var legacybpm))
+                                {
+									GuiTrack.Bpm = legacybpm;
+                                }
+								else if (property == "legacyoffset" && long.TryParse(value, out var legacyoffset))
+                                {
+									GuiTrack.BpmOffset = legacyoffset;
                                 }
 							}
 						}
 					}
 				}
-
-				var Bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds);
-				gse.Offset.Text = Bpm.Ms.ToString();
 			}
 		}
 
@@ -1755,7 +1861,7 @@ namespace Sound_Space_Editor
 					_soundId = -1;
 
 				GuiTrack.BPMs.Clear();
-				GuiTrack.BpmOffset = 0;
+				GuiTrack.NoteOffset = 0;
 				GuiTrack.TextBpm = 0;
 			}
 			catch (Exception e)
@@ -1775,17 +1881,24 @@ namespace Sound_Space_Editor
 
 		public BPM GetCurrentBpm(double currentms)
         {
-			BPM currentbpm = new BPM(0,0);
-
-			foreach (var bpm in GuiTrack.BPMs)
+			if (!Settings.Default.LegacyBPM)
             {
-				if (bpm.Ms <= currentms)
-                {
-					currentbpm = bpm;
-                }
-            }
+				BPM currentbpm = new BPM(0, 0);
 
-			return currentbpm;
+				foreach (var bpm in GuiTrack.BPMs)
+				{
+					if (bpm.Ms <= currentms)
+					{
+						currentbpm = bpm;
+					}
+				}
+
+				return currentbpm;
+			}
+			else
+            {
+				return new BPM(GuiTrack.Bpm, GuiTrack.BpmOffset);
+            }
         }
 
 		private bool PromptSave()
@@ -1901,7 +2014,7 @@ namespace Sound_Space_Editor
 
 			var iniFile = Path.ChangeExtension(_file, ".ini");
 
-			File.WriteAllLines(iniFile, new[] { $@"BPM={BpmsToString()}", $@"Offset={GuiTrack.BpmOffset}", $@"Time={(long)MusicPlayer.CurrentTime.TotalMilliseconds}", $@"Divisor={GuiTrack.BeatDivisor}" }, Encoding.UTF8);
+			File.WriteAllLines(iniFile, new[] { $@"BPM={BpmsToString()}", $@"Offset={GuiTrack.NoteOffset}", $@"LegacyBPM={GuiTrack.Bpm}", $@"LegacyOffset={GuiTrack.BpmOffset}", $@"Time={(long)MusicPlayer.CurrentTime.TotalMilliseconds}", $@"Divisor={GuiTrack.BeatDivisor}" }, Encoding.UTF8);
 		}
 
 		private bool LoadSound(long id)

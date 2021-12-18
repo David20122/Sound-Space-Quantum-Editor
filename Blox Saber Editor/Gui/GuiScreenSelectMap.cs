@@ -42,14 +42,14 @@ namespace Sound_Space_Editor.Gui
 
 			if (File.Exists(Properties.Settings.Default.LastFile))
 			{
-				_lastMapButton = new GuiButton(3, 0, 0, 256, 48, "EDIT LAST MAP");
+				_lastMapButton = new GuiButton(3, 0, 0, 256, 48, "EDIT LAST MAP", false);
 				Buttons.Add(_lastMapButton);
 			}
-			_createMapButton = new GuiButton(0, 0, 0, 256, 48, "CREATE NEW MAP");
-			_loadMapButton = new GuiButton(1, 0, 0, 256, 48, "EDIT EXISTING MAP");
-			_importButton = new GuiButton(2, 0, 0, 256, 48, "IMPORT MAP");
-			_pasteDataButton = new GuiButton(4, 0, 0, 256, 36, "PASTE DATA");
-			_githubButton = new GuiButton(5, 0, 0, 256, 36, "GITHUB LINK");
+			_createMapButton = new GuiButton(0, 0, 0, 256, 48, "CREATE NEW MAP", false);
+			_loadMapButton = new GuiButton(1, 0, 0, 256, 48, "EDIT EXISTING MAP", false);
+			_importButton = new GuiButton(2, 0, 0, 256, 48, "IMPORT MAP", false);
+			_pasteDataButton = new GuiButton(4, 0, 0, 256, 36, "PASTE DATA", false);
+			_githubButton = new GuiButton(5, 0, 0, 256, 36, "GITHUB LINK", false);
 			_pasteDataButton.Visible = false;
 			_githubButton.Visible = false;
 			Buttons.Add(_createMapButton);

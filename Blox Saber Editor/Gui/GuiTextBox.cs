@@ -16,6 +16,7 @@ namespace Sound_Space_Editor.Gui
 		public bool Decimal;
 		public bool Centered;
 		public bool CanBeNegative;
+		public bool Timings;
 
 		private bool _focused;
 		private string _text = "";
@@ -117,6 +118,8 @@ namespace Sound_Space_Editor.Gui
 			Glu.RenderOutline(rect);
 
 			var fr = EditorWindow.Instance.FontRenderer;
+			if (Timings)
+				fr = TimingPoints.Instance.FontRenderer;
 
 			var renderedText = _text;
 
@@ -175,15 +178,18 @@ namespace Sound_Space_Editor.Gui
 				return;
 			}
 
-			var textwidth = EditorWindow.Instance.FontRenderer.GetWidth(_text, 24);
-			var posX = x - ClientRectangle.X - (ClientRectangle.Width - textwidth) / 2;
-			var letterwidth = textwidth / _text.Length;
+			if (_text.Length > 0)
+            {
+				var textwidth = EditorWindow.Instance.FontRenderer.GetWidth(_text, 24);
+				var posX = x - ClientRectangle.X - (ClientRectangle.Width - textwidth) / 2;
+				var letterwidth = textwidth / _text.Length;
 
-			posX = Math.Max(0, posX);
-			posX = Math.Min(textwidth, posX);
-			posX = (float)Math.Floor(posX / letterwidth + 0.3);
+				posX = Math.Max(0, posX);
+				posX = Math.Min(textwidth, posX);
+				posX = (float)Math.Floor(posX / letterwidth + 0.3);
 
-			_cursorPos = (int)posX;
+				_cursorPos = (int)posX;
+			}
 
 			Focused = true;
 		}

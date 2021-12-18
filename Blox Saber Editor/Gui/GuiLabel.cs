@@ -8,12 +8,14 @@ namespace Sound_Space_Editor.Gui
 		public string Text;
 		public int FontSize = 24;
 		public bool Centered = false;
+		public bool Timings = false;
 
 		public Color Color = Color.White;
 
-		public GuiLabel(float x, float y, string text) : base(x, y, 0, 0)
+		public GuiLabel(float x, float y, string text, bool timings) : base(x, y, 0, 0)
 		{
 			Text = text;
+			Timings = timings;
 		}
 
 		public override void Render(float delta, float mouseX, float mouseY)
@@ -21,6 +23,8 @@ namespace Sound_Space_Editor.Gui
 			GL.Color4(Color);
 
 			var fr = EditorWindow.Instance.FontRenderer;
+			if (Timings)
+				fr = TimingPoints.Instance.FontRenderer;
 
 			if (Centered)
 			{

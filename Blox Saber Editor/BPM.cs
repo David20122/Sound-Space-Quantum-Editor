@@ -7,6 +7,7 @@ namespace Sound_Space_Editor
 	{
 		public float bpm;
 		public long Ms;
+		public long DragStartMs;
 
 		public BPM(float beatspermin, long ms)
 		{

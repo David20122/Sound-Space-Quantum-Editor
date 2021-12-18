@@ -21,7 +21,7 @@ namespace Sound_Space_Editor.Gui
 
 		private float _alpha;
 
-		public GuiSlider(float x, float y, float sx, float sy) : base(int.MinValue, x, y, sx, sy, "")
+		public GuiSlider(float x, float y, float sx, float sy) : base(int.MinValue, x, y, sx, sy, "", false)
 		{
 			_vertical = sx < sy;
 		}
@@ -29,51 +29,55 @@ namespace Sound_Space_Editor.Gui
 		string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 21);
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
-			var rect = ClientRectangle;
+			if (MaxValue > 0)
+            {
+				var rect = ClientRectangle;
 
-			IsMouseOver = rect.Contains(mouseX, mouseY);
+				IsMouseOver = rect.Contains(mouseX, mouseY);
 
-			var lineSize = _vertical ? rect.Height - rect.Width : rect.Width - rect.Height;
+				var lineSize = _vertical ? rect.Height - rect.Width : rect.Width - rect.Height;
 
-			var step = lineSize / MaxValue;
-			var pos = Snap ? step * Value : Progress * lineSize;
-			var lineRect = new RectangleF(rect.X + (_vertical ? rect.Width / 2 - 1 : rect.Height / 2), rect.Y + (_vertical ? rect.Width / 2 : rect.Height / 2 - 1), _vertical ? 2 : lineSize, _vertical ? lineSize : 2);
-			var cursorPos = new PointF(rect.X + (_vertical ? rect.Width / 2 : rect.Height / 2 + pos), _vertical ? rect.Bottom - rect.Width / 2 - pos : rect.Y + rect.Height / 2);
+				var step = lineSize / MaxValue;
+				var pos = Snap ? step * Value : Progress * lineSize;
+				var lineRect = new RectangleF(rect.X + (_vertical ? rect.Width / 2 - 1 : rect.Height / 2), rect.Y + (_vertical ? rect.Width / 2 : rect.Height / 2 - 1), _vertical ? 2 : lineSize, _vertical ? lineSize : 2);
+				var cursorPos = new PointF(rect.X + (_vertical ? rect.Width / 2 : rect.Height / 2 + pos), _vertical ? rect.Bottom - rect.Width / 2 - pos : rect.Y + rect.Height / 2);
 
-			var mouseClose = Dragging || Math.Sqrt(Math.Pow(mouseX - cursorPos.X, 2) + Math.Pow(mouseY - cursorPos.Y, 2)) <= 12;
+				var mouseClose = Dragging || Math.Sqrt(Math.Pow(mouseX - cursorPos.X, 2) + Math.Pow(mouseY - cursorPos.Y, 2)) <= 12;
 
-			_alpha = MathHelper.Clamp(_alpha + (mouseClose ? 10 : -10) * delta, 0, 1);
+				_alpha = MathHelper.Clamp(_alpha + (mouseClose ? 10 : -10) * delta, 0, 1);
 
-			RenderTimeline(lineRect);
+				RenderTimeline(lineRect);
 
-			//cursor
-			GL.Translate(cursorPos.X, cursorPos.Y, 0);
-			GL.Rotate(_alpha * 90, 0, 0, 1);
+				//cursor
+				GL.Translate(cursorPos.X, cursorPos.Y, 0);
+				GL.Rotate(_alpha * 90, 0, 0, 1);
 
-			// color 1
+				// color 1
 
-			string[] c1values = rc1.Split(',');
-			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
+				string[] c1values = rc1.Split(',');
+				int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
 
-			//color 2
+				//color 2
 
-			string[] c2values = rc2.Split(',');
-			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
+				string[] c2values = rc2.Split(',');
+				int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 
-			if (_alpha > 0)
-			{
-				GL.PolygonMode(MaterialFace.Front, PolygonMode.Line);
+				if (_alpha > 0)
+				{
+					GL.PolygonMode(MaterialFace.Front, PolygonMode.Line);
+					GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+					Glu.RenderCircle(0, 0, 12 * _alpha);
+				}
+
+				GL.Rotate(-_alpha * 90, 0, 0, 1);
+				GL.Translate(-cursorPos.X, -cursorPos.Y, 0);
+
+				GL.PolygonMode(MaterialFace.Front, PolygonMode.Fill);
 				GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-				Glu.RenderCircle(0, 0, 12 * _alpha);
+				Glu.RenderCircle(cursorPos.X, cursorPos.Y, 4, 16);
+				//GL.LineWidth(1);
 			}
 
-			GL.Rotate(-_alpha * 90, 0, 0, 1);
-			GL.Translate(-cursorPos.X, -cursorPos.Y, 0);
-
-			GL.PolygonMode(MaterialFace.Front, PolygonMode.Fill);
-			GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-			Glu.RenderCircle(cursorPos.X, cursorPos.Y, 4, 16);
-			//GL.LineWidth(1);
 		}
 		protected virtual void RenderTimeline(RectangleF rect)
 		{
