@@ -12,8 +12,7 @@ namespace Sound_Space_Editor.Gui
 		public float color2;
 		public float color3;
 		public string Text = " ";
-		public string Font;
-		public FontRenderer fr;
+		public bool Timings;
 
 		protected int Texture;
 
@@ -37,24 +36,14 @@ namespace Sound_Space_Editor.Gui
 			Texture = texture;
 		}
 
-		public GuiButton(int id, float x, float y, float sx, float sy, string text) : this(id, x, y, sx, sy)
+		public GuiButton(int id, float x, float y, float sx, float sy, string text, bool timings) : this(id, x, y, sx, sy)
 		{
 			color1 = 1f;
 			color2 = 1;
 			color3 = 1;
 
 			Text = text;
-			Font = "main";
-		}
-
-		public GuiButton(int id, float x, float y, float sx, float sy, string text, string font) : this(id, x, y, sx, sy)
-		{
-			color1 = 1f;
-			color2 = 1;
-			color3 = 1;
-
-			Text = text;
-			Font = font;
+			Timings = timings;
 		}
 
 		public GuiButton(int id, float x, float y, float sx, float sy, string text, float cr, float cg, float cb) : this(id, x, y, sx, sy)
@@ -64,17 +53,6 @@ namespace Sound_Space_Editor.Gui
 			color3 = cb;
 
 			Text = text;
-			Font = "main";
-		}
-
-		public GuiButton(int id, float x, float y, float sx, float sy, string text, string font, float cr, float cg, float cb) : this(id, x, y, sx, sy)
-		{
-			color1 = cr;
-			color2 = cg;
-			color3 = cb;
-
-			Text = text;
-			Font = font;
 		}
 
 		public override void Render(float delta, float mouseX, float mouseY)
@@ -112,24 +90,15 @@ namespace Sound_Space_Editor.Gui
 				Glu.RenderOutline(ClientRectangle);
 			}
 
-			if (Font == "squareo")
-			{
-				fr = EditorWindow.Instance.SquareOFontRenderer;
-			}
-			else if (Font == "square")
-			{
-				fr = EditorWindow.Instance.SquareFontRenderer;
-			}
-			else if (Font == "main")
-			{
-				fr = EditorWindow.Instance.FontRenderer;
-			}
-
+			var fr = EditorWindow.Instance.FontRenderer;
 			var width = fr.GetWidth(Text, (int)ClientRectangle.Height / 2);
 			var height = fr.GetHeight((int)ClientRectangle.Height / 2);
 
 			GL.Color3(color1,color2,color3);
-			fr.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
+			if (!Timings)
+				fr.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
+			else
+				TimingPoints.Instance.FontRenderer.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
 		}
 
 
