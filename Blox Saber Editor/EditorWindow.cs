@@ -25,7 +25,11 @@ namespace Sound_Space_Editor
 	{
 		private bool discordEnabled = false;
 		public static EditorWindow Instance;
+
 		public FontRenderer FontRenderer;
+		public FontRenderer SquareFontRenderer;
+		public FontRenderer SquareOFontRenderer;
+
 		public bool IsPaused { get; private set; }
 
 		public GuiScreen GuiScreen { get; private set; }
