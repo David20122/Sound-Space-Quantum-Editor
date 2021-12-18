@@ -126,6 +126,8 @@ namespace Sound_Space_Editor
 			SoundPlayer = new SoundPlayer();
 
 			FontRenderer = new FontRenderer("main");
+			SquareOFontRenderer = new FontRenderer("Squareo");
+			SquareFontRenderer = new FontRenderer("Square");
 
 			if (!File.Exists(settingsFile))
 			{
