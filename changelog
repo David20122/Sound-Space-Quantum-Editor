@@ -1,0 +1,9 @@
+1.7 Release - 20/12/2021
+
+                            ADDS:
+- Timing Points
+- Metronome
+-
+- Redesigned menu (you can put a background on it!  
+                  [background_menu.png] in editor folder)
+- background.png => background_editor.png
