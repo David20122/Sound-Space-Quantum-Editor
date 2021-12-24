@@ -172,3 +172,13 @@ C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Edi
 C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.Rocks.pdb
 C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\NuGet.Squirrel.pdb
 C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Squirrel.pdb
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\DeltaCompressionDotNet.dll
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\DeltaCompressionDotNet.MsDelta.dll
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\DeltaCompressionDotNet.PatchApi.dll
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.dll
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.Mdb.dll
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.Pdb.dll
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.Rocks.dll
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\NuGet.Squirrel.dll
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\SharpCompress.dll
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Squirrel.dll

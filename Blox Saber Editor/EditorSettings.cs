@@ -30,42 +30,42 @@ namespace Sound_Space_Editor
                 {
                     if (text.Contains("--")) 
                         continue;
-                    string[] array = text.Trim().Replace(" ", "").Split(new char[] { '=' });
-                    string text2 = array[0];
-                    string v = array[1];
-                    Console.WriteLine("{0}, {1}", text2, v);
-                    switch (text2)
+                    string[] settings = text.Trim().Replace(" ", "").Split(new char[] { '=' });
+                    string setting = settings[0];
+                    string v = settings[1];
+                    Console.WriteLine("{0}, {1}", setting, v);
+                    switch (setting)
                     {
-                        case string a when a.Equals("Waveform"):
+                        case "Waveform":
                             bool resA;
                             bool.TryParse(v, out resA);
                             Waveform = resA;
                             break;
-                        case string b when b.Equals("EditorBGOpacity"):
+                        case "EditorBGOpacity":
                             int resB;
                             int.TryParse(v, out resB);
                             EditorBGOpacity = resB;
                             break;
-                        case string c when c.Equals("GridOpacity"):
+                        case "GridOpacity":
                             int resC;
                             int.TryParse(v, out resC);
                             GridOpacity = resC;
                             break;
-                        case string d when d.Equals("TrackOpacity"):
+                        case "TrackOpacity":
                             int resD;
                             int.TryParse(v, out resD);
                             TrackOpacity = resD;
                             break;
-                        case string e when e.Equals("Color1"):
+                        case "Color1":
                             Color1 = v;
                             break;
-                        case string f when f.Equals("Color2"):
+                        case "Color2":
                             Color2 = v;
                             break;
-                        case string g when g.Equals("NoteColor1"):
+                        case "NoteColor1":
                             NoteColor1 = v;
                             break;
-                        case string h when h.Equals("NoteColor2"):
+                        case "NoteColor2":
                             NoteColor2 = v;
                             break;
                     }
