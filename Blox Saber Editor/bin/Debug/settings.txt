@@ -1,5 +1,6 @@
 -- DON'T EDIT THIS, LAUNCH EDITOR AND GO IN SETTINGS INSTEAD
 Waveform=True
+BPMForm=False
 EditorBGOpacity=255
 GridOpacity=255
 TrackOpacity=255

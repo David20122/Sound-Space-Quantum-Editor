@@ -169,6 +169,7 @@
 			this.Controls.Add(this.UpdateButton);
 			this.Controls.Add(this.RemoveButton);
 			this.Controls.Add(this.PointList);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
 			this.Name = "TimingsWindow";
 			this.ShowIcon = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

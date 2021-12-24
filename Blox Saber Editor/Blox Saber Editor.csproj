@@ -209,6 +209,9 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Timing Setup Panel.resx">
+      <DependentUpon>Timing Setup Panel.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Help\BassNet.chm" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
