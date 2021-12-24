@@ -25,6 +25,7 @@ namespace Sound_Space_Editor.Gui
 		private GuiTextBox NoteColor2TextBox;
 
 		private GuiCheckBox WaveformCheckbox;
+		private GuiCheckBox BPMFormCheckbox;
 
 		private GuiTextBox EditorBGOpacityTextBox;
 		private GuiTextBox GridOpacityTextBox;
@@ -89,11 +90,13 @@ namespace Sound_Space_Editor.Gui
 			};
 
 			WaveformCheckbox = new GuiCheckBox(1, "Waveform", 0, 0, 72, 72, 32, EditorSettings.Waveform);
+			BPMFormCheckbox = new GuiCheckBox(1, "Use Timings Form", 0, 0, 72, 72, 32, EditorSettings.BPMForm);
 
 			Buttons.Add(_openFolderButton);
 			Buttons.Add(_resetButton);
 			Buttons.Add(_backButton);
 			Buttons.Add(WaveformCheckbox);
+			Buttons.Add(BPMFormCheckbox);
 
 			if (File.Exists(Path.Combine(EditorWindow.Instance.LauncherDir, "background_menu.png")))
 			{
@@ -166,6 +169,7 @@ namespace Sound_Space_Editor.Gui
 			NoteColor2TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - 800, ClientRectangle.Height / 2 - -150);
 
 			WaveformCheckbox.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - -475, ClientRectangle.Height / 2 - 300);
+			BPMFormCheckbox.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - 200,ClientRectangle.Height/2 - 300);
 
 			EditorBGOpacityTextBox.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - -475, ClientRectangle.Height / 2 - 150);
 			GridOpacityTextBox.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - -475, ClientRectangle.Height / 2 - 0);
@@ -395,6 +399,7 @@ namespace Sound_Space_Editor.Gui
 					EditorSettings.NoteColor1 = NoteColor1TextBox.Text;
 					EditorSettings.NoteColor2 = NoteColor2TextBox.Text;
 					EditorSettings.Waveform = WaveformCheckbox.Toggle;
+					EditorSettings.BPMForm = BPMFormCheckbox.Toggle;
 					EditorSettings.EditorBGOpacity = editorbgOpacity;
 					EditorSettings.GridOpacity = gridOpacity;
 					EditorSettings.TrackOpacity = trackOpacity;
@@ -405,6 +410,7 @@ namespace Sound_Space_Editor.Gui
 					break;
 				case 1:
 					EditorSettings.Waveform = true;
+					EditorSettings.BPMForm = false;
 					EditorBGOpacityTextBox.Text = "255";
 					GridOpacityTextBox.Text = "255";
 					TrackOpacityTextBox.Text = "255";

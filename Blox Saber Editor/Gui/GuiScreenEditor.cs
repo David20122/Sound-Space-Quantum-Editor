@@ -56,7 +56,6 @@ namespace Sound_Space_Editor.Gui
 
 		//private object TimingPanel;
 		TimingPoints TimingPoints;
-		private Type TimingType = Type.GetType("Sound_Space_Editor.TimingsWindow");
 
 		public GuiScreenEditor() : base(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64)
 		{
@@ -495,15 +494,11 @@ namespace Sound_Space_Editor.Gui
 					});
 					break;
 				case 8:
-					/*
-					if (TimingPanel != null)
-                    {
-						(TimingPanel as Form).Close();
-                    }
-					TimingPanel = Activator.CreateInstance(TimingType);
-					(TimingPanel as Form).Show();
-					break;
-					*/
+					if (EditorSettings.BPMForm)
+					{
+						new TimingsWindow().Show();
+						break;
+					}
 
 					void openGui()
 					{
