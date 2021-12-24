@@ -153,6 +153,12 @@
     <Compile Include="EditorSettings.cs" />
     <Compile Include="Gui\GuiScreenSettings.cs" />
     <Compile Include="Gui\GuiScreenTimings.cs" />
+    <Compile Include="Timing Setup Panel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Timing Setup Panel.Designer.cs">
+      <DependentUpon>Timing Setup Panel.cs</DependentUpon>
+    </Compile>
     <Compile Include="TimingPoints.cs" />
     <Compile Include="ColorSequence.cs" />
     <Compile Include="DiscordGameSDK\ActivityManager.cs" />
