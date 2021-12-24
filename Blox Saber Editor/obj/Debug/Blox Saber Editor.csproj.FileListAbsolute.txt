@@ -191,3 +191,4 @@ C:\Users\pc\Documents\SSQE\Blox Saber Editor\bin\Debug\Mono.Cecil.Rocks.dll
 C:\Users\pc\Documents\SSQE\Blox Saber Editor\bin\Debug\NuGet.Squirrel.dll
 C:\Users\pc\Documents\SSQE\Blox Saber Editor\bin\Debug\SharpCompress.dll
 C:\Users\pc\Documents\SSQE\Blox Saber Editor\bin\Debug\Squirrel.dll
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound_Space_Editor.TimingsWindow.resources
