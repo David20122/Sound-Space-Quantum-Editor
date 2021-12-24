@@ -91,7 +91,7 @@ namespace Sound_Space_Editor.Gui
 
             for (var i = 0; i < GuiTrack.BPMs.Count; i++)
             {
-                if (i >= ScrollIndex)
+                if (i >= ScrollIndex && i < ScrollIndex + 8)
                 {
                     var bpm = GuiTrack.BPMs[i];
                     var by = y + height / 8 * (i - ScrollIndex);

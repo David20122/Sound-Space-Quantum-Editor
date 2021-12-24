@@ -309,7 +309,7 @@ namespace Sound_Space_Editor.Gui
 						//draw timing point info
 						var x = Math.Round(ScreenX - posX + Bpm.Ms / 1000f * cubeStep);
 
-						var numText = $"{Bpm.bpm:##,###}";
+						var numText = $"{Bpm.bpm:##,###.###}";
 
 						GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 						fr.Render(numText, (int)x + 3, (int)(rect.Y + rect.Height) + 3 + 28, 16);
