@@ -37,7 +37,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiCheckBox QuantumGridLines;
 		public readonly GuiCheckBox QuantumGridSnap;
 		public readonly GuiCheckBox Metronome;
-		public readonly GuiCheckBox LegacyBPM;
+		//public readonly GuiCheckBox LegacyBPM;
 		public readonly GuiButton BackButton;
 		public readonly GuiButton CopyButton;
 		public readonly GuiButton SetOffset;
@@ -149,7 +149,7 @@ namespace Sound_Space_Editor.Gui
 			QuantumGridLines = new GuiCheckBox(5, "Quantum Grid Lines", 0, 0, 32, 32, Settings.Default.QuantumGridLines);
 			QuantumGridSnap = new GuiCheckBox(5, "Snap to Grid", 0, 0, 32, 32, Settings.Default.QuantumGridSnap);
 			Metronome = new GuiCheckBox(5, "Metronome", 0, 0, 32, 32, Settings.Default.Metronome);
-			LegacyBPM = new GuiCheckBox(5, "Use Legacy BPM", 0, 0, 24, 24, Settings.Default.LegacyBPM);
+			//LegacyBPM = new GuiCheckBox(5, "Use Legacy BPM", 0, 0, 24, 24, Settings.Default.LegacyBPM);
 
 			Offset.Focused = true;
 			SfxOffset.Focused = true;
@@ -182,7 +182,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(QuantumGridLines);
 			Buttons.Add(QuantumGridSnap);
 			Buttons.Add(Metronome);
-			Buttons.Add(LegacyBPM);
+			//Buttons.Add(LegacyBPM);
 			Buttons.Add(SetOffset);
 			Buttons.Add(BackButton);
 			Buttons.Add(CopyButton);
@@ -447,7 +447,7 @@ namespace Sound_Space_Editor.Gui
 					Settings.Default.QuantumGridSnap = QuantumGridSnap.Toggle;
 					Settings.Default.Metronome = Metronome.Toggle;
 					Settings.Default.SfxOffset = SfxOffset.Text;
-					Settings.Default.LegacyBPM = LegacyBPM.Toggle;
+					//Settings.Default.LegacyBPM = LegacyBPM.Toggle;
 					Settings.Default.Save();
 					break;
 				case 6:
@@ -567,7 +567,7 @@ namespace Sound_Space_Editor.Gui
 			AutoAdvance.ClientRectangle.Y = CopyButton.ClientRectangle.Y + 35;
 			QuantumGridSnap.ClientRectangle.Y = QuantumGridLines.ClientRectangle.Bottom + 10;
 			Metronome.ClientRectangle.Y = QuantumGridSnap.ClientRectangle.Bottom + 10;
-			LegacyBPM.ClientRectangle.Y = OpenTimings.ClientRectangle.Bottom + 10;
+			//LegacyBPM.ClientRectangle.Y = OpenTimings.ClientRectangle.Bottom + 10;
 
 			Offset.ClientRectangle.X = 10;
 			SfxOffset.ClientRectangle.X = Tempo.ClientRectangle.X + Tempo.ClientRectangle.Width / 2 - SfxOffset.ClientRectangle.Width / 2;
@@ -589,7 +589,7 @@ namespace Sound_Space_Editor.Gui
 			AutoAdvance.ClientRectangle.X = BeatSnapDivisor.ClientRectangle.X + 20;
 			QuantumGridSnap.ClientRectangle.X = QuantumGridLines.ClientRectangle.X;
 			Metronome.ClientRectangle.X = QuantumGridSnap.ClientRectangle.X;
-			LegacyBPM.ClientRectangle.X = OpenTimings.ClientRectangle.X;
+			//LegacyBPM.ClientRectangle.X = OpenTimings.ClientRectangle.X;
 
 			_toast.ClientRectangle.X = size.Width / 2f;
 		}
