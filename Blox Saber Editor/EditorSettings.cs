@@ -30,43 +30,43 @@ namespace Sound_Space_Editor
                 {
                     if (text.Contains("--")) 
                         continue;
-                    string[] settings = text.Trim().Replace(" ", "").Split(new char[] { '=' });
-                    string setting = settings[0];
-                    string v = settings[1];
-                    Console.WriteLine("{0}, {1}", setting, v);
+                    string[] settingsArray = text.Trim().Replace(" ", "").Split(new char[] { '=' });
+                    string setting = settingsArray[0];
+                    string value = settingsArray[1];
+                    Console.WriteLine("{0}, {1}", setting, value);
                     switch (setting)
                     {
                         case "Waveform":
                             bool resA;
-                            bool.TryParse(v, out resA);
+                            bool.TryParse(value, out resA);
                             Waveform = resA;
                             break;
                         case "EditorBGOpacity":
                             int resB;
-                            int.TryParse(v, out resB);
+                            int.TryParse(value, out resB);
                             EditorBGOpacity = resB;
                             break;
                         case "GridOpacity":
                             int resC;
-                            int.TryParse(v, out resC);
+                            int.TryParse(value, out resC);
                             GridOpacity = resC;
                             break;
                         case "TrackOpacity":
                             int resD;
-                            int.TryParse(v, out resD);
+                            int.TryParse(value, out resD);
                             TrackOpacity = resD;
                             break;
                         case "Color1":
-                            Color1 = v;
+                            Color1 = value;
                             break;
                         case "Color2":
-                            Color2 = v;
+                            Color2 = value;
                             break;
                         case "NoteColor1":
-                            NoteColor1 = v;
+                            NoteColor1 = value;
                             break;
                         case "NoteColor2":
-                            NoteColor2 = v;
+                            NoteColor2 = value;
                             break;
                     }
                 }
