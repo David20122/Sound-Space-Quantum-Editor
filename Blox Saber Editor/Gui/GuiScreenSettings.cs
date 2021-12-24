@@ -16,6 +16,8 @@ namespace Sound_Space_Editor.Gui
 		private bool bgImg = false;
 
 		private GuiButton _backButton = new GuiButton(0, 0, 0, 600, 100, "SAVE AND RETURN", "square", 100);
+		private GuiButton _resetButton = new GuiButton(1, 0, 0, 500, 50, "RESET TO DEFAULT", "square", 100);
+		private GuiButton _openFolderButton = new GuiButton(2, 0, 0, 500, 50, "OPEN EDITOR FOLDER", "square", 100);
 
 		private GuiTextBox color1TextBox;
 		private GuiTextBox color2TextBox;
@@ -88,6 +90,8 @@ namespace Sound_Space_Editor.Gui
 
 			WaveformCheckbox = new GuiCheckBox(1, "Waveform", 0, 0, 72, 72, 32, EditorSettings.Waveform);
 
+			Buttons.Add(_openFolderButton);
+			Buttons.Add(_resetButton);
 			Buttons.Add(_backButton);
 			Buttons.Add(WaveformCheckbox);
 
@@ -152,6 +156,8 @@ namespace Sound_Space_Editor.Gui
 			ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
 
 			_backButton.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - 300, ClientRectangle.Height / 2 - -350);
+			_resetButton.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - 250, ClientRectangle.Height / 2 - -290);
+			_openFolderButton.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - 250, ClientRectangle.Height / 2 - -235);
 
 			color1TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - 800, ClientRectangle.Height / 2 - 300);
 			color2TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - 800, ClientRectangle.Height / 2 - 150);
@@ -171,8 +177,6 @@ namespace Sound_Space_Editor.Gui
 		void ShowColor()
         {
 			var size = EditorWindow.Instance.ClientSize;
-
-			EditorWindow.Instance.UpdateColors();
 
 			try
             {
@@ -398,6 +402,19 @@ namespace Sound_Space_Editor.Gui
 					EditorSettings.Load();
 					EditorWindow.Instance.UpdateColors();
 					EditorWindow.Instance.OpenGuiScreen(new GuiScreenMenu());
+					break;
+				case 1:
+					EditorSettings.Waveform = true;
+					EditorBGOpacityTextBox.Text = "255";
+					GridOpacityTextBox.Text = "255";
+					TrackOpacityTextBox.Text = "255";
+					color1TextBox.Text = "0,255,200";
+                    color2TextBox.Text = "255,0,255";
+					NoteColor1TextBox.Text = "255,0,255";
+					NoteColor2TextBox.Text = "0,255,200";
+					break;
+				case 2:
+					System.Diagnostics.Process.Start(Environment.CurrentDirectory);
 					break;
 			}
 			base.OnButtonClicked(id);

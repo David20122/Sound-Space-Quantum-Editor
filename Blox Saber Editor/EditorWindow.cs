@@ -176,9 +176,7 @@ namespace Sound_Space_Editor
 		private async Task CheckForUpdates()
         {
 			string temp = Path.GetTempPath();
-			Console.WriteLine(temp);
             string path = Path.Combine(temp + "Quantum Editor");
-			Console.WriteLine(path);
 			using (var manager = new UpdateManager(path))
 			{
 				await manager.UpdateApp();
@@ -202,6 +200,35 @@ namespace Sound_Space_Editor
 			string nc2 = EditorSettings.NoteColor2;
 			string[] nc2values = nc2.Split(',');
 			NoteColor2 = Array.ConvertAll<string, int>(nc2values, int.Parse);
+
+			if (Color1.Length != 3)
+			{
+				MessageBox.Show("One or more values in Color1 are invalid. \n Resetting Color1 to default.");
+				Color1 = new int[] { 0, 255, 200 };
+
+				EditorSettings.Save();
+			}
+			if (Color2.Length != 3)
+			{
+				MessageBox.Show("One or more values in Color2 are invalid. \n Resetting Color2 to default.");
+				Color2 = new int[] { 255, 0, 255 };
+
+				EditorSettings.Save();
+			}
+			if (NoteColor1.Length != 3)
+			{
+				MessageBox.Show("One or more values in NoteColor1 are invalid. \n Resetting NoteColor1 to default.");
+				NoteColor1 = new int[] { 255, 0, 255 };
+
+				EditorSettings.Save();
+			}
+			if (NoteColor2.Length != 3)
+			{
+				MessageBox.Show("One or more values in NoteColor2 are invalid. \n Resetting NoteColor2 to default.");
+				NoteColor2 = new int[] { 0, 255, 200 };
+
+				EditorSettings.Save();
+			}
 		}
 
 		public void ChangeKeyMapping(string input)
