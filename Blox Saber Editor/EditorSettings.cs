@@ -31,48 +31,48 @@ namespace Sound_Space_Editor
 				{
 					if (text.Contains("--"))
 						continue;
-					string[] array = text.Trim().Replace(" ", "").Split(new char[] { '=' });
-					string text2 = array[0];
-					string v = array[1];
-					Console.WriteLine("{0}, {1}", text2, v);
-					switch (text2)
+					string[] setting = text.Trim().Replace(" ", "").Split(new char[] { '=' });
+					string settingName = setting[0];
+					string value = setting[1];
+					Console.WriteLine("{0}, {1}", settingName, value);
+					switch (settingName)
 					{
 						case "Waveform":
 							bool resA;
-							bool.TryParse(v, out resA);
+							bool.TryParse(value, out resA);
 							Waveform = resA;
 							break;
 						case "BPMForm":
 							bool resE;
-							bool.TryParse(v, out resE);
+							bool.TryParse(value, out resE);
 							BPMForm = resE;
 							break;
 						case "EditorBGOpacity":
 							int resB;
-							int.TryParse(v, out resB);
+							int.TryParse(value, out resB);
 							EditorBGOpacity = resB;
 							break;
 						case "GridOpacity":
 							int resC;
-							int.TryParse(v, out resC);
+							int.TryParse(value, out resC);
 							GridOpacity = resC;
 							break;
 						case "TrackOpacity":
 							int resD;
-							int.TryParse(v, out resD);
+							int.TryParse(value, out resD);
 							TrackOpacity = resD;
 							break;
 						case "Color1":
-							Color1 = v;
+							Color1 = value;
 							break;
 						case "Color2":
-							Color2 = v;
+							Color2 = value;
 							break;
 						case "NoteColor1":
-							NoteColor1 = v;
+							NoteColor1 = value;
 							break;
 						case "NoteColor2":
-							NoteColor2 = v;
+							NoteColor2 = value;
 							break;
 					}
 				}
