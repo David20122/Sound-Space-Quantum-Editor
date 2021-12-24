@@ -18,6 +18,8 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using KeyPressEventArgs = OpenTK.KeyPressEventArgs;
 using Discord;
+using System.Threading.Tasks;
+using Squirrel;
 
 namespace Sound_Space_Editor
 {
@@ -101,6 +103,10 @@ namespace Sound_Space_Editor
 
 		public bool draggingoi = false;
 		public string inputState = null;
+		public int[] Color1;
+		public int[] Color2;
+		public int[] NoteColor1;
+		public int[] NoteColor2;
 		public float Zoom
 		{
 			get => _zoom;
@@ -111,18 +117,18 @@ namespace Sound_Space_Editor
 
 		public string LauncherDir;
 		public string cacheFolder;
-		public string settingsFile;
 
-		public EditorWindow(long offset, string launcherDir) : base(1080, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor " + version)
+		public EditorWindow(long offset, string launcherDir) : base(1200, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor " + version)
 		{
 			LauncherDir = launcherDir;
 			cacheFolder = Path.Combine(launcherDir, "cached/");
-			settingsFile = Path.Combine(launcherDir, "settings.ini");
 			Instance = this;
 			this.WindowState = OpenTK.WindowState.Maximized;
 			Icon = Resources.icon;
 			VSync = VSyncMode.On;
-			TargetUpdatePeriod = 1.0 / 20.0;
+            TargetUpdatePeriod = 1.0 / 20.0;
+
+			CheckForUpdates();
 
 			//TargetRenderFrequency = 60;
 
@@ -133,12 +139,11 @@ namespace Sound_Space_Editor
 			SquareOFontRenderer = new FontRenderer("Squareo");
 			SquareFontRenderer = new FontRenderer("Square");
 
-			if (!File.Exists(settingsFile))
-			{
-				File.AppendAllText(settingsFile, "\n// Background Opacity (0-255, 0 means invisible)\n\n255\n\n// Track Opacity\n\n255\n\n// Grid Opacity\n\n255\n\n // You can search for 'rgb color picker' in Google to get rgb color values.\n// Color 1 (Text, BPM Lines)\n\n0,255,200\n\n// Color 2 (Checkboxes, Sliders, Numbers, BPM Lines)\n\n255,0,255\n\n// Note Colors\n\n255,0,255\n0,255,200\n\n//Waveform (true or false)\n\ntrue");
-			}
+			EditorSettings.Load();
 
 			OpenGuiScreen(new GuiScreenMenu());
+
+			UpdateColors();
 
 			SoundPlayer.Cache("hit");
 			SoundPlayer.Cache("click");
@@ -166,6 +171,37 @@ namespace Sound_Space_Editor
 				networkManager = discord.GetNetworkManager();
 				lobbyManager = discord.GetLobbyManager();
 			}
+		}
+
+		private async Task CheckForUpdates()
+        {
+			string temp = Path.GetTempPath();
+			Console.WriteLine(temp);
+            string path = Path.Combine(temp + "Quantum Editor");
+			Console.WriteLine(path);
+			using (var manager = new UpdateManager(path))
+			{
+				await manager.UpdateApp();
+			}
+        }
+
+		public void UpdateColors()
+        {
+			string c1 = EditorSettings.Color1;
+			string[] c1values = c1.Split(',');
+			Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
+
+			string c2 = EditorSettings.Color2;
+			string[] c2values = c2.Split(',');
+			Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
+
+			string nc1 = EditorSettings.NoteColor1;
+			string[] nc1values = nc1.Split(',');
+			NoteColor1 = Array.ConvertAll<string, int>(nc1values, int.Parse);
+
+			string nc2 = EditorSettings.NoteColor2;
+			string[] nc2values = nc2.Split(',');
+			NoteColor2 = Array.ConvertAll<string, int>(nc2values, int.Parse);
 		}
 
 		public void ChangeKeyMapping(string input)
@@ -366,6 +402,7 @@ namespace Sound_Space_Editor
 					}
 				}
 			}
+
 			GL.PopMatrix();
 			SwapBuffers();
 		}
@@ -911,11 +948,6 @@ namespace Sound_Space_Editor
 				}
 			}
 
-			// color 1
-			string rc1 = EditorWindow.Instance.ReadLine(settingsFile, 17);
-			string[] c1values = rc1.Split(',');
-			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
-
 			if (GuiScreen is GuiScreenEditor editor)
 			{
 				if ((e.Key == Key.Left || e.Key == Key.Right) && SelectedNotes.Count == 0)
@@ -1305,6 +1337,7 @@ namespace Sound_Space_Editor
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
+			EditorSettings.Save();
 			if (TimingPoints.Instance != null)
 				TimingPoints.Instance.Close();
 

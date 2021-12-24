@@ -13,15 +13,10 @@ namespace Sound_Space_Editor.Gui
 
 		}
 
-		string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+		int[] Color1 = EditorWindow.Instance.Color1;
+
 		protected override void RenderTimeline(RectangleF rect)
 		{
-			
-			// color 1
-
-			string[] c1values = rc1.Split(',');
-			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
-
 
 			base.RenderTimeline(rect);
 

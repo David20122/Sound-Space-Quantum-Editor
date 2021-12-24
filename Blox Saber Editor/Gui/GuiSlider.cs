@@ -25,8 +25,8 @@ namespace Sound_Space_Editor.Gui
 		{
 			_vertical = sx < sy;
 		}
-		string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
-		string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 21);
+		int[] Color1 = EditorWindow.Instance.Color1;
+		int[] Color2 = EditorWindow.Instance.Color2;
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
 			if (MaxValue > 0)
@@ -52,16 +52,6 @@ namespace Sound_Space_Editor.Gui
 				GL.Translate(cursorPos.X, cursorPos.Y, 0);
 				GL.Rotate(_alpha * 90, 0, 0, 1);
 
-				// color 1
-
-				string[] c1values = rc1.Split(',');
-				int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
-
-				//color 2
-
-				string[] c2values = rc2.Split(',');
-				int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
-
 				if (_alpha > 0)
 				{
 					GL.PolygonMode(MaterialFace.Front, PolygonMode.Line);
@@ -81,10 +71,6 @@ namespace Sound_Space_Editor.Gui
 		}
 		protected virtual void RenderTimeline(RectangleF rect)
 		{
-			//color 2
-
-			string[] c2values = rc2.Split(',');
-			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 
 			GL.Color4(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 			Glu.RenderQuad(rect);

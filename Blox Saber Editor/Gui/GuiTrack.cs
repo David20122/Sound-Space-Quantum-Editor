@@ -24,7 +24,7 @@ namespace Sound_Space_Editor.Gui
 		public static long NoteOffset = 0; //in ms
 		public static long BpmOffset = 0;
 		public static float TextBpm = 0;
-		public static string wv = null;
+		public static bool waveform;
 		public static int BeatDivisor = 4;
 
 		public GuiTrack(float y, float sy) : base(0, y, EditorWindow.Instance.ClientSize.Width, sy)
@@ -32,40 +32,23 @@ namespace Sound_Space_Editor.Gui
 
 		}
 
+
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
 			// track transparency
 
 			var editor = EditorWindow.Instance;
 
-			int res;
-			string trackdim = editor.ReadLine("settings.ini", 8);
-			int.TryParse(trackdim, out res);
+			int trackdim = EditorSettings.TrackOpacity;
 
-			// color 1
-
-			string rc1 = editor.ReadLine("settings.ini", 17);
-			string[] c1values = rc1.Split(',');
-			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
-
-			//color 2
-
-			string rc2 = editor.ReadLine("settings.ini", 21);
-			string[] c2values = rc2.Split(',');
-			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
+			int[] Color1 = EditorWindow.Instance.Color1;
+			int[] Color2 = EditorWindow.Instance.Color2;
 
 			// waveform
 
-			try
-			{
-				wv = editor.ReadLine("settings.ini", 30);
+			waveform = EditorSettings.Waveform;
 
-			} catch
-            {
-				
-            }
-
-			GL.Color4(Color.FromArgb(res, 36, 35, 33));
+			GL.Color4(Color.FromArgb(trackdim, 36, 35, 33));
 
 			var rect = ClientRectangle;
 
@@ -93,7 +76,7 @@ namespace Sound_Space_Editor.Gui
 			if (lineX < 0)
 				lineX %= lineSpace;
 
-			if (wv == "true")
+			if (waveform)
             {
 				GL.Color3(0.35f, 0.35f, 0.35f);
 				GL.PushMatrix();

@@ -26,11 +26,9 @@ namespace Sound_Space_Editor.Gui
 			var rect = ClientRectangle;
 			var mouseOver = false;
 			// grid transparency
-			int res;
-			string griddim = EditorWindow.Instance.ReadLine("settings.ini", 12);
-			int.TryParse(griddim, out res);
+			int griddim = EditorSettings.GridOpacity;
 
-			GL.Color4(Color.FromArgb(res, 36, 35, 33));
+			GL.Color4(Color.FromArgb(griddim, 36, 35, 33));
 			Glu.RenderQuad(rect.X, rect.Y, rect.Width, rect.Height);
 
 			var cellSize = rect.Width / 3f;

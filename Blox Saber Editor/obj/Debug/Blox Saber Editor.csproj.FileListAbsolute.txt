@@ -156,3 +156,19 @@ C:\Users\pc\Documents\SSQE\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.
 C:\Users\pc\Documents\SSQE\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CopyComplete
 C:\Users\pc\Documents\SSQE\Blox Saber Editor\obj\Debug\Sound Space Quantum Editor.exe
 C:\Users\pc\Documents\SSQE\Blox Saber Editor\obj\Debug\Sound Space Quantum Editor.pdb
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\DeltaCompressionDotNet.dll
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\DeltaCompressionDotNet.MsDelta.dll
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\DeltaCompressionDotNet.PatchApi.dll
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.dll
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.Mdb.dll
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.Pdb.dll
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.Rocks.dll
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\NuGet.Squirrel.dll
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\SharpCompress.dll
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Squirrel.dll
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.pdb
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.Mdb.pdb
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.Pdb.pdb
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Mono.Cecil.Rocks.pdb
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\NuGet.Squirrel.pdb
+C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Squirrel.pdb

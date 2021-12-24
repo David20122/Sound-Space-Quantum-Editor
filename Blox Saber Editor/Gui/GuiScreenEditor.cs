@@ -60,10 +60,10 @@ namespace Sound_Space_Editor.Gui
 
 		public GuiScreenEditor() : base(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64)
 		{
-			if (File.Exists(Path.Combine(EditorWindow.Instance.LauncherDir, "background.png")))
+			if (File.Exists(Path.Combine(EditorWindow.Instance.LauncherDir, "background_editor.png")))
 			{
 				this.bgImg = true;
-				using (Bitmap img = new Bitmap(Path.Combine(EditorWindow.Instance.LauncherDir, "background.png")))
+				using (Bitmap img = new Bitmap(Path.Combine(EditorWindow.Instance.LauncherDir, "background_editor.png")))
 				{
 					this._textureId = TextureManager.GetOrRegister("bg", img, true);
 				}
@@ -205,9 +205,7 @@ namespace Sound_Space_Editor.Gui
 				Settings.Default.SfxOffset = SfxOffset.Text;
 			};
 		}
-		string bgdim = EditorWindow.Instance.ReadLine("settings.ini", 4);
-		string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
-		string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 21);
+
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
 			_toastTime = Math.Min(2, _toastTime + delta);
@@ -227,26 +225,19 @@ namespace Sound_Space_Editor.Gui
 			var fr = EditorWindow.Instance.FontRenderer;
 			var h = fr.GetHeight(_toast.FontSize);
 
+			int bgdim = EditorSettings.EditorBGOpacity;
+
 			if (bgImg)
 			{
-				int res;
-				Int32.TryParse(bgdim, out res);
-				GL.Color4(Color.FromArgb(res, 255, 255, 255));
+				GL.Color4(Color.FromArgb(bgdim, 255, 255, 255));
 				Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
 			}
 
 			_toast.ClientRectangle.Y = size.Height - toastOffY * h * 3.25f + h / 2;
 			_toast.Color = Color.FromArgb((int)(Math.Pow(toastOffY, 3) * 255), _toast.Color);
 
-			// color 1
-
-				string[] c1values = rc1.Split(',');
-				int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
-
-			//color 2
-
-				string[] c2values = rc2.Split(',');
-				int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
+			int[] Color1 = EditorWindow.Instance.Color1;
+			int[] Color2 = EditorWindow.Instance.Color2;
 
 			GL.Color3(Color.FromArgb(Color1[0],Color1[1],Color1[2]));
 			var zoomW = fr.GetWidth("Zoom: ", 24);
@@ -430,7 +421,7 @@ namespace Sound_Space_Editor.Gui
 						EditorWindow.Instance.Notes.Clear();
 						EditorWindow.Instance.SelectedNotes.Clear();
 						EditorWindow.Instance.MusicPlayer.Reset();
-						EditorWindow.Instance.OpenGuiScreen(new GuiScreenSelectMap());
+						EditorWindow.Instance.OpenGuiScreen(new GuiScreenMenu());
 						EditorWindow.Instance.UpdateActivity("Sitting in the menu");
 					}
 					break;

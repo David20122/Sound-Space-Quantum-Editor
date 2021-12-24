@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -15,6 +16,7 @@ namespace Sound_Space_Editor.Gui
 		public string Font;
 		public FontRenderer fr;
 		public bool Timings;
+		public int Alpha;
 
 		protected int Texture;
 
@@ -69,6 +71,17 @@ namespace Sound_Space_Editor.Gui
 			Font = font;
 		}
 
+		public GuiButton(int id, float x, float y, float sx, float sy, string text, string font, int alpha) : this(id, x, y, sx, sy)
+		{
+			color1 = 1f;
+			color2 = 1;
+			color3 = 1;
+			Alpha = alpha;
+
+			Text = text;
+			Font = font;
+		}
+
 		public GuiButton(int id, float x, float y, float sx, float sy, string text, float cr, float cg, float cb) : this(id, x, y, sx, sy)
 		{
 			color1 = cr;
@@ -115,13 +128,28 @@ namespace Sound_Space_Editor.Gui
 			}
 			else
 			{
-				var d = 0.075f * _alpha;
+				if (Alpha != 0)
+                {
+					if (IsMouseOver)
+						GL.Color4(Color.FromArgb(130, 0, 0, 0));
+					else
+						GL.Color4(Color.FromArgb(Alpha, 0, 0, 0));
 
-				GL.Color3(0.1f + d, 0.1f + d, 0.1f + d);
-				Glu.RenderQuad(ClientRectangle);
+					Glu.RenderQuad(ClientRectangle);
 
-				GL.Color3(0.2f + d, 0.2f + d, 0.2f + d);
-				Glu.RenderOutline(ClientRectangle);
+					GL.Color4(Color.FromArgb(Alpha, 0, 0, 0));
+					Glu.RenderOutline(ClientRectangle);
+
+				} else {
+
+					var d = 0.075f * _alpha;
+
+					GL.Color3(0.1f + d, 0.1f + d, 0.1f + d);
+					Glu.RenderQuad(ClientRectangle);
+
+					GL.Color3(0.2f + d, 0.2f + d, 0.2f + d);
+					Glu.RenderOutline(ClientRectangle);
+				}
 			}
 
 			if (Font == "squareo")

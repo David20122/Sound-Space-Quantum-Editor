@@ -17,7 +17,8 @@ namespace Sound_Space_Editor.Gui
 		public bool Centered;
 		public bool CanBeNegative;
 		public bool Timings;
-
+		public int[] Color1;
+		public int[] Color2;
 		private bool _focused;
 		private string _text = "";
 		private int _cursorPos;
@@ -103,10 +104,22 @@ namespace Sound_Space_Editor.Gui
 				}
 			}
 		}
-		string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
-		string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 21);
+
+
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
+
+			if (EditorWindow.Instance.GuiScreen is GuiScreenSettings settings)
+			{
+				Color1 = new int[] { 255, 255, 255 };
+				Color2 = new int[] { 255, 255, 255 };
+
+			} else {
+
+				Color1 = EditorWindow.Instance.Color1;
+				Color2 = EditorWindow.Instance.Color2;
+			}
+
 			var rect = ClientRectangle;
 
 			var x = rect.X + rect.Height / 4;
@@ -132,16 +145,6 @@ namespace Sound_Space_Editor.Gui
 
 			if (Centered)
 				GL.Translate(offX, 0, 0);
-
-			// color 1
-
-			string[] c1values = rc1.Split(',');
-			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
-
-			//color 2
-
-			string[] c2values = rc2.Split(',');
-			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 
 			GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 			fr.Render(renderedText, (int)x, (int)(y - fr.GetHeight(24) / 2f), 24);
