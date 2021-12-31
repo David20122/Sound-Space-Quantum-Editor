@@ -3,6 +3,7 @@ using System.Drawing;
 using OpenTK.Graphics.OpenGL;
 using System.Windows.Forms;
 using System.Linq;
+using Sound_Space_Editor.Properties;
 
 namespace Sound_Space_Editor
 {
@@ -14,19 +15,12 @@ namespace Sound_Space_Editor
 
 		public ColorSequence()
 		{
-			// color 1
+			int bgdim = EditorSettings.EditorBGOpacity;
 
-			string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 25);
-			string[] c1values = rc1.Split(',');
-			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
+			int[] NoteColor1 = EditorWindow.Instance.NoteColor1;
+			int[] NoteColor2 = EditorWindow.Instance.NoteColor2;
 
-			//color 2
-
-			string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 26);
-			string[] c2values = rc2.Split(',');
-			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
-
-			_colors = new Color[] { Color.FromArgb(Color1[0], Color1[1], Color1[2]), Color.FromArgb(Color2[0], Color2[1], Color2[2]) };
+			_colors = new Color[] { Color.FromArgb(NoteColor1[0], NoteColor1[1], NoteColor1[2]), Color.FromArgb(NoteColor2[0], NoteColor2[1], NoteColor2[2]) };
 		}
 
 		public Color Next()

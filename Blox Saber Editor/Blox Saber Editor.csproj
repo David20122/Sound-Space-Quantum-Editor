@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Sound_Space_Editor</RootNamespace>
     <AssemblyName>Sound Space Quantum Editor</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -29,6 +29,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -108,12 +109,26 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.DirectoryServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BassManager.cs" />
+    <Compile Include="BPM.cs" />
+    <Compile Include="EditorSettings.cs" />
+    <Compile Include="Gui\GuiScreenSettings.cs" />
+    <Compile Include="Gui\GuiScreenTimings.cs" />
+    <Compile Include="Timing Setup Panel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Timing Setup Panel.Designer.cs">
+      <DependentUpon>Timing Setup Panel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TimingPoints.cs" />
     <Compile Include="ColorSequence.cs" />
     <Compile Include="DiscordGameSDK\ActivityManager.cs" />
     <Compile Include="DiscordGameSDK\Constants.cs" />
@@ -136,6 +151,7 @@
     <Compile Include="Gui\GuiScreen.cs" />
     <Compile Include="Gui\GuiScreenCreate.cs" />
     <Compile Include="Gui\GuiScreenEditor.cs" />
+    <Compile Include="Gui\GuiScreenMenu.cs" />
     <Compile Include="Gui\GuiScreenSelectMap.cs" />
     <Compile Include="Gui\GuiSliderTimeline.cs" />
     <Compile Include="Gui\GuiSlider.cs" />
@@ -162,6 +178,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Timing Setup Panel.resx">
+      <DependentUpon>Timing Setup Panel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Help\BassNet.chm" />
     <None Include="OpenTK.dll.config" />

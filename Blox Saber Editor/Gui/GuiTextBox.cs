@@ -16,7 +16,9 @@ namespace Sound_Space_Editor.Gui
 		public bool Decimal;
 		public bool Centered;
 		public bool CanBeNegative;
-
+		public bool Timings;
+		public int[] Color1;
+		public int[] Color2;
 		private bool _focused;
 		private string _text = "";
 		private int _cursorPos;
@@ -37,6 +39,7 @@ namespace Sound_Space_Editor.Gui
 					OnChanged?.Invoke(null, Text);
 
 				_cursorPos = Math.Min(_cursorPos, (_text = value).Length);
+				
 			}
 		}
 
@@ -59,7 +62,6 @@ namespace Sound_Space_Editor.Gui
 		{
 		}
 
-		// 0 bug go away
 		private void OnFocus(bool flag)
 		{
 			if (flag)
@@ -78,7 +80,7 @@ namespace Sound_Space_Editor.Gui
 				{
 					if (hasDecimalPoint)
 					{
-						var text = Text.Trim('0');
+						var text = Text;
 
 						if (text.Length > 0 && text[text.Length - 1].ToString() == CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
 						{
@@ -91,6 +93,7 @@ namespace Sound_Space_Editor.Gui
 
 							Text = parsed.ToString();
 						}
+
 					}
 					if (decimal.TryParse(_text, out var num) && num == (long)num)
 					{
@@ -101,10 +104,22 @@ namespace Sound_Space_Editor.Gui
 				}
 			}
 		}
-		string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
-		string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 21);
+
+
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
+
+			if (EditorWindow.Instance.GuiScreen is GuiScreenSettings settings)
+			{
+				Color1 = new int[] { 255, 255, 255 };
+				Color2 = new int[] { 255, 255, 255 };
+
+			} else {
+
+				Color1 = EditorWindow.Instance.Color1;
+				Color2 = EditorWindow.Instance.Color2;
+			}
+
 			var rect = ClientRectangle;
 
 			var x = rect.X + rect.Height / 4;
@@ -116,10 +131,12 @@ namespace Sound_Space_Editor.Gui
 			Glu.RenderOutline(rect);
 
 			var fr = EditorWindow.Instance.FontRenderer;
+			if (Timings)
+				fr = TimingPoints.Instance.FontRenderer;
 
 			var renderedText = _text;
 
-			while (fr.GetWidth(renderedText, 24) > rect.Width - rect.Height / 2)
+			while (fr.GetWidth(renderedText, 24) != null && fr.GetWidth(renderedText, 24) > rect.Width - rect.Height / 2)
 			{
 				renderedText = renderedText.Substring(1, renderedText.Length - 1);
 			}
@@ -128,16 +145,6 @@ namespace Sound_Space_Editor.Gui
 
 			if (Centered)
 				GL.Translate(offX, 0, 0);
-
-			// color 1
-
-			string[] c1values = rc1.Split(',');
-			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
-
-			//color 2
-
-			string[] c2values = rc2.Split(',');
-			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 
 			GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 			fr.Render(renderedText, (int)x, (int)(y - fr.GetHeight(24) / 2f), 24);
@@ -172,6 +179,19 @@ namespace Sound_Space_Editor.Gui
 			{
 				Focused = false;
 				return;
+			}
+
+			if (_text.Length > 0)
+            {
+				var textwidth = EditorWindow.Instance.FontRenderer.GetWidth(_text, 24);
+				var posX = x - ClientRectangle.X - (ClientRectangle.Width - textwidth) / 2;
+				var letterwidth = textwidth / _text.Length;
+
+				posX = Math.Max(0, posX);
+				posX = Math.Min(textwidth, posX);
+				posX = (float)Math.Floor(posX / letterwidth + 0.3);
+
+				_cursorPos = (int)posX;
 			}
 
 			Focused = true;

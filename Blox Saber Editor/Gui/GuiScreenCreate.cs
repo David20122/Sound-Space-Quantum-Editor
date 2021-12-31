@@ -1,21 +1,26 @@
 ﻿using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 
 namespace Sound_Space_Editor.Gui
 {
 	class GuiScreenCreate : GuiScreen
 	{
+		private readonly int _textureId;
+		private bool bgImg = false;
+
 		private readonly GuiTextBox _tb;
 		private readonly GuiButton _btnCreate;
 		private readonly GuiButton _btnBack;
-		private readonly GuiLabel _lbl = new GuiLabel(0, 0, "i need audio id") { Centered = true };
+		private readonly GuiLabel _lbl = new GuiLabel(0, 0, "Input Audio ID", false) { Centered = true };
 
 		public GuiScreenCreate() : base(0, 0, 0, 0)
 		{
 			_tb = new GuiTextBox(0, 0, 256, 64) { Centered = true, Focused = true };
-			_btnCreate = new GuiButton(0, 0, 0, 256, 64, "CREATE");
-			_btnBack = new GuiButton(1, 0, 0, 256, 64, "BACK");
+			_btnCreate = new GuiButton(0, 0, 0, 256, 64, "CREATE", false);
+			_btnBack = new GuiButton(1, 0, 0, 256, 64, "BACK", false);
 
 			_lbl.Color = Color.FromArgb(255, 255, 255);
 
@@ -23,10 +28,31 @@ namespace Sound_Space_Editor.Gui
 
 			Buttons.Add(_btnCreate);
 			Buttons.Add(_btnBack);
+
+			if (File.Exists(Path.Combine(EditorWindow.Instance.LauncherDir, "background_menu.png")))
+			{
+				bgImg = true;
+				using (Bitmap img = new Bitmap(Path.Combine(EditorWindow.Instance.LauncherDir, "background_menu.png")))
+				{
+					_textureId = TextureManager.GetOrRegister("createbg", img, true);
+				}
+			}
 		}
 
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
+			var size = EditorWindow.Instance.ClientSize;
+
+			if (bgImg)
+			{
+				GL.Color4(Color.FromArgb(255, 255, 255, 255));
+				Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
+			}
+			else
+			{
+				GL.Color4(Color.FromArgb(255, 30, 30, 30));
+				Glu.RenderQuad(0, 0, size.Width, size.Height);
+			}
 			_tb.Render(delta, mouseX, mouseY);
 
 			foreach (var button in Buttons)
@@ -67,13 +93,13 @@ namespace Sound_Space_Editor.Gui
 					}
 					else
 					{
-						MessageBox.Show("this isnt a number smhHhH.", "Error", MessageBoxButtons.OK,
+						MessageBox.Show("not a valid audio id", "Error", MessageBoxButtons.OK,
 							MessageBoxIcon.Error);
 					}
 
 					break;
 				case 1:
-					EditorWindow.Instance.OpenGuiScreen(new GuiScreenSelectMap());
+					EditorWindow.Instance.OpenGuiScreen(new GuiScreenMenu());
 					break;
 			}
 		}

@@ -26,11 +26,9 @@ namespace Sound_Space_Editor.Gui
 			var rect = ClientRectangle;
 			var mouseOver = false;
 			// grid transparency
-			int res;
-			string griddim = EditorWindow.Instance.ReadLine("settings.ini", 12);
-			int.TryParse(griddim, out res);
+			int griddim = EditorSettings.GridOpacity;
 
-			GL.Color4(Color.FromArgb(res, 36, 35, 33));
+			GL.Color4(Color.FromArgb(griddim, 36, 35, 33));
 			Glu.RenderQuad(rect.X, rect.Y, rect.Width, rect.Height);
 
 			var cellSize = rect.Width / 3f;
@@ -39,6 +37,20 @@ namespace Sound_Space_Editor.Gui
 			var gap = cellSize - noteSize;
 
 			var audioTime = EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds;
+
+			if (editor.Numpad.Toggle)
+            {
+				if (EditorWindow.Instance.inputState == "keyboard")
+                {
+					EditorWindow.Instance.ChangeKeyMapping("numpad");
+                }
+            } else
+            {
+				if (EditorWindow.Instance.inputState == "numpad")
+				{
+					EditorWindow.Instance.ChangeKeyMapping("keyboard");
+				}
+			}
 
 			GL.Color3(0.2, 0.2, 0.2f);
 
@@ -56,7 +68,7 @@ namespace Sound_Space_Editor.Gui
 				Glu.RenderQuad((int)(rect.X + lx), (int)(rect.Y), 1, rect.Height + 1);
 			}
 
-			if (editor.NoteAlign.Value != 1)
+			if (editor.NoteAlign.Value != 1 && editor.QuantumGridLines.Toggle)
 			{
 				GL.Begin(PrimitiveType.Lines);
 
@@ -85,6 +97,9 @@ namespace Sound_Space_Editor.Gui
 					continue;
 
 				var letter = pair.Key == Key.Z ? "Y/Z" : pair.Key.ToString();
+
+				if (letter.Length > 1) letter = letter.Replace("Keypad", "");
+
 				var tuple = pair.Value;
 
 				var x = rect.X + tuple.Item1 * cellSize + cellSize / 2;

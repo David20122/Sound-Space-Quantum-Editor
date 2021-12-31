@@ -13,14 +13,15 @@ namespace Sound_Space_Editor.Gui
 	class GuiScreenSelectMap : GuiScreen
 	{
 		private int logoTxt;
-		private FontRenderer fr = EditorWindow.Instance.FontRenderer;
 		private GuiButton _createMapButton;
 		private GuiButton _loadMapButton;
 		private GuiButton _lastMapButton;
 		private GuiButton _importButton;
 		private GuiButton _pasteDataButton;
 		private GuiButton _githubButton;
-		private bool importmapclicked = false;
+		//private bool importmapclicked = false;
+		//private readonly int _textureId;
+		//private bool bgImg = false;
 
 		public GuiScreenSelectMap() : base(0, 0, EditorWindow.Instance.ClientSize.Width, EditorWindow.Instance.ClientSize.Height)
 		{
@@ -28,16 +29,27 @@ namespace Sound_Space_Editor.Gui
 			{
 				logoTxt = TextureManager.GetOrRegister("logo", img, true);
 			}
+			/* 
+			if (File.Exists(Path.Combine(EditorWindow.Instance.LauncherDir, "background_menu.png")))
+			{
+				bgImg = true;
+				using (Bitmap img = new Bitmap(Path.Combine(EditorWindow.Instance.LauncherDir, "background_menu.png")))
+				{
+					_textureId = TextureManager.GetOrRegister("bg", img, true);
+				}
+			}
+			 */
+
 			if (File.Exists(Properties.Settings.Default.LastFile))
 			{
-				_lastMapButton = new GuiButton(3, 0, 0, 256, 48, "EDIT LAST MAP");
+				_lastMapButton = new GuiButton(3, 0, 0, 256, 48, "EDIT LAST MAP", false);
 				Buttons.Add(_lastMapButton);
 			}
-			_createMapButton = new GuiButton(0, 0, 0, 256, 48, "CREATE NEW MAP");
-			_loadMapButton = new GuiButton(1, 0, 0, 256, 48, "EDIT EXISTING MAP");
-			_importButton = new GuiButton(2, 0, 0, 256, 48, "IMPORT MAP");
-			_pasteDataButton = new GuiButton(4, 0, 0, 256, 36, "PASTE DATA");
-			_githubButton = new GuiButton(5, 0, 0, 256, 36, "GITHUB LINK");
+			_createMapButton = new GuiButton(0, 0, 0, 256, 48, "CREATE NEW MAP", false);
+			_loadMapButton = new GuiButton(1, 0, 0, 256, 48, "EDIT EXISTING MAP", false);
+			_importButton = new GuiButton(2, 0, 0, 256, 48, "IMPORT MAP", false);
+			_pasteDataButton = new GuiButton(4, 0, 0, 256, 36, "PASTE DATA", false);
+			_githubButton = new GuiButton(5, 0, 0, 256, 36, "GITHUB LINK", false);
 			_pasteDataButton.Visible = false;
 			_githubButton.Visible = false;
 			Buttons.Add(_createMapButton);
@@ -50,7 +62,16 @@ namespace Sound_Space_Editor.Gui
 
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
+
 			var size = EditorWindow.Instance.ClientSize;
+			/*
+			if (bgImg)
+			{
+				GL.Color4(Color.FromArgb(255, 255, 255, 255));
+				Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
+			}
+			*/
+
 			Glu.RenderTexturedQuad(ClientRectangle.Width / 2 - 400 / 2, ClientRectangle.Height / 2 - 300, 400, 400, 0, 0, 1, 1, logoTxt);
 			base.Render(delta, mouseX, mouseY);
 		}
@@ -110,7 +131,7 @@ namespace Sound_Space_Editor.Gui
 					}
 					break;
 				case 2:
-					if (importmapclicked == false)
+					/*if (importmapclicked == false)
 					{
 						importmapclicked = true;
 						_pasteDataButton.Visible = true;
@@ -121,11 +142,46 @@ namespace Sound_Space_Editor.Gui
 						importmapclicked = false;
 						_pasteDataButton.Visible = false;
 						_githubButton.Visible = false;
+					}*/
+
+					try
+                    {
+						var clipboard = Clipboard.GetText();
+						SecureWebClient wc = new SecureWebClient();
+						if (clipboard.Contains("gist") || clipboard.Contains("github"))
+                        {
+							try
+                            {
+								var reply = wc.DownloadString(clipboard);
+								EditorWindow.Instance.LoadMap(reply, false);
+							}
+							catch
+							{
+								MessageBox.Show("Error while loading map data from link.\nIs it valid?");
+							}
+                        } 
+						else
+                        {
+							try
+							{
+								EditorWindow.Instance.LoadMap(clipboard, false);
+							}
+							catch
+							{
+								MessageBox.Show("Error while loading map data.\nIs it valid?");
+							}
+						}
 					}
+					catch
+                    {
+
+                    }
+					
 					break;
 				case 3:
 					EditorWindow.Instance.LoadFile(Properties.Settings.Default.LastFile);
 					break;
+				/*
 				case 4:
 					try
 					{
@@ -150,6 +206,7 @@ namespace Sound_Space_Editor.Gui
 						MessageBox.Show("Couldn't read map data from the link. Do you have it copied?");
 					}
 					break;
+				*/
 			}
 			base.OnButtonClicked(id);
 		}

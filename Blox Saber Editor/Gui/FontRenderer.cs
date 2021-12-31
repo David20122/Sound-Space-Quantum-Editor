@@ -19,10 +19,16 @@ namespace Sound_Space_Editor.Gui
 
 		public void Render(string text, int x, int y, int size)
 		{
-			if (!_cached.TryGetValue(size, out var font))
-				_cached.Add(size, font = new FtFont(_fontPath, size));
+			try
+            {
+				if (!_cached.TryGetValue(size, out var font))
+					_cached.Add(size, font = new FtFont(_fontPath, size));
+				font.Print(text, x, y);
+			}
+			catch
+            {
 
-			font.Print(text, x, y);
+            }
 		}
 
 		public int GetWidth(string text, int size)
