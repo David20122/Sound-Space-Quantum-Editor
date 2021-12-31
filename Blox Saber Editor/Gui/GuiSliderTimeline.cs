@@ -13,15 +13,10 @@ namespace Sound_Space_Editor.Gui
 
 		}
 
-		string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
+		int[] Color1 = EditorWindow.Instance.Color1;
+
 		protected override void RenderTimeline(RectangleF rect)
 		{
-			
-			// color 1
-
-			string[] c1values = rc1.Split(',');
-			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
-
 
 			base.RenderTimeline(rect);
 
@@ -40,6 +35,19 @@ namespace Sound_Space_Editor.Gui
 				GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 				Glu.RenderQuad((int)x, y + rect.Height * 2, 1, rect.Height);
 			}
+
+			for (int i = 0; i < GuiTrack.BPMs.Count; i++)
+            {
+				var bpm = GuiTrack.BPMs[i];
+
+				var progress = bpm.Ms / EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds;
+
+				var x = rect.X + progress * rect.Width - 1;
+				var y = rect.Y - rect.Height / 2f;
+
+				GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+				Glu.RenderQuad((int)x, y - rect.Height * 4, 2, rect.Height * 2);
+            }
 		}
 	}
 }

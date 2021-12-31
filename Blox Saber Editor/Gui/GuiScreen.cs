@@ -67,7 +67,7 @@ namespace Sound_Space_Editor.Gui
 
 		public virtual void OnClosing()
 		{
-
+			
 		}
 	}
 }

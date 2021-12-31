@@ -9,6 +9,9 @@ namespace Sound_Space_Editor.Gui
 		public bool Toggle { get; private set; }
 
 		private float _alpha;
+		public int FontSize;
+		public int[] Color1;
+		public int[] Color2;
 
 		public GuiCheckBox(int id, float x, float y, float sx, float sy, bool toggle) : base(id, x, y, sx, sy)
 		{
@@ -20,21 +23,33 @@ namespace Sound_Space_Editor.Gui
 		public GuiCheckBox(int id, string text, float x, float y, float sx, float sy, bool toggle) : this(id, x, y, sx, sy, toggle)
 		{
 			Text = text;
+			FontSize = 24;
 		}
-		string rc1 = EditorWindow.Instance.ReadLine("settings.ini", 17);
-		string rc2 = EditorWindow.Instance.ReadLine("settings.ini", 21);
+
+		public GuiCheckBox(int id, string text, float x, float y, float sx, float sy, int fontsize, bool toggle) : this(id, x, y, sx, sy, toggle)
+		{
+			Text = text;
+			FontSize = fontsize;
+		}
+
+
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
 
-			// color 1
+			if (EditorWindow.Instance.GuiScreen is GuiScreenSettings settings)
+			{
 
-			string[] c1values = rc1.Split(',');
-			int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
+				Color1 = new int[] { 255, 255, 255 };
+				Color2 = new int[] { 50, 50, 50 };
 
-			//color 2
+			}
+			else
+			{
 
-			string[] c2values = rc2.Split(',');
-			int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
+				Color1 = EditorWindow.Instance.Color1;
+				Color2 = EditorWindow.Instance.Color2;
+
+			}
 
 			var rect = ClientRectangle;
 
@@ -57,10 +72,10 @@ namespace Sound_Space_Editor.Gui
 			}
 
 			var fr = EditorWindow.Instance.FontRenderer;
-			var height = fr.GetHeight(24);
+			var height = fr.GetHeight(FontSize);
 
 			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-			fr.Render(Text, (int)(rect.Right + rect.Height / 4), (int)(rect.Y + rect.Height / 2 - height / 2f), 24);
+			fr.Render(Text, (int)(rect.Right + rect.Height / 4), (int)(rect.Y + rect.Height / 2 - height / 2f), FontSize);
 		}
 
 		public override void OnMouseClick(float x, float y)

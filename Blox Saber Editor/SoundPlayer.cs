@@ -27,7 +27,6 @@ namespace Sound_Space_Editor
 				s = BassFx.BASS_FX_TempoCreate(s, BASSFlag.BASS_STREAM_PRESCAN | BASSFlag.BASS_STREAM_AUTOFREE | BASSFlag.BASS_FX_FREESOURCE | BASSFlag.BASS_MUSIC_AUTOFREE);
 
 				Bass.BASS_ChannelSetAttribute(s, BASSAttribute.BASS_ATTRIB_VOL, volume);
-				Bass.BASS_ChannelSetAttribute(s, BASSAttribute.BASS_ATTRIB_FREQ, speed * 44100);
 
 				Bass.BASS_ChannelPlay(s, false);
 			}
