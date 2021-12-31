@@ -55,7 +55,7 @@ namespace Sound_Space_Editor.Gui
 		private bool bgImg = false;
 
 		//private object TimingPanel;
-		TimingPoints TimingPoints;
+		//TimingPoints TimingPoints;
 
 		public GuiScreenEditor() : base(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64)
 		{

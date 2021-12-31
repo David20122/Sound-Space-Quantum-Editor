@@ -94,13 +94,21 @@ namespace Sound_Space_Editor.Gui
 					Glu.RenderQuad(ClientRectangle.Left + 35, ClientRectangle.Top + 180, 950, 790);
 					GL.Color4(Color.FromArgb(100, 36, 35, 33));
 					Glu.RenderQuad(ClientRectangle.Left + 55, ClientRectangle.Top + 230, 900, 715);
-				} 
-				else if (size.Width == 1366 && size.Height > 690 && size.Height <= 768 || size.Width == 1280 && size.Height > 640 && size.Height <= 720)
+				}
+				//else if (size.Width >= 1280 && size.Width <= 1700  && size.Height > 690 && size.Height <= 768 || size.Width == 1280 && size.Height > 640 && size.Height <= 720)
+				else if (size.Width >= 10 && size.Width <= 1700 && size.Height > 600 && size.Height <= 1300)
 				{
 					GL.Color4(Color.FromArgb(120, 57, 56, 47));
 					Glu.RenderQuad(ClientRectangle.Left + 35, ClientRectangle.Top + 180, 650, 525);
 					GL.Color4(Color.FromArgb(100, 36, 35, 33));
 					Glu.RenderQuad(ClientRectangle.Left + 55, ClientRectangle.Top + 230, 600, 450);
+				}
+				else
+                {
+					GL.Color4(Color.FromArgb(120, 57, 56, 47));
+					Glu.RenderQuad(ClientRectangle.Left + 35, ClientRectangle.Top + 180, 950, 790);
+					GL.Color4(Color.FromArgb(100, 36, 35, 33));
+					Glu.RenderQuad(ClientRectangle.Left + 55, ClientRectangle.Top + 230, 900, 715);
 				}
 
 				CHANGELOGlabel.Render(delta, mouseX, mouseY);
@@ -127,12 +135,19 @@ namespace Sound_Space_Editor.Gui
 					GL.Color4(Color.FromArgb(50, 0, 0, 0));
 					Glu.RenderQuad(ClientRectangle.Left + 55, ClientRectangle.Top + 230, 900, 715);
 				}
-				else if (size.Width == 1366 && size.Height > 690 && size.Height <= 768 || size.Width == 1280 && size.Height > 640 && size.Height <= 720)
+				else if (size.Width >= 10 && size.Width <= 1700 && size.Height >= 100 && size.Height <= 1300)
 				{
 					GL.Color4(Color.FromArgb(40, 0, 0, 0));
 					Glu.RenderQuad(ClientRectangle.Left + 35, ClientRectangle.Top + 180, 650, 525);
 					GL.Color4(Color.FromArgb(50, 0, 0, 0));
 					Glu.RenderQuad(ClientRectangle.Left + 55, ClientRectangle.Top + 230, 600, 450);
+				} 
+				else
+                {
+					GL.Color4(Color.FromArgb(40, 0, 0, 0));
+					Glu.RenderQuad(ClientRectangle.Left + 35, ClientRectangle.Top + 180, 950, 790);
+					GL.Color4(Color.FromArgb(50, 0, 0, 0));
+					Glu.RenderQuad(ClientRectangle.Left + 55, ClientRectangle.Top + 230, 900, 715);
 				}
 
 
@@ -184,9 +199,11 @@ namespace Sound_Space_Editor.Gui
 				ScrollBar.ClientRectangle.Location = new PointF(ClientRectangle.Left + 950, ClientRectangle.Top + 230);
 				ScrollBar.ClientRectangle.Size = new SizeF(20, 720);
 				ScrollBar.MaxValue = ChangelogText.Split('\n').Length;
-			}
 
-			if (size.Width == 1366 && size.Height > 690 && size.Height <= 768 || size.Width == 1280 && size.Height > 640 && size.Height <= 720)
+				AssembleChangelog();
+			} 
+			//else if (size.Width >= 1280 && size.Height > 690 && size.Height <= 768 || size.Width == 1280 && size.Height > 640 && size.Height <= 720)
+			else if (size.Width >= 10 && size.Width <= 1700 && size.Height > 600 && size.Height <= 1300)
 			{
 				ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
 				var SSLabelFontSize = 110;
@@ -221,6 +238,47 @@ namespace Sound_Space_Editor.Gui
 				_loadMapButton.ClientRectangle.Size = new SizeF(400, 50);
 				_importButton.ClientRectangle.Size = new SizeF(400, 50);
 				_SettingsButton.ClientRectangle.Size = new SizeF(400, 50);
+
+				ScrollBar.ClientRectangle.Location = new PointF(ClientRectangle.Left + 650, ClientRectangle.Top + 230);
+				ScrollBar.ClientRectangle.Size = new SizeF(20, 460);
+				ScrollBar.MaxValue = ChangelogText.Split('\n').Length;
+
+				AssembleChangelog();
+			} 
+			else
+            {
+				var SSLabelFontSize = 150;
+				var QELabelFontSize = 36;
+				var ChangelogFontSize = 16;
+
+				ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
+
+				CHANGELOGlabel.ClientRectangle.Location = new PointF(ClientRectangle.Left + 155, ClientRectangle.Top + 210);
+				//CHANGELOGlabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 157, ClientRectangle.Top + 210);
+				ssLabel.ClientRectangle.Location = new PointF(ClientRectangle.Left + 35, ClientRectangle.Top + 35);
+				ssLabel.FontSize = SSLabelFontSize;
+				//ssLabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 37, ClientRectangle.Top + 35);
+				qeLabel.ClientRectangle.Location = new PointF(ClientRectangle.Left + 615, ClientRectangle.Top + 140);
+				qeLabel.FontSize = QELabelFontSize;
+				//qeLabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 617, ClientRectangle.Top + 140);
+				Changelog.ClientRectangle.Location = new PointF(ClientRectangle.Left + 60, ClientRectangle.Top + 230);
+				Changelog.FontSize = ChangelogFontSize;
+
+				// buttons
+				_createMapButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 730, ClientRectangle.Top + 180);
+				_loadMapButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 730, ClientRectangle.Top + 295);
+				_importButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 730, ClientRectangle.Top + 410);
+				_SettingsButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 730, ClientRectangle.Top + 525);
+
+				// resizing
+				_createMapButton.ClientRectangle.Size = new SizeF(600, 100);
+				_loadMapButton.ClientRectangle.Size = new SizeF(600, 100);
+				_importButton.ClientRectangle.Size = new SizeF(600, 100);
+				_SettingsButton.ClientRectangle.Size = new SizeF(600, 100);
+
+				ScrollBar.ClientRectangle.Location = new PointF(ClientRectangle.Left + 950, ClientRectangle.Top + 230);
+				ScrollBar.ClientRectangle.Size = new SizeF(20, 720);
+				ScrollBar.MaxValue = ChangelogText.Split('\n').Length;
 			}
 
 			base.OnResize(size);
