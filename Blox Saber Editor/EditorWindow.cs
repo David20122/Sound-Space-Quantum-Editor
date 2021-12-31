@@ -573,6 +573,21 @@ namespace Sound_Space_Editor
 					OnDraggingTimeline(e.X);
 				}
 			}
+
+			if (GuiScreen is GuiScreenMenu menu)
+            {
+				if (menu.ScrollBar.Dragging)
+                {
+					var rect = menu.ScrollBar.ClientRectangle;
+					var lineSize = rect.Height - rect.Width;
+					var step = lineSize / menu.ScrollBar.MaxValue;
+
+					var tick = MathHelper.Clamp(Math.Round((lineSize - (e.Y - rect.Y - rect.Width / 2)) / step), 0, menu.ScrollBar.MaxValue);
+
+					menu.ScrollBar.Value = (int)tick;
+					menu.AssembleChangelog();
+				}
+            }
 		}
 
 		protected override void OnMouseLeave(EventArgs e)
@@ -581,6 +596,9 @@ namespace Sound_Space_Editor
 
 			if (GuiScreen is GuiScreenEditor editor)
 				editor.OnMouseLeave();
+
+			if (GuiScreen is GuiScreenMenu menu)
+				menu.OnMouseLeave();
 		}
 
 		protected override void OnFocusedChanged(EventArgs e)
@@ -750,6 +768,15 @@ namespace Sound_Space_Editor
                 }
 			}
 
+			if (GuiScreen is GuiScreenMenu menu)
+            {
+				if (menu.ScrollBar.ClientRectangle.Contains(e.Position))
+				{
+					menu.ScrollBar.Dragging = true;
+					OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
+				}
+			}
+
 			if (e.Button == MouseButton.Left)
 				GuiScreen?.OnMouseClick(e.X, e.Y);
 		}
@@ -917,6 +944,11 @@ namespace Sound_Space_Editor
 				editor.Tempo.Dragging = false;
 				editor.NoteAlign.Dragging = false;
 			}
+
+			if (GuiScreen is GuiScreenMenu menu)
+            {
+				menu.ScrollBar.Dragging = false;
+            }
 
 			_draggingNoteTimeline = false;
 			_draggingPointTimeline = false;
@@ -1362,6 +1394,13 @@ namespace Sound_Space_Editor
 
 					MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(time);
 				}
+			}
+
+			if (GuiScreen is GuiScreenMenu menu)
+            {
+				menu.ScrollBar.Value += (int)e.DeltaPrecise;
+				menu.ScrollBar.Value = MathHelper.Clamp(menu.ScrollBar.Value, 0, menu.ScrollBar.MaxValue);
+				menu.AssembleChangelog();
 			}
 		}
 

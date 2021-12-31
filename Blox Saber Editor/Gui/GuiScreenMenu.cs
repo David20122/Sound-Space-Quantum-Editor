@@ -231,6 +231,20 @@ namespace Sound_Space_Editor.Gui
 			ScrollBar.Dragging = false;
 		}
 
+		public void AssembleChangelog()
+        {
+			string result = "";
+			string[] lines = ChangelogText.Split('\n');
+			for (int i = 0; i < lines.Length; i++)
+            {
+				if (i >= ScrollBar.MaxValue - ScrollBar.Value)
+                {
+					result += lines[i] + "\n";
+                }
+            }
+			Changelog.Text = result;
+        }
+
 		protected override void OnButtonClicked(int id)
 		{
 			switch (id)
