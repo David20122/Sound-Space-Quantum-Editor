@@ -9,6 +9,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System.IO;
 using System.Threading;
+using Logic;
 
 namespace Sound_Space_Editor.Gui
 {
@@ -40,6 +41,7 @@ namespace Sound_Space_Editor.Gui
 		//public readonly GuiCheckBox LegacyBPM;
 		public readonly GuiButton BackButton;
 		public readonly GuiButton CopyButton;
+		public readonly GuiButton PlayButton;
 		public readonly GuiButton SetOffset;
 		public readonly GuiButton JumpMSButton;
 		public readonly GuiButton RotateButton;
@@ -131,7 +133,8 @@ namespace Sound_Space_Editor.Gui
 
 			SetOffset = new GuiButton(2, 0, 0, 64, 32, "SET", false);
 			BackButton = new GuiButton(3, 0, 0, Grid.ClientRectangle.Width + 1, 42, "BACK TO MENU", false);
-			CopyButton = new GuiButton(4, 0, 0, Grid.ClientRectangle.Width + 1, 42, "COPY MAP DATA", false);
+			CopyButton = new GuiButton(4, 0, 0, (Grid.ClientRectangle.Width - 5) / 2, 42, "COPY MAP DATA", false);
+			PlayButton = new GuiButton(99, 0, 0, (Grid.ClientRectangle.Width - 5) / 2, 42, "PLAY MAP", false);
 
 			JumpMSButton = new GuiButton(6, 0, 0, 64, 32, "JUMP", false);
 			RotateButton = new GuiButton(7, 0, 0, 64, 32, "ROTATE", false);
@@ -185,6 +188,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(SetOffset);
 			Buttons.Add(BackButton);
 			Buttons.Add(CopyButton);
+			Buttons.Add(PlayButton);
 			Buttons.Add(JumpMSButton);
 			Buttons.Add(RotateButton);
 			Buttons.Add(OpenTimings);
@@ -514,6 +518,19 @@ namespace Sound_Space_Editor.Gui
 				case 9:
 					Offset.Text = ((long)EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds).ToString();
 					break;
+				case 99:
+					using (var dialog = new OpenFileDialog
+					{
+						Title = "Select Game Executable",
+						Filter = "Executables (*.exe)|*.exe"
+					})
+					{
+						if (dialog.ShowDialog() == DialogResult.OK)
+						{
+							Game.TryStart(dialog.FileName, EditorWindow.Instance.ParseData());
+						}
+					}
+					break;
 			}
 		}
 
@@ -533,7 +550,8 @@ namespace Sound_Space_Editor.Gui
 
 			Grid.ClientRectangle = new RectangleF((int)(size.Width / 2f - Grid.ClientRectangle.Width / 2), (int)((size.Height + Track.ClientRectangle.Height - 64) / 2 - Grid.ClientRectangle.Height / 2), Grid.ClientRectangle.Width, Grid.ClientRectangle.Height);
 			BackButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Bottom + 5 + 1 + 78);
-			CopyButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 75);
+			CopyButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X + 150, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 30);
+			PlayButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - PlayButton.ClientRectangle.Height - 30);
 			BeatSnapDivisor.ClientRectangle.Location = new PointF(EditorWindow.Instance.ClientSize.Width - BeatSnapDivisor.ClientRectangle.Width, Grid.ClientRectangle.Y + 28);
 			Timeline.ClientRectangle = new RectangleF(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64);
 			Tempo.ClientRectangle = new RectangleF(EditorWindow.Instance.ClientSize.Width - 512, EditorWindow.Instance.ClientSize.Height - 64, 512, 64);

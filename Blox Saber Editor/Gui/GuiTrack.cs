@@ -456,11 +456,21 @@ namespace Sound_Space_Editor.Gui
 
 			if (editor.GuiScreen is GuiScreenEditor gse1 && gse1.Metronome.Toggle)
 			{
+				//bool bdbool = true;
 				double.TryParse(gse1.SfxOffset.Text, out var offset);
 
 				var ms = editor.MusicPlayer.CurrentTime.TotalMilliseconds - offset;
 				var bpm = editor.GetCurrentBpm(editor.MusicPlayer.CurrentTime.TotalMilliseconds);
-				double interval = 60000 / bpm.bpm / BeatDivisor;
+				int div = BeatDivisor;//1;
+				
+				/*-
+				if (bdbool)
+                {
+                    div = BeatDivisor;
+				}
+				*/
+
+				double interval = 60000 / bpm.bpm / div;
 				double remainder = (ms - bpm.Ms) % interval;
 				double closestMS = ms - remainder;
 
