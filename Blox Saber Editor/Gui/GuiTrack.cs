@@ -238,11 +238,15 @@ namespace Sound_Space_Editor.Gui
 
 				var numText = $"{(i + 1):##,###}";
 
+				var msText = $"{note.Ms:##,###}";
+				if (msText == "")
+					msText = "0";
+
 				GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 				fr.Render(numText, (int)x + 3, (int)(rect.Y + rect.Height) + 3, 16);
 
 				GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
-				fr.Render($"{note.Ms:##,###}ms", (int)x + 3,
+				fr.Render($"{msText}ms", (int)x + 3,
 					(int)(rect.Y + rect.Height + fr.GetHeight(16)) + 3 + 2, 16);
 
 				//draw line
@@ -310,12 +314,18 @@ namespace Sound_Space_Editor.Gui
 						var x = Math.Round(ScreenX - posX + Bpm.Ms / 1000f * cubeStep);
 
 						var numText = $"{Bpm.bpm:##,###.###}";
+						if (numText == "")
+							numText = "0";
+
+						var msText = $"{Bpm.Ms:##,###}";
+						if (msText == "")
+							msText = "0";
 
 						GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 						fr.Render(numText, (int)x + 3, (int)(rect.Y + rect.Height) + 3 + 28, 16);
 
 						GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
-						fr.Render($"{Bpm.Ms:##,###}ms", (int)x + 3,
+						fr.Render($"{msText}ms", (int)x + 3,
 							(int)(rect.Y + rect.Height + fr.GetHeight(16)) + 3 + 2 + 28, 16);
 
 						//render BPM lines
