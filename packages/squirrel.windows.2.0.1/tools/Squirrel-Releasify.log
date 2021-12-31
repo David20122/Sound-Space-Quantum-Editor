@@ -1,9 +1,0 @@
-﻿[24/12/21 17:15:10] info: Program: Starting Squirrel Updater: --releasify SoundSpaceQuantumEditor.1.7.0.nupkg
-[24/12/21 17:15:10] info: Program: Bootstrapper EXE found at:C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\packages\squirrel.windows.2.0.1\tools\Setup.exe
-[24/12/21 17:15:10] info: Program: Creating release package: C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Releases\SoundSpaceQuantumEditor.1.7.0.nupkg
-[24/12/21 17:15:10] info: ReleasePackage: Creating release package: C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Releases\SoundSpaceQuantumEditor.1.7.0.nupkg => C:\Users\barte\source\repos\David20122\Sound-Space-Quantum-Editor\Releases\SoundSpaceQuantumEditor-1.7.0-full.nupkg
-[24/12/21 17:15:11] info: ReleasePackage: Extracting dependent packages: []
-[24/12/21 17:15:11] info: ReleasePackage: Removing unnecessary data
-[24/12/21 17:15:11] info: ReleasePackage: No release notes found in C:\Users\barte\AppData\Local\SquirrelTemp\tempa\SoundSpaceQuantumEditor.nuspec
-[24/12/21 17:15:12] info: Program: Building embedded zip file for Setup.exe
-[24/12/21 17:15:20] info: Program: Finished Squirrel Updater

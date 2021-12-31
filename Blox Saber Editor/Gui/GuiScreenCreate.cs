@@ -93,7 +93,7 @@ namespace Sound_Space_Editor.Gui
 					}
 					else
 					{
-						MessageBox.Show("this isnt a number smhHhH.", "Error", MessageBoxButtons.OK,
+						MessageBox.Show("not a valid audio id", "Error", MessageBoxButtons.OK,
 							MessageBoxIcon.Error);
 					}
 

@@ -148,7 +148,7 @@ namespace Sound_Space_Editor.Gui
 			QuantumGridLines = new GuiCheckBox(5, "Quantum Grid Lines", 0, 0, 32, 32, Settings.Default.QuantumGridLines);
 			QuantumGridSnap = new GuiCheckBox(5, "Snap to Grid", 0, 0, 32, 32, Settings.Default.QuantumGridSnap);
 			Metronome = new GuiCheckBox(5, "Metronome", 0, 0, 32, 32, Settings.Default.Metronome);
-			//LegacyBPM = new GuiCheckBox(5, "Use Legacy BPM", 0, 0, 24, 24, Settings.Default.LegacyBPM);
+			//LegacyBPM = new GuiCheckBox(5, "Use Legacy Panel", 0, 0, 24, 24, Settings.Default.LegacyBPM);
 
 			Offset.Focused = true;
 			SfxOffset.Focused = true;
@@ -494,24 +494,22 @@ namespace Sound_Space_Editor.Gui
 					});
 					break;
 				case 8:
-					if (EditorSettings.BPMForm)
-					{
-						new TimingsWindow().Show();
-						break;
-					}
-
+					/*
 					void openGui()
 					{
 						if (TimingPoints != null)
-                        {
+						{
 							TimingPoints.Close();
-                        }
-						TimingPoints = new TimingPoints();
-						TimingPoints.Run();
+						}
+					TimingPoints = new TimingPoints();
+					TimingPoints.Run();
 					}
 
 					Thread t = new Thread(new ThreadStart(openGui));
 					t.Start();
+					*/
+
+					new TimingsWindow().Show();
 					break;
 				case 9:
 					Offset.Text = ((long)EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds).ToString();
@@ -540,7 +538,6 @@ namespace Sound_Space_Editor.Gui
 			Timeline.ClientRectangle = new RectangleF(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64);
 			Tempo.ClientRectangle = new RectangleF(EditorWindow.Instance.ClientSize.Width - 512, EditorWindow.Instance.ClientSize.Height - 64, 512, 64);
 
-			// sm
 			Offset.ClientRectangle.Y = Grid.ClientRectangle.Y + 28 + Offset.ClientRectangle.Height / 2 + 5;
 			SfxOffset.ClientRectangle.Y = size.Height - SfxOffset.ClientRectangle.Height - 55;
 			JumpMSBox.ClientRectangle.Y = SfxOffset.ClientRectangle.Y;

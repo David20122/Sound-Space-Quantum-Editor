@@ -19,7 +19,7 @@ using OpenTK.Input;
 using KeyPressEventArgs = OpenTK.KeyPressEventArgs;
 using Discord;
 using System.Threading.Tasks;
-using Squirrel;
+using System.Diagnostics;
 
 namespace Sound_Space_Editor
 {
@@ -45,7 +45,7 @@ namespace Sound_Space_Editor
 		public Discord.NetworkManager networkManager;
 		public Discord.LobbyManager lobbyManager;
 
-		public static string version = "1.7";
+		public static string version = "1.7.0";
 
 		public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
 
@@ -117,8 +117,10 @@ namespace Sound_Space_Editor
 
 		public string LauncherDir;
 		public string cacheFolder;
+		public string currentEditorVersion;
+		public string downloadedVersionString;
 
-		public EditorWindow(long offset, string launcherDir) : base(1200, 600, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor " + version)
+		public EditorWindow(long offset, string launcherDir) : base(1280, 720, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor " + version)
 		{
 			LauncherDir = launcherDir;
 			cacheFolder = Path.Combine(launcherDir, "cached/");
@@ -141,9 +143,9 @@ namespace Sound_Space_Editor
 
 			EditorSettings.Load();
 
-			OpenGuiScreen(new GuiScreenMenu());
-
 			UpdateColors();
+
+			OpenGuiScreen(new GuiScreenMenu());
 
 			SoundPlayer.Cache("hit");
 			SoundPlayer.Cache("click");
@@ -173,61 +175,62 @@ namespace Sound_Space_Editor
 			}
 		}
 
-		private async Task CheckForUpdates()
+		void CheckForUpdates()
         {
-			string temp = Path.GetTempPath();
-            string path = Path.Combine(temp + "Quantum Editor");
-			using (var manager = new UpdateManager(path))
-			{
-				await manager.UpdateApp();
-			}
-        }
+			var versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+			currentEditorVersion = versionInfo.FileVersion;
+
+			try
+            {
+				WebClient wc = new WebClient();
+				string reply = wc.DownloadString("https://raw.githubusercontent.com/David20122/SSQEUpdater/main/version");
+				string trimmedReply = reply.TrimEnd();
+				downloadedVersionString = trimmedReply;
+			} 
+			catch
+            {
+
+            }
+
+			if (currentEditorVersion != downloadedVersionString)
+            {
+				Process.Start("SSQEUpdater.exe");
+				Environment.Exit(0);
+            }
+		}
 
 		public void UpdateColors()
-        {
-			string c1 = EditorSettings.Color1;
-			string[] c1values = c1.Split(',');
-			Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
-
-			string c2 = EditorSettings.Color2;
-			string[] c2values = c2.Split(',');
-			Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
-
-			string nc1 = EditorSettings.NoteColor1;
-			string[] nc1values = nc1.Split(',');
-			NoteColor1 = Array.ConvertAll<string, int>(nc1values, int.Parse);
-
-			string nc2 = EditorSettings.NoteColor2;
-			string[] nc2values = nc2.Split(',');
-			NoteColor2 = Array.ConvertAll<string, int>(nc2values, int.Parse);
-
-			if (Color1.Length != 3)
+		{
+			try
 			{
-				MessageBox.Show("One or more values in Color1 are invalid. \n Resetting Color1 to default.");
-				Color1 = new int[] { 0, 255, 200 };
+				string c1 = EditorSettings.Color1;
+				string[] c1values = c1.Split(',');
+				Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
 
-				EditorSettings.Save();
+				string c2 = EditorSettings.Color2;
+				string[] c2values = c2.Split(',');
+				Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
+
+				string nc1 = EditorSettings.NoteColor1;
+				string[] nc1values = nc1.Split(',');
+				NoteColor1 = Array.ConvertAll<string, int>(nc1values, int.Parse);
+
+				string nc2 = EditorSettings.NoteColor2;
+				string[] nc2values = nc2.Split(',');
+				NoteColor2 = Array.ConvertAll<string, int>(nc2values, int.Parse);
+
+				Console.WriteLine("Updated Colors => {0} | {1} | {2} | {3}", string.Join(", ", Color1), string.Join(", ", Color2), string.Join(", ", NoteColor1), string.Join(", ", NoteColor2));
 			}
-			if (Color2.Length != 3)
+			catch
 			{
-				MessageBox.Show("One or more values in Color2 are invalid. \n Resetting Color2 to default.");
-				Color2 = new int[] { 255, 0, 255 };
+				EditorSettings.Color1 = "0,255,200";
+				EditorSettings.Color2 = "255,0,255";
+				EditorSettings.NoteColor1 = "255,0,255";
+				EditorSettings.NoteColor2 = "0,255,200";
 
-				EditorSettings.Save();
-			}
-			if (NoteColor1.Length != 3)
-			{
-				MessageBox.Show("One or more values in NoteColor1 are invalid. \n Resetting NoteColor1 to default.");
-				NoteColor1 = new int[] { 255, 0, 255 };
+				UpdateColors();
 
-				EditorSettings.Save();
-			}
-			if (NoteColor2.Length != 3)
-			{
-				MessageBox.Show("One or more values in NoteColor2 are invalid. \n Resetting NoteColor2 to default.");
-				NoteColor2 = new int[] { 0, 255, 200 };
-
-				EditorSettings.Save();
+				MessageBox.Show("Colors have been reset to default beacuse one or more were invalid.");
 			}
 		}
 
@@ -1930,10 +1933,9 @@ namespace Sound_Space_Editor
 				GuiTrack.NoteOffset = 0;
 				GuiTrack.TextBpm = 0;
 			}
-			catch (Exception e)
+			catch
 			{
-				MessageBox.Show(e.StackTrace, "Error loading map data", MessageBoxButtons.OK,
-	MessageBoxIcon.Error);
+				MessageBox.Show("An error has occured while loading map data.");
 				return false;
 			}
 

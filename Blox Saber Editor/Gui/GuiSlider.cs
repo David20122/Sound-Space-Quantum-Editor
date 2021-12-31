@@ -21,14 +21,29 @@ namespace Sound_Space_Editor.Gui
 
 		private float _alpha;
 
+		public int[] Color1;
+		public int[] Color2;
+
 		public GuiSlider(float x, float y, float sx, float sy) : base(int.MinValue, x, y, sx, sy, "", false)
 		{
 			_vertical = sx < sy;
 		}
-		int[] Color1 = EditorWindow.Instance.Color1;
-		int[] Color2 = EditorWindow.Instance.Color2;
+
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
+			if (EditorWindow.Instance.GuiScreen is GuiScreenMenu menu)
+			{
+				Color1 = new int[] { 255, 255, 255 };
+				Color2 = new int[] { 50, 50, 50 };
+
+			}
+			else
+			{
+
+				Color1 = EditorWindow.Instance.Color1;
+				Color2 = EditorWindow.Instance.Color2;
+			}
+
 			if (MaxValue > 0)
             {
 				var rect = ClientRectangle;

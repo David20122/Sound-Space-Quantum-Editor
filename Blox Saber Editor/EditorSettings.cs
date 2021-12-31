@@ -14,7 +14,7 @@ namespace Sound_Space_Editor
 	{
 		public static readonly string file = "settings.txt";
 		public static bool Waveform;
-		public static bool BPMForm;
+		//public static bool BPMForm;
 		public static int EditorBGOpacity;
 		public static int GridOpacity;
 		public static int TrackOpacity;
@@ -42,11 +42,13 @@ namespace Sound_Space_Editor
 							bool.TryParse(value, out resA);
 							Waveform = resA;
 							break;
+						/*
 						case "BPMForm":
 							bool resE;
 							bool.TryParse(value, out resE);
 							BPMForm = resE;
 							break;
+						*/
 						case "EditorBGOpacity":
 							int resB;
 							int.TryParse(value, out resB);
@@ -82,12 +84,14 @@ namespace Sound_Space_Editor
 				Reset();
 				Console.WriteLine("no settings.txt - loading default settings");
 			}
+
+            Console.WriteLine("Loaded => {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7}", Waveform, EditorBGOpacity, GridOpacity, TrackOpacity, Color1, Color2, NoteColor1, NoteColor2);
 		}
 
 		public static void Reset()
 		{
 			Waveform = true;
-			BPMForm = false;
+			//BPMForm = false;
 			EditorBGOpacity = 255;
 			GridOpacity = 255;
 			TrackOpacity = 255;
@@ -102,7 +106,7 @@ namespace Sound_Space_Editor
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine("-- DON'T EDIT THIS, LAUNCH EDITOR AND GO IN SETTINGS INSTEAD");
 			sb.AppendLine(string.Format("Waveform={0}", Waveform));
-			sb.AppendLine(string.Format("BPMForm={0}", BPMForm));
+			//sb.AppendLine(string.Format("BPMForm={0}", BPMForm));
 			sb.AppendLine(string.Format("EditorBGOpacity={0}", EditorBGOpacity));
 			sb.AppendLine(string.Format("GridOpacity={0}", GridOpacity));
 			sb.AppendLine(string.Format("TrackOpacity={0}", TrackOpacity));
@@ -113,10 +117,11 @@ namespace Sound_Space_Editor
 			try
 			{
 				File.WriteAllText(file, sb.ToString());
+				Console.WriteLine("Saved => {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7}", Waveform, EditorBGOpacity, GridOpacity, TrackOpacity, Color1, Color2, NoteColor1, NoteColor2);
 			}
 			catch
 			{
-
+				Console.WriteLine("failed to save");
 			}
 		}
 	}
