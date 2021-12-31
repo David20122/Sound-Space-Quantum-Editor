@@ -7,13 +7,22 @@ namespace Logic
 {
     public class Game
     {
-        //public static string path = @"H:\Game_Dev\BlockGame\""Block Game""\Build\""Block Game.exe""";
-
         static public void TryStart(string path, string MapData)
         {
             try
             {
                 var data = EditorWindow.Instance.ParseData();
+
+                if (data == null)
+                {
+                    data = MapData;
+                }
+
+                if (data == null)
+                {
+                    return; // Data doesnt exist?
+                }
+
                 string mapcurrent = Environment.CurrentDirectory + @"\temp.txt";
 
                 if (!File.Exists(mapcurrent))
@@ -25,31 +34,7 @@ namespace Logic
 
                 string[] mapsplit = mapcurrent.Split(char.Parse(@"\"));
 
-                string MapPath = mapcurrent;//"";
-                /*/
-                for (int i = 0; i < mapsplit.Length; i++)
-                {
-                    string current = mapsplit[i];
-
-                    bool hasSpace = current.Contains(" ");
-
-                    if (hasSpace)
-                    {
-                        current = current.Insert(0, @"""");
-                        current = current.Insert(current.Length, @"""");
-                    }
-
-                    Console.WriteLine(hasSpace + ":" + current);
-
-                    if (i == mapsplit.Length - 1)
-                    {
-                        MapPath += current;
-                        continue;
-                    }
-
-                    MapPath += current + @"\";
-                }
-                /*/
+                string MapPath = mapcurrent;
 
                 string[] split = path.Split(char.Parse(@"\"));
 
@@ -77,7 +62,7 @@ namespace Logic
 
                     newPath += current + @"\";
                 }
-                string gamePath = newPath;// + @"""Block Game.exe""";
+                string gamePath = newPath;
 
                 if (!File.Exists(gamePath))
                 {

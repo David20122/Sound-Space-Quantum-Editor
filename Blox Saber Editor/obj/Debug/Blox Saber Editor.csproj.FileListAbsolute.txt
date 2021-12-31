@@ -132,3 +132,4 @@ H:\Sound-Space-Quantum-Editor-Game\Blox Saber Editor\obj\Debug\Blox Saber Editor
 H:\Sound-Space-Quantum-Editor-Game\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CopyComplete
 H:\Sound-Space-Quantum-Editor-Game\Blox Saber Editor\obj\Debug\Sound Space Quantum Editor.exe
 H:\Sound-Space-Quantum-Editor-Game\Blox Saber Editor\obj\Debug\Sound Space Quantum Editor.pdb
+H:\Sound-Space-Quantum-Editor-Game\Blox Saber Editor\obj\Debug\Sound_Space_Editor.TimingsWindow.resources
