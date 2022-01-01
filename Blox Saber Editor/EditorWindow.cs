@@ -194,8 +194,34 @@ namespace Sound_Space_Editor
 
 			if (currentEditorVersion != downloadedVersionString)
             {
-				Process.Start("SSQEUpdater.exe");
-				Environment.Exit(0);
+				object[] settings = {
+					Settings.Default.MasterVolume,
+					Settings.Default.SFXVolume,
+					Settings.Default.GridNumbers,
+					Settings.Default.ApproachSquares,
+					Settings.Default.AnimateBackground,
+					Settings.Default.Autoplay,
+					Settings.Default.BGDim,
+					Settings.Default.LastFile,
+					Settings.Default.Quantum,
+					Settings.Default.AutoAdvance,
+					Settings.Default.SfxOffset,
+					Settings.Default.Numpad,
+					Settings.Default.QuantumGridLines,
+					Settings.Default.QuantumGridSnap,
+					Settings.Default.Metronome,
+					Settings.Default.LegacyBPM
+				};
+
+				try
+                {
+					Process.Start("SSQEUpdater.exe", string.Join(" ", settings));
+					Environment.Exit(0);
+				}
+				catch
+                {
+					MessageBox.Show("Failed to update the editor, did you move or rename the updater .exe?", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
 		}
 
