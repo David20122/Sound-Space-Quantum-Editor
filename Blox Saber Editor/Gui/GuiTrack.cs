@@ -370,7 +370,7 @@ namespace Sound_Space_Editor.Gui
 						}
 
 						var w = Math.Max(fr.GetWidth($"{Bpm.Ms:##,###}ms", 16), fr.GetWidth($"{Bpm.bpm:##,###}", 16));
-						var pointRect = new RectangleF((int)x, rect.Bottom, w + 3, 56);
+						var pointRect = new RectangleF((int)x, rect.Bottom, w + 3, found != null ? 48 : 32);
 
 						var g = MouseOverPoint == null && pointRect.Contains(mouseX, mouseY);
 
@@ -387,7 +387,7 @@ namespace Sound_Space_Editor.Gui
 								GL.Color3(0, 0.5f, 1);
 							}
 
-							Glu.RenderOutline((int)(x - 4), rect.Bottom, w + 3 + 8, 56 + 4);
+							Glu.RenderOutline((int)(x - 4), rect.Bottom, w + 3 + 8, found != null ? 48 : 32);
 						}
 					}
 				}
