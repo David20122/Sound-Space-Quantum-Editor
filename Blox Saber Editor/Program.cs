@@ -37,7 +37,6 @@ namespace Sound_Space_Editor
 				Settings.Default.QuantumGridSnap = bool.Parse(args[13]);
 				Settings.Default.Metronome = bool.Parse(args[14]);
 				Settings.Default.LegacyBPM = bool.Parse(args[15]);
-
 			}
 
 			try
