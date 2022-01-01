@@ -515,7 +515,7 @@ namespace Sound_Space_Editor
 				if (_draggingNoteTimeline)
 				{
 					var x = Math.Abs(e.X - _dragStartX) >= 5 ? e.X : _dragStartX;
-					//OnDraggingTimelineNotes(x);
+					
 					OnDraggingTimelineNotes(x);
 				}
 				if (_draggingPointTimeline)
@@ -1043,7 +1043,7 @@ namespace Sound_Space_Editor
 					if (MusicPlayer.IsPlaying)
 						MusicPlayer.Pause();
 
-					var bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds).bpm;
+					var bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm;
 
 					if (bpm > 0)
 					{
@@ -1056,7 +1056,7 @@ namespace Sound_Space_Editor
 							stepSmall = -stepSmall;
 
 						long closestBeat =
-							GetClosestBeat((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, stepSmall < 0);
+							GetClosestBeat((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, stepSmall < 0, false);
 
                         try
                         {
@@ -1304,7 +1304,7 @@ namespace Sound_Space_Editor
 						{
 							if (gse.AutoAdvance.Toggle)
 							{
-								var bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds).bpm;
+								var bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm;
 								if (bpm < 1)
 								{
 									return;
@@ -1318,7 +1318,7 @@ namespace Sound_Space_Editor
 									var stepSmall = lineSpace / beatDivisor * 1000;
 
 									long closestBeat =
-										GetClosestBeat((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+										GetClosestBeat((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false, false);
                                     try
                                     {
 										MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
@@ -1399,7 +1399,7 @@ namespace Sound_Space_Editor
 					var time = (long)MusicPlayer.CurrentTime.TotalMilliseconds;
 					var maxTime = (long)MusicPlayer.TotalTime.TotalMilliseconds;
 
-					var bpm = GetCurrentBpm(time);
+					var bpm = GetCurrentBpm(time, false);
 
 					if (bpm.bpm > 33)
 					{
@@ -1489,7 +1489,7 @@ namespace Sound_Space_Editor
 			return true;
 		}
 
-		private long GetClosestBeat(long ms, bool next, bool negative)
+		private long GetClosestBeat(long ms, bool next, bool negative, bool draggingpoint)
 		{
 			/* wayyyy too much going on here
 			var lastDiffMs = long.MaxValue;
@@ -1555,7 +1555,7 @@ namespace Sound_Space_Editor
 			return closestMs;
 			*/
 
-			var currentbpm = GetCurrentBpm(ms);
+			var currentbpm = GetCurrentBpm(ms, draggingpoint);
 			float interval = 60000 / currentbpm.bpm / GuiTrack.BeatDivisor;
 			float remainder = (ms - currentbpm.Ms) % interval;
 			float closestms = ms - remainder;
@@ -1585,9 +1585,9 @@ namespace Sound_Space_Editor
 				var clickOff = clickMs - _dragNoteStartMs;
 				var cursorMs = (int)(Math.Max(0, mouseX - gui.Track.ScreenX + audioTime / 1000 * CubeStep) / CubeStep * 1000) - clickOff;
 
-				if (_draggedNotes.Count > 0 && GetCurrentBpm(cursorMs).bpm > 0)
+				if (_draggedNotes.Count > 0 && GetCurrentBpm(cursorMs, false).bpm > 0)
 				{
-					var lineSpace = 60 / GetCurrentBpm(cursorMs).bpm * CubeStep;
+					var lineSpace = 60 / GetCurrentBpm(cursorMs, false).bpm * CubeStep;
 					var stepSmall = lineSpace / GuiTrack.BeatDivisor;
 					var snap = stepSmall / 1.75f;
 
@@ -1598,7 +1598,7 @@ namespace Sound_Space_Editor
 					else if (snap > 12)
 						threshold = 12;
 
-					var snappedMs = GetClosestBeat(_draggedNote.Ms, false, false);
+					var snappedMs = GetClosestBeat(_draggedNote.Ms, false, false, false);
 
 					if (Math.Abs(snappedMs - cursorMs) / 1000f * CubeStep <= threshold) //8 pixels
 						msDiff = -(_draggedNote.DragStartMs - snappedMs);
@@ -1622,13 +1622,29 @@ namespace Sound_Space_Editor
 			var pixels = mouseX - _dragStartX;
 			var msDiff = pixels / CubeStep * 1000;
 
-			//var audioTime = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
+			var audioTime = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
 
 			if (GuiScreen is GuiScreenEditor gui && _draggedPoint != null)
             {
-				//var clickMs = (int)(Math.Max(0, _clickedMouse.X - gui.Track.ScreenX + audioTime / 1000 * CubeStep) / CubeStep * 1000);
-				//var clickOff = clickMs - _dragPointStartMs;
-				//var cursorMs = (int)(Math.Max(0, mouseX - gui.Track.ScreenX + audioTime / 1000 * CubeStep) / CubeStep * 1000) - clickOff;
+				var clickMs = (int)(Math.Max(0, _clickedMouse.X - gui.Track.ScreenX + audioTime / 1000 * CubeStep) / CubeStep * 1000);
+				var clickOff = clickMs - _dragPointStartMs;
+				var cursorMs = (int)(Math.Max(0, mouseX - gui.Track.ScreenX + audioTime / 1000 * CubeStep) / CubeStep * 1000) - clickOff;
+
+				var lineSpace = 60 / GetCurrentBpm(cursorMs, true).bpm * CubeStep;
+				var stepSmall = lineSpace / GuiTrack.BeatDivisor;
+				var snap = stepSmall / 1.75f;
+
+				float threshold = snap;
+
+				if (snap < 1)
+					threshold = 1;
+				else if (snap > 12)
+					threshold = 12;
+
+				var snappedMs = GetClosestBeat(_draggedPoint.Ms, false, false, true);
+
+				if (Math.Abs(snappedMs - cursorMs) / 1000f * CubeStep <= threshold) //8 pixels
+					msDiff = -(_draggedPoint.DragStartMs - snappedMs);
 
 				var time = _draggedPoint.DragStartMs + (int)msDiff;
 
@@ -1790,7 +1806,7 @@ namespace Sound_Space_Editor
 
 				time = (int)Math.Max(0, Math.Min(MusicPlayer.TotalTime.TotalMilliseconds, time));
 
-				var bpm = GetCurrentBpm(time);
+				var bpm = GetCurrentBpm(time, false);
 
 				if (bpm.bpm > 33 && time >= bpm.Ms && time < MusicPlayer.TotalTime.TotalMilliseconds)
 				{
@@ -2012,18 +2028,16 @@ namespace Sound_Space_Editor
 			LoadMap(id.ToString(), false);
 		}
 
-		public BPM GetCurrentBpm(double currentms)
+		public BPM GetCurrentBpm(double currentms, bool draggingbpm)
         {
 			if (!Settings.Default.LegacyBPM)
             {
 				BPM currentbpm = new BPM(0, 0);
 
 				foreach (var bpm in GuiTrack.BPMs)
-				{
-					if (bpm.Ms <= currentms)
-					{
+                {
+					if ((!draggingbpm && bpm.Ms <= currentms) || (draggingbpm && bpm.Ms < currentms))
 						currentbpm = bpm;
-					}
 				}
 
 				return currentbpm;

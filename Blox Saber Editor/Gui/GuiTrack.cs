@@ -467,7 +467,7 @@ namespace Sound_Space_Editor.Gui
 				double.TryParse(gse1.SfxOffset.Text, out var offset);
 
 				var ms = editor.MusicPlayer.CurrentTime.TotalMilliseconds - offset;
-				var bpm = editor.GetCurrentBpm(editor.MusicPlayer.CurrentTime.TotalMilliseconds);
+				var bpm = editor.GetCurrentBpm(editor.MusicPlayer.CurrentTime.TotalMilliseconds, false);
 				double interval = 60000 / bpm.bpm / BeatDivisor;
 				double remainder = (ms - bpm.Ms) % interval;
 				double closestMS = ms - remainder;
