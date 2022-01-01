@@ -2,7 +2,7 @@
 
 namespace Sound_Space_Editor
 {
-	class UndoRedoAction
+	public class UndoRedoAction
 	{
 		public Action Undo;
 		public Action Redo;

@@ -5,7 +5,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiButton : Gui
+	public class GuiButton : Gui
 	{
 		public bool IsMouseOver { get; protected set; }
 		public int Id;

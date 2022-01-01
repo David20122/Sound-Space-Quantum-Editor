@@ -2,7 +2,7 @@
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiButtonPlayPause : GuiButton
+	public class GuiButtonPlayPause : GuiButton
 	{
 		public GuiButtonPlayPause(int id, float x, float y, float sx, float sy) : base(id, x, y, sx, sy)
 		{

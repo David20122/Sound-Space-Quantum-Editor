@@ -5,7 +5,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Sound_Space_Editor
 {
-	static class Glu
+	public static class Glu
 	{
 		public static void RenderQuad(double x, double y, double sx, double sy)
 		{

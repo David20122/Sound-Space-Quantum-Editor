@@ -13,7 +13,7 @@ using Logic;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiScreenEditor : GuiScreen
+	public class GuiScreenEditor : GuiScreen
 	{
 		public GuiScreen GuiScreen { get; private set; }
         public bool AutoSave = false;

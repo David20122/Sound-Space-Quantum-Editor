@@ -8,12 +8,69 @@ using OpenTK.Graphics;
 
 namespace Sound_Space_Editor
 {
-	class Program
+	internal class Program
 	{
+		static bool ModsLoaded = false;
+		static void MODLOADER()
+		{
+			if (ModsLoaded)
+			{
+				return; // Cant reload as of right now
+            }
+			
+			string path = Directory.GetCurrentDirectory();
 
+			//MessageBox.Show(path, "DEBUG", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+			if (Directory.Exists(path + @"\mods"))
+			{
+				var Files = Directory.GetFiles(path + @"\mods");
+				//MessageBox.Show(Files.Length.ToString(), "DEBUG", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+				foreach (string cfile in Files)
+				{
+					FileInfo mFile = new FileInfo(cfile);
+					//MessageBox.Show(mFile.FullName, "DEBUG", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					bool isMod = mFile.Extension.Contains("dll");
+
+					if (isMod)
+					{
+						try
+						{
+                            var DLL = Assembly.LoadFile(mFile.FullName);
+
+							foreach (Type type in DLL.GetExportedTypes())
+							{
+								var modDll = Activator.CreateInstance(type);
+								try
+								{
+									type.InvokeMember("Main", BindingFlags.InvokeMethod, null, modDll, new object[] { });
+								}
+								catch (Exception e)
+								{
+									MessageBox.Show(e.ToString(), "Mod Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+								}
+							}
+						}
+						catch (Exception e)
+                        {
+							MessageBox.Show(e.ToString(), "Mod Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						}
+					}
+				}
+			}
+			else
+			{
+				Directory.CreateDirectory(path + @"\mods");
+			}
+
+			ModsLoaded = true;
+		}
 		[STAThread]
 		static void Main(string[] args)
 		{
+			MODLOADER();
+
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			EditorWindow w;
@@ -54,8 +111,6 @@ namespace Sound_Space_Editor
 			}
 
 			INativeWindow window = new OpenTK.NativeWindow(1080, 600, "Timings Setup", GameWindowFlags.Default, new GraphicsMode(32, 8, 0, 8), DisplayDevice.Default);
-
-			
 		}
 	}
 }

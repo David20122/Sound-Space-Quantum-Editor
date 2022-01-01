@@ -13,7 +13,7 @@ using System.Globalization;
 
 namespace Sound_Space_Editor.Gui
 {
-    class GuiScreenTimings : GuiScreen
+    public class GuiScreenTimings : GuiScreen
     {
         public GuiScreen GuiScreen { get; private set; }
 

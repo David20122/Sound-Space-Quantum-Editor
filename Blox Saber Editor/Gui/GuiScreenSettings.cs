@@ -10,7 +10,7 @@ using OpenTK.Input;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiScreenSettings : GuiScreen
+	public class GuiScreenSettings : GuiScreen
 	{
 		private readonly int _textureId;
 		private bool bgImg = false;

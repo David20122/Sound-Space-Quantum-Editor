@@ -8,7 +8,7 @@ using Un4seen.Bass.Misc;
 
 namespace Sound_Space_Editor
 {
-	class MusicPlayer
+	public class MusicPlayer
 	{
 		private object locker = new object();
 

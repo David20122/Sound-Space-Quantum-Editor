@@ -3,7 +3,7 @@ using OpenTK.Input;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiScreen : Gui
+	public class GuiScreen : Gui
 	{
 		protected List<GuiButton> Buttons = new List<GuiButton>();
 

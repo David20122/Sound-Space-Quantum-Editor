@@ -6,7 +6,7 @@ using Sound_Space_Editor.Gui;
 
 namespace Sound_Space_Editor
 {
-	class UndoRedo
+	public class UndoRedo
 	{
 		private readonly List<UndoRedoAction> _actions = new List<UndoRedoAction>();
 

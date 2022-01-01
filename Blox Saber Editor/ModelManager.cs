@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Sound_Space_Editor
 {
-    class ModelManager
+    public class ModelManager
     {
         private static readonly List<int> VaOs = new List<int>();
         private static readonly List<int> VbOs = new List<int>();

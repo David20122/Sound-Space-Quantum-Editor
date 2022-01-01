@@ -10,7 +10,7 @@ using System.Globalization;
 
 namespace Sound_Space_Editor
 {
-	class EditorSettings
+	public class EditorSettings
 	{
 		public static readonly string file = "settings.txt";
 		public static bool Waveform;

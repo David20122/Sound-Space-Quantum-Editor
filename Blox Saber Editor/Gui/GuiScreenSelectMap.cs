@@ -10,7 +10,7 @@ using Color = System.Drawing.Color;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiScreenSelectMap : GuiScreen
+	public class GuiScreenSelectMap : GuiScreen
 	{
 		private int logoTxt;
 		private GuiButton _createMapButton;

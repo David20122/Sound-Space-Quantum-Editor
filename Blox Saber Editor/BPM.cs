@@ -3,7 +3,7 @@
 namespace Sound_Space_Editor
 {
 	[Serializable]
-	class BPM
+	public class BPM
 	{
 		public float bpm;
 		public long Ms;

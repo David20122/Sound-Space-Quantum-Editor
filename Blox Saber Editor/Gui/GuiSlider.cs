@@ -5,7 +5,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiSlider : GuiButton
+	public class GuiSlider : GuiButton
 	{
 		public int MaxValue = 7;
 

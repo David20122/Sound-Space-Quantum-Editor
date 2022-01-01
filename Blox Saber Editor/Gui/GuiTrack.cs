@@ -6,7 +6,7 @@ using Sound_Space_Editor.Properties;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiTrack : Gui
+	public class GuiTrack : Gui
 	{
 		private readonly ColorSequence _cs = new ColorSequence();
 

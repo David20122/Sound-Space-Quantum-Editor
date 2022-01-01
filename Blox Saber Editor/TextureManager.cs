@@ -8,7 +8,7 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace Sound_Space_Editor
 {
-	static class TextureManager
+	public static class TextureManager
 	{
 		private static readonly Dictionary<string, int> Textures = new Dictionary<string, int>();
 

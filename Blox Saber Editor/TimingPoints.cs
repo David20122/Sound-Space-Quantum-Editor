@@ -14,7 +14,7 @@ using Sound_Space_Editor.Properties;
 
 namespace Sound_Space_Editor
 {
-    class TimingPoints : GameWindow
+    public class TimingPoints : GameWindow
     {
         public GuiScreen GuiScreen { get; private set; }
         private Point _clickedMouse;

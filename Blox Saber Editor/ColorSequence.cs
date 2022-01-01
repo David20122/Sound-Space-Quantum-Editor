@@ -7,7 +7,7 @@ using Sound_Space_Editor.Properties;
 
 namespace Sound_Space_Editor
 {
-	class ColorSequence
+	public class ColorSequence
 	{
 		private readonly Color[] _colors;
 		private int _index;

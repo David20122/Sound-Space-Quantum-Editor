@@ -6,7 +6,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiSliderTimeline : GuiSlider
+	public class GuiSliderTimeline : GuiSlider
 	{
 		public GuiSliderTimeline(float x, float y, float sx, float sy) : base(x, y, sx, sy)
 		{

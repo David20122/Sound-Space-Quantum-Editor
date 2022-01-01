@@ -23,7 +23,7 @@ using System.Diagnostics;
 
 namespace Sound_Space_Editor
 {
-	class EditorWindow : GameWindow
+	public class EditorWindow : GameWindow
 	{
 		private bool discordEnabled = false;
 		public static EditorWindow Instance;
@@ -2179,7 +2179,7 @@ namespace Sound_Space_Editor
 		}
 	}
 
-	class SecureWebClient : WebClient
+	public class SecureWebClient : WebClient
 	{
 		protected override WebRequest GetWebRequest(Uri address)
 		{
@@ -2190,7 +2190,7 @@ namespace Sound_Space_Editor
 		}
 	}
 
-	class NoteList
+	public class NoteList
 	{
 		private List<Note> _notes = new List<Note>();
 

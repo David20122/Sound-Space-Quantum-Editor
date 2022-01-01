@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiLabel : Gui
+	public class GuiLabel : Gui
 	{
 		public string Text;
 		public string Font;

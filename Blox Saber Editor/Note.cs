@@ -5,7 +5,7 @@ using System.Drawing;
 namespace Sound_Space_Editor
 {
 	[Serializable]
-	class Note
+	public class Note
 	{
 		public float X;
 		public float Y;

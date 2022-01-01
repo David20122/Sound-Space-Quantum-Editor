@@ -2,7 +2,7 @@
 
 namespace Sound_Space_Editor.Gui
 {
-	class Gui
+	public class Gui
 	{
 		public RectangleF ClientRectangle;
 		public bool Visible = true;

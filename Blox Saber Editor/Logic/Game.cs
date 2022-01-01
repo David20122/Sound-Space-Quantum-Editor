@@ -7,7 +7,7 @@ namespace Logic
 {
     public class Game
     {
-        static public void TryStart(string path, string MapData)
+        public static void TryStart(string path, string MapData)
         {
             try
             {

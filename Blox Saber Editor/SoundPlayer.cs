@@ -5,7 +5,7 @@ using Un4seen.Bass.AddOn.Fx;
 
 namespace Sound_Space_Editor
 {
-	class SoundPlayer
+	public class SoundPlayer
 	{
 		private readonly Dictionary<string, string> _sounds = new Dictionary<string, string>();
 

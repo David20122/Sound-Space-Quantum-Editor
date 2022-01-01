@@ -4,7 +4,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiCheckBox : GuiButton
+	public class GuiCheckBox : GuiButton
 	{
 		public bool Toggle { get; private set; }
 

@@ -8,7 +8,7 @@ using OpenTK.Input;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiGrid : Gui
+	public class GuiGrid : Gui
 	{
 		public Note MouseOverNote;
 

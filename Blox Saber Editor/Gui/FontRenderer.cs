@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Sound_Space_Editor.Gui
 {
-	class FontRenderer
+	public class FontRenderer
 	{
 		private readonly Dictionary<int, FtFont> _cached = new Dictionary<int, FtFont>();
 

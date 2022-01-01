@@ -8,7 +8,7 @@ using Color = System.Drawing.Color;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiScreenMenu : GuiScreen
+	public class GuiScreenMenu : GuiScreen
 	{
 		private readonly int _textureId;
 		private bool bgImg = false;

@@ -10,7 +10,7 @@ using OpenTK.Input;
 
 namespace Sound_Space_Editor.Gui
 {
-	class GuiTextBox : Gui
+	public class GuiTextBox : Gui
 	{
 		public bool Numeric;
 		public bool Decimal;
