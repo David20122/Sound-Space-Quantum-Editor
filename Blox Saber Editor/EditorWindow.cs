@@ -220,7 +220,7 @@ namespace Sound_Space_Editor
 				}
 				catch
                 {
-					MessageBox.Show("Failed to update the editor, did you move or rename the updater .exe?", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBox.Show("Failed to locate 'SSQEUpdater.exe'\nDid you rename or move the file?", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
 		}
