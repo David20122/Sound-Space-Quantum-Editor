@@ -17,10 +17,34 @@ namespace Sound_Space_Editor
 		{
 			int bgdim = EditorSettings.EditorBGOpacity;
 
-			int[] NoteColor1 = EditorWindow.Instance.NoteColor1;
-			int[] NoteColor2 = EditorWindow.Instance.NoteColor2;
+			string[] NoteColors = EditorWindow.Instance.NoteColors;
+			//int[] NoteColor1 = EditorWindow.Instance.NoteColor1;
+			//int[] NoteColor2 = EditorWindow.Instance.NoteColor2;
 
-			_colors = new Color[] { Color.FromArgb(NoteColor1[0], NoteColor1[1], NoteColor1[2]), Color.FromArgb(NoteColor2[0], NoteColor2[1], NoteColor2[2]) };
+			_colors = new Color[NoteColors.Length]; //{ Color.FromArgb(NoteColor1[0], NoteColor1[1], NoteColor1[2]), Color.FromArgb(NoteColor2[0], NoteColor2[1], NoteColor2[2]) };
+			int i = 0;
+
+			foreach (string color in NoteColors)
+			{
+				string[] c1values = color.Split(',');
+				int[] cc = Array.ConvertAll(c1values, int.Parse);
+
+				Color current;
+
+				bool a = cc.Length > 3;
+
+				if (a)
+				{
+					current = Color.FromArgb(cc[3], cc[0], cc[1], cc[2]);
+				}
+				else
+				{
+					current = Color.FromArgb(cc[0], cc[1], cc[2]);
+				}
+
+				_colors[i] = current;
+				i++;
+			}
 		}
 
 		public Color Next()

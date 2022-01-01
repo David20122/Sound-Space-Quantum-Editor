@@ -107,6 +107,7 @@ namespace Sound_Space_Editor
 		public int[] Color2;
 		public int[] NoteColor1;
 		public int[] NoteColor2;
+		public string[] NoteColors;
 		public float Zoom
 		{
 			get => _zoom;
@@ -210,6 +211,10 @@ namespace Sound_Space_Editor
 				string c2 = EditorSettings.Color2;
 				string[] c2values = c2.Split(',');
 				Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
+
+				string ncs = EditorSettings.NoteColors;
+				string[] ncsvalues = ncs.Split('|');
+				NoteColors = ncsvalues;
 
 				string nc1 = EditorSettings.NoteColor1;
 				string[] nc1values = nc1.Split(',');

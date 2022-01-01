@@ -22,6 +22,7 @@ namespace Sound_Space_Editor
 		public static string Color2;
 		public static string NoteColor1;
 		public static string NoteColor2;
+		public static string NoteColors;
 
 		public static void Load()
 		{
@@ -75,6 +76,9 @@ namespace Sound_Space_Editor
 							break;
 						case "NoteColor2":
 							NoteColor2 = value;
+							break;
+						case "NoteColors":
+							NoteColors = value;
 							break;
 					}
 				}
