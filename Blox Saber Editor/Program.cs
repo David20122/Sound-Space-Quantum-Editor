@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics;
+using Sound_Space_Editor.Properties;
 
 namespace Sound_Space_Editor
 {
@@ -17,6 +18,27 @@ namespace Sound_Space_Editor
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			EditorWindow w;
+
+			if (args.Length == 16)
+            {
+				Settings.Default.MasterVolume = decimal.Parse(args[0]);
+				Settings.Default.SFXVolume = decimal.Parse(args[1]);
+				Settings.Default.GridNumbers = bool.Parse(args[2]);
+				Settings.Default.ApproachSquares = bool.Parse(args[3]);
+				Settings.Default.AnimateBackground = bool.Parse(args[4]);
+				Settings.Default.Autoplay = bool.Parse(args[5]);
+				Settings.Default.BGDim = float.Parse(args[6]);
+				Settings.Default.LastFile = args[7];
+				Settings.Default.Quantum = bool.Parse(args[8]);
+				Settings.Default.AutoAdvance = bool.Parse(args[9]);
+				Settings.Default.SfxOffset = args[10];
+				Settings.Default.Numpad = bool.Parse(args[11]);
+				Settings.Default.QuantumGridLines = bool.Parse(args[12]);
+				Settings.Default.QuantumGridSnap = bool.Parse(args[13]);
+				Settings.Default.Metronome = bool.Parse(args[14]);
+				Settings.Default.LegacyBPM = bool.Parse(args[15]);
+
+			}
 
 			try
 			{
