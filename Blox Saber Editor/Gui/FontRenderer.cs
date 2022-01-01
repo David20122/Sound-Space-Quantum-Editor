@@ -34,7 +34,16 @@ namespace Sound_Space_Editor.Gui
 		public int GetWidth(string text, int size)
 		{
 			if (_cached.TryGetValue(size, out var font))
-				return font.Extent(text);
+            {
+				var max = 0;
+				var lines = text.Split('\n');
+				foreach (var line in lines)
+                {
+					if (font.Extent(line) > max)
+						max = font.Extent(line);
+                }
+				return max;
+			}
 
 			return 0;
 		}

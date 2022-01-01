@@ -62,13 +62,15 @@ namespace Sound_Space_Editor.Gui
 
 			_alpha = Toggle ? Math.Min(1, _alpha + delta * 8) : Math.Max(0, _alpha - delta * 8);
 
-			var checkSize = rect.Height * 0.75f * _alpha;
-			var gap = (rect.Height - checkSize) / 2;
+			var checkSizeX = rect.Width * 0.75f * _alpha;
+			var checkSizeY = rect.Height * 0.75f * _alpha;
+			var gapX = (rect.Width - checkSizeX) / 2;
+			var gapY = (rect.Height - checkSizeY) / 2;
 
-			if (checkSize > 0)
+			if (checkSizeX > 0 && checkSizeY > 0)
 			{
 				GL.Color4(Color.FromArgb(255, Color2[0], Color2[1], Color2[2]));
-				Glu.RenderQuad(rect.X + gap, rect.Y + gap, checkSize, checkSize);
+				Glu.RenderQuad(rect.X + gapX, rect.Y + gapY, checkSizeX, checkSizeY);
 			}
 
 			var fr = EditorWindow.Instance.FontRenderer;

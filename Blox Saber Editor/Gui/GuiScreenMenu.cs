@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Color = System.Drawing.Color;
@@ -14,7 +15,7 @@ namespace Sound_Space_Editor.Gui
 		private bool bgImg = false;
 		private string ChangelogText;
 
-		private readonly GuiLabel CHANGELOGlabel = new GuiLabel(0, 0, "CHANGELOG", "square", 40) { Centered = true };
+		private readonly GuiLabel CHANGELOGlabel = new GuiLabel(0, 0, "CHANGELOG", "square", 40) { Centered = false };
 		private readonly GuiLabel CHANGELOGlabelOutline = new GuiLabel(0, 0, "CHANGELOG", "squareo", 41) { Centered = true };
 
 		private readonly GuiLabel ssLabel = new GuiLabel(0, 0, "SOUND SPACE", "square", 150);
@@ -34,7 +35,6 @@ namespace Sound_Space_Editor.Gui
 
 		public GuiScreenMenu() : base(0, 0, EditorWindow.Instance.ClientSize.Width, EditorWindow.Instance.ClientSize.Height)
 		{
-
 			if (File.Exists(Path.Combine(EditorWindow.Instance.LauncherDir, "background_menu.png")))
 			{
 				bgImg = true;
@@ -82,206 +82,80 @@ namespace Sound_Space_Editor.Gui
 		{
 			var size = EditorWindow.Instance.ClientSize;
 
-			if (bgImg) {
+			var widthdiff = size.Width / 1920f;
+			var heightdiff = size.Height / 1080f;
 
-				// background
+			if (bgImg)
+            {
 				GL.Color4(Color.FromArgb(255, 255, 255, 255));
 				Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
-
-				if (size.Width == 1920 && size.Height > 1000 && size.Height <= 1080)
-				{
-					GL.Color4(Color.FromArgb(120, 57, 56, 47));
-					Glu.RenderQuad(ClientRectangle.Left + 35, ClientRectangle.Top + 180, 950, 790);
-					GL.Color4(Color.FromArgb(100, 36, 35, 33));
-					Glu.RenderQuad(ClientRectangle.Left + 55, ClientRectangle.Top + 230, 900, 715);
-				}
-				//else if (size.Width >= 1280 && size.Width <= 1700  && size.Height > 690 && size.Height <= 768 || size.Width == 1280 && size.Height > 640 && size.Height <= 720)
-				else if (size.Width >= 10 && size.Width <= 1700 && size.Height > 600 && size.Height <= 1300)
-				{
-					GL.Color4(Color.FromArgb(120, 57, 56, 47));
-					Glu.RenderQuad(ClientRectangle.Left + 35, ClientRectangle.Top + 180, 650, 525);
-					GL.Color4(Color.FromArgb(100, 36, 35, 33));
-					Glu.RenderQuad(ClientRectangle.Left + 55, ClientRectangle.Top + 230, 600, 450);
-				}
-				else
-                {
-					GL.Color4(Color.FromArgb(120, 57, 56, 47));
-					Glu.RenderQuad(ClientRectangle.Left + 35, ClientRectangle.Top + 180, 950, 790);
-					GL.Color4(Color.FromArgb(100, 36, 35, 33));
-					Glu.RenderQuad(ClientRectangle.Left + 55, ClientRectangle.Top + 230, 900, 715);
-				}
-
-				CHANGELOGlabel.Render(delta, mouseX, mouseY);
-				//CHANGELOGlabelOutline.Render(delta, mouseX, mouseY);
-				ssLabel.Render(delta, mouseX, mouseY);
-				//ssLabelOutline.Render(delta, mouseX, mouseY);
-				qeLabel.Render(delta, mouseX, mouseY);
-
-				Changelog.Render(delta, mouseX, mouseY);
-
-				ScrollBar.Render(delta, mouseX, mouseY);
-
-			} else {
-
-				// background
+			}
+			else
+            {
 				GL.Color4(Color.FromArgb(255, 30, 30, 30));
 				Glu.RenderQuad(0, 0, size.Width, size.Height);
-
-
-				if (size.Width == 1920 && size.Height > 1000 && size.Height <= 1080)
-				{
-					GL.Color4(Color.FromArgb(40, 0, 0, 0));
-					Glu.RenderQuad(ClientRectangle.Left + 35, ClientRectangle.Top + 180, 950, 790);
-					GL.Color4(Color.FromArgb(50, 0, 0, 0));
-					Glu.RenderQuad(ClientRectangle.Left + 55, ClientRectangle.Top + 230, 900, 715);
-				}
-				else if (size.Width >= 10 && size.Width <= 1700 && size.Height >= 100 && size.Height <= 1300)
-				{
-					GL.Color4(Color.FromArgb(40, 0, 0, 0));
-					Glu.RenderQuad(ClientRectangle.Left + 35, ClientRectangle.Top + 180, 650, 525);
-					GL.Color4(Color.FromArgb(50, 0, 0, 0));
-					Glu.RenderQuad(ClientRectangle.Left + 55, ClientRectangle.Top + 230, 600, 450);
-				} 
-				else
-                {
-					GL.Color4(Color.FromArgb(40, 0, 0, 0));
-					Glu.RenderQuad(ClientRectangle.Left + 35, ClientRectangle.Top + 180, 950, 790);
-					GL.Color4(Color.FromArgb(50, 0, 0, 0));
-					Glu.RenderQuad(ClientRectangle.Left + 55, ClientRectangle.Top + 230, 900, 715);
-				}
-
-
-				CHANGELOGlabel.Render(delta, mouseX, mouseY);
-				ssLabel.Render(delta, mouseX, mouseY);
-				qeLabel.Render(delta, mouseX, mouseY);
-
-				Changelog.Render(delta, mouseX, mouseY);
 			}
+
+			GL.Color4(Color.FromArgb(120, 57, 56, 47));
+			Glu.RenderQuad(35 * widthdiff, 180 * heightdiff, 950 * widthdiff, 790 * heightdiff);
+			GL.Color4(Color.FromArgb(100, 36, 35, 33));
+			Glu.RenderQuad(55 * widthdiff, 230 * heightdiff, 900 * widthdiff, 715 * heightdiff);
+
+			CHANGELOGlabel.Render(delta, mouseX, mouseY);
+			ssLabel.Render(delta, mouseX, mouseY);
+			qeLabel.Render(delta, mouseX, mouseY);
+
+			Changelog.Render(delta, mouseX, mouseY);
 
 			base.Render(delta, mouseX, mouseY);
 		}
 
 		public override void OnResize(Size size)
 		{
-			Console.WriteLine("Resolution: {0}, {1}", size.Width, size.Height);
+			Console.WriteLine($"Resolution: {size.Width}, {size.Height}");
 
-			if (size.Width == 1920 && size.Height > 1000 && size.Height <= 1080)
-            {
-				var SSLabelFontSize = 150;
-				var QELabelFontSize = 36;
-				var ChangelogFontSize = 16;
+			ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
 
-				ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
+			var widthdiff = size.Width / 1920f;
+			var heightdiff = size.Height / 1080f;
 
-				CHANGELOGlabel.ClientRectangle.Location = new PointF(ClientRectangle.Left + 155, ClientRectangle.Top + 210);
-				//CHANGELOGlabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 157, ClientRectangle.Top + 210);
-				ssLabel.ClientRectangle.Location = new PointF(ClientRectangle.Left + 35, ClientRectangle.Top + 35);
-				ssLabel.FontSize = SSLabelFontSize;
-				//ssLabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 37, ClientRectangle.Top + 35);
-				qeLabel.ClientRectangle.Location = new PointF(ClientRectangle.Left + 615, ClientRectangle.Top + 140);
-				qeLabel.FontSize = QELabelFontSize;
-				//qeLabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 617, ClientRectangle.Top + 140);
-				Changelog.ClientRectangle.Location = new PointF(ClientRectangle.Left + 60, ClientRectangle.Top + 230);
-				Changelog.FontSize = ChangelogFontSize;
+			var CHANGELOGLabelFontSize = 40f * heightdiff;
+			var SSLabelFontSize = 150f * heightdiff;
+			var QELabelFontSize = 36f * heightdiff;
+			var ChangelogFontSize = 16f;
 
-				// buttons
-				_createMapButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 730, ClientRectangle.Top + 180);
-				_loadMapButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 730, ClientRectangle.Top + 295);
-				_importButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 730, ClientRectangle.Top + 410);
-				_SettingsButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 730, ClientRectangle.Top + 525);
+			Console.WriteLine($"{widthdiff}, {heightdiff}");
 
-				// resizing
-				_createMapButton.ClientRectangle.Size = new SizeF(600, 100);
-				_loadMapButton.ClientRectangle.Size = new SizeF(600, 100);
-				_importButton.ClientRectangle.Size = new SizeF(600, 100);
-				_SettingsButton.ClientRectangle.Size = new SizeF(600, 100);
+			CHANGELOGlabel.ClientRectangle.Location = new PointF(60 * widthdiff, 200 * heightdiff);
+			CHANGELOGlabel.FontSize = (int)CHANGELOGLabelFontSize;
+			//CHANGELOGlabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 157, ClientRectangle.Top + 210);
+			ssLabel.ClientRectangle.Location = new PointF(35 * widthdiff, 35 * heightdiff);
+			ssLabel.FontSize = (int)SSLabelFontSize;
+			//ssLabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 37, ClientRectangle.Top + 35);
+			qeLabel.ClientRectangle.Location = new PointF(615 * widthdiff, 140 * heightdiff);
+			qeLabel.FontSize = (int)QELabelFontSize;
+			//qeLabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 617, ClientRectangle.Top + 140);
+			Changelog.ClientRectangle.Location = new PointF(60 * widthdiff, 230 * heightdiff);
+			Changelog.FontSize = (int)ChangelogFontSize;
 
-				ScrollBar.ClientRectangle.Location = new PointF(ClientRectangle.Left + 950, ClientRectangle.Top + 230);
-				ScrollBar.ClientRectangle.Size = new SizeF(20, 720);
-				ScrollBar.MaxValue = ChangelogText.Split('\n').Length;
+			// buttons
+			_createMapButton.ClientRectangle.Location = new PointF(1190 * widthdiff, 180 * heightdiff);
+			_loadMapButton.ClientRectangle.Location = new PointF(1190 * widthdiff, 295 * heightdiff);
+			_importButton.ClientRectangle.Location = new PointF(1190 * widthdiff, 410 * heightdiff);
+			_SettingsButton.ClientRectangle.Location = new PointF(1190 * widthdiff, 525 * heightdiff);
 
-				AssembleChangelog();
-			} 
-			//else if (size.Width >= 1280 && size.Height > 690 && size.Height <= 768 || size.Width == 1280 && size.Height > 640 && size.Height <= 720)
-			else if (size.Width >= 10 && size.Width <= 1700 && size.Height > 600 && size.Height <= 1300)
-			{
-				ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
-				var SSLabelFontSize = 110;
-				var QELabelFontSize = 30;
-				var ChangelogFontSize = 13;
+			// resizing
+			_createMapButton.ClientRectangle.Size = new SizeF(600 * widthdiff, 100 * heightdiff);
+			_loadMapButton.ClientRectangle.Size = new SizeF(600 * widthdiff, 100 * heightdiff);
+			_importButton.ClientRectangle.Size = new SizeF(600 * widthdiff, 100 * heightdiff);
+			_SettingsButton.ClientRectangle.Size = new SizeF(600 * widthdiff, 100 * heightdiff);
 
-				// labels
-				CHANGELOGlabel.ClientRectangle.Location = new PointF(ClientRectangle.Left + 155, ClientRectangle.Top + 210);
-
-				//CHANGELOGlabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 157, ClientRectangle.Top + 210);
-
-				ssLabel.ClientRectangle.Location = new PointF(ClientRectangle.Left + 35, ClientRectangle.Top + 35);
-				ssLabel.FontSize = SSLabelFontSize;
-
-				ssLabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 37, ClientRectangle.Top + 35);
-
-				qeLabel.ClientRectangle.Location = new PointF(ClientRectangle.Left + 440, ClientRectangle.Top + 110);
-				qeLabel.FontSize = QELabelFontSize;
-				//qeLabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 617, ClientRectangle.Top + 140);
-
-				Changelog.ClientRectangle.Location = new PointF(ClientRectangle.Left + 60, ClientRectangle.Top + 230);
-				Changelog.FontSize = ChangelogFontSize;
-
-				// buttons
-				_createMapButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 500, ClientRectangle.Top + 180);
-				_loadMapButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 500, ClientRectangle.Top + 240);
-				_importButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 500, ClientRectangle.Top + 300);
-				_SettingsButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 500, ClientRectangle.Top + 360);
-
-				// resizing
-				_createMapButton.ClientRectangle.Size = new SizeF(400, 50);
-				_loadMapButton.ClientRectangle.Size = new SizeF(400, 50);
-				_importButton.ClientRectangle.Size = new SizeF(400, 50);
-				_SettingsButton.ClientRectangle.Size = new SizeF(400, 50);
-
-				ScrollBar.ClientRectangle.Location = new PointF(ClientRectangle.Left + 650, ClientRectangle.Top + 230);
-				ScrollBar.ClientRectangle.Size = new SizeF(20, 460);
-				ScrollBar.MaxValue = ChangelogText.Split('\n').Length;
-
-				AssembleChangelog();
-			} 
-			else
-            {
-				var SSLabelFontSize = 150;
-				var QELabelFontSize = 36;
-				var ChangelogFontSize = 16;
-
-				ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
-
-				CHANGELOGlabel.ClientRectangle.Location = new PointF(ClientRectangle.Left + 155, ClientRectangle.Top + 210);
-				//CHANGELOGlabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 157, ClientRectangle.Top + 210);
-				ssLabel.ClientRectangle.Location = new PointF(ClientRectangle.Left + 35, ClientRectangle.Top + 35);
-				ssLabel.FontSize = SSLabelFontSize;
-				//ssLabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 37, ClientRectangle.Top + 35);
-				qeLabel.ClientRectangle.Location = new PointF(ClientRectangle.Left + 615, ClientRectangle.Top + 140);
-				qeLabel.FontSize = QELabelFontSize;
-				//qeLabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 617, ClientRectangle.Top + 140);
-				Changelog.ClientRectangle.Location = new PointF(ClientRectangle.Left + 60, ClientRectangle.Top + 230);
-				Changelog.FontSize = ChangelogFontSize;
-
-				// buttons
-				_createMapButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 730, ClientRectangle.Top + 180);
-				_loadMapButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 730, ClientRectangle.Top + 295);
-				_importButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 730, ClientRectangle.Top + 410);
-				_SettingsButton.ClientRectangle.Location = new PointF(ClientRectangle.Right - 730, ClientRectangle.Top + 525);
-
-				// resizing
-				_createMapButton.ClientRectangle.Size = new SizeF(600, 100);
-				_loadMapButton.ClientRectangle.Size = new SizeF(600, 100);
-				_importButton.ClientRectangle.Size = new SizeF(600, 100);
-				_SettingsButton.ClientRectangle.Size = new SizeF(600, 100);
-
-				ScrollBar.ClientRectangle.Location = new PointF(ClientRectangle.Left + 950, ClientRectangle.Top + 230);
-				ScrollBar.ClientRectangle.Size = new SizeF(20, 720);
-				ScrollBar.MaxValue = ChangelogText.Split('\n').Length;
-			}
+			ScrollBar.ClientRectangle.Location = new PointF(950 * widthdiff, 230 * heightdiff);
+			ScrollBar.ClientRectangle.Size = new SizeF(20 * widthdiff, 720 * heightdiff);
 
 			base.OnResize(size);
+
+			AssembleChangelog();
 		}
 
 		public void OnMouseLeave()
@@ -291,11 +165,44 @@ namespace Sound_Space_Editor.Gui
 
 		public void AssembleChangelog()
         {
+			var widthdiff = ClientRectangle.Width / 1920f;
+			var heightdiff = ClientRectangle.Height / 1080f;
 			string result = "";
-			string[] lines = ChangelogText.Split('\n');
-			for (int i = 0; i < lines.Length; i++)
+			List<string> lines = new List<string>();
+			foreach (var line in ChangelogText.Split('\n'))
             {
-				if (i >= ScrollBar.MaxValue - ScrollBar.Value)
+				var test = 1;
+				var lineedit = line;
+				while (EditorWindow.Instance.FontRenderer.GetWidth(lineedit, Changelog.FontSize) > 900 * widthdiff && test < 20)
+                {
+					var index = lineedit.LastIndexOf(' ');
+					Console.WriteLine(lineedit);
+					if (index >= 0)
+                    {
+						if (EditorWindow.Instance.FontRenderer.GetWidth(lineedit.Substring(0, index), Changelog.FontSize) < 900 * widthdiff)
+						{
+							lineedit = lineedit.Remove(index, 1);
+							lineedit = lineedit.Insert(index, "\n");
+						}
+						else
+						{
+							lineedit = lineedit.Remove(index, 1);
+							lineedit = lineedit.Insert(index, "_");
+						}
+					}
+					test += 1;
+                }
+				lineedit = lineedit.Replace('_', ' ');
+				foreach (var newline in lineedit.Split('\n'))
+                {
+					if (newline != "\n")
+						lines.Add(newline);
+				}
+            }
+			ScrollBar.MaxValue = lines.Count;
+			for (int i = 0; i < lines.Count; i++)
+            {
+				if (i >= ScrollBar.MaxValue - ScrollBar.Value && i < ScrollBar.MaxValue - ScrollBar.Value + 715 * heightdiff / Changelog.FontSize - 1)
                 {
 					result += lines[i] + "\n";
                 }
