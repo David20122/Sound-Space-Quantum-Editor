@@ -224,7 +224,7 @@ namespace Sound_Space_Editor
 				string[] nc2values = nc2.Split(',');
 				NoteColor2 = Array.ConvertAll<string, int>(nc2values, int.Parse);
 
-				Console.WriteLine("Updated Colors => {0} | {1} | {2} | {3}", string.Join(", ", Color1), string.Join(", ", Color2), string.Join(", ", NoteColor1), string.Join(", ", NoteColor2));
+				Console.WriteLine("Updated Colors => {0}", ncs);
 			}
 			catch
 			{
@@ -232,6 +232,7 @@ namespace Sound_Space_Editor
 				EditorSettings.Color2 = "255,0,255";
 				EditorSettings.NoteColor1 = "255,0,255";
 				EditorSettings.NoteColor2 = "0,255,200";
+				EditorSettings.NoteColors = "255,0,255|0,255,200";
 
 				UpdateColors();
 

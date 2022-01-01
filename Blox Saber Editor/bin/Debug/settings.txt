@@ -7,3 +7,4 @@ Color1=0,255,200
 Color2=255,0,255
 NoteColor1=255,0,255
 NoteColor2=0,255,200
+NoteColors=255,0,255|0,255,200

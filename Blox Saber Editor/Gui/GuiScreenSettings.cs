@@ -473,6 +473,7 @@ namespace Sound_Space_Editor.Gui
 					EditorSettings.Color2 = color2TextBox.Text;
 					EditorSettings.NoteColor1 = NoteColor1TextBox.Text;
 					EditorSettings.NoteColor2 = NoteColor2TextBox.Text;
+					EditorSettings.NoteColors = EditorSettings.NoteColors;
 					EditorSettings.Waveform = WaveformCheckbox.Toggle;
 					//EditorSettings.BPMForm = BPMFormCheckbox.Toggle;
 					EditorSettings.EditorBGOpacity = editorbgOpacity;
@@ -485,6 +486,7 @@ namespace Sound_Space_Editor.Gui
 					EditorWindow.Instance.OpenGuiScreen(new GuiScreenMenu());
 					break;
 				case 1:
+					EditorSettings.NoteColors = "255,0,255|0,255,200";
 					EditorSettings.Waveform = true;
 					//EditorSettings.BPMForm = false;
 					EditorBGOpacityTextBox.Text = "255";

@@ -89,7 +89,7 @@ namespace Sound_Space_Editor
 				Console.WriteLine("no settings.txt - loading default settings");
 			}
 
-            Console.WriteLine("Loaded => {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7}", Waveform, EditorBGOpacity, GridOpacity, TrackOpacity, Color1, Color2, NoteColor1, NoteColor2);
+            Console.WriteLine("Loaded => {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} || {8}", Waveform, EditorBGOpacity, GridOpacity, TrackOpacity, Color1, Color2, NoteColor1, NoteColor2, NoteColors);
 		}
 
 		public static void Reset()
@@ -103,6 +103,7 @@ namespace Sound_Space_Editor
 			Color2 = "255,0,255";
 			NoteColor1 = "255,0,255";
 			NoteColor2 = "0,255,200";
+			NoteColors = "255,0,255|0,255,200";
 		}
 
 		public static void Save()
@@ -118,10 +119,11 @@ namespace Sound_Space_Editor
 			sb.AppendLine(string.Format("Color2={0}", Color2));
 			sb.AppendLine(string.Format("NoteColor1={0}", NoteColor1));
 			sb.AppendLine(string.Format("NoteColor2={0}", NoteColor2));
+			sb.AppendLine(string.Format("NoteColors={0}", NoteColors));
 			try
 			{
 				File.WriteAllText(file, sb.ToString());
-				Console.WriteLine("Saved => {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7}", Waveform, EditorBGOpacity, GridOpacity, TrackOpacity, Color1, Color2, NoteColor1, NoteColor2);
+				Console.WriteLine("Saved => {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} || {8}", Waveform, EditorBGOpacity, GridOpacity, TrackOpacity, Color1, Color2, NoteColor1, NoteColor2, NoteColors);
 			}
 			catch
 			{
