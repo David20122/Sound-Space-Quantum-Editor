@@ -1,18 +1,33 @@
-                                                                              ---------------------------------
-                                                                                 -- 1.7.1.1 - 31/12/2021 --
+----------------------------------
+      -- 1.7.2 - 2/1/2021 --
+
+            CHANGES:
+- New resizing method, also applies to the main editor window
+- Note and BPM labels on the track are now more descriptive
+- Settings now transfer between updates
+- Timing points snap to the previous point's lines
+- Multiple notes can be selected via holding CTRL and SHIFT on both the grid and track
+
+            FIXES:
+- Timing point parsing with some decimal separators
+- Failure to update no longer crashes the editor
+
+----------------------------------
+    -- 1.7.1.1 - 31/12/2021 --
                                                                                  
 - now works well with anything above 1280x720
                                                                                  
-                                                                              ---------------------------------
-                                                                                 -- 1.7.1 - 30/12/2021 --
+----------------------------------
+     -- 1.7.1 - 30/12/2021 --
                                                                                  
-                                                                                           CHANGES:
+            CHANGES:
 - menu and settings works well with 1366x768, 1280x720
 - changelog now scrollable
-                                                                              -------------------------------------
-                                                                              -- 1.7 Release - 29/12/2021 --
 
-                                                                                             ADDS:
+----------------------------------
+  -- 1.7 Release - 29/12/2021 --
+
+            ADDS:
                                                                                              
 - Timing Points (they appear on the timeline and can be dragged on the track)
 - Metronome
@@ -22,7 +37,7 @@
 - Redesigned menu (you can put a background on it! -- [background_menu.png] in editor folder)
 - Settings menu (background same as the main menu)
 
-                                                                                           CHANGES:
+            CHANGES:
                                                                                            
 - !!! background.png has been split - background_editor.png & background_menu.png
 
@@ -35,7 +50,7 @@
 - Moved copy and return to menu buttons further from the grid
 - Raised Tempo slider limit to 200%, raised zoom to 1000%
 
-                                                                                            FIXES:
+            FIXES:
                                                                                             
 - Fixed note selection issues
 - Text box now functions correctly
