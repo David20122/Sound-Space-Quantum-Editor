@@ -2103,10 +2103,10 @@ namespace Sound_Space_Editor
 
 				if (result == DialogResult.OK)
 				{
-					WriteFile(sfd.FileName);
-
 					_file = sfd.FileName;
 					Settings.Default.LastFile = _file;
+
+					WriteFile(sfd.FileName);
 
 					return true;
 				}
@@ -2149,7 +2149,7 @@ namespace Sound_Space_Editor
 		{
 			if (file == null)
 				return false;
-
+			
 			try
 			{
 				var data = ParseData();
@@ -2186,7 +2186,7 @@ namespace Sound_Space_Editor
 		{
 			if (_file == null)
 				return;
-
+			
 			var iniFile = Path.ChangeExtension(_file, ".ini");
 
 			File.WriteAllLines(iniFile, new[] { $@"BPM={BpmsToString()}", $@"Offset={GuiTrack.NoteOffset}", $@"LegacyBPM={GuiTrack.Bpm}", $@"LegacyOffset={GuiTrack.BpmOffset}", $@"Time={(long)MusicPlayer.CurrentTime.TotalMilliseconds}", $@"Divisor={GuiTrack.BeatDivisor}" }, Encoding.UTF8);
