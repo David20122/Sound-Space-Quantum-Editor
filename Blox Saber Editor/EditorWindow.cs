@@ -201,7 +201,6 @@ namespace Sound_Space_Editor
 					Settings.Default.AnimateBackground,
 					Settings.Default.Autoplay,
 					Settings.Default.BGDim,
-					Settings.Default.LastFile,
 					Settings.Default.Quantum,
 					Settings.Default.AutoAdvance,
 					Settings.Default.SfxOffset,
@@ -211,7 +210,7 @@ namespace Sound_Space_Editor
 					Settings.Default.Metronome,
 					Settings.Default.LegacyBPM
 				};
-
+				
 				try
                 {
 					Process.Start("SSQEUpdater.exe", string.Join(" ", settings));

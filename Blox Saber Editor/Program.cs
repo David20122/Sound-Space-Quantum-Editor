@@ -19,7 +19,7 @@ namespace Sound_Space_Editor
 
 			EditorWindow w;
 
-			if (args.Length == 16)
+			if (args.Length > 0)
             {
 				Settings.Default.MasterVolume = decimal.Parse(args[0]);
 				Settings.Default.SFXVolume = decimal.Parse(args[1]);
@@ -28,15 +28,14 @@ namespace Sound_Space_Editor
 				Settings.Default.AnimateBackground = bool.Parse(args[4]);
 				Settings.Default.Autoplay = bool.Parse(args[5]);
 				Settings.Default.BGDim = float.Parse(args[6]);
-				Settings.Default.LastFile = args[7];
-				Settings.Default.Quantum = bool.Parse(args[8]);
-				Settings.Default.AutoAdvance = bool.Parse(args[9]);
-				Settings.Default.SfxOffset = args[10];
-				Settings.Default.Numpad = bool.Parse(args[11]);
-				Settings.Default.QuantumGridLines = bool.Parse(args[12]);
-				Settings.Default.QuantumGridSnap = bool.Parse(args[13]);
-				Settings.Default.Metronome = bool.Parse(args[14]);
-				Settings.Default.LegacyBPM = bool.Parse(args[15]);
+				Settings.Default.Quantum = bool.Parse(args[7]);
+				Settings.Default.AutoAdvance = bool.Parse(args[8]);
+				Settings.Default.SfxOffset = args[9];
+				Settings.Default.Numpad = bool.Parse(args[10]);
+				Settings.Default.QuantumGridLines = bool.Parse(args[11]);
+				Settings.Default.QuantumGridSnap = bool.Parse(args[12]);
+				Settings.Default.Metronome = bool.Parse(args[13]);
+				Settings.Default.LegacyBPM = bool.Parse(args[14]);
 			}
 
 			try
@@ -44,22 +43,6 @@ namespace Sound_Space_Editor
 				long offset = 0;
 
 				var launcherDir = Environment.CurrentDirectory;
-				if (args.Length > 0)
-                {
-					launcherDir = "";
-					var i = 0;
-					foreach (string argument in args.ToList<string>())
-                    {
-						i++;
-						if (i == 1)
-                        {
-							launcherDir = argument;
-                        } else
-                        {
-							launcherDir += " " + argument;
-                        }
-                    }
-                }
 
 				w = new EditorWindow(offset, launcherDir);
 			}
