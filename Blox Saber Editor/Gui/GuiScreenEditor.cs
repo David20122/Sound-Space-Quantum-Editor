@@ -580,19 +580,20 @@ namespace Sound_Space_Editor.Gui
 			GridNumbers.ClientRectangle.Location = new PointF(10 * widthdiff, ApproachSquares.ClientRectangle.Bottom + 10 * heightdiff);
 			Quantum.ClientRectangle.Location = new PointF(10 * widthdiff, GridNumbers.ClientRectangle.Bottom + 10 * heightdiff);
 			Numpad.ClientRectangle.Location = new PointF(10 * widthdiff, Quantum.ClientRectangle.Bottom + 10 * heightdiff);
-			AutoAdvance.ClientRectangle.Location = new PointF(10 * widthdiff, Numpad.ClientRectangle.Bottom + 10 * heightdiff);
-			QuantumGridLines.ClientRectangle.Location = new PointF(10 * widthdiff, AutoAdvance.ClientRectangle.Bottom + 10 * heightdiff);
+			QuantumGridLines.ClientRectangle.Location = new PointF(10 * widthdiff, Numpad.ClientRectangle.Bottom + 10 * heightdiff);
 			QuantumGridSnap.ClientRectangle.Location = new PointF(10 * widthdiff, QuantumGridLines.ClientRectangle.Bottom + 10 * heightdiff);
 			Metronome.ClientRectangle.Location = new PointF(10 * widthdiff, QuantumGridSnap.ClientRectangle.Bottom + 10 * heightdiff);
+
+			BackButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Bottom + 84 * heightdiff);
+			CopyButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 75 * heightdiff);
+
+			AutoAdvance.ClientRectangle.Location = new PointF(BeatSnapDivisor.ClientRectangle.X + 20 * widthdiff, CopyButton.ClientRectangle.Y + 35 * heightdiff);
 
 			SetOffset.ClientRectangle.Location = new PointF(Offset.ClientRectangle.Right + 5 * widthdiff, Offset.ClientRectangle.Y);
 			JumpMSButton.ClientRectangle.Location = new PointF(JumpMSBox.ClientRectangle.Right + 5 * widthdiff, JumpMSBox.ClientRectangle.Y);
 			RotateButton.ClientRectangle.Location = new PointF(JumpMSButton.ClientRectangle.X, RotateBox.ClientRectangle.Y);
 			UseCurrentMs.ClientRectangle.Location = new PointF(SetOffset.ClientRectangle.Right + 5 * widthdiff, SetOffset.ClientRectangle.Y);
 			OpenTimings.ClientRectangle.Location = new PointF(UseCurrentMs.ClientRectangle.X, UseCurrentMs.ClientRectangle.Bottom + 5 * heightdiff);
-
-			BackButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Bottom + 84 * heightdiff);
-			CopyButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 75 * heightdiff);
 		}
 
 		public void OnMouseLeave()
