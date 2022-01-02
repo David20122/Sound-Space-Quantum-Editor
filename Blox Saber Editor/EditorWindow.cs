@@ -45,8 +45,6 @@ namespace Sound_Space_Editor
 		public Discord.NetworkManager networkManager;
 		public Discord.LobbyManager lobbyManager;
 
-		public static string version = "1.7.1.1";
-
 		public readonly Dictionary<Key, Tuple<int, int>> KeyMapping = new Dictionary<Key, Tuple<int, int>>();
 
 		//private readonly GuiScreenEditor _screenEditor;
@@ -121,7 +119,7 @@ namespace Sound_Space_Editor
 		public string currentEditorVersion;
 		public string downloadedVersionString;
 
-		public EditorWindow(long offset, string launcherDir) : base(1280, 720, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor " + version)
+		public EditorWindow(long offset, string launcherDir) : base(1280, 720, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor " + Application.ProductVersion)
 		{
 			LauncherDir = launcherDir;
 			cacheFolder = Path.Combine(launcherDir, "cached/");
@@ -311,7 +309,7 @@ namespace Sound_Space_Editor
 			var activity = new Discord.Activity
 			{
 				State = state,
-				Details = "Version " + version,
+				Details = "Version " + Application.ProductVersion,
 				Timestamps =
 				{
 					Start = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
