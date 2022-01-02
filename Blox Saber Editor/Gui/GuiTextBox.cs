@@ -136,10 +136,10 @@ namespace Sound_Space_Editor.Gui
 
 			var renderedText = _text;
 
-			while (fr.GetWidth(renderedText, 24) != null && fr.GetWidth(renderedText, 24) > rect.Width - rect.Height / 2)
+			/*while (fr.GetWidth(renderedText, 24) != null && fr.GetWidth(renderedText, 24) > rect.Width - rect.Height / 2)
 			{
 				renderedText = renderedText.Substring(1, renderedText.Length - 1);
-			}
+			}*/
 
 			var offX = (int)(ClientRectangle.Width / 2 - fr.GetWidth(renderedText, 24) / 2f - rect.Height / 4);
 

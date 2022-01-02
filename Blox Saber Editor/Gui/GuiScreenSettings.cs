@@ -156,88 +156,43 @@ namespace Sound_Space_Editor.Gui
 
 		public override void OnResize(Size size)
 		{
-			if (size.Width == 1920 && size.Height > 1000 && size.Height <= 1080)
-			{
-				ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
-				var middle = new PointF(size.Width / 2f, size.Height / 2f);
+			ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
+			var widthdiff = size.Width / 1920f;
+			var heightdiff = size.Height / 1080f;
 
-				_backButton.ClientRectangle.Location = new PointF(ClientRectangle.Left + 655, ClientRectangle.Bottom - 150);
-				_resetButton.ClientRectangle.Location = new PointF(ClientRectangle.Left + 700, ClientRectangle.Bottom - 215);
-				_openFolderButton.ClientRectangle.Location = new PointF(ClientRectangle.Left + 700, ClientRectangle.Bottom - 270);
+			_backButton.ClientRectangle.Location = new PointF(655 * widthdiff, 930 * heightdiff);
+			_resetButton.ClientRectangle.Location = new PointF(700 * widthdiff, 865 * heightdiff);
+			_openFolderButton.ClientRectangle.Location = new PointF(700 * widthdiff, 810 * heightdiff);
 
-				_backButton.ClientRectangle.Size = new SizeF(600, 100);
-				_resetButton.ClientRectangle.Size = new SizeF(500, 50);
-				_openFolderButton.ClientRectangle.Size = new SizeF(500, 50);
+			_backButton.ClientRectangle.Size = new SizeF(600 * widthdiff, 100 * heightdiff);
+			_resetButton.ClientRectangle.Size = new SizeF(500 * widthdiff, 50 * heightdiff);
+			_openFolderButton.ClientRectangle.Size = new SizeF(500 * widthdiff, 50 * heightdiff);
 
-				color1TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Left + 160, ClientRectangle.Top + 210);
-				color2TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Left + 160, ClientRectangle.Top + 360);
+			color1TextBox.ClientRectangle.Location = new PointF(160 * widthdiff, 210 * heightdiff);
+			color2TextBox.ClientRectangle.Location = new PointF(160 * widthdiff, 360 * heightdiff);
 
-				NoteColor1TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Left + 160, ClientRectangle.Top + 510);
-				NoteColor2TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Left + 160, ClientRectangle.Top + 660);
+			color1TextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
+			color2TextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
 
-				WaveformCheckbox.ClientRectangle.Location = new PointF(ClientRectangle.Right - 485, ClientRectangle.Top + 195);
-				EditorBGOpacityTextBox.ClientRectangle.Location = new PointF(ClientRectangle.Right - 485, ClientRectangle.Top + 360);
+			NoteColor1TextBox.ClientRectangle.Location = new PointF(160 * widthdiff, 510 * heightdiff);
+			NoteColor2TextBox.ClientRectangle.Location = new PointF(160 * widthdiff, 660 * heightdiff);
 
-				GridOpacityTextBox.ClientRectangle.Location = new PointF(ClientRectangle.Right - 485, ClientRectangle.Top + 510);
-				TrackOpacityTextBox.ClientRectangle.Location = new PointF(ClientRectangle.Right - 485, ClientRectangle.Top + 660);
+			NoteColor1TextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
+			NoteColor2TextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
 
-				//BPMFormCheckbox.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - 200, ClientRectangle.Height / 2 - 300);
-			}
-			//else if (size.Width == 1366 && size.Height > 690 && size.Height <= 768 || size.Width == 1280 && size.Height > 640 && size.Height <= 720)
-			else if (size.Width >= 10 && size.Width <= 1700 && size.Height > 600 && size.Height <= 1300)
-			{
-				ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
-				var middle = new PointF(size.Width / 2f, size.Height / 2f);
+			WaveformCheckbox.ClientRectangle.Location = new PointF(1435 * widthdiff, 195 * heightdiff);
+			EditorBGOpacityTextBox.ClientRectangle.Location = new PointF(1435 * widthdiff, 360 * heightdiff);
 
-				_backButton.ClientRectangle.Location = new PointF(ClientRectangle.Left + 450, ClientRectangle.Bottom - 100);
-				_resetButton.ClientRectangle.Location = new PointF(ClientRectangle.Left + 480, ClientRectangle.Bottom - 150);
-				_openFolderButton.ClientRectangle.Location = new PointF(ClientRectangle.Left + 480, ClientRectangle.Bottom - 190);
+			WaveformCheckbox.ClientRectangle.Size = new SizeF(72 * widthdiff, 72 * heightdiff);
+			EditorBGOpacityTextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
 
-				_backButton.ClientRectangle.Size = new SizeF(350, 55);
-				_resetButton.ClientRectangle.Size = new SizeF(300, 35);
-				_openFolderButton.ClientRectangle.Size = new SizeF(300, 35);
+			GridOpacityTextBox.ClientRectangle.Location = new PointF(1435 * widthdiff, 510 * heightdiff);
+			TrackOpacityTextBox.ClientRectangle.Location = new PointF(1435 * widthdiff, 660 * heightdiff);
 
-				color1TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Left + 100, ClientRectangle.Top + 150);
-				color2TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Left + 100, ClientRectangle.Top + 300);
+			GridOpacityTextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
+			TrackOpacityTextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
 
-				NoteColor1TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Left + 100, ClientRectangle.Top + 450);
-				NoteColor2TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Left + 100, ClientRectangle.Top + 600);
-
-				WaveformCheckbox.ClientRectangle.Location = new PointF(ClientRectangle.Right - 425, ClientRectangle.Top + 135);
-				EditorBGOpacityTextBox.ClientRectangle.Location = new PointF(ClientRectangle.Right - 425, ClientRectangle.Top + 300);
-
-				GridOpacityTextBox.ClientRectangle.Location = new PointF(ClientRectangle.Right - 425, ClientRectangle.Top + 450);
-				TrackOpacityTextBox.ClientRectangle.Location = new PointF(ClientRectangle.Right - 425, ClientRectangle.Top + 600);
-
-				//BPMFormCheckbox.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - 200, ClientRectangle.Height / 2 - 300);
-			} 
-			else
-            {
-				ClientRectangle = new RectangleF(0, 0, size.Width, size.Height);
-				var middle = new PointF(size.Width / 2f, size.Height / 2f);
-
-				_backButton.ClientRectangle.Location = new PointF(ClientRectangle.Left + 655, ClientRectangle.Bottom - 150);
-				_resetButton.ClientRectangle.Location = new PointF(ClientRectangle.Left + 700, ClientRectangle.Bottom - 215);
-				_openFolderButton.ClientRectangle.Location = new PointF(ClientRectangle.Left + 700, ClientRectangle.Bottom - 270);
-
-				_backButton.ClientRectangle.Size = new SizeF(600, 100);
-				_resetButton.ClientRectangle.Size = new SizeF(500, 50);
-				_openFolderButton.ClientRectangle.Size = new SizeF(500, 50);
-
-				color1TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Left + 160, ClientRectangle.Top + 210);
-				color2TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Left + 160, ClientRectangle.Top + 360);
-
-				NoteColor1TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Left + 160, ClientRectangle.Top + 510);
-				NoteColor2TextBox.ClientRectangle.Location = new PointF(ClientRectangle.Left + 160, ClientRectangle.Top + 660);
-
-				WaveformCheckbox.ClientRectangle.Location = new PointF(ClientRectangle.Right - 485, ClientRectangle.Top + 195);
-				EditorBGOpacityTextBox.ClientRectangle.Location = new PointF(ClientRectangle.Right - 485, ClientRectangle.Top + 360);
-
-				GridOpacityTextBox.ClientRectangle.Location = new PointF(ClientRectangle.Right - 485, ClientRectangle.Top + 510);
-				TrackOpacityTextBox.ClientRectangle.Location = new PointF(ClientRectangle.Right - 485, ClientRectangle.Top + 660);
-
-				//BPMFormCheckbox.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - 200, ClientRectangle.Height / 2 - 300);
-			}
+			//BPMFormCheckbox.ClientRectangle.Location = new PointF(760 * widthdiff, 240 * heightdiff);
 
 			base.OnResize(size);
 		}
@@ -248,6 +203,9 @@ namespace Sound_Space_Editor.Gui
 
 			var size = EditorWindow.Instance.ClientSize;
 
+			var widthdiff = size.Width / 1920f;
+			var heightdiff = size.Height / 1080f;
+
 			try
             {
 				string c1 = color1TextBox.Text;
@@ -255,14 +213,14 @@ namespace Sound_Space_Editor.Gui
 				int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
 
 				GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-				Glu.RenderQuad(color1TextBox.ClientRectangle.X + 210, color1TextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(color1TextBox.ClientRectangle.X + 210 * widthdiff, color1TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 			catch
             {
 				GL.Color3(Color.FromArgb(255, 0, 0));
-				fr.Render("invalid", (int)color1TextBox.ClientRectangle.X + 300, (int)color1TextBox.ClientRectangle.Y + 15, 20);
+				fr.Render("invalid", (int)(color1TextBox.ClientRectangle.X + 300 * widthdiff), (int)(color1TextBox.ClientRectangle.Y + 15 * heightdiff), 20);
 				GL.Color3(Color.FromArgb(0, 0, 0));
-				Glu.RenderQuad(color1TextBox.ClientRectangle.X + 210, color1TextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(color1TextBox.ClientRectangle.X + 210 * widthdiff, color1TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 
 			// color 2
@@ -274,14 +232,14 @@ namespace Sound_Space_Editor.Gui
 				int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 
 				GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
-				Glu.RenderQuad(color2TextBox.ClientRectangle.X + 210, color2TextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(color2TextBox.ClientRectangle.X + 210 * widthdiff, color2TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
             catch
             {
 				GL.Color3(Color.FromArgb(255, 0, 0));
-				fr.Render("invalid", (int)color2TextBox.ClientRectangle.X + 300, (int)color2TextBox.ClientRectangle.Y + 15, 20);
+				fr.Render("invalid", (int)(color2TextBox.ClientRectangle.X + 300 * widthdiff), (int)(color2TextBox.ClientRectangle.Y + 15 * heightdiff), 20);
 				GL.Color3(Color.FromArgb(0, 0, 0));
-				Glu.RenderQuad(color2TextBox.ClientRectangle.X + 210, color2TextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(color2TextBox.ClientRectangle.X + 210 * widthdiff, color2TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 		}
 
@@ -291,6 +249,9 @@ namespace Sound_Space_Editor.Gui
 
 			var size = EditorWindow.Instance.ClientSize;
 
+			var widthdiff = size.Width / 1920f;
+			var heightdiff = size.Height / 1080f;
+
 			try
             {
 				string c1 = NoteColor1TextBox.Text;
@@ -298,14 +259,14 @@ namespace Sound_Space_Editor.Gui
 				int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
 
 				GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-				Glu.RenderQuad(NoteColor1TextBox.ClientRectangle.X + 210, NoteColor1TextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(NoteColor1TextBox.ClientRectangle.X + 210 * widthdiff, NoteColor1TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			} 
 			catch
             {
 				GL.Color3(Color.FromArgb(255, 0, 0));
-				fr.Render("invalid", (int)NoteColor1TextBox.ClientRectangle.X + 300, (int)NoteColor1TextBox.ClientRectangle.Y + 15, 20);
+				fr.Render("invalid", (int)(NoteColor1TextBox.ClientRectangle.X + 300 * widthdiff), (int)(NoteColor1TextBox.ClientRectangle.Y + 15 * heightdiff), 20);
 				GL.Color3(Color.FromArgb(0, 0, 0));
-				Glu.RenderQuad(NoteColor1TextBox.ClientRectangle.X + 210, NoteColor1TextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(NoteColor1TextBox.ClientRectangle.X + 210 * widthdiff, NoteColor1TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 
 			// color 2
@@ -317,19 +278,24 @@ namespace Sound_Space_Editor.Gui
 				int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
 
 				GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
-				Glu.RenderQuad(NoteColor2TextBox.ClientRectangle.X + 210, NoteColor2TextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(NoteColor2TextBox.ClientRectangle.X + 210 * widthdiff, NoteColor2TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 			catch
             {
 				GL.Color3(Color.FromArgb(255, 0, 0));
-				fr.Render("invalid", (int)NoteColor2TextBox.ClientRectangle.X + 300, (int)NoteColor2TextBox.ClientRectangle.Y + 15, 20);
+				fr.Render("invalid", (int)(NoteColor2TextBox.ClientRectangle.X + 300 * widthdiff), (int)(NoteColor2TextBox.ClientRectangle.Y + 15 * heightdiff), 20);
 				GL.Color3(Color.FromArgb(0, 0, 0));
-				Glu.RenderQuad(NoteColor2TextBox.ClientRectangle.X + 210, NoteColor2TextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(NoteColor2TextBox.ClientRectangle.X + 210 * widthdiff, NoteColor2TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
         }
 
 		void ShowOpacities()
         {
+			var size = EditorWindow.Instance.ClientSize;
+
+			var widthdiff = size.Width / 1920f;
+			var heightdiff = size.Height / 1080f;
+
 			try
             {
 				int res;
@@ -350,12 +316,12 @@ namespace Sound_Space_Editor.Gui
 				}
 
 				GL.Color4(Color.FromArgb(res, 255, 255, 255));
-				Glu.RenderQuad(EditorBGOpacityTextBox.ClientRectangle.X + 210, EditorBGOpacityTextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(EditorBGOpacityTextBox.ClientRectangle.X + 210 * widthdiff, EditorBGOpacityTextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 			catch
             {
 				GL.Color4(Color.FromArgb(255, 255, 255, 255));
-				Glu.RenderQuad(EditorBGOpacityTextBox.ClientRectangle.X + 210, EditorBGOpacityTextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(EditorBGOpacityTextBox.ClientRectangle.X + 210 * widthdiff, EditorBGOpacityTextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 
 			try
@@ -378,12 +344,12 @@ namespace Sound_Space_Editor.Gui
 				}
 
 				GL.Color4(Color.FromArgb(res, 255, 255, 255));
-				Glu.RenderQuad(GridOpacityTextBox.ClientRectangle.X + 210, GridOpacityTextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(GridOpacityTextBox.ClientRectangle.X + 210 * widthdiff, GridOpacityTextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 			catch
             {
 				GL.Color4(Color.FromArgb(255, 255, 255, 255));
-				Glu.RenderQuad(GridOpacityTextBox.ClientRectangle.X + 210, GridOpacityTextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(GridOpacityTextBox.ClientRectangle.X + 210 * widthdiff, GridOpacityTextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 
             try
@@ -406,12 +372,12 @@ namespace Sound_Space_Editor.Gui
 				}
 
 				GL.Color4(Color.FromArgb(res, 255, 255, 255));
-				Glu.RenderQuad(TrackOpacityTextBox.ClientRectangle.X + 210, TrackOpacityTextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(TrackOpacityTextBox.ClientRectangle.X + 210 * widthdiff, TrackOpacityTextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 			catch
             {
 				GL.Color4(Color.FromArgb(255, 255, 255, 255));
-				Glu.RenderQuad(TrackOpacityTextBox.ClientRectangle.X + 210, TrackOpacityTextBox.ClientRectangle.Y - 15, 75, 75);
+				Glu.RenderQuad(TrackOpacityTextBox.ClientRectangle.X + 210 * widthdiff, TrackOpacityTextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
         }
 
