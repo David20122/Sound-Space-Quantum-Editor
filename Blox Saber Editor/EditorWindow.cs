@@ -86,6 +86,7 @@ namespace Sound_Space_Editor
 		private bool _rightDown;
 		private bool _controlDown;
 		private bool _altDown;
+		private bool _shiftDown;
 		private bool _draggingNoteTimeline;
 		private bool _draggingPointTimeline;
 		private bool _draggingNoteGrid;
@@ -662,21 +663,37 @@ namespace Sound_Space_Editor
 
 						_draggedNote = tn;
 
-						if (!_draggedNotes.Contains(tn))
+						if (_controlDown)
+							if (_draggedNotes.Contains(tn))
+								_draggedNotes.Remove(tn);
+							else
+								_draggedNotes.Add(tn);
+						else if (_shiftDown && _draggedNotes.Count > 0)
 						{
-							if (_draggedNotes.Count == 1 || !SelectedNotes.Contains(tn))
-								_draggedNotes.Clear();
-
-							_draggedNotes.Add(tn);
+							var startms = _draggedNotes.FirstOrDefault().Ms;
+							var endms = tn.Ms;
+							_draggedNotes.Clear();
+							foreach (var note in Notes.ToList())
+							{
+								if ((endms >= note.Ms && note.Ms >= startms) || (startms >= note.Ms && note.Ms >= endms))
+									_draggedNotes.Add(note);
+							}
 						}
+						else if (!_draggedNotes.Contains(tn))
+                        {
+							_draggedNotes.Clear();
+							_draggedNotes.Add(tn);
+                        }
 
-						if (!SelectedNotes.Contains(tn))
+						/*if (!SelectedNotes.Contains(tn))
 						{
 							SelectedNotes.Clear();
 
 							SelectedNotes.Add(tn);
 							//Console.WriteLine(SelectedNotes.Count);
-						}
+						}*/
+
+						SelectedNotes = _draggedNotes;
 
 						foreach (var note in _draggedNotes)
 						{
@@ -694,25 +711,36 @@ namespace Sound_Space_Editor
 						_dragStartIndexX = gn.X;
 						_dragStartIndexY = gn.Y;
 
-						if (!_draggedNotes.Contains(gn))
+						if (_controlDown)
+							if (_draggedNotes.Contains(gn))
+								_draggedNotes.Remove(gn);
+							else
+								_draggedNotes.Add(gn);
+						else if (_shiftDown && _draggedNotes.Count > 0)
 						{
-							if (_draggedNotes.Count == 1 || !SelectedNotes.Contains(gn))
-								_draggedNotes.Clear();
-
+							var startms = _draggedNotes.FirstOrDefault().Ms;
+							var endms = gn.Ms;
+							_draggedNotes.Clear();
+							foreach (var note in Notes.ToList())
+							{
+								if ((endms >= note.Ms && note.Ms >= startms) || (startms >= note.Ms && note.Ms >= endms))
+									_draggedNotes.Add(note);
+							}
+						}
+						else if (!_draggedNotes.Contains(gn))
+						{
+							_draggedNotes.Clear();
 							_draggedNotes.Add(gn);
 						}
-						else if (_draggedNotes.FirstOrDefault() is Note note)
-                        {
-							_dragStartIndexX = note.X;
-							_dragStartIndexY = note.Y;
-						}
 
-						if (!SelectedNotes.Contains(gn))
+						/*if (!SelectedNotes.Contains(gn))
 						{
 							SelectedNotes.Clear();
 
 							SelectedNotes.Add(gn);
-						}
+						}*/
+
+						SelectedNotes = _draggedNotes;
 					}
 					else if (editor.Track.MouseOverPoint is BPM pn)
                     {
@@ -993,6 +1021,8 @@ namespace Sound_Space_Editor
 									   Keyboard.GetState().IsKeyDown(Key.LControl);
 			_altDown = e.Alt || Keyboard.GetState().IsKeyDown(Key.AltLeft) ||
 									   Keyboard.GetState().IsKeyDown(Key.LAlt);
+			_shiftDown = e.Shift || Keyboard.GetState().IsKeyDown(Key.ShiftLeft) ||
+									   Keyboard.GetState().IsKeyDown(Key.LShift);
 		}
 
 		protected override void OnKeyDown(KeyboardKeyEventArgs e)
@@ -1001,6 +1031,8 @@ namespace Sound_Space_Editor
 						   Keyboard.GetState().IsKeyDown(Key.LControl);
 			_altDown = e.Alt || Keyboard.GetState().IsKeyDown(Key.AltLeft) ||
 						   Keyboard.GetState().IsKeyDown(Key.LAlt);
+			_shiftDown = e.Shift || Keyboard.GetState().IsKeyDown(Key.ShiftLeft) ||
+						   Keyboard.GetState().IsKeyDown(Key.LShift);
 
 			if (e.Key == Key.F11)
 			{
