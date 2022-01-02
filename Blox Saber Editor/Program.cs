@@ -69,8 +69,6 @@ namespace Sound_Space_Editor
 		[STAThread]
 		static void Main(string[] args)
 		{
-			MODLOADER();
-
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			EditorWindow w;
@@ -104,6 +102,8 @@ namespace Sound_Space_Editor
 				MessageBox.Show(e.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}
+
+			MODLOADER();
 
 			using (w)
 			{
