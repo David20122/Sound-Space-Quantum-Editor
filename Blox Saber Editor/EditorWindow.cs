@@ -1900,25 +1900,20 @@ namespace Sound_Space_Editor
 
 								if (property == "bpm" /*&& decimal.TryParse(value, out var bpm)*/)
 								{
+									var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+									culture.NumberFormat.NumberDecimalSeparator = ".";
 									var bpmsplit = value.Split(',');
 									foreach (var item in bpmsplit)
                                     {
 										var bpmms = item.Split('|');
+										var bpm = float.Parse(bpmms[0], culture);
 										if (bpmms.Count() > 1)
-                                        {
-											if (float.TryParse(bpmms[0], out var bpm) && int.TryParse(bpmms[1], out var ms))
-											{
-												GuiTrack.BPMs.Add(new BPM(bpm, ms));
-											}
+										{
+											var ms = int.Parse(bpmms[1], culture);
+											GuiTrack.BPMs.Add(new BPM(bpm, ms));
 										}
 										else
-                                        {
-											oldformat = true;
-											if (float.TryParse(bpmms[0], out var bpm))
-                                            {
-												GuiTrack.BPMs.Add(new BPM(bpm, 0));
-                                            }
-                                        }
+											GuiTrack.BPMs.Add(new BPM(bpm, 0));
 										
 										GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
                                     }
@@ -2145,7 +2140,11 @@ namespace Sound_Space_Editor
 
 			foreach (var bpm in GuiTrack.BPMs)
             {
-				final += $",{bpm.bpm}|{bpm.Ms}";
+				var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+				culture.NumberFormat.NumberDecimalSeparator = ".";
+				var bpmf = bpm.bpm.ToString(culture);
+				var msf = bpm.Ms.ToString(culture);
+				final += $",{bpmf}|{msf}";
             }
 
 			if (final.Length > 0)
