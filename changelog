@@ -1,4 +1,11 @@
 ----------------------------------
+     -- 1.7.2.2 - 3/1/2021 --
+
+- re-split the BPM and Note labels on the track
+- darkened the changelog's background colors when no image is present
+- fixed no BPM crashing the editor on load
+
+----------------------------------
      -- 1.7.2.1 - 2/1/2021 --
 
 - fixed saving .ini files on close
