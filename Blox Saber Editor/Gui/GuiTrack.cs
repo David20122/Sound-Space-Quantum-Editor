@@ -287,8 +287,6 @@ namespace Sound_Space_Editor.Gui
 
 					if (Bpm.bpm > 33)
 					{
-						var found = EditorWindow.Instance.Notes.ToList().Find(j => j.Ms == Bpm.Ms);
-
 						lineSpace = 60 / Bpm.bpm * cubeStep;
 						var stepSmall = lineSpace / BeatDivisor;
 
@@ -307,7 +305,7 @@ namespace Sound_Space_Editor.Gui
 							GL.Color4(Color.FromArgb(255, 0, 0));
 							GL.Begin(PrimitiveType.Lines);
 							GL.Vertex2((int)lineX + 0.5f, 0);
-							GL.Vertex2((int)lineX + 0.5f, rect.Bottom + 28 + (found == null ? 0 : 16));
+							GL.Vertex2((int)lineX + 0.5f, rect.Bottom + 56);
 							GL.End();
 						}
 
@@ -318,23 +316,15 @@ namespace Sound_Space_Editor.Gui
 						if (numText == "")
 							numText = "0";
 
-						if (found == null)
-                        {
-							GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-							fr.Render($"{numText} BPM", (int)x + 3, (int)(rect.Y + rect.Height) + 3, 16);
+						GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+						fr.Render($"{numText} BPM", (int)x + 3, (int)(rect.Y + rect.Height) + 3 + 28, 16);
 
-							var msText = $"{Bpm.Ms:##,###}";
-							if (msText == "")
-								msText = "0";
+						var msText = $"{Bpm.Ms:##,###}";
+						if (msText == "")
+							msText = "0";
 
-							GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
-							fr.Render($"{msText}ms", (int)x + 3, (int)(rect.Y + rect.Height + fr.GetHeight(16)) + 3 + 2, 16);
-						}
-						else
-                        {
-							GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-							fr.Render($"{numText} BPM", (int)x + 3, (int)(rect.Y + rect.Height) + 3 + 28, 16);
-						}
+						GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+						fr.Render($"{msText}ms", (int)x + 3, (int)(rect.Y + rect.Height + fr.GetHeight(16)) + 3 + 2 + 28, 16);
 
 						//render BPM lines
 						while (lineSpace > 0 && lineX < rect.Width && lineX < endLineX && lineX < nextLineX)
@@ -370,7 +360,7 @@ namespace Sound_Space_Editor.Gui
 						}
 
 						var w = Math.Max(fr.GetWidth($"{Bpm.Ms:##,###}ms", 16), fr.GetWidth($"{Bpm.bpm:##,###}", 16));
-						var pointRect = new RectangleF((int)x, rect.Bottom, w + 3, found != null ? 48 : 32);
+						var pointRect = new RectangleF((int)x, rect.Bottom, w + 3, 56);
 
 						var g = MouseOverPoint == null && pointRect.Contains(mouseX, mouseY);
 
@@ -387,7 +377,7 @@ namespace Sound_Space_Editor.Gui
 								GL.Color3(0, 0.5f, 1);
 							}
 
-							Glu.RenderOutline((int)(x - 4), rect.Bottom, w + 3 + 8, found != null ? 48 : 32);
+							Glu.RenderOutline((int)(x - 4), rect.Bottom, w + 3 + 8, 56 + 4);
 						}
 					}
 				}
