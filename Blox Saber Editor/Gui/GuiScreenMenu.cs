@@ -89,17 +89,22 @@ namespace Sound_Space_Editor.Gui
             {
 				GL.Color4(Color.FromArgb(255, 255, 255, 255));
 				Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
+
+				GL.Color4(Color.FromArgb(120, 57, 56, 47));
+				Glu.RenderQuad(35 * widthdiff, 180 * heightdiff, 950 * widthdiff, 790 * heightdiff);
+				GL.Color4(Color.FromArgb(100, 36, 35, 33));
+				Glu.RenderQuad(55 * widthdiff, 230 * heightdiff, 900 * widthdiff, 715 * heightdiff);
 			}
 			else
             {
 				GL.Color4(Color.FromArgb(255, 30, 30, 30));
 				Glu.RenderQuad(0, 0, size.Width, size.Height);
-			}
 
-			GL.Color4(Color.FromArgb(120, 57, 56, 47));
-			Glu.RenderQuad(35 * widthdiff, 180 * heightdiff, 950 * widthdiff, 790 * heightdiff);
-			GL.Color4(Color.FromArgb(100, 36, 35, 33));
-			Glu.RenderQuad(55 * widthdiff, 230 * heightdiff, 900 * widthdiff, 715 * heightdiff);
+				GL.Color4(Color.FromArgb(40, 0, 0, 0));
+				Glu.RenderQuad(35 * widthdiff, 180 * heightdiff, 950 * widthdiff, 790 * heightdiff);
+				GL.Color4(Color.FromArgb(50, 0, 0, 0));
+				Glu.RenderQuad(55 * widthdiff, 230 * heightdiff, 900 * widthdiff, 715 * heightdiff);
+			}
 
 			CHANGELOGlabel.Render(delta, mouseX, mouseY);
 			ssLabel.Render(delta, mouseX, mouseY);
