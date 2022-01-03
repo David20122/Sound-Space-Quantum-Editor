@@ -1935,14 +1935,13 @@ namespace Sound_Space_Editor
 									foreach (var item in bpmsplit)
                                     {
 										var bpmms = item.Split('|');
-										var bpm = float.Parse(bpmms[0], culture);
-										if (bpmms.Count() > 1)
-										{
-											var ms = int.Parse(bpmms[1], culture);
-											GuiTrack.BPMs.Add(new BPM(bpm, ms));
+										if (float.TryParse(bpmms[0], NumberStyles.Float, culture, out var bpm))
+                                        {
+											if (int.TryParse(bpmms[1], out var ms))
+												GuiTrack.BPMs.Add(new BPM(bpm, ms));
+											else
+												GuiTrack.BPMs.Add(new BPM(bpm, 0));
 										}
-										else
-											GuiTrack.BPMs.Add(new BPM(bpm, 0));
 										
 										GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
                                     }
