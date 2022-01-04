@@ -359,7 +359,7 @@ namespace Sound_Space_Editor.Gui
 							lineX += lineSpace;
 						}
 
-						var w = Math.Max(fr.GetWidth($"{Bpm.Ms:##,###}ms", 16), fr.GetWidth($"{Bpm.bpm:##,###}", 16));
+						var w = Math.Max(fr.GetWidth($"{Bpm.Ms:##,###}ms", 16), fr.GetWidth($"{Bpm.bpm:##,###.###} BPM", 16));
 						var pointRect = new RectangleF((int)x, rect.Bottom, w + 3, 56);
 
 						var g = MouseOverPoint == null && pointRect.Contains(mouseX, mouseY);
