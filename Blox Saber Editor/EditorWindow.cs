@@ -21,6 +21,8 @@ using Discord;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
+//god
+
 namespace Sound_Space_Editor
 {
 	class EditorWindow : GameWindow
@@ -1937,7 +1939,7 @@ namespace Sound_Space_Editor
 										var bpmms = item.Split('|');
 										if (float.TryParse(bpmms[0], NumberStyles.Float, culture, out var bpm))
                                         {
-											if (int.TryParse(bpmms[1], out var ms))
+											if (bpmms.Count() > 1 && int.TryParse(bpmms[1], out var ms))
 												GuiTrack.BPMs.Add(new BPM(bpm, ms));
 											else
 												GuiTrack.BPMs.Add(new BPM(bpm, 0));
