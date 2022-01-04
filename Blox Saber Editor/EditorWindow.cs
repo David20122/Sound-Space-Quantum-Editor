@@ -802,9 +802,11 @@ namespace Sound_Space_Editor
 				{
 					SelectedNotes.Clear();
 					_draggedNotes.Clear();
+					_draggedPoint = null;
 
 					_draggingNoteGrid = false;
 					_draggingNoteTimeline = false;
+					_draggingPointTimeline = false;
 				}
 
 				if (editor.ClientRectangle.Contains(e.Position))
