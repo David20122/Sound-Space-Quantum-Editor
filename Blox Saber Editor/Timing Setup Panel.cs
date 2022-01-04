@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using Sound_Space_Editor.Gui;
+using OpenTK;
 
 namespace Sound_Space_Editor
 {
@@ -41,12 +42,12 @@ namespace Sound_Space_Editor
 
         private void RemoveButton_Click(object sender, EventArgs e)
         {
-            if (PointList.SelectedRows.Count > 0)
+            foreach (DataGridViewRow row in PointList.SelectedRows)
             {
-                GuiTrack.BPMs.RemoveAt(PointList.CurrentRow.Index);
+                GuiTrack.BPMs.RemoveAt(row.Index);
                 GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
-                ResetList(PointList.CurrentRow.Index - 1);
             }
+            ResetList(PointList.CurrentRow.Index - 1);
         }
 
         private void UpdateButton_Click(object sender, EventArgs e)
@@ -84,8 +85,6 @@ namespace Sound_Space_Editor
 
     public void ResetList(int index)
         {
-            if (index < 0)
-                index = 0;
             PointList.Rows.Clear();
             foreach (var point in GuiTrack.BPMs)
             {
@@ -93,6 +92,7 @@ namespace Sound_Space_Editor
             }
             if (GuiTrack.BPMs.Count > 0)
             {
+                index = MathHelper.Clamp(index, 0, GuiTrack.BPMs.Count - 1);
                 PointList.CurrentCell = PointList[0, index];
                 var tpoint = GuiTrack.BPMs[index];
                 BPMBox.Text = tpoint.bpm.ToString();
@@ -115,5 +115,16 @@ namespace Sound_Space_Editor
                 OffsetBox.Text = point.Ms.ToString();
             }
         }
-	}
+
+        private void MoveButton_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in PointList.SelectedRows)
+            {
+                var index = row.Index;
+                var point = GuiTrack.BPMs[index];
+                point.Ms += (long)MoveBox.Value;
+            }
+            ResetList(0);
+        }
+    }
 }
