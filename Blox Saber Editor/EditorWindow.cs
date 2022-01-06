@@ -789,7 +789,7 @@ namespace Sound_Space_Editor
 						editor.NoteAlign.Dragging = true;
 						OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
 					}
-					else if (!editor.RotateButton.ClientRectangle.Contains(e.Position))
+					else if (!editor.RotateButton.ClientRectangle.Contains(e.Position) && !editor.BezierButton.ClientRectangle.Contains(e.Position) && !editor.BezierBox.ClientRectangle.Contains(e.Position))
 					{
 						SelectedNotes.Clear();
 						_draggedNotes.Clear();

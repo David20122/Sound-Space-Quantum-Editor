@@ -9,6 +9,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System.IO;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace Sound_Space_Editor.Gui
 {
@@ -28,6 +29,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiTextBox SfxOffset;
 		public readonly GuiTextBox JumpMSBox;
 		public readonly GuiTextBox RotateBox;
+		public readonly GuiTextBox BezierBox;
 		public readonly GuiCheckBox Autoplay;
 		public readonly GuiCheckBox ApproachSquares;
 		public readonly GuiCheckBox GridNumbers;
@@ -43,6 +45,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiButton SetOffset;
 		public readonly GuiButton JumpMSButton;
 		public readonly GuiButton RotateButton;
+		public readonly GuiButton BezierButton;
 
 		public readonly GuiButton OpenTimings;
 		public readonly GuiButton UseCurrentMs;
@@ -96,6 +99,13 @@ namespace Sound_Space_Editor.Gui
 				Numeric = true,
 				CanBeNegative = false,
 			};
+			BezierBox = new GuiTextBox(0, 0, 128, 32)
+			{
+				Text = "0",
+				Centered = true,
+				Numeric = true,
+				CanBeNegative = false,
+			};
 			SfxOffset = new GuiTextBox(EditorWindow.Instance.ClientSize.Width - 128, 0, 128, 32)
 			{
 				Text = "0",
@@ -135,6 +145,7 @@ namespace Sound_Space_Editor.Gui
 
 			JumpMSButton = new GuiButton(6, 0, 0, 64, 32, "JUMP", false);
 			RotateButton = new GuiButton(7, 0, 0, 64, 32, "ROTATE", false);
+			BezierButton = new GuiButton(10, 0, 0, 64, 32, "DRAW", false);
 
 			OpenTimings = new GuiButton(8, 0, 0, 200, 32, "OPEN TIMING SETUP PANEL", false);
 			UseCurrentMs = new GuiButton(9, 0, 0, 200, 32, "USE CURRENT MS", false);
@@ -189,6 +200,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(RotateButton);
 			Buttons.Add(OpenTimings);
 			Buttons.Add(UseCurrentMs);
+			Buttons.Add(BezierButton);
 
 			OnResize(EditorWindow.Instance.ClientSize);
 
@@ -249,6 +261,7 @@ namespace Sound_Space_Editor.Gui
 			fr.Render("SFX Offset[ms]:", (int)SfxOffset.ClientRectangle.X, (int)SfxOffset.ClientRectangle.Y - 24, 24);
 			fr.Render("Jump to MS:", (int)JumpMSBox.ClientRectangle.X, (int)JumpMSBox.ClientRectangle.Y - 24, 24);
 			fr.Render("Rotate by Degrees:", (int)RotateBox.ClientRectangle.X, (int)RotateBox.ClientRectangle.Y - 24, 24);
+			fr.Render("Draw Bezier with Divisor:", (int)BezierBox.ClientRectangle.X, (int)BezierBox.ClientRectangle.Y - 24, 24);
 			fr.Render("Options:", (int)Autoplay.ClientRectangle.X, (int)Autoplay.ClientRectangle.Y - 26, 24);
 			var divisor = $"Beat Divisor: {BeatSnapDivisor.Value + 1}";
 			var divisorW = fr.GetWidth(divisor, 24);
@@ -317,11 +330,12 @@ namespace Sound_Space_Editor.Gui
 			SfxOffset.Render(delta, mouseX, mouseY);
 			JumpMSBox.Render(delta, mouseX, mouseY);
 			RotateBox.Render(delta, mouseX, mouseY);
+			BezierBox.Render(delta, mouseX, mouseY);
 		}
 
 		public override bool AllowInput()
 		{
-			return !Offset.Focused && !SfxOffset.Focused && !JumpMSBox.Focused && !RotateBox.Focused;
+			return !Offset.Focused && !SfxOffset.Focused && !JumpMSBox.Focused && !RotateBox.Focused && !BezierBox.Focused;
 		}
 
 		public override void OnKeyTyped(char key)
@@ -330,6 +344,7 @@ namespace Sound_Space_Editor.Gui
 			SfxOffset.OnKeyTyped(key);
 			JumpMSBox.OnKeyTyped(key);
 			RotateBox.OnKeyTyped(key);
+			BezierBox.OnKeyTyped(key);
 
 			UpdateTrack();
 		}
@@ -340,6 +355,7 @@ namespace Sound_Space_Editor.Gui
 			SfxOffset.OnKeyDown(key, control);
 			JumpMSBox.OnKeyDown(key, control);
 			RotateBox.OnKeyDown(key, control);
+			BezierBox.OnKeyDown(key, control);
 
 			UpdateTrack();
 		}
@@ -350,6 +366,7 @@ namespace Sound_Space_Editor.Gui
 			SfxOffset.OnMouseClick(x, y);
 			JumpMSBox.OnMouseClick(x, y);
 			RotateBox.OnMouseClick(x, y);
+			BezierBox.OnMouseClick(x, y);
 
 			base.OnMouseClick(x, y);
 		}
@@ -508,11 +525,47 @@ namespace Sound_Space_Editor.Gui
 					Thread t = new Thread(new ThreadStart(openGui));
 					t.Start();
 					*/
-
+					if (TimingsWindow.inst != null)
+						TimingsWindow.inst.Close();
 					new TimingsWindow().Show();
 					break;
 				case 9:
 					Offset.Text = ((long)EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds).ToString();
+					break;
+				case 10:
+					if (int.TryParse(BezierBox.Text, out var divisor) && divisor > 0 && EditorWindow.Instance.SelectedNotes.Count > 1)
+					{
+						var notes = new List<Note>(EditorWindow.Instance.SelectedNotes);
+						var beziernotes = new List<Note>();
+						var k = notes.Count - 1;
+						float tdiff = notes[k].Ms - notes[0].Ms;
+						float d = 1f / (divisor * k);
+						for (float t = 0; t <= 1; t += d)
+						{
+							float xf = 0;
+							float yf = 0;
+							float tf = notes[0].Ms + tdiff * t;
+							for (int v = 0; v <= k; v++)
+							{
+								var note = notes[v];
+
+								xf += (float)(MathHelper.BinomialCoefficient(k, v) * Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.X);
+								yf += (float)(MathHelper.BinomialCoefficient(k, v) * Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.Y);
+							}
+							beziernotes.Add(new Note(xf, yf, (long)tf));
+						}
+						EditorWindow.Instance.Notes.RemoveAll(notes);
+						EditorWindow.Instance.Notes.AddAll(beziernotes);
+						EditorWindow.Instance.UndoRedo.AddUndoRedo("DRAW BEZIER", () =>
+						{
+							EditorWindow.Instance.Notes.AddAll(notes);
+							EditorWindow.Instance.Notes.RemoveAll(beziernotes);
+						}, () =>
+						{
+							EditorWindow.Instance.Notes.RemoveAll(notes);
+							EditorWindow.Instance.Notes.AddAll(beziernotes);
+						});
+					}
 					break;
 			}
 		}
@@ -552,6 +605,7 @@ namespace Sound_Space_Editor.Gui
 			SfxOffset.ClientRectangle.Size = Offset.ClientRectangle.Size;
 			JumpMSBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
 			RotateBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
+			BezierBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
 
 			Autoplay.ClientRectangle.Size = new SizeF(40 * widthdiff, 40 * heightdiff);
 			ApproachSquares.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
@@ -566,6 +620,7 @@ namespace Sound_Space_Editor.Gui
 			SetOffset.ClientRectangle.Size = new SizeF(64 * widthdiff, Offset.ClientRectangle.Height);
 			JumpMSButton.ClientRectangle.Size = SetOffset.ClientRectangle.Size;
 			RotateButton.ClientRectangle.Size = SetOffset.ClientRectangle.Size;
+			BezierButton.ClientRectangle.Size = SetOffset.ClientRectangle.Size;
 			UseCurrentMs.ClientRectangle.Size = new SizeF(200 * widthdiff, Offset.ClientRectangle.Height);
 			OpenTimings.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
 
@@ -574,6 +629,7 @@ namespace Sound_Space_Editor.Gui
 			SfxOffset.ClientRectangle.Location = new PointF(Tempo.ClientRectangle.X + Tempo.ClientRectangle.Width / 2 - SfxOffset.ClientRectangle.Width / 2, Tempo.ClientRectangle.Top - SfxOffset.ClientRectangle.Height - 15 * heightdiff);
 			JumpMSBox.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, SfxOffset.ClientRectangle.Y - 80 * heightdiff);
 			RotateBox.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, JumpMSBox.ClientRectangle.Y - 80 * heightdiff);
+			BezierBox.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, RotateBox.ClientRectangle.Y - 80 * heightdiff);
 
 			Autoplay.ClientRectangle.Location = new PointF(10 * widthdiff, Offset.ClientRectangle.Bottom + 52 * heightdiff);
 			ApproachSquares.ClientRectangle.Location = new PointF(10 * widthdiff, Autoplay.ClientRectangle.Bottom + 10 * heightdiff);
@@ -592,6 +648,7 @@ namespace Sound_Space_Editor.Gui
 			SetOffset.ClientRectangle.Location = new PointF(Offset.ClientRectangle.Right + 5 * widthdiff, Offset.ClientRectangle.Y);
 			JumpMSButton.ClientRectangle.Location = new PointF(JumpMSBox.ClientRectangle.Right + 5 * widthdiff, JumpMSBox.ClientRectangle.Y);
 			RotateButton.ClientRectangle.Location = new PointF(JumpMSButton.ClientRectangle.X, RotateBox.ClientRectangle.Y);
+			BezierButton.ClientRectangle.Location = new PointF(RotateButton.ClientRectangle.X, BezierBox.ClientRectangle.Y);
 			UseCurrentMs.ClientRectangle.Location = new PointF(SetOffset.ClientRectangle.Right + 5 * widthdiff, SetOffset.ClientRectangle.Y);
 			OpenTimings.ClientRectangle.Location = new PointF(UseCurrentMs.ClientRectangle.X, UseCurrentMs.ClientRectangle.Bottom + 5 * heightdiff);
 		}
@@ -659,6 +716,16 @@ namespace Sound_Space_Editor.Gui
 				if (jumpMS.ToString() != "0")
 					JumpMSBox.Text = jumpMS.ToString();
 			}
+			if (RotateBox.Focused)
+            {
+				if (float.TryParse(RotateBox.Text, out var degrees))
+					RotateBox.Text = degrees.ToString();
+            }
+			if (BezierBox.Focused)
+            {
+				if (long.TryParse(BezierBox.Text, out var ints))
+					BezierBox.Text = ints.ToString();
+            }
 		}
 
 		public void ShowToast(string text, Color color)
