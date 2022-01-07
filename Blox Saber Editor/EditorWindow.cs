@@ -707,9 +707,6 @@ namespace Sound_Space_Editor
 
 						_draggingNoteGrid = true;
 
-						_dragStartIndexX = gn.X;
-						_dragStartIndexY = gn.Y;
-
 						if (_controlDown)
 							if (_draggedNotes.Contains(gn))
 								_draggedNotes.Remove(gn);
@@ -738,6 +735,9 @@ namespace Sound_Space_Editor
 
 							SelectedNotes.Add(gn);
 						}*/
+
+						_dragStartIndexX = _draggedNotes.FirstOrDefault().X;
+						_dragStartIndexY = _draggedNotes.FirstOrDefault().Y;
 
 						SelectedNotes = _draggedNotes;
 					}
@@ -1761,10 +1761,10 @@ namespace Sound_Space_Editor
 							}
 						}
 						
-						xdiff = (float)Math.Max((double)-0.850, minX + xdiff) - minX;
-						ydiff = (float)Math.Max((double)-0.850, minY + ydiff) - minY;
-						xdiff = (float)Math.Min((double)2.850, maxX + xdiff) - maxX;
-						ydiff = (float)Math.Min((double)2.850, maxY + ydiff) - maxY;
+						xdiff = (float)Math.Max(-0.850d, minX + xdiff) - minX;
+						xdiff = (float)Math.Min(2.850d, maxX + xdiff) - maxX;
+						ydiff = (float)Math.Max(-0.850d, minY + ydiff) - minY;
+						ydiff = (float)Math.Min(2.850d, maxY + ydiff) - maxY;
 
 						note.X += xdiff;
 						note.Y += ydiff;
