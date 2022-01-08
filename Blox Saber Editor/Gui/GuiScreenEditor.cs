@@ -10,6 +10,7 @@ using OpenTK.Input;
 using System.IO;
 using System.Threading;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Sound_Space_Editor.Gui
 {
@@ -60,6 +61,23 @@ namespace Sound_Space_Editor.Gui
 		//private object TimingPanel;
 		//TimingPoints TimingPoints;
 
+		public BigInteger FactorialApprox(int k)
+        {
+			var result = new BigInteger(1);
+			if (k < 10)
+            {
+				for (int i = 1; i <= k; i++)
+                {
+					result *= i;
+                }
+            }
+			else
+            {
+				result = (BigInteger)(Math.Sqrt(2 * Math.PI * k) * Math.Pow(k / Math.E, k));
+			}
+			return result;
+		}
+
 		public GuiScreenEditor() : base(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64)
 		{
 			if (File.Exists(Path.Combine(EditorWindow.Instance.LauncherDir, "background_editor.png")))
@@ -101,7 +119,7 @@ namespace Sound_Space_Editor.Gui
 			};
 			BezierBox = new GuiTextBox(0, 0, 128, 32)
 			{
-				Text = "0",
+				Text = "4",
 				Centered = true,
 				Numeric = true,
 				CanBeNegative = false,
@@ -535,36 +553,45 @@ namespace Sound_Space_Editor.Gui
 				case 10:
 					if (int.TryParse(BezierBox.Text, out var divisor) && divisor > 0 && EditorWindow.Instance.SelectedNotes.Count > 1)
 					{
-						var notes = new List<Note>(EditorWindow.Instance.SelectedNotes);
-						var beziernotes = new List<Note>();
-						var k = notes.Count - 1;
-						float tdiff = notes[k].Ms - notes[0].Ms;
-						float d = 1f / (divisor * k);
-						for (float t = 0; t <= 1; t += d)
-						{
-							float xf = 0;
-							float yf = 0;
-							float tf = notes[0].Ms + tdiff * t;
-							for (int v = 0; v <= k; v++)
+						try
+                        {
+							var notes = new List<Note>(EditorWindow.Instance.SelectedNotes);
+							var beziernotes = new List<Note>();
+							var k = notes.Count - 1;
+							float tdiff = notes[k].Ms - notes[0].Ms;
+							float d = 1f / (divisor * k);
+							for (float t = 0; t <= 1; t += d)
 							{
-								var note = notes[v];
+								float xf = 0;
+								float yf = 0;
+								float tf = notes[0].Ms + tdiff * t;
+								for (int v = 0; v <= k; v++)
+								{
+									var note = notes[v];
+									var bic = FactorialApprox(k) / (FactorialApprox(v) * FactorialApprox(k - v));
+									
 
-								xf += (float)(MathHelper.BinomialCoefficient(k, v) * Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.X);
-								yf += (float)(MathHelper.BinomialCoefficient(k, v) * Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.Y);
+									xf += (float)((double)bic * Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.X);
+									yf += (float)((double)bic * Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.Y);
+								}
+								beziernotes.Add(new Note(xf, yf, (long)tf));
 							}
-							beziernotes.Add(new Note(xf, yf, (long)tf));
-						}
-						EditorWindow.Instance.Notes.RemoveAll(notes);
-						EditorWindow.Instance.Notes.AddAll(beziernotes);
-						EditorWindow.Instance.UndoRedo.AddUndoRedo("DRAW BEZIER", () =>
-						{
-							EditorWindow.Instance.Notes.AddAll(notes);
-							EditorWindow.Instance.Notes.RemoveAll(beziernotes);
-						}, () =>
-						{
 							EditorWindow.Instance.Notes.RemoveAll(notes);
 							EditorWindow.Instance.Notes.AddAll(beziernotes);
-						});
+							EditorWindow.Instance.UndoRedo.AddUndoRedo("DRAW BEZIER", () =>
+							{
+								EditorWindow.Instance.Notes.AddAll(notes);
+								EditorWindow.Instance.Notes.RemoveAll(beziernotes);
+							}, () =>
+							{
+								EditorWindow.Instance.Notes.RemoveAll(notes);
+								EditorWindow.Instance.Notes.AddAll(beziernotes);
+							});
+						}
+						catch
+                        {
+							ShowToast("FAILED TO DRAW CURVE", Color.FromArgb(255, 200, 0));
+                        }
 					}
 					break;
 			}
