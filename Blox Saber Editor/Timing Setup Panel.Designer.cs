@@ -42,6 +42,9 @@
             this.MoveLabel = new System.Windows.Forms.Label();
             this.MoveBox = new System.Windows.Forms.NumericUpDown();
             this.MoveButton = new System.Windows.Forms.Button();
+            this.ImportCH = new System.Windows.Forms.Button();
+            this.ImportOSU = new System.Windows.Forms.Button();
+            this.ImportADOFAI = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.PointList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MoveBox)).BeginInit();
             this.SuspendLayout();
@@ -197,11 +200,47 @@
             this.MoveButton.UseVisualStyleBackColor = true;
             this.MoveButton.Click += new System.EventHandler(this.MoveButton_Click);
             // 
+            // ImportCH
+            // 
+            this.ImportCH.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.ImportCH.Location = new System.Drawing.Point(230, 494);
+            this.ImportCH.Name = "ImportCH";
+            this.ImportCH.Size = new System.Drawing.Size(105, 47);
+            this.ImportCH.TabIndex = 13;
+            this.ImportCH.Text = "Import Clone Hero Timings";
+            this.ImportCH.UseVisualStyleBackColor = true;
+            this.ImportCH.Click += new System.EventHandler(this.ImportCH_Click);
+            // 
+            // ImportOSU
+            // 
+            this.ImportOSU.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.ImportOSU.Location = new System.Drawing.Point(9, 494);
+            this.ImportOSU.Name = "ImportOSU";
+            this.ImportOSU.Size = new System.Drawing.Size(105, 47);
+            this.ImportOSU.TabIndex = 14;
+            this.ImportOSU.Text = "Import OSU Timings";
+            this.ImportOSU.UseVisualStyleBackColor = true;
+            this.ImportOSU.Click += new System.EventHandler(this.ImportOSU_Click);
+            // 
+            // ImportADOFAI
+            // 
+            this.ImportADOFAI.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.ImportADOFAI.Location = new System.Drawing.Point(120, 494);
+            this.ImportADOFAI.Name = "ImportADOFAI";
+            this.ImportADOFAI.Size = new System.Drawing.Size(104, 47);
+            this.ImportADOFAI.TabIndex = 15;
+            this.ImportADOFAI.Text = "Import ADOFAI Timings";
+            this.ImportADOFAI.UseVisualStyleBackColor = true;
+            this.ImportADOFAI.Click += new System.EventHandler(this.ImportADOFAI_Click);
+            // 
             // TimingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(344, 497);
+            this.ClientSize = new System.Drawing.Size(345, 550);
+            this.Controls.Add(this.ImportADOFAI);
+            this.Controls.Add(this.ImportOSU);
+            this.Controls.Add(this.ImportCH);
             this.Controls.Add(this.MoveButton);
             this.Controls.Add(this.MoveBox);
             this.Controls.Add(this.MoveLabel);
@@ -242,5 +281,8 @@
         private System.Windows.Forms.Label MoveLabel;
         private System.Windows.Forms.NumericUpDown MoveBox;
         private System.Windows.Forms.Button MoveButton;
+        private System.Windows.Forms.Button ImportCH;
+        private System.Windows.Forms.Button ImportOSU;
+        private System.Windows.Forms.Button ImportADOFAI;
     }
 }
