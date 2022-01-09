@@ -1228,7 +1228,8 @@ namespace Sound_Space_Editor
 				{
 					if (e.Key == Key.H)
 					{
-						foreach (var node in SelectedNotes)
+						var selected = SelectedNotes.ToList();
+						foreach (var node in selected)
 						{
 							node.X = 2 - node.X;
 							editor.ShowToast("Horizontal Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
@@ -1237,14 +1238,14 @@ namespace Sound_Space_Editor
 						var saveState = _saved;
 						UndoRedo.AddUndoRedo("HORIZONTAL FLIP", () =>
 						{
-							foreach (var node in SelectedNotes)
+							foreach (var node in selected)
 							{
 								node.X = 2 - node.X;
 							}
 
 						}, () =>
 						{
-							foreach (var node in SelectedNotes)
+							foreach (var node in selected)
 							{
 								node.X = 2 - node.X;
 							}
@@ -1256,7 +1257,8 @@ namespace Sound_Space_Editor
 
 					if (e.Key == Key.V)
 					{
-						foreach (var node in SelectedNotes)
+						var selected = SelectedNotes.ToList();
+						foreach (var node in selected)
 						{
 							node.Y = 2 - node.Y;
 							editor.ShowToast("Vertical Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
@@ -1265,14 +1267,14 @@ namespace Sound_Space_Editor
 						var saveState = _saved;
 						UndoRedo.AddUndoRedo("VERTICAL FLIP", () =>
 						{
-							foreach (var node in SelectedNotes)
+							foreach (var node in selected)
 							{
 								node.Y = 2 - node.Y;
 							}
 
 						}, () =>
 						{
-							foreach (var node in SelectedNotes)
+							foreach (var node in selected)
 							{
 								node.Y = 2 - node.Y;
 							}
