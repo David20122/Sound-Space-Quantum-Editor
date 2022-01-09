@@ -565,14 +565,20 @@ namespace Sound_Space_Editor.Gui
 								float xf = 0;
 								float yf = 0;
 								float tf = notes[0].Ms + tdiff * t;
-								for (int v = 0; v <= k; v++)
-								{
-									var note = notes[v];
-									var bic = FactorialApprox(k) / (FactorialApprox(v) * FactorialApprox(k - v));
-									
+								try
+                                {
+									for (int v = 0; v <= k; v++)
+									{
+										var note = notes[v];
+										var bic = FactorialApprox(k) / (FactorialApprox(v) * FactorialApprox(k - v));
 
-									xf += (float)((double)bic * Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.X);
-									yf += (float)((double)bic * Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.Y);
+										xf += (float)((int)bic * (Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.X));
+										yf += (float)((int)bic * (Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.Y));
+									}
+								}
+								catch
+                                {
+									ShowToast("TOO MANY NODES - OVERFLOW", Color.FromArgb(255, 200, 0));
 								}
 								beziernotes.Add(new Note(xf, yf, (long)tf));
 							}
