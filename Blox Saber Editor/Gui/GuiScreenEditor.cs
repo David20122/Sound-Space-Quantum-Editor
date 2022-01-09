@@ -565,20 +565,13 @@ namespace Sound_Space_Editor.Gui
 								float xf = 0;
 								float yf = 0;
 								float tf = notes[0].Ms + tdiff * t;
-								try
-                                {
-									for (int v = 0; v <= k; v++)
-									{
-										var note = notes[v];
-										var bic = FactorialApprox(k) / (FactorialApprox(v) * FactorialApprox(k - v));
+								for (int v = 0; v <= k; v++)
+								{
+									var note = notes[v];
+									var bic = FactorialApprox(k) / (FactorialApprox(v) * FactorialApprox(k - v));
 
-										xf += (float)((double)bic * (Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.X));
-										yf += (float)((double)bic * (Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.Y));
-									}
-								}
-								catch
-                                {
-									ShowToast("TOO MANY NODES - OVERFLOW", Color.FromArgb(255, 200, 0));
+									xf += (float)((double)bic * (Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.X));
+									yf += (float)((double)bic * (Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.Y));
 								}
 								beziernotes.Add(new Note(xf, yf, (long)tf));
 							}
@@ -593,6 +586,10 @@ namespace Sound_Space_Editor.Gui
 								EditorWindow.Instance.Notes.RemoveAll(notes);
 								EditorWindow.Instance.Notes.AddAll(beziernotes);
 							});
+						}
+						catch (OverflowException)
+                        {
+							ShowToast("TOO MANY NODES - OVERFLOW", Color.FromArgb(255, 200, 0));
 						}
 						catch
                         {
