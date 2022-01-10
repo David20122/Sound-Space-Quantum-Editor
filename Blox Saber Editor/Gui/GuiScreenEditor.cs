@@ -281,7 +281,7 @@ namespace Sound_Space_Editor.Gui
 
 			fr.Render("Zoom: ", 10, (int)Offset.ClientRectangle.Y - 60, 24);
 			GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
-			fr.Render($"{Math.Round(EditorWindow.Instance.Zoom, 1) * 100}%", 10 + zoomW, (int)Offset.ClientRectangle.Y - 60, 24);
+			fr.Render($"{Math.Round(EditorWindow.Instance.Zoom, 2) * 100}%", 10 + zoomW, (int)Offset.ClientRectangle.Y - 60, 24);
 			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 			fr.Render("Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
 			fr.Render("SFX Offset[ms]:", (int)SfxOffset.ClientRectangle.X, (int)SfxOffset.ClientRectangle.Y - 24, 24);

@@ -111,7 +111,7 @@ namespace Sound_Space_Editor
 		public float Zoom
 		{
 			get => _zoom;
-			set => _zoom = Math.Max(0.1f, Math.Min(10, value));
+			set => _zoom = Math.Max(0.01f, Math.Min(10, value));
 		}
 
 		public float CubeStep => 50 * 10 * Zoom;
@@ -1421,7 +1421,18 @@ namespace Sound_Space_Editor
 			{
 				if (_controlDown)
 				{
-					Zoom += e.DeltaPrecise * 0.1f;
+					if (Zoom < 0.1f)
+						Zoom += e.DeltaPrecise * 0.01f;
+					else if (Zoom == 0.1f)
+                    {
+						if (e.DeltaPrecise > 0)
+							Zoom += e.DeltaPrecise * 0.1f;
+						else
+							Zoom += e.DeltaPrecise * 0.01f;
+                    }
+					else
+						Zoom += e.DeltaPrecise * 0.1f;
+					Zoom = (float)Math.Round(Zoom, 2);
 				}
 				else if (_altDown)
 				{
