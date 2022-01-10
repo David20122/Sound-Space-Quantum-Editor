@@ -455,6 +455,8 @@ namespace Sound_Space_Editor.Gui
 
 						GuiTrack.NoteOffset = oldOffset;
 					}, Redo);
+
+					EditorWindow.Instance.SaveState(false);
 					break;
 				case 3:
 					if (EditorWindow.Instance.WillClose())
@@ -535,6 +537,8 @@ namespace Sound_Space_Editor.Gui
 							node.Y = (float)(Math.Sin(finalradians) * distance + 1);
 						}
 					});
+
+					EditorWindow.Instance.SaveState(false);
 					break;
 				case 8:
 					/*
@@ -594,16 +598,67 @@ namespace Sound_Space_Editor.Gui
 								EditorWindow.Instance.Notes.RemoveAll(notes);
 								EditorWindow.Instance.Notes.AddAll(beziernotes);
 							});
+							EditorWindow.Instance.SaveState(false);
 						}
 						catch (OverflowException)
                         {
-							ShowToast("TOO MANY NODES - OVERFLOW", Color.FromArgb(255, 200, 0));
+							ShowToast("TOO MANY NODES", Color.FromArgb(255, 200, 0));
 						}
 						catch
                         {
 							ShowToast("FAILED TO DRAW CURVE", Color.FromArgb(255, 200, 0));
                         }
 					}
+					break;
+				case 11:
+					var selectedH = EditorWindow.Instance.SelectedNotes.ToList();
+					foreach (var node in selectedH)
+					{
+						node.X = 2 - node.X;
+					}
+
+					EditorWindow.Instance.UndoRedo.AddUndoRedo("HORIZONTAL FLIP", () =>
+					{
+						foreach (var node in selectedH)
+						{
+							node.X = 2 - node.X;
+						}
+
+					}, () =>
+					{
+						foreach (var node in selectedH)
+						{
+							node.X = 2 - node.X;
+						}
+
+					});
+
+					EditorWindow.Instance.SaveState(false);
+					break;
+				case 12:
+					var selectedV = EditorWindow.Instance.SelectedNotes.ToList();
+					foreach (var node in selectedV)
+					{
+						node.Y = 2 - node.Y;
+					}
+
+					EditorWindow.Instance.UndoRedo.AddUndoRedo("VERTICAL FLIP", () =>
+					{
+						foreach (var node in selectedV)
+						{
+							node.Y = 2 - node.Y;
+						}
+
+					}, () =>
+					{
+						foreach (var node in selectedV)
+						{
+							node.Y = 2 - node.Y;
+						}
+
+					});
+
+					EditorWindow.Instance.SaveState(false);
 					break;
 			}
 		}

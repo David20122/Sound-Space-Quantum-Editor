@@ -1232,10 +1232,10 @@ namespace Sound_Space_Editor
 						foreach (var node in selected)
 						{
 							node.X = 2 - node.X;
-							editor.ShowToast("Horizontal Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 						}
+						if (selected.Count > 0)
+							editor.ShowToast("Horizontal Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 
-						var saveState = _saved;
 						UndoRedo.AddUndoRedo("HORIZONTAL FLIP", () =>
 						{
 							foreach (var node in selected)
@@ -1261,10 +1261,10 @@ namespace Sound_Space_Editor
 						foreach (var node in selected)
 						{
 							node.Y = 2 - node.Y;
-							editor.ShowToast("Vertical Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 						}
+						if (selected.Count > 0)
+							editor.ShowToast("Vertical Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 
-						var saveState = _saved;
 						UndoRedo.AddUndoRedo("VERTICAL FLIP", () =>
 						{
 							foreach (var node in selected)
@@ -2250,6 +2250,11 @@ namespace Sound_Space_Editor
 
 			GuiScreen = s;
 		}
+
+		public void SaveState(bool state)
+        {
+			_saved = state;
+        }
 	}
 
 	class SecureWebClient : WebClient
