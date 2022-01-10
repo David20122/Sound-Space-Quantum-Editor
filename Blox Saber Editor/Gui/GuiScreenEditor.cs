@@ -51,6 +51,9 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiButton OpenTimings;
 		public readonly GuiButton UseCurrentMs;
 
+		public readonly GuiButton HFlip;
+		public readonly GuiButton VFlip;
+
         public float AutoSaveTimer { get; private set; } = 0f;
 
 		private readonly GuiLabel _toast;
@@ -168,6 +171,9 @@ namespace Sound_Space_Editor.Gui
 			OpenTimings = new GuiButton(8, 0, 0, 200, 32, "OPEN BPM SETUP", false);
 			UseCurrentMs = new GuiButton(9, 0, 0, 200, 32, "USE CURRENT MS", false);
 
+			HFlip = new GuiButton(11, 0, 0, 128, 32, "HORIZONTAL FLIP", false);
+			VFlip = new GuiButton(12, 0, 0, 128, 32, "VERTICAL FLIP", false);
+
 			Autoplay = new GuiCheckBox(5, "Autoplay", 0, 0, 32, 32, Settings.Default.Autoplay);
 			ApproachSquares = new GuiCheckBox(5, "Approach Squares", 0, 0, 32, 32, Settings.Default.ApproachSquares);
 			GridNumbers = new GuiCheckBox(5, "Grid Numbers", 0, 0, 32, 32, Settings.Default.GridNumbers);
@@ -219,6 +225,8 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(OpenTimings);
 			Buttons.Add(UseCurrentMs);
 			Buttons.Add(BezierButton);
+			Buttons.Add(HFlip);
+			Buttons.Add(VFlip);
 
 			OnResize(EditorWindow.Instance.ClientSize);
 
@@ -271,9 +279,9 @@ namespace Sound_Space_Editor.Gui
 			GL.Color3(Color.FromArgb(Color1[0],Color1[1],Color1[2]));
 			var zoomW = fr.GetWidth("Zoom: ", 24);
 
-			fr.Render("Zoom: ", 10, (int)Grid.ClientRectangle.Y + 28 - 60, 24);
+			fr.Render("Zoom: ", 10, (int)Offset.ClientRectangle.Y - 60, 24);
 			GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
-			fr.Render($"{Math.Round(EditorWindow.Instance.Zoom, 1) * 100}%", 10 + zoomW, (int)Grid.ClientRectangle.Y + 28 - 60, 24);
+			fr.Render($"{Math.Round(EditorWindow.Instance.Zoom, 1) * 100}%", 10 + zoomW, (int)Offset.ClientRectangle.Y - 60, 24);
 			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 			fr.Render("Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
 			fr.Render("SFX Offset[ms]:", (int)SfxOffset.ClientRectangle.X, (int)SfxOffset.ClientRectangle.Y - 24, 24);
@@ -621,8 +629,6 @@ namespace Sound_Space_Editor.Gui
 
 			BeatSnapDivisor.ClientRectangle.Y = Grid.ClientRectangle.Y + 28;
             NoteAlign.ClientRectangle.Y = BeatSnapDivisor.ClientRectangle.Bottom + 5 + 24;
-
-			OpenTimings.ClientRectangle.X = UseCurrentMs.ClientRectangle.X;
 			NoteAlign.ClientRectangle.X = BeatSnapDivisor.ClientRectangle.X;
 
 			_toast.ClientRectangle.X = size.Width / 2f;
@@ -632,11 +638,6 @@ namespace Sound_Space_Editor.Gui
 			var heightdiff = size.Height / 1080f;
 
 			Offset.ClientRectangle.Size = new SizeF(128 * widthdiff, 40 * heightdiff);
-			SfxOffset.ClientRectangle.Size = Offset.ClientRectangle.Size;
-			JumpMSBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
-			RotateBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
-			BezierBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
-
 			Autoplay.ClientRectangle.Size = new SizeF(40 * widthdiff, 40 * heightdiff);
 			ApproachSquares.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			GridNumbers.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
@@ -654,21 +655,24 @@ namespace Sound_Space_Editor.Gui
 			UseCurrentMs.ClientRectangle.Size = new SizeF(200 * widthdiff, Offset.ClientRectangle.Height);
 			OpenTimings.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
 
+			SfxOffset.ClientRectangle.Size = Offset.ClientRectangle.Size;
+			JumpMSBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
+			RotateBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
+			BezierBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
 
-			Offset.ClientRectangle.Location = new PointF(10 * widthdiff, Grid.ClientRectangle.Y + 49 * heightdiff);
-			SfxOffset.ClientRectangle.Location = new PointF(Tempo.ClientRectangle.X + Tempo.ClientRectangle.Width / 2 - SfxOffset.ClientRectangle.Width / 2, Tempo.ClientRectangle.Top - SfxOffset.ClientRectangle.Height - 15 * heightdiff);
-			JumpMSBox.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, SfxOffset.ClientRectangle.Y - 80 * heightdiff);
-			RotateBox.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, JumpMSBox.ClientRectangle.Y - 80 * heightdiff);
-			BezierBox.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, RotateBox.ClientRectangle.Y - 80 * heightdiff);
+			HFlip.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
+			VFlip.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
 
-			Autoplay.ClientRectangle.Location = new PointF(10 * widthdiff, Offset.ClientRectangle.Bottom + 52 * heightdiff);
-			ApproachSquares.ClientRectangle.Location = new PointF(10 * widthdiff, Autoplay.ClientRectangle.Bottom + 10 * heightdiff);
-			GridNumbers.ClientRectangle.Location = new PointF(10 * widthdiff, ApproachSquares.ClientRectangle.Bottom + 10 * heightdiff);
-			Quantum.ClientRectangle.Location = new PointF(10 * widthdiff, GridNumbers.ClientRectangle.Bottom + 10 * heightdiff);
-			Numpad.ClientRectangle.Location = new PointF(10 * widthdiff, Quantum.ClientRectangle.Bottom + 10 * heightdiff);
-			QuantumGridLines.ClientRectangle.Location = new PointF(10 * widthdiff, Numpad.ClientRectangle.Bottom + 10 * heightdiff);
-			QuantumGridSnap.ClientRectangle.Location = new PointF(10 * widthdiff, QuantumGridLines.ClientRectangle.Bottom + 10 * heightdiff);
-			Metronome.ClientRectangle.Location = new PointF(10 * widthdiff, QuantumGridSnap.ClientRectangle.Bottom + 10 * heightdiff);
+
+			Offset.ClientRectangle.Location = new PointF(10 * widthdiff, Track.ClientRectangle.Bottom + 200 * heightdiff);
+			Autoplay.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, Offset.ClientRectangle.Bottom + 52 * heightdiff);
+			ApproachSquares.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, Autoplay.ClientRectangle.Bottom + 10 * heightdiff);
+			GridNumbers.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, ApproachSquares.ClientRectangle.Bottom + 10 * heightdiff);
+			Quantum.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, GridNumbers.ClientRectangle.Bottom + 10 * heightdiff);
+			Numpad.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, Quantum.ClientRectangle.Bottom + 10 * heightdiff);
+			QuantumGridLines.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, Numpad.ClientRectangle.Bottom + 10 * heightdiff);
+			QuantumGridSnap.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, QuantumGridLines.ClientRectangle.Bottom + 10 * heightdiff);
+			Metronome.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, QuantumGridSnap.ClientRectangle.Bottom + 10 * heightdiff);
 
 			BackButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Bottom + 84 * heightdiff);
 			CopyButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 75 * heightdiff);
@@ -676,11 +680,19 @@ namespace Sound_Space_Editor.Gui
 			AutoAdvance.ClientRectangle.Location = new PointF(BeatSnapDivisor.ClientRectangle.X + 20 * widthdiff, CopyButton.ClientRectangle.Y + 35 * heightdiff);
 
 			SetOffset.ClientRectangle.Location = new PointF(Offset.ClientRectangle.Right + 5 * widthdiff, Offset.ClientRectangle.Y);
-			JumpMSButton.ClientRectangle.Location = new PointF(JumpMSBox.ClientRectangle.Right + 5 * widthdiff, JumpMSBox.ClientRectangle.Y);
-			RotateButton.ClientRectangle.Location = new PointF(JumpMSButton.ClientRectangle.X, RotateBox.ClientRectangle.Y);
-			BezierButton.ClientRectangle.Location = new PointF(RotateButton.ClientRectangle.X, BezierBox.ClientRectangle.Y);
+			JumpMSButton.ClientRectangle.Location = new PointF(SfxVolume.ClientRectangle.Left - JumpMSButton.ClientRectangle.Width - 10 * widthdiff, Tempo.ClientRectangle.Top - JumpMSButton.ClientRectangle.Height - 95 * heightdiff);
+			RotateButton.ClientRectangle.Location = new PointF(JumpMSButton.ClientRectangle.X, JumpMSButton.ClientRectangle.Y - 80 * heightdiff);
+			BezierButton.ClientRectangle.Location = new PointF(RotateButton.ClientRectangle.X, RotateButton.ClientRectangle.Y - 80 * heightdiff);
 			UseCurrentMs.ClientRectangle.Location = new PointF(SetOffset.ClientRectangle.Right + 5 * widthdiff, SetOffset.ClientRectangle.Y);
 			OpenTimings.ClientRectangle.Location = new PointF(UseCurrentMs.ClientRectangle.X, UseCurrentMs.ClientRectangle.Bottom + 5 * heightdiff);
+
+			SfxOffset.ClientRectangle.Location = new PointF(JumpMSButton.ClientRectangle.Left - SfxOffset.ClientRectangle.Width - 5 * widthdiff, JumpMSButton.ClientRectangle.Y + 80 * heightdiff);
+			JumpMSBox.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, JumpMSButton.ClientRectangle.Y);
+			RotateBox.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, RotateButton.ClientRectangle.Y);
+			BezierBox.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, BezierButton.ClientRectangle.Y);
+
+			HFlip.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, Metronome.ClientRectangle.Bottom + 10 * heightdiff);
+			VFlip.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, HFlip.ClientRectangle.Bottom + 10 * heightdiff);
 		}
 
 		public void OnMouseLeave()
