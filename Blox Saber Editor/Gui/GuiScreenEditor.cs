@@ -165,7 +165,7 @@ namespace Sound_Space_Editor.Gui
 			RotateButton = new GuiButton(7, 0, 0, 64, 32, "ROTATE", false);
 			BezierButton = new GuiButton(10, 0, 0, 64, 32, "DRAW", false);
 
-			OpenTimings = new GuiButton(8, 0, 0, 200, 32, "OPEN TIMING SETUP PANEL", false);
+			OpenTimings = new GuiButton(8, 0, 0, 200, 32, "OPEN BPM SETUP", false);
 			UseCurrentMs = new GuiButton(9, 0, 0, 200, 32, "USE CURRENT MS", false);
 
 			Autoplay = new GuiCheckBox(5, "Autoplay", 0, 0, 32, 32, Settings.Default.Autoplay);
