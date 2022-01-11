@@ -115,7 +115,7 @@ namespace Sound_Space_Editor.Gui
 			};
 			RotateBox = new GuiTextBox(0, 0, 128, 32)
 			{
-				Text = "0",
+				Text = "90",
 				Centered = true,
 				Numeric = true,
 				CanBeNegative = false,
