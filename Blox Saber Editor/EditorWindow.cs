@@ -1421,18 +1421,13 @@ namespace Sound_Space_Editor
 			{
 				if (_controlDown)
 				{
-					if (Zoom < 0.1f)
+					if (Zoom < 0.1f || (Zoom == 0.1f && e.DeltaPrecise < 0))
 						Zoom += e.DeltaPrecise * 0.01f;
-					else if (Zoom == 0.1f)
-                    {
-						if (e.DeltaPrecise > 0)
-							Zoom += e.DeltaPrecise * 0.1f;
-						else
-							Zoom += e.DeltaPrecise * 0.01f;
-                    }
 					else
 						Zoom += e.DeltaPrecise * 0.1f;
 					Zoom = (float)Math.Round(Zoom, 2);
+					if (Zoom > 0.1f)
+						Zoom = (float)Math.Round(Zoom * 10) / 10;
 				}
 				else if (_altDown)
 				{
