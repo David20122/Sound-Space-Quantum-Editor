@@ -44,17 +44,20 @@ namespace Sound_Space_Editor.Gui
 				}
 			}
 
+			ScrollBar = new GuiSlider(0, 0, 20, 720)
+			{
+				MaxValue = 0,
+				Value = 0,
+			};
+
 			try
             {
 				SecureWebClient wc = new SecureWebClient();
 				ChangelogText = wc.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/master/changelog");
 				Changelog = new GuiLabel(0, 0, ChangelogText, "main", 16);
 
-				ScrollBar = new GuiSlider(0, 0, 20, 720)
-				{
-					MaxValue = ChangelogText.Split('\n').Length,
-					Value = ChangelogText.Split('\n').Length,
-				};
+				ScrollBar.MaxValue = ChangelogText.Split('\n').Length;
+				ScrollBar.Value = ChangelogText.Split('\n').Length;
 
 			} catch {
 				Changelog = new GuiLabel(0, 0, "Failed to load changelog", "main", 16);
@@ -170,6 +173,8 @@ namespace Sound_Space_Editor.Gui
 
 		public void AssembleChangelog()
         {
+			if (ChangelogText == null)
+				return;
 			var widthdiff = ClientRectangle.Width / 1920f;
 			var heightdiff = ClientRectangle.Height / 1080f;
 			string result = "";

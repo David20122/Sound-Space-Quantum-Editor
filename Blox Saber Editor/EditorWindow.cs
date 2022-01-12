@@ -187,15 +187,10 @@ namespace Sound_Space_Editor
 				string reply = wc.DownloadString("https://raw.githubusercontent.com/David20122/SSQEUpdater/main/version");
 				string trimmedReply = reply.TrimEnd();
 				downloadedVersionString = trimmedReply;
-			} 
-			catch
-            {
 
-            }
-
-			if (currentEditorVersion != downloadedVersionString)
-            {
-				object[] settings = {
+				if (currentEditorVersion != downloadedVersionString)
+				{
+					object[] settings = {
 					Settings.Default.MasterVolume,
 					Settings.Default.SFXVolume,
 					Settings.Default.GridNumbers,
@@ -212,16 +207,21 @@ namespace Sound_Space_Editor
 					Settings.Default.Metronome,
 					Settings.Default.LegacyBPM
 				};
-				
-				try
-                {
-					Process.Start("SSQEUpdater.exe", string.Join(" ", settings));
-					Environment.Exit(0);
+
+					try
+					{
+						Process.Start("SSQEUpdater.exe", string.Join(" ", settings));
+						Environment.Exit(0);
+					}
+					catch
+					{
+						MessageBox.Show("Failed to locate 'SSQEUpdater.exe'\nDid you rename or move the file?", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					}
 				}
-				catch
-                {
-					MessageBox.Show("Failed to locate 'SSQEUpdater.exe'\nDid you rename or move the file?", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
+			} 
+			catch
+            {
+				MessageBox.Show("Failed to check for updates", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 		}
 
