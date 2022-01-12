@@ -1440,17 +1440,19 @@ namespace Sound_Space_Editor
 					var time = (long)MusicPlayer.CurrentTime.TotalMilliseconds;
 					var maxTime = (long)MusicPlayer.TotalTime.TotalMilliseconds;
 
-					var bpm = GetCurrentBpm(time, false);
+					var closest = GetClosestBeat(time, true, e.DeltaPrecise < 0, false);
+					var bpm = GetCurrentBpm(0, false);
 
-					if (bpm.bpm > 33)
+					if (closest >= 0 || bpm.bpm > 33)
 					{
-						var bpmDivided = 60 / bpm.bpm * 1000 / GuiTrack.BeatDivisor;
+						/*var bpmDivided = 60 / bpm.bpm * 1000 / GuiTrack.BeatDivisor;
 
 						var offset = (bpmDivided + bpm.Ms) % bpmDivided;
 
 						time += (long)(e.DeltaPrecise * bpmDivided);
 
-						time = (long)(Math.Round((time - offset) / bpmDivided) * bpmDivided + offset);
+						time = (long)(Math.Round((time - offset) / bpmDivided) * bpmDivided + offset);*/
+						time = closest;
 					}
 					else
 					{
@@ -1594,7 +1596,7 @@ namespace Sound_Space_Editor
 			}
 
 			return closestMs;
-			*/
+			
 
 			var currentbpm = GetCurrentBpm(ms, draggingpoint);
 			float interval = 60000 / currentbpm.bpm / GuiTrack.BeatDivisor;
@@ -1609,6 +1611,70 @@ namespace Sound_Space_Editor
 					closestms -= interval;
 				else
 					closestms += interval;
+			*/
+			if (GuiTrack.BPMs.Count == 0 || GuiTrack.BPMs[0].Ms - 5 > ms)
+				return -1;
+			
+			float closestms = -1;
+			int index = 0;
+			var bpmints = new List<float>();
+
+			for (int i = 0; i < GuiTrack.BPMs.Count; i++)
+            {
+				var bpm = GuiTrack.BPMs[i];
+				if (bpm.bpm > 33 && (!draggingpoint || bpm.Ms < ms))
+                {
+					float curms = bpm.Ms;
+					var nextms = MusicPlayer.TotalTime.TotalMilliseconds;
+
+					if (i + 1 < GuiTrack.BPMs.Count && !draggingpoint)
+						nextms = GuiTrack.BPMs[i + 1].Ms;
+
+					float interval = 60000 / bpm.bpm / GuiTrack.BeatDivisor;
+
+					while (curms < nextms)
+                    {
+						bpmints.Add(curms);
+						curms += interval;
+                    }
+                }
+            }
+
+			bpmints.Add((float)MusicPlayer.TotalTime.TotalMilliseconds - 1);
+
+			for (int i = 0; i < bpmints.Count; i++)
+            {
+				if (i == 0)
+					closestms = bpmints[0];
+				else
+                {
+					if (Math.Abs(closestms - ms) > Math.Abs(bpmints[i] - closestms) / 2)
+                    {
+						closestms = bpmints[i];
+						index = i;
+					}
+                }
+            }
+
+			if (next)
+            {
+				if (negative)
+                {
+					if (closestms < ms && Math.Abs(closestms - ms) > 5)
+						return (long)closestms;
+					if (index > 0)
+						closestms = bpmints[index - 1];
+					else
+						closestms = 0;
+                }
+				else
+                {
+					if (closestms > ms && Math.Abs(closestms - ms) > 5)
+						return (long)closestms;
+					if (index + 1 < bpmints.Count)
+						closestms = bpmints[index + 1];
+                }
+            }
 
 			return (long)closestms;
 		}
