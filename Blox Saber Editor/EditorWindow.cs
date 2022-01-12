@@ -1947,12 +1947,15 @@ namespace Sound_Space_Editor
 									foreach (var item in bpmsplit)
                                     {
 										var bpmms = item.Split('|');
-										if (float.TryParse(bpmms[0], NumberStyles.Float, culture, out var bpm))
+										if (float.TryParse(bpmms[0], NumberStyles.Float, culture, out var bpm) && bpm > 0)
                                         {
 											if (bpmms.Count() > 1 && int.TryParse(bpmms[1], out var ms))
 												GuiTrack.BPMs.Add(new BPM(bpm, ms));
 											else
+                                            {
 												GuiTrack.BPMs.Add(new BPM(bpm, 0));
+												oldformat = true;
+											}
 										}
 										
 										GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
