@@ -11,7 +11,6 @@ using System.IO;
 using System.Threading;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Diagnostics;
 
 namespace Sound_Space_Editor.Gui
 {
@@ -64,6 +63,23 @@ namespace Sound_Space_Editor.Gui
 
 		//private object TimingPanel;
 		//TimingPoints TimingPoints;
+
+		public BigInteger FactorialApprox(int k)
+        {
+			var result = new BigInteger(1);
+			if (k < 10)
+            {
+				for (int i = 1; i <= k; i++)
+                {
+					result *= i;
+                }
+            }
+			else
+            {
+				result = (BigInteger)(Math.Sqrt(2 * Math.PI * k) * Math.Pow(k / Math.E, k));
+			}
+			return result;
+		}
 
 		public GuiScreenEditor() : base(0, EditorWindow.Instance.ClientSize.Height - 64, EditorWindow.Instance.ClientSize.Width - 512 - 64, 64)
 		{
@@ -381,58 +397,6 @@ namespace Sound_Space_Editor.Gui
 			base.OnMouseClick(x, y);
 		}
 
-		public BigInteger FactorialApprox(int k)
-		{
-			var result = new BigInteger(1);
-			if (k < 10)
-			{
-				for (int i = 1; i <= k; i++)
-				{
-					result *= i;
-				}
-			}
-			else
-			{
-				var divsqrt = Math.Sqrt(2 * Math.PI * k);
-				var decimalsleft = DecimalPlaces(divsqrt);
-				BigInteger bintbotleft = RaiseToPower(10, decimalsleft);
-				BigInteger binttopleft = (BigInteger)(divsqrt * (long)bintbotleft);
-
-				var dive = k / Math.E;
-				var decimalsright = DecimalPlaces(dive);
-				BigInteger bintbotright = RaiseToPower(10, decimalsright);
-				BigInteger binttopright = (BigInteger)(dive * (long)bintbotright);
-
-				result = RaiseToPower(binttopleft, k) * binttopright / (RaiseToPower(bintbotleft, k) * bintbotright);
-			}
-			return result;
-		}
-
-		public int DecimalPlaces(double n)
-        {
-			n = Math.Abs(n);
-			var places = 0;
-			while (n > 0)
-            {
-				n *= 10;
-				n -= (int)n;
-				places++;
-            }
-			if (places > 16)
-				places = 16;
-			return places;
-        }
-
-		public BigInteger RaiseToPower(BigInteger n, int exp)
-        {
-			BigInteger result = 1;
-			for (int i = 0; i < exp; i++)
-            {
-				result *= n;
-            }
-			return result;
-        }
-
 		protected override void OnButtonClicked(int id)
 		{
 			switch (id)
@@ -618,22 +582,10 @@ namespace Sound_Space_Editor.Gui
 									var note = notes[v];
 									var bic = FactorialApprox(k) / (FactorialApprox(v) * FactorialApprox(k - v));
 
-									var decimalsleft = DecimalPlaces(1 - t);
-									BigInteger bintbotleft = RaiseToPower(10, decimalsleft);
-									BigInteger binttopleft = (BigInteger)((1 - t) * (long)bintbotleft);
-
-									var decimalsright = DecimalPlaces(t);
-									BigInteger bintbotright = RaiseToPower(10, decimalsright);
-									BigInteger binttopright = (BigInteger)(t * (long)bintbotright);
-
-									BigInteger topfinal = bic * RaiseToPower(binttopleft, k - v) * RaiseToPower(binttopright, v);
-									BigInteger botfinal = RaiseToPower(bintbotleft, k - v) * RaiseToPower(bintbotright, v);
-									var div = (float)(1000 * topfinal / botfinal) / 1000f;
-									xf += div * note.X;
-									yf += div * note.Y;
+									xf += (float)((double)bic * (Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.X));
+									yf += (float)((double)bic * (Math.Pow(1 - t, k - v) * Math.Pow(t, v) * note.Y));
 								}
 								beziernotes.Add(new Note(xf, yf, (long)tf));
-								Console.WriteLine(t);
 							}
 							EditorWindow.Instance.Notes.RemoveAll(notes);
 							EditorWindow.Instance.Notes.AddAll(beziernotes);
@@ -648,15 +600,9 @@ namespace Sound_Space_Editor.Gui
 							});
 							EditorWindow.Instance.SaveState(false);
 						}
-						catch (OverflowException ex)
+						catch (OverflowException)
                         {
 							ShowToast("TOO MANY NODES", Color.FromArgb(255, 200, 0));
-							/*
-							var st = new StackTrace(ex, true);
-							var frame = st.GetFrame(st.FrameCount - 1);
-							var line = frame.GetFileLineNumber();
-							Console.WriteLine(line);
-							*/
 						}
 						catch
                         {
