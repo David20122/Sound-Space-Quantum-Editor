@@ -1634,7 +1634,7 @@ namespace Sound_Space_Editor
 
 					while (curms < nextms)
                     {
-						bpmints.Add(curms);
+						bpmints.Add((long)curms);
 						curms += interval;
                     }
                 }
@@ -1665,7 +1665,7 @@ namespace Sound_Space_Editor
 					if (index > 0)
 						closestms = bpmints[index - 1];
 					else
-						closestms = 0;
+						closestms = -1;
                 }
 				else
                 {
