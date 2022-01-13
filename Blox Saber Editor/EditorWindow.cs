@@ -121,6 +121,8 @@ namespace Sound_Space_Editor
 		public string currentEditorVersion;
 		public string downloadedVersionString;
 
+		public string currentData;
+
 		public EditorWindow(long offset, string launcherDir) : base(1280, 720, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor " + Application.ProductVersion)
 		{
 			LauncherDir = launcherDir;
@@ -1495,7 +1497,7 @@ namespace Sound_Space_Editor
 
 		public bool WillClose()
 		{
-			if (!_saved && _soundId != -1)
+			if (!_saved && _soundId != -1 && currentData != ParseData())
 			{
 				var wasPlaying = MusicPlayer.IsPlaying;
 
@@ -2077,6 +2079,8 @@ namespace Sound_Space_Editor
 
 			_draggedNote = null;
 
+			currentData = null;
+
 			if (!fromFile)
 			{
 				UpdateActivity("Untitled");
@@ -2117,6 +2121,8 @@ namespace Sound_Space_Editor
 				GuiTrack.BPMs.Clear();
 				GuiTrack.NoteOffset = 0;
 				GuiTrack.TextBpm = 0;
+
+				currentData = data;
 			}
 			catch
 			{
