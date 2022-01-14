@@ -571,12 +571,12 @@ namespace Sound_Space_Editor.Gui
 							var beziernotes = new List<Note>();
 							var k = notes.Count - 1;
 							float tdiff = notes[k].Ms - notes[0].Ms;
-							float d = 1f / (divisor * k);
-							for (float t = 0; t <= 1; t += d)
+							double d = 1f / (divisor * k);
+							for (double t = 0; t <= 1; t += d)
 							{
 								float xf = 0;
 								float yf = 0;
-								float tf = notes[0].Ms + tdiff * t;
+								double tf = notes[0].Ms + tdiff * t;
 								for (int v = 0; v <= k; v++)
 								{
 									var note = notes[v];
