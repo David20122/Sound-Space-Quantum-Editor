@@ -214,5 +214,17 @@ namespace Sound_Space_Editor.Properties {
                 this["LegacyBPM"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DynamicBezier {
+            get {
+                return ((bool)(this["DynamicBezier"]));
+            }
+            set {
+                this["DynamicBezier"] = value;
+            }
+        }
     }
 }

@@ -207,7 +207,8 @@ namespace Sound_Space_Editor
 					Settings.Default.QuantumGridLines,
 					Settings.Default.QuantumGridSnap,
 					Settings.Default.Metronome,
-					Settings.Default.LegacyBPM
+					Settings.Default.LegacyBPM,
+					Settings.Default.DynamicBezier,
 				};
 
 					try
@@ -791,7 +792,7 @@ namespace Sound_Space_Editor
 						editor.NoteAlign.Dragging = true;
 						OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
 					}
-					else if (!editor.RotateButton.ClientRectangle.Contains(e.Position) && !editor.BezierButton.ClientRectangle.Contains(e.Position) && !editor.BezierBox.ClientRectangle.Contains(e.Position) && !editor.HFlip.ClientRectangle.Contains(e.Position) && !editor.VFlip.ClientRectangle.Contains(e.Position))
+					else if (!editor.RotateButton.ClientRectangle.Contains(e.Position) && !editor.BezierButton.ClientRectangle.Contains(e.Position) && !editor.BezierBox.ClientRectangle.Contains(e.Position) && !editor.HFlip.ClientRectangle.Contains(e.Position) && !editor.VFlip.ClientRectangle.Contains(e.Position) && !editor.BezierClearButton.ClientRectangle.Contains(e.Position) && !editor.BezierStoreButton.ClientRectangle.Contains(e.Position))
 					{
 						SelectedNotes.Clear();
 						_draggedNotes.Clear();
