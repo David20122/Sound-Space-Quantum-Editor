@@ -9,6 +9,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -17,7 +18,6 @@ namespace Sound_Space_Editor.Gui
 	class GuiScreenEditor : GuiScreen
 	{
 		public GuiScreen GuiScreen { get; private set; }
-        public bool AutoSave = false;
 		public readonly GuiGrid Grid = new GuiGrid(300, 300);
 		public readonly GuiTrack Track = new GuiTrack(0, 64);
 		public readonly GuiSlider Tempo;

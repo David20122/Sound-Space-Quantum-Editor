@@ -31,6 +31,9 @@ namespace Sound_Space_Editor.Gui
 		private GuiTextBox GridOpacityTextBox;
 		private GuiTextBox TrackOpacityTextBox;
 
+		private GuiCheckBox AutosaveCheckbox;
+		private GuiTextBox AutosaveInterval;
+
 		public GuiScreenSettings() : base(0, 0, EditorWindow.Instance.ClientSize.Width, EditorWindow.Instance.ClientSize.Height)
 		{
 			color1TextBox = new GuiTextBox(0, 0, 200, 50)
@@ -89,14 +92,24 @@ namespace Sound_Space_Editor.Gui
 				CanBeNegative = false
 			};
 
+			AutosaveInterval = new GuiTextBox(0, 0, 200, 50)
+			{
+				Text = EditorSettings.AutosaveInterval.ToString(),
+				Centered = true,
+				Numeric = true,
+				CanBeNegative = false
+			};
+
 			WaveformCheckbox = new GuiCheckBox(1, "Waveform", 0, 0, 72, 72, 32, EditorSettings.Waveform);
 			//BPMFormCheckbox = new GuiCheckBox(1, "Use Timings Form", 0, 0, 72, 72, 32, EditorSettings.BPMForm);
+			AutosaveCheckbox = new GuiCheckBox(3, "Enable Autosave", 0, 0, 72, 72, 32, EditorSettings.EnableAutosave);
 
 			Buttons.Add(_openFolderButton);
 			Buttons.Add(_resetButton);
 			Buttons.Add(_backButton);
 			Buttons.Add(WaveformCheckbox);
 			//Buttons.Add(BPMFormCheckbox);
+			Buttons.Add(AutosaveCheckbox);
 
 			if (File.Exists(Path.Combine(EditorWindow.Instance.LauncherDir, "background_menu.png")))
 			{
@@ -137,6 +150,8 @@ namespace Sound_Space_Editor.Gui
 			fr.Render("Grid Opacity:", (int)GridOpacityTextBox.ClientRectangle.X, (int)GridOpacityTextBox.ClientRectangle.Y - 26, 24);
 			fr.Render("Track Opacity:", (int)TrackOpacityTextBox.ClientRectangle.X, (int)TrackOpacityTextBox.ClientRectangle.Y - 26, 24);
 
+			fr.Render("Autosave Interval (min):", (int)AutosaveInterval.ClientRectangle.X, (int)AutosaveInterval.ClientRectangle.Y - 26, 24);
+
 			color1TextBox.Render(delta, mouseX, mouseY);
 			color2TextBox.Render(delta, mouseX, mouseY);
 
@@ -146,6 +161,8 @@ namespace Sound_Space_Editor.Gui
 			EditorBGOpacityTextBox.Render(delta, mouseX, mouseY);
 			TrackOpacityTextBox.Render(delta, mouseX, mouseY);
 			GridOpacityTextBox.Render(delta, mouseX, mouseY);
+
+			AutosaveInterval.Render(delta, mouseX, mouseY);
 
 			ShowColor();
 			ShowNoteColor();
@@ -191,6 +208,12 @@ namespace Sound_Space_Editor.Gui
 
 			GridOpacityTextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
 			TrackOpacityTextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
+
+			AutosaveInterval.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
+			AutosaveCheckbox.ClientRectangle.Size = new SizeF(72 * widthdiff, 72 * heightdiff);
+
+			AutosaveInterval.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - AutosaveInterval.ClientRectangle.Width / 2, 360 * heightdiff);
+			AutosaveCheckbox.ClientRectangle.Location = new PointF(AutosaveInterval.ClientRectangle.X, 195 * heightdiff);
 
 			//BPMFormCheckbox.ClientRectangle.Location = new PointF(760 * widthdiff, 240 * heightdiff);
 
@@ -392,6 +415,8 @@ namespace Sound_Space_Editor.Gui
 			GridOpacityTextBox.OnKeyTyped(key);
 			TrackOpacityTextBox.OnKeyTyped(key);
 
+			AutosaveInterval.OnKeyTyped(key);
+
 			ShowColor();
 			ShowNoteColor();
 			ShowOpacities();
@@ -407,6 +432,8 @@ namespace Sound_Space_Editor.Gui
 			EditorBGOpacityTextBox.OnKeyDown(key, control);
 			GridOpacityTextBox.OnKeyDown(key, control);
 			TrackOpacityTextBox.OnKeyDown(key, control);
+
+			AutosaveInterval.OnKeyDown(key, control);
 
 			ShowColor();
 			ShowNoteColor();
@@ -424,6 +451,8 @@ namespace Sound_Space_Editor.Gui
 			GridOpacityTextBox.OnMouseClick(x, y);
 			TrackOpacityTextBox.OnMouseClick(x, y);
 
+			AutosaveInterval.OnMouseClick(x, y);
+
 			base.OnMouseClick(x, y);
 		}
 
@@ -432,18 +461,21 @@ namespace Sound_Space_Editor.Gui
 			switch (id)
 			{
 				case 0:
-					int editorbgOpacity = int.Parse(EditorBGOpacityTextBox.Text);
-					int gridOpacity = int.Parse(GridOpacityTextBox.Text);
-					int trackOpacity = int.Parse(TrackOpacityTextBox.Text);
+					int editorbgOpacity = int.TryParse(EditorBGOpacityTextBox.Text, out var val1) ? val1 : EditorSettings.EditorBGOpacity;
+					int gridOpacity = int.TryParse(GridOpacityTextBox.Text, out var val2) ? val2 : EditorSettings.GridOpacity;
+					int trackOpacity = int.TryParse(TrackOpacityTextBox.Text, out var val3) ? val3 : EditorSettings.TrackOpacity;
+					int autosaveInterval = int.TryParse(AutosaveInterval.Text, out var val4) && val4 > 0? val4 : EditorSettings.AutosaveInterval;
 					EditorSettings.Color1 = color1TextBox.Text;
 					EditorSettings.Color2 = color2TextBox.Text;
 					EditorSettings.NoteColor1 = NoteColor1TextBox.Text;
 					EditorSettings.NoteColor2 = NoteColor2TextBox.Text;
 					EditorSettings.Waveform = WaveformCheckbox.Toggle;
 					//EditorSettings.BPMForm = BPMFormCheckbox.Toggle;
+					EditorSettings.EnableAutosave = AutosaveCheckbox.Toggle;
 					EditorSettings.EditorBGOpacity = editorbgOpacity;
 					EditorSettings.GridOpacity = gridOpacity;
 					EditorSettings.TrackOpacity = trackOpacity;
+					EditorSettings.AutosaveInterval = autosaveInterval;
 					EditorSettings.Save();
 					EditorSettings.Load();
 					EditorWindow.Instance.UpdateColors();
@@ -460,9 +492,13 @@ namespace Sound_Space_Editor.Gui
                     color2TextBox.Text = "255,0,255";
 					NoteColor1TextBox.Text = "255,0,255";
 					NoteColor2TextBox.Text = "0,255,200";
+					AutosaveInterval.Text = "5";
 					break;
 				case 2:
 					System.Diagnostics.Process.Start(Environment.CurrentDirectory);
+					break;
+				case 3:
+
 					break;
 			}
 			base.OnButtonClicked(id);

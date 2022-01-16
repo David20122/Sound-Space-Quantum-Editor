@@ -2269,6 +2269,38 @@ namespace Sound_Space_Editor
 			return final;
         }
 
+		private void Autosave()
+        {
+			if (GuiScreen is GuiScreenEditor editor)
+            {
+				if (!_saved && _file == null)
+				{
+					var wasPlaying = MusicPlayer.IsPlaying;
+
+					MusicPlayer.Pause();
+
+					if (PromptSave())
+					{
+						_saved = true;
+
+						editor.ShowToast("AUTOSAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+					}
+
+					if (wasPlaying)
+						MusicPlayer.Play();
+				}
+				else
+				{
+					if (WriteFile(_file))
+					{
+						_saved = true;
+
+						editor.ShowToast("AUTOSAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+					}
+				}
+			}
+		}
+
 		private void WriteIniFile()
 		{
 			if (_file == null)
@@ -2305,6 +2337,18 @@ namespace Sound_Space_Editor
 			return false;
 		}
 
+		private void RunAutosave()
+        {
+			if (EditorSettings.EnableAutosave && GuiScreen is GuiScreenEditor)
+            {
+				var delay = Task.Delay(EditorSettings.AutosaveInterval * 60000).ContinueWith(_ =>
+				{
+					Autosave();
+					RunAutosave();
+				});
+            }
+        }
+
 		public void OpenGuiScreen(GuiScreen s)
 		{
 			if (GuiScreen is GuiScreenEditor)
@@ -2331,6 +2375,8 @@ namespace Sound_Space_Editor
 			IsPaused = s != null && s.Pauses;
 
 			GuiScreen = s;
+
+			RunAutosave();
 		}
 
 		public void SaveState(bool state)
