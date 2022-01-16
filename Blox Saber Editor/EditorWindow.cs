@@ -2273,30 +2273,11 @@ namespace Sound_Space_Editor
         {
 			if (GuiScreen is GuiScreenEditor editor)
             {
-				if (!_saved && _file == null)
+				if (WriteFile(_file))
 				{
-					var wasPlaying = MusicPlayer.IsPlaying;
+					_saved = true;
 
-					MusicPlayer.Pause();
-
-					if (PromptSave())
-					{
-						_saved = true;
-
-						editor.ShowToast("AUTOSAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-					}
-
-					if (wasPlaying)
-						MusicPlayer.Play();
-				}
-				else
-				{
-					if (WriteFile(_file))
-					{
-						_saved = true;
-
-						editor.ShowToast("AUTOSAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-					}
+					editor.ShowToast("AUTOSAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 				}
 			}
 		}
