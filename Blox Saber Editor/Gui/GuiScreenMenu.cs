@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Color = System.Drawing.Color;
+using Sound_Space_Editor.Properties;
 
 namespace Sound_Space_Editor.Gui
 {
@@ -30,6 +31,8 @@ namespace Sound_Space_Editor.Gui
 		private GuiButton _loadMapButton = new GuiButton(1, 0, 0, 600, 100, "LOAD MAP", "square", 100);
 		private GuiButton _importButton = new GuiButton(2, 0, 0, 600, 100, "IMPORT MAP", "square", 100);
         private GuiButton _SettingsButton = new GuiButton(3, 0, 0, 600, 100, "SETTINGS", "square", 100);
+
+		private GuiButton _AutosavedButton = new GuiButton(4, 0, 0, 0, 0, "AUTOSAVED MAP", "square", 100);
 
 		public GuiSlider ScrollBar;
 
@@ -67,6 +70,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(_loadMapButton);
 			Buttons.Add(_importButton);
 			Buttons.Add(_SettingsButton);
+			Buttons.Add(_AutosavedButton);
 			Buttons.Add(ScrollBar);
 
 			CHANGELOGlabel.Color = Color.FromArgb(255, 255, 255);
@@ -132,8 +136,6 @@ namespace Sound_Space_Editor.Gui
 			var QELabelFontSize = 36f * heightdiff;
 			var ChangelogFontSize = 16f;
 
-			Console.WriteLine($"{widthdiff}, {heightdiff}");
-
 			CHANGELOGlabel.ClientRectangle.Location = new PointF(60 * widthdiff, 200 * heightdiff);
 			CHANGELOGlabel.FontSize = (int)CHANGELOGLabelFontSize;
 			//CHANGELOGlabelOutline.ClientRectangle.Location = new PointF(ClientRectangle.Left + 157, ClientRectangle.Top + 210);
@@ -152,11 +154,17 @@ namespace Sound_Space_Editor.Gui
 			_importButton.ClientRectangle.Location = new PointF(1190 * widthdiff, 410 * heightdiff);
 			_SettingsButton.ClientRectangle.Location = new PointF(1190 * widthdiff, 525 * heightdiff);
 
+			if (Settings.Default.AutosavedFile != "")
+				_AutosavedButton.ClientRectangle.Location = new PointF(1190 * widthdiff, 640 * heightdiff);
+
 			// resizing
 			_createMapButton.ClientRectangle.Size = new SizeF(600 * widthdiff, 100 * heightdiff);
 			_loadMapButton.ClientRectangle.Size = new SizeF(600 * widthdiff, 100 * heightdiff);
 			_importButton.ClientRectangle.Size = new SizeF(600 * widthdiff, 100 * heightdiff);
 			_SettingsButton.ClientRectangle.Size = new SizeF(600 * widthdiff, 100 * heightdiff);
+
+			if (Settings.Default.AutosavedFile != "")
+				_AutosavedButton.ClientRectangle.Size = new SizeF(600 * widthdiff, 100 * heightdiff);
 
 			ScrollBar.ClientRectangle.Location = new PointF(950 * widthdiff, 230 * heightdiff);
 			ScrollBar.ClientRectangle.Size = new SizeF(20 * widthdiff, 720 * heightdiff);
@@ -277,6 +285,10 @@ namespace Sound_Space_Editor.Gui
 					break;
 				case 3:
 					EditorWindow.Instance.OpenGuiScreen(new GuiScreenSettings());
+					break;
+				case 4:
+					if (Settings.Default.AutosavedFile != "")
+						EditorWindow.Instance.LoadMap(Settings.Default.AutosavedFile, false);
 					break;
 			}
 			base.OnButtonClicked(id);

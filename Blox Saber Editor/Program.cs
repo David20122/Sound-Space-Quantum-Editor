@@ -37,6 +37,7 @@ namespace Sound_Space_Editor
 				Settings.Default.Metronome = bool.Parse(args[13]);
 				Settings.Default.LegacyBPM = bool.Parse(args[14]);
 				Settings.Default.DynamicBezier = bool.Parse(args[15]);
+				Settings.Default.AutosavedFile = args[16];
 			}
 
 			try

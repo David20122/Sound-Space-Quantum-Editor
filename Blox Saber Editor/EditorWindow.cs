@@ -209,7 +209,8 @@ namespace Sound_Space_Editor
 					Settings.Default.Metronome,
 					Settings.Default.LegacyBPM,
 					Settings.Default.DynamicBezier,
-				};
+					Settings.Default.AutosavedFile,
+					};
 
 					try
 					{
@@ -533,7 +534,9 @@ namespace Sound_Space_Editor
 								   (editor.ClientRectangle.Width - editor.ClientRectangle.Height)));
 
 					MusicPlayer.Stop();
-					MusicPlayer.CurrentTime = TimeSpan.FromTicks((long)(MusicPlayer.TotalTime.Ticks * (decimal)editor.Timeline.Progress));
+
+					var time = MathHelper.Clamp(MusicPlayer.TotalTime.TotalMilliseconds * editor.Timeline.Progress, 0, MusicPlayer.TotalTime.TotalMilliseconds - 1);
+					MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(time);
 				}
 				if (editor.MasterVolume.Dragging)
 				{
@@ -989,10 +992,6 @@ namespace Sound_Space_Editor
 					Settings.Default.SFXVolume = (decimal)editor.SfxVolume.Value / editor.SfxVolume.MaxValue;
 
 					Settings.Default.Save();
-				}
-				if (editor.Timeline.Dragging)
-				{
-					MusicPlayer.CurrentTime = TimeSpan.FromTicks((long)(MusicPlayer.TotalTime.Ticks * (decimal)editor.Timeline.Progress));
 				}
 
 				editor.BeatSnapDivisor.Dragging = false;
@@ -1914,11 +1913,11 @@ namespace Sound_Space_Editor
 
 				var time = _dragStartMs - (int)msDiff;
 
-				time = (int)Math.Max(0, Math.Min(MusicPlayer.TotalTime.TotalMilliseconds, time));
+				time = (int)Math.Max(0, Math.Min(MusicPlayer.TotalTime.TotalMilliseconds - 1, time));
 
 				var bpm = GetCurrentBpm(time, false);
 
-				if (bpm.bpm > 33 && time >= bpm.Ms && time < MusicPlayer.TotalTime.TotalMilliseconds)
+				if (bpm.bpm > 33 && time >= bpm.Ms && time < MusicPlayer.TotalTime.TotalMilliseconds - 1)
 				{
 					var bpmDivided = 60 / bpm.bpm * 1000 / GuiTrack.BeatDivisor;
 
@@ -1979,8 +1978,6 @@ namespace Sound_Space_Editor
 			{
 				_file = file;
 				_saved = true;
-
-				Settings.Default.LastFile = file;
 
 				GuiTrack.BPMs.Clear();
 				gse.Offset.Text = "0";
@@ -2191,7 +2188,6 @@ namespace Sound_Space_Editor
 				if (result == DialogResult.OK)
 				{
 					_file = sfd.FileName;
-					Settings.Default.LastFile = _file;
 
 					WriteFile(sfd.FileName);
 
@@ -2273,7 +2269,13 @@ namespace Sound_Space_Editor
         {
 			if (GuiScreen is GuiScreenEditor editor)
             {
-				if (WriteFile(_file))
+				if (_file == null)
+                {
+					Settings.Default.AutosavedFile = ParseData();
+
+					editor.ShowToast("AUTOSAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+				}
+				else if (WriteFile(_file))
 				{
 					_saved = true;
 

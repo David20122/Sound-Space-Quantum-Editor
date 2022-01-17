@@ -23,7 +23,7 @@
     <Setting Name="BGDim" Type="System.Single" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="LastFile" Type="System.String" Scope="User">
+    <Setting Name="AutosavedFile" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="Quantum" Type="System.Boolean" Scope="User">

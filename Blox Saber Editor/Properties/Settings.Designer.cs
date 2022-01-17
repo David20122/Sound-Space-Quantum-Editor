@@ -110,12 +110,12 @@ namespace Sound_Space_Editor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LastFile {
+        public string AutosavedFile {
             get {
-                return ((string)(this["LastFile"]));
+                return ((string)(this["AutosavedFile"]));
             }
             set {
-                this["LastFile"] = value;
+                this["AutosavedFile"] = value;
             }
         }
         
