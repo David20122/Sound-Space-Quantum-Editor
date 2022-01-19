@@ -108,69 +108,73 @@ namespace Sound_Space_Editor.Gui
 
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
+			if (Visible)
+            {
+				if (EditorWindow.Instance.GuiScreen is GuiScreenSettings settings)
+				{
+					Color1 = new int[] { 255, 255, 255 };
+					Color2 = new int[] { 255, 255, 255 };
 
-			if (EditorWindow.Instance.GuiScreen is GuiScreenSettings settings)
-			{
-				Color1 = new int[] { 255, 255, 255 };
-				Color2 = new int[] { 255, 255, 255 };
+				}
+				else
+				{
 
-			} else {
+					Color1 = EditorWindow.Instance.Color1;
+					Color2 = EditorWindow.Instance.Color2;
+				}
 
-				Color1 = EditorWindow.Instance.Color1;
-				Color2 = EditorWindow.Instance.Color2;
+				var rect = ClientRectangle;
+
+				var x = rect.X + rect.Height / 4;
+				var y = rect.Y + rect.Height / 2;
+
+				GL.Color3(0.1f, 0.1f, 0.1f);
+				Glu.RenderQuad(rect);
+				GL.Color3(0.5f, 0.5f, 0.5f);
+				Glu.RenderOutline(rect);
+
+				var fr = EditorWindow.Instance.FontRenderer;
+				if (Timings)
+					fr = TimingPoints.Instance.FontRenderer;
+
+				var renderedText = _text;
+
+				/*while (fr.GetWidth(renderedText, 24) != null && fr.GetWidth(renderedText, 24) > rect.Width - rect.Height / 2)
+				{
+					renderedText = renderedText.Substring(1, renderedText.Length - 1);
+				}*/
+
+				var offX = (int)(ClientRectangle.Width / 2 - fr.GetWidth(renderedText, 24) / 2f - rect.Height / 4);
+
+				if (Centered)
+					GL.Translate(offX, 0, 0);
+
+				GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+				fr.Render(renderedText, (int)x, (int)(y - fr.GetHeight(24) / 2f), 24);
+
+				if (Focused)
+				{
+					var textToCursor = renderedText.Substring(0,
+						Math.Max(0, Math.Min(renderedText.Length, renderedText.Length - (_text.Length - _cursorPos))));
+					var textToCursorSize = fr.GetWidth(textToCursor, 24);
+
+					var cursorHeight = fr.GetHeight(24) * 1.4f;
+
+					var alpha = (float)(Math.Sin(_timer * MathHelper.TwoPi) + 1) / 2;
+
+					GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+					Glu.RenderQuad(x + textToCursorSize, y - cursorHeight / 2, 1, cursorHeight);
+
+					_timer += delta * 1.25f;
+				}
+				else
+				{
+					_timer = 0;
+				}
+
+				if (Centered)
+					GL.Translate(-offX, 0, 0);
 			}
-
-			var rect = ClientRectangle;
-
-			var x = rect.X + rect.Height / 4;
-			var y = rect.Y + rect.Height / 2;
-
-			GL.Color3(0.1f, 0.1f, 0.1f);
-			Glu.RenderQuad(rect);
-			GL.Color3(0.5f, 0.5f, 0.5f);
-			Glu.RenderOutline(rect);
-
-			var fr = EditorWindow.Instance.FontRenderer;
-			if (Timings)
-				fr = TimingPoints.Instance.FontRenderer;
-
-			var renderedText = _text;
-
-			/*while (fr.GetWidth(renderedText, 24) != null && fr.GetWidth(renderedText, 24) > rect.Width - rect.Height / 2)
-			{
-				renderedText = renderedText.Substring(1, renderedText.Length - 1);
-			}*/
-
-			var offX = (int)(ClientRectangle.Width / 2 - fr.GetWidth(renderedText, 24) / 2f - rect.Height / 4);
-
-			if (Centered)
-				GL.Translate(offX, 0, 0);
-
-			GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
-			fr.Render(renderedText, (int)x, (int)(y - fr.GetHeight(24) / 2f), 24);
-
-			if (Focused)
-			{
-				var textToCursor = renderedText.Substring(0,
-					Math.Max(0, Math.Min(renderedText.Length, renderedText.Length - (_text.Length - _cursorPos))));
-				var textToCursorSize = fr.GetWidth(textToCursor, 24);
-
-				var cursorHeight = fr.GetHeight(24) * 1.4f;
-
-				var alpha = (float)(Math.Sin(_timer * MathHelper.TwoPi) + 1) / 2;
-
-				GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-				Glu.RenderQuad(x + textToCursorSize, y - cursorHeight / 2, 1, cursorHeight);
-
-				_timer += delta * 1.25f;
-			}
-			else
-			{
-				_timer = 0;
-			}
-
-			if (Centered)
-				GL.Translate(-offX, 0, 0);
 		}
 
 		public void OnMouseClick(float x, float y)

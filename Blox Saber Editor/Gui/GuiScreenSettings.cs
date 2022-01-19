@@ -132,7 +132,9 @@ namespace Sound_Space_Editor.Gui
 				GL.Color4(Color.FromArgb(255, 255, 255, 255));
 				Glu.RenderTexturedQuad(0, 0, size.Width, size.Height, 0, 0, 1, 1, _textureId);
 
-			} else {
+			}
+			else
+			{
 
 				GL.Color4(Color.FromArgb(255, 30, 30, 30));
 				Glu.RenderQuad(0, 0, size.Width, size.Height);
@@ -221,7 +223,7 @@ namespace Sound_Space_Editor.Gui
 		}
 
 		void ShowColor()
-        {
+		{
 			var fr = EditorWindow.Instance.FontRenderer;
 
 			var size = EditorWindow.Instance.ClientSize;
@@ -230,7 +232,7 @@ namespace Sound_Space_Editor.Gui
 			var heightdiff = size.Height / 1080f;
 
 			try
-            {
+			{
 				string c1 = color1TextBox.Text;
 				string[] c1values = c1.Split(',');
 				int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
@@ -239,7 +241,7 @@ namespace Sound_Space_Editor.Gui
 				Glu.RenderQuad(color1TextBox.ClientRectangle.X + 210 * widthdiff, color1TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 			catch
-            {
+			{
 				GL.Color3(Color.FromArgb(255, 0, 0));
 				fr.Render("invalid", (int)(color1TextBox.ClientRectangle.X + 300 * widthdiff), (int)(color1TextBox.ClientRectangle.Y + 15 * heightdiff), 20);
 				GL.Color3(Color.FromArgb(0, 0, 0));
@@ -248,8 +250,8 @@ namespace Sound_Space_Editor.Gui
 
 			// color 2
 
-            try
-            {
+			try
+			{
 				string c2 = color2TextBox.Text;
 				string[] c2values = c2.Split(',');
 				int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
@@ -257,8 +259,8 @@ namespace Sound_Space_Editor.Gui
 				GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 				Glu.RenderQuad(color2TextBox.ClientRectangle.X + 210 * widthdiff, color2TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
-            catch
-            {
+			catch
+			{
 				GL.Color3(Color.FromArgb(255, 0, 0));
 				fr.Render("invalid", (int)(color2TextBox.ClientRectangle.X + 300 * widthdiff), (int)(color2TextBox.ClientRectangle.Y + 15 * heightdiff), 20);
 				GL.Color3(Color.FromArgb(0, 0, 0));
@@ -267,7 +269,7 @@ namespace Sound_Space_Editor.Gui
 		}
 
 		void ShowNoteColor()
-        {
+		{
 			var fr = EditorWindow.Instance.FontRenderer;
 
 			var size = EditorWindow.Instance.ClientSize;
@@ -276,16 +278,16 @@ namespace Sound_Space_Editor.Gui
 			var heightdiff = size.Height / 1080f;
 
 			try
-            {
+			{
 				string c1 = NoteColor1TextBox.Text;
 				string[] c1values = c1.Split(',');
 				int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
 
 				GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 				Glu.RenderQuad(NoteColor1TextBox.ClientRectangle.X + 210 * widthdiff, NoteColor1TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
-			} 
+			}
 			catch
-            {
+			{
 				GL.Color3(Color.FromArgb(255, 0, 0));
 				fr.Render("invalid", (int)(NoteColor1TextBox.ClientRectangle.X + 300 * widthdiff), (int)(NoteColor1TextBox.ClientRectangle.Y + 15 * heightdiff), 20);
 				GL.Color3(Color.FromArgb(0, 0, 0));
@@ -295,7 +297,7 @@ namespace Sound_Space_Editor.Gui
 			// color 2
 
 			try
-            {
+			{
 				string c2 = NoteColor2TextBox.Text;
 				string[] c2values = c2.Split(',');
 				int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
@@ -304,29 +306,29 @@ namespace Sound_Space_Editor.Gui
 				Glu.RenderQuad(NoteColor2TextBox.ClientRectangle.X + 210 * widthdiff, NoteColor2TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 			catch
-            {
+			{
 				GL.Color3(Color.FromArgb(255, 0, 0));
 				fr.Render("invalid", (int)(NoteColor2TextBox.ClientRectangle.X + 300 * widthdiff), (int)(NoteColor2TextBox.ClientRectangle.Y + 15 * heightdiff), 20);
 				GL.Color3(Color.FromArgb(0, 0, 0));
 				Glu.RenderQuad(NoteColor2TextBox.ClientRectangle.X + 210 * widthdiff, NoteColor2TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
-        }
+		}
 
 		void ShowOpacities()
-        {
+		{
 			var size = EditorWindow.Instance.ClientSize;
 
 			var widthdiff = size.Width / 1920f;
 			var heightdiff = size.Height / 1080f;
 
 			try
-            {
+			{
 				int res;
 				string editorBGOpacityText = EditorBGOpacityTextBox.Text;
 				var editorBGOpacity = int.TryParse(editorBGOpacityText, out res);
-				
+
 				if (res > 255)
-                {
+				{
 					EditorBGOpacityTextBox.Text = "255";
 					string changedText = EditorBGOpacityTextBox.Text;
 					var editorBGOpacityNew = int.TryParse(changedText, out res);
@@ -342,13 +344,13 @@ namespace Sound_Space_Editor.Gui
 				Glu.RenderQuad(EditorBGOpacityTextBox.ClientRectangle.X + 210 * widthdiff, EditorBGOpacityTextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 			catch
-            {
+			{
 				GL.Color4(Color.FromArgb(255, 255, 255, 255));
 				Glu.RenderQuad(EditorBGOpacityTextBox.ClientRectangle.X + 210 * widthdiff, EditorBGOpacityTextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 
 			try
-            {
+			{
 				int res;
 				string gridOpacityText = GridOpacityTextBox.Text;
 				var gridOpacity = int.TryParse(gridOpacityText, out res);
@@ -370,13 +372,13 @@ namespace Sound_Space_Editor.Gui
 				Glu.RenderQuad(GridOpacityTextBox.ClientRectangle.X + 210 * widthdiff, GridOpacityTextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 			catch
-            {
+			{
 				GL.Color4(Color.FromArgb(255, 255, 255, 255));
 				Glu.RenderQuad(GridOpacityTextBox.ClientRectangle.X + 210 * widthdiff, GridOpacityTextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 
-            try
-            {
+			try
+			{
 				int res;
 				string trackOpacityText = TrackOpacityTextBox.Text;
 				var trackOpacity = int.TryParse(trackOpacityText, out res);
@@ -386,8 +388,8 @@ namespace Sound_Space_Editor.Gui
 					TrackOpacityTextBox.Text = "255";
 					string changedText = TrackOpacityTextBox.Text;
 					var TrackOpacityNew = int.TryParse(changedText, out res);
-				} 
-				else if (res < 0) 
+				}
+				else if (res < 0)
 				{
 					TrackOpacityTextBox.Text = "0";
 					string changedText = TrackOpacityTextBox.Text;
@@ -398,11 +400,11 @@ namespace Sound_Space_Editor.Gui
 				Glu.RenderQuad(TrackOpacityTextBox.ClientRectangle.X + 210 * widthdiff, TrackOpacityTextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
 			catch
-            {
+			{
 				GL.Color4(Color.FromArgb(255, 255, 255, 255));
 				Glu.RenderQuad(TrackOpacityTextBox.ClientRectangle.X + 210 * widthdiff, TrackOpacityTextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 			}
-        }
+		}
 
 		public override void OnKeyTyped(char key)
 		{
@@ -442,7 +444,7 @@ namespace Sound_Space_Editor.Gui
 
 		public override void OnMouseClick(float x, float y)
 		{
-			color1TextBox.OnMouseClick(x, y); 
+			color1TextBox.OnMouseClick(x, y);
 			color2TextBox.OnMouseClick(x, y);
 			NoteColor1TextBox.OnMouseClick(x, y);
 			NoteColor2TextBox.OnMouseClick(x, y);
@@ -464,7 +466,7 @@ namespace Sound_Space_Editor.Gui
 					int editorbgOpacity = int.TryParse(EditorBGOpacityTextBox.Text, out var val1) ? val1 : EditorSettings.EditorBGOpacity;
 					int gridOpacity = int.TryParse(GridOpacityTextBox.Text, out var val2) ? val2 : EditorSettings.GridOpacity;
 					int trackOpacity = int.TryParse(TrackOpacityTextBox.Text, out var val3) ? val3 : EditorSettings.TrackOpacity;
-					int autosaveInterval = int.TryParse(AutosaveInterval.Text, out var val4) && val4 > 0? val4 : EditorSettings.AutosaveInterval;
+					int autosaveInterval = int.TryParse(AutosaveInterval.Text, out var val4) && val4 > 0 ? val4 : EditorSettings.AutosaveInterval;
 					EditorSettings.Color1 = color1TextBox.Text;
 					EditorSettings.Color2 = color2TextBox.Text;
 					EditorSettings.NoteColor1 = NoteColor1TextBox.Text;
@@ -489,7 +491,7 @@ namespace Sound_Space_Editor.Gui
 					GridOpacityTextBox.Text = "255";
 					TrackOpacityTextBox.Text = "255";
 					color1TextBox.Text = "0,255,200";
-                    color2TextBox.Text = "255,0,255";
+					color2TextBox.Text = "255,0,255";
 					NoteColor1TextBox.Text = "255,0,255";
 					NoteColor2TextBox.Text = "0,255,200";
 					AutosaveInterval.Text = "5";
