@@ -1324,6 +1324,8 @@ namespace Sound_Space_Editor
 						}
 						else
 						{
+							if (MusicPlayer.CurrentTime.TotalMilliseconds >= MusicPlayer.TotalTime.TotalMilliseconds - 1)
+								MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(0);
 							MusicPlayer.Play();
 						}
 					}
