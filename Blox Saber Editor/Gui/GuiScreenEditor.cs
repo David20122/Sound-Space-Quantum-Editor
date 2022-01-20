@@ -493,7 +493,12 @@ namespace Sound_Space_Editor.Gui
 
 		public override bool AllowInput()
 		{
-			return !Offset.Focused && !SfxOffset.Focused && !JumpMSBox.Focused && !RotateBox.Focused && !BezierBox.Focused && !ScaleBox.Focused;
+			foreach (var box in Boxes)
+            {
+				if (box.Focused)
+					return false;
+            }
+			return true;
 		}
 
 		public override void OnKeyTyped(char key)
@@ -987,7 +992,7 @@ namespace Sound_Space_Editor.Gui
 
 			//timing
 			Offset.ClientRectangle.Size = new SizeF(128 * widthdiff, 40 * heightdiff);
-			SetOffset.ClientRectangle.Size = new SizeF(64 * widthdiff, Offset.ClientRectangle.Height);
+			SetOffset.ClientRectangle.Size = Offset.ClientRectangle.Size;
 			UseCurrentMs.ClientRectangle.Size = new SizeF(Offset.ClientRectangle.Width + SetOffset.ClientRectangle.Width + 5 * widthdiff, Offset.ClientRectangle.Height);
 			OpenTimings.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
 
