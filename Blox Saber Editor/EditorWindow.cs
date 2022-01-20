@@ -814,6 +814,14 @@ namespace Sound_Space_Editor
 					_draggingNoteTimeline = false;
 					_draggingPointTimeline = false;
 				}
+				else if (editor.CanClick(e.Position))
+				{
+					SelectedNotes.Clear();
+					_draggedNotes.Clear();
+
+					_draggingNoteGrid = false;
+					_draggingNoteTimeline = false;
+				}
 
 				if (editor.ClientRectangle.Contains(e.Position))
 				{
@@ -822,11 +830,6 @@ namespace Sound_Space_Editor
 
 					OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
 				}
-
-				if (editor.Offset.ClientRectangle.Contains(e.Position) || editor.SfxOffset.ClientRectangle.Contains(e.Position) || editor.JumpMSBox.ClientRectangle.Contains(e.Position) || editor.RotateBox.ClientRectangle.Contains(e.Position))
-                {
-					SelectedNotes.Clear();
-                }
 			}
 
 			if (GuiScreen is GuiScreenMenu menu)
