@@ -219,7 +219,7 @@ namespace Sound_Space_Editor.Gui
 
 			ScaleBox = new GuiTextBox(0, 0, 128, 32)
 			{
-				Text = "100",
+				Text = "150",
 				Centered = true,
 				Numeric = true,
 				CanBeNegative = false,
@@ -230,18 +230,21 @@ namespace Sound_Space_Editor.Gui
 			SfxOffset.Focused = true;
 			JumpMSBox.Focused = true;
 			RotateBox.Focused = true;
+			BezierBox.Focused = true;
 			ScaleBox.Focused = true;
 
 			Offset.OnKeyDown(Key.Right, false);
 			SfxOffset.OnKeyDown(Key.Right, false);
 			JumpMSBox.OnKeyDown(Key.Right, false);
 			RotateBox.OnKeyDown(Key.Right, false);
+			BezierBox.OnKeyDown(Key.Right, false);
 			ScaleBox.OnKeyDown(Key.Right, false);
 
 			Offset.Focused = false;
 			SfxOffset.Focused = false;
 			JumpMSBox.Focused = false;
 			RotateBox.Focused = false;
+			BezierBox.Focused = false;
 			ScaleBox.Focused = false;
 
 			Buttons.Add(playPause);
@@ -917,7 +920,33 @@ namespace Sound_Space_Editor.Gui
 				case 18:
 					if (int.TryParse(ScaleBox.Text, out var scale))
                     {
-						//scale
+						var scalef = scale / 100f;
+						var selected = EditorWindow.Instance.SelectedNotes.ToList();
+						foreach (var note in selected)
+                        {
+							note.X = (note.X - 1) * scalef + 1;
+							note.Y = (note.Y - 1) * scalef + 1;
+                        }
+
+						EditorWindow.Instance.UndoRedo.AddUndoRedo($"SCALE {scale}%", () =>
+						{
+							foreach (var note in selected)
+							{
+								note.X = (note.X - 1) / scalef + 1;
+								note.Y = (note.Y - 1) / scalef + 1;
+							}
+
+						}, () =>
+						{
+							foreach (var note in selected)
+							{
+								note.X = (note.X - 1) * scalef + 1;
+								note.Y = (note.Y - 1) * scalef + 1;
+							}
+
+						});
+
+						EditorWindow.Instance.SaveState(false);
                     }
 					break;
 			}
