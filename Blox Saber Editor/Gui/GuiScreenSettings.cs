@@ -19,10 +19,15 @@ namespace Sound_Space_Editor.Gui
 		private GuiButton _resetButton = new GuiButton(1, 0, 0, 500, 50, "RESET TO DEFAULT", "square", 100);
 		private GuiButton _openFolderButton = new GuiButton(2, 0, 0, 500, 50, "OPEN EDITOR FOLDER", "square", 100);
 
-		private GuiTextBox color1TextBox;
-		private GuiTextBox color2TextBox;
-		private GuiTextBox NoteColor1TextBox;
-		private GuiTextBox NoteColor2TextBox;
+		private GuiButton Color1Picker = new GuiButton(3, 0, 0, 200, 50, "PICK COLOR", "square", 100);
+		private GuiButton Color2Picker = new GuiButton(4, 0, 0, 200, 50, "PICK COLOR", "square", 100);
+		private GuiButton NoteColor1Picker = new GuiButton(5, 0, 0, 200, 50, "PICK COLOR", "square", 100);
+		private GuiButton NoteColor2Picker = new GuiButton(6, 0, 0, 200, 50, "PICK COLOR", "square", 100);
+
+		private Color color1;
+		private Color color2;
+		private Color notecolor1;
+		private Color notecolor2;
 
 		private GuiCheckBox WaveformCheckbox;
 		//private GuiCheckBox BPMFormCheckbox;
@@ -36,37 +41,15 @@ namespace Sound_Space_Editor.Gui
 
 		public GuiScreenSettings() : base(0, 0, EditorWindow.Instance.ClientSize.Width, EditorWindow.Instance.ClientSize.Height)
 		{
-			color1TextBox = new GuiTextBox(0, 0, 200, 50)
-			{
-				Text = EditorSettings.Color1,
-				Centered = true,
-				Numeric = true,
-				CanBeNegative = false
-			};
+			var Color1Str = Array.ConvertAll(EditorSettings.Color1.Split(','), int.Parse);
+			var Color2Str = Array.ConvertAll(EditorSettings.Color2.Split(','), int.Parse);
+			var NoteColor1Str = Array.ConvertAll(EditorSettings.NoteColor1.Split(','), int.Parse);
+			var NoteColor2Str = Array.ConvertAll(EditorSettings.NoteColor2.Split(','), int.Parse);
 
-			color2TextBox = new GuiTextBox(0, 0, 200, 50)
-			{
-				Text = EditorSettings.Color2,
-				Centered = true,
-				Numeric = true,
-				CanBeNegative = false
-			};
-
-			NoteColor1TextBox = new GuiTextBox(0, 0, 200, 50)
-			{
-				Text = EditorSettings.NoteColor1,
-				Centered = true,
-				Numeric = true,
-				CanBeNegative = false
-			};
-
-			NoteColor2TextBox = new GuiTextBox(0, 0, 200, 50)
-			{
-				Text = EditorSettings.NoteColor2,
-				Centered = true,
-				Numeric = true,
-				CanBeNegative = false
-			};
+			color1 = Color.FromArgb(Color1Str[0], Color1Str[1], Color1Str[2]);
+			color2 = Color.FromArgb(Color2Str[0], Color2Str[1], Color2Str[2]);
+			notecolor1 = Color.FromArgb(NoteColor1Str[0], NoteColor1Str[1], NoteColor1Str[2]);
+			notecolor2 = Color.FromArgb(NoteColor2Str[0], NoteColor2Str[1], NoteColor2Str[2]);
 
 			EditorBGOpacityTextBox = new GuiTextBox(0, 0, 200, 50)
 			{
@@ -111,6 +94,11 @@ namespace Sound_Space_Editor.Gui
 			//Buttons.Add(BPMFormCheckbox);
 			Buttons.Add(AutosaveCheckbox);
 
+			Buttons.Add(Color1Picker);
+			Buttons.Add(Color2Picker);
+			Buttons.Add(NoteColor1Picker);
+			Buttons.Add(NoteColor2Picker);
+
 			if (File.Exists(Path.Combine(EditorWindow.Instance.LauncherDir, "background_menu.png")))
 			{
 				bgImg = true;
@@ -142,23 +130,17 @@ namespace Sound_Space_Editor.Gui
 			var fr = EditorWindow.Instance.FontRenderer;
 
 			GL.Color4(Color.FromArgb(255, 255, 255, 255));
-			fr.Render("Color 1:", (int)color1TextBox.ClientRectangle.X, (int)color1TextBox.ClientRectangle.Y - 26, 24);
-			fr.Render("Color 2:", (int)color2TextBox.ClientRectangle.X, (int)color2TextBox.ClientRectangle.Y - 26, 24);
+			fr.Render("Color 1:", (int)Color1Picker.ClientRectangle.X, (int)Color1Picker.ClientRectangle.Y - 26, 24);
+			fr.Render("Color 2:", (int)Color2Picker.ClientRectangle.X, (int)Color2Picker.ClientRectangle.Y - 26, 24);
 
-			fr.Render("Note Color 1:", (int)NoteColor1TextBox.ClientRectangle.X, (int)NoteColor1TextBox.ClientRectangle.Y - 26, 24);
-			fr.Render("Note Color 2:", (int)NoteColor2TextBox.ClientRectangle.X, (int)NoteColor2TextBox.ClientRectangle.Y - 26, 24);
+			fr.Render("Note Color 1:", (int)NoteColor1Picker.ClientRectangle.X, (int)NoteColor1Picker.ClientRectangle.Y - 26, 24);
+			fr.Render("Note Color 2:", (int)NoteColor2Picker.ClientRectangle.X, (int)NoteColor2Picker.ClientRectangle.Y - 26, 24);
 
 			fr.Render("Editor BG Opacity:", (int)EditorBGOpacityTextBox.ClientRectangle.X, (int)EditorBGOpacityTextBox.ClientRectangle.Y - 26, 24);
 			fr.Render("Grid Opacity:", (int)GridOpacityTextBox.ClientRectangle.X, (int)GridOpacityTextBox.ClientRectangle.Y - 26, 24);
 			fr.Render("Track Opacity:", (int)TrackOpacityTextBox.ClientRectangle.X, (int)TrackOpacityTextBox.ClientRectangle.Y - 26, 24);
 
 			fr.Render("Autosave Interval (min):", (int)AutosaveInterval.ClientRectangle.X, (int)AutosaveInterval.ClientRectangle.Y - 26, 24);
-
-			color1TextBox.Render(delta, mouseX, mouseY);
-			color2TextBox.Render(delta, mouseX, mouseY);
-
-			NoteColor1TextBox.Render(delta, mouseX, mouseY);
-			NoteColor2TextBox.Render(delta, mouseX, mouseY);
 
 			EditorBGOpacityTextBox.Render(delta, mouseX, mouseY);
 			TrackOpacityTextBox.Render(delta, mouseX, mouseY);
@@ -187,17 +169,17 @@ namespace Sound_Space_Editor.Gui
 			_resetButton.ClientRectangle.Size = new SizeF(500 * widthdiff, 50 * heightdiff);
 			_openFolderButton.ClientRectangle.Size = new SizeF(500 * widthdiff, 50 * heightdiff);
 
-			color1TextBox.ClientRectangle.Location = new PointF(160 * widthdiff, 210 * heightdiff);
-			color2TextBox.ClientRectangle.Location = new PointF(160 * widthdiff, 360 * heightdiff);
+			Color1Picker.ClientRectangle.Location = new PointF(160 * widthdiff, 210 * heightdiff);
+			Color2Picker.ClientRectangle.Location = new PointF(160 * widthdiff, 360 * heightdiff);
 
-			color1TextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
-			color2TextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
+			Color1Picker.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
+			Color2Picker.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
 
-			NoteColor1TextBox.ClientRectangle.Location = new PointF(160 * widthdiff, 510 * heightdiff);
-			NoteColor2TextBox.ClientRectangle.Location = new PointF(160 * widthdiff, 660 * heightdiff);
+			NoteColor1Picker.ClientRectangle.Location = new PointF(160 * widthdiff, 510 * heightdiff);
+			NoteColor2Picker.ClientRectangle.Location = new PointF(160 * widthdiff, 660 * heightdiff);
 
-			NoteColor1TextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
-			NoteColor2TextBox.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
+			NoteColor1Picker.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
+			NoteColor2Picker.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
 
 			WaveformCheckbox.ClientRectangle.Location = new PointF(1435 * widthdiff, 195 * heightdiff);
 			EditorBGOpacityTextBox.ClientRectangle.Location = new PointF(1435 * widthdiff, 360 * heightdiff);
@@ -231,41 +213,11 @@ namespace Sound_Space_Editor.Gui
 			var widthdiff = size.Width / 1920f;
 			var heightdiff = size.Height / 1080f;
 
-			try
-			{
-				string c1 = color1TextBox.Text;
-				string[] c1values = c1.Split(',');
-				int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
+			GL.Color3(color1);
+			Glu.RenderQuad(Color1Picker.ClientRectangle.X + 210 * widthdiff, Color1Picker.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 
-				GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-				Glu.RenderQuad(color1TextBox.ClientRectangle.X + 210 * widthdiff, color1TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
-			}
-			catch
-			{
-				GL.Color3(Color.FromArgb(255, 0, 0));
-				fr.Render("invalid", (int)(color1TextBox.ClientRectangle.X + 300 * widthdiff), (int)(color1TextBox.ClientRectangle.Y + 15 * heightdiff), 20);
-				GL.Color3(Color.FromArgb(0, 0, 0));
-				Glu.RenderQuad(color1TextBox.ClientRectangle.X + 210 * widthdiff, color1TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
-			}
-
-			// color 2
-
-			try
-			{
-				string c2 = color2TextBox.Text;
-				string[] c2values = c2.Split(',');
-				int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
-
-				GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
-				Glu.RenderQuad(color2TextBox.ClientRectangle.X + 210 * widthdiff, color2TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
-			}
-			catch
-			{
-				GL.Color3(Color.FromArgb(255, 0, 0));
-				fr.Render("invalid", (int)(color2TextBox.ClientRectangle.X + 300 * widthdiff), (int)(color2TextBox.ClientRectangle.Y + 15 * heightdiff), 20);
-				GL.Color3(Color.FromArgb(0, 0, 0));
-				Glu.RenderQuad(color2TextBox.ClientRectangle.X + 210 * widthdiff, color2TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
-			}
+			GL.Color3(color2);
+			Glu.RenderQuad(Color2Picker.ClientRectangle.X + 210 * widthdiff, Color2Picker.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 		}
 
 		void ShowNoteColor()
@@ -277,41 +229,11 @@ namespace Sound_Space_Editor.Gui
 			var widthdiff = size.Width / 1920f;
 			var heightdiff = size.Height / 1080f;
 
-			try
-			{
-				string c1 = NoteColor1TextBox.Text;
-				string[] c1values = c1.Split(',');
-				int[] Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
+			GL.Color3(notecolor1);
+			Glu.RenderQuad(NoteColor1Picker.ClientRectangle.X + 210 * widthdiff, NoteColor1Picker.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 
-				GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-				Glu.RenderQuad(NoteColor1TextBox.ClientRectangle.X + 210 * widthdiff, NoteColor1TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
-			}
-			catch
-			{
-				GL.Color3(Color.FromArgb(255, 0, 0));
-				fr.Render("invalid", (int)(NoteColor1TextBox.ClientRectangle.X + 300 * widthdiff), (int)(NoteColor1TextBox.ClientRectangle.Y + 15 * heightdiff), 20);
-				GL.Color3(Color.FromArgb(0, 0, 0));
-				Glu.RenderQuad(NoteColor1TextBox.ClientRectangle.X + 210 * widthdiff, NoteColor1TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
-			}
-
-			// color 2
-
-			try
-			{
-				string c2 = NoteColor2TextBox.Text;
-				string[] c2values = c2.Split(',');
-				int[] Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
-
-				GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
-				Glu.RenderQuad(NoteColor2TextBox.ClientRectangle.X + 210 * widthdiff, NoteColor2TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
-			}
-			catch
-			{
-				GL.Color3(Color.FromArgb(255, 0, 0));
-				fr.Render("invalid", (int)(NoteColor2TextBox.ClientRectangle.X + 300 * widthdiff), (int)(NoteColor2TextBox.ClientRectangle.Y + 15 * heightdiff), 20);
-				GL.Color3(Color.FromArgb(0, 0, 0));
-				Glu.RenderQuad(NoteColor2TextBox.ClientRectangle.X + 210 * widthdiff, NoteColor2TextBox.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
-			}
+			GL.Color3(notecolor2);
+			Glu.RenderQuad(NoteColor2Picker.ClientRectangle.X + 210 * widthdiff, NoteColor2Picker.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 		}
 
 		void ShowOpacities()
@@ -408,11 +330,6 @@ namespace Sound_Space_Editor.Gui
 
 		public override void OnKeyTyped(char key)
 		{
-			color1TextBox.OnKeyTyped(key);
-			color2TextBox.OnKeyTyped(key);
-			NoteColor1TextBox.OnKeyTyped(key);
-			NoteColor2TextBox.OnKeyTyped(key);
-
 			EditorBGOpacityTextBox.OnKeyTyped(key);
 			GridOpacityTextBox.OnKeyTyped(key);
 			TrackOpacityTextBox.OnKeyTyped(key);
@@ -426,11 +343,6 @@ namespace Sound_Space_Editor.Gui
 
 		public override void OnKeyDown(Key key, bool control)
 		{
-			color1TextBox.OnKeyDown(key, control);
-			color2TextBox.OnKeyDown(key, control);
-			NoteColor1TextBox.OnKeyDown(key, control);
-			NoteColor2TextBox.OnKeyDown(key, control);
-
 			EditorBGOpacityTextBox.OnKeyDown(key, control);
 			GridOpacityTextBox.OnKeyDown(key, control);
 			TrackOpacityTextBox.OnKeyDown(key, control);
@@ -444,11 +356,6 @@ namespace Sound_Space_Editor.Gui
 
 		public override void OnMouseClick(float x, float y)
 		{
-			color1TextBox.OnMouseClick(x, y);
-			color2TextBox.OnMouseClick(x, y);
-			NoteColor1TextBox.OnMouseClick(x, y);
-			NoteColor2TextBox.OnMouseClick(x, y);
-
 			EditorBGOpacityTextBox.OnMouseClick(x, y);
 			GridOpacityTextBox.OnMouseClick(x, y);
 			TrackOpacityTextBox.OnMouseClick(x, y);
@@ -467,10 +374,10 @@ namespace Sound_Space_Editor.Gui
 					int gridOpacity = int.TryParse(GridOpacityTextBox.Text, out var val2) ? val2 : EditorSettings.GridOpacity;
 					int trackOpacity = int.TryParse(TrackOpacityTextBox.Text, out var val3) ? val3 : EditorSettings.TrackOpacity;
 					int autosaveInterval = int.TryParse(AutosaveInterval.Text, out var val4) && val4 > 0 ? val4 : EditorSettings.AutosaveInterval;
-					EditorSettings.Color1 = color1TextBox.Text;
-					EditorSettings.Color2 = color2TextBox.Text;
-					EditorSettings.NoteColor1 = NoteColor1TextBox.Text;
-					EditorSettings.NoteColor2 = NoteColor2TextBox.Text;
+					EditorSettings.Color1 = $"{color1.R},{color1.G},{color1.B}";
+					EditorSettings.Color2 = $"{color2.R},{color2.G},{color2.B}";
+					EditorSettings.NoteColor1 = $"{notecolor1.R},{notecolor1.G},{notecolor1.B}";
+					EditorSettings.NoteColor2 = $"{notecolor2.R},{notecolor2.G},{notecolor2.B}";
 					EditorSettings.Waveform = WaveformCheckbox.Toggle;
 					//EditorSettings.BPMForm = BPMFormCheckbox.Toggle;
 					EditorSettings.EnableAutosave = AutosaveCheckbox.Toggle;
@@ -485,22 +392,55 @@ namespace Sound_Space_Editor.Gui
 					EditorWindow.Instance.OpenGuiScreen(new GuiScreenMenu());
 					break;
 				case 1:
+					color1 = Color.FromArgb(0, 255, 200);
+					color2 = Color.FromArgb(255, 0, 255);
+					notecolor1 = Color.FromArgb(255, 0, 255);
+					notecolor2 = Color.FromArgb(0, 255, 200);
 					EditorSettings.Waveform = true;
 					//EditorSettings.BPMForm = false;
 					EditorBGOpacityTextBox.Text = "255";
 					GridOpacityTextBox.Text = "255";
 					TrackOpacityTextBox.Text = "255";
-					color1TextBox.Text = "0,255,200";
-					color2TextBox.Text = "255,0,255";
-					NoteColor1TextBox.Text = "255,0,255";
-					NoteColor2TextBox.Text = "0,255,200";
 					AutosaveInterval.Text = "5";
 					break;
 				case 2:
 					System.Diagnostics.Process.Start(Environment.CurrentDirectory);
 					break;
 				case 3:
+					var ColorDialog1 = new ColorDialog();
+					ColorDialog1.Color = color1;
 
+					if (ColorDialog1.ShowDialog() == DialogResult.OK)
+                    {
+						color1 = ColorDialog1.Color;
+                    }
+					break;
+				case 4:
+					var ColorDialog2 = new ColorDialog();
+					ColorDialog2.Color = color2;
+
+					if (ColorDialog2.ShowDialog() == DialogResult.OK)
+					{
+						color2 = ColorDialog2.Color;
+					}
+					break;
+				case 5:
+					var ColorDialog3 = new ColorDialog();
+					ColorDialog3.Color = notecolor1;
+
+					if (ColorDialog3.ShowDialog() == DialogResult.OK)
+					{
+						notecolor1 = ColorDialog3.Color;
+					}
+					break;
+				case 6:
+					var ColorDialog4 = new ColorDialog();
+					ColorDialog4.Color = notecolor2;
+
+					if (ColorDialog4.ShowDialog() == DialogResult.OK)
+					{
+						notecolor2 = ColorDialog4.Color;
+					}
 					break;
 			}
 			base.OnButtonClicked(id);

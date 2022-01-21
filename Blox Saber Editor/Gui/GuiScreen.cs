@@ -53,7 +53,8 @@ namespace Sound_Space_Editor.Gui
 				{
 					button.OnMouseClick(x, y);
 
-					EditorWindow.Instance.SoundPlayer.Play("click", 0.035f);
+					var id = EditorWindow.Instance.inconspicuousvar ? "1091083826" : "click";
+					EditorWindow.Instance.SoundPlayer.Play(id, 0.035f);
 					OnButtonClicked(button.Id);
 					break;
 				}

@@ -13,9 +13,12 @@ namespace Sound_Space_Editor
 		{
 		}
 
-		public void Cache(string id, string ext = "wav")
+		public void Cache(string id, bool inc, string ext = "wav")
 		{
-			_sounds.Add(id, $"assets/sounds/{id}.{ext}");
+			if (inc)
+				_sounds.Add(id, $"cached/{id}.asset");
+			else
+				_sounds.Add(id, $"assets/sounds/{id}.{ext}");
 		}
 
 		public void Play(string id, float volume = 1, float speed = 1)

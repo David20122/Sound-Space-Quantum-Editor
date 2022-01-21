@@ -123,6 +123,8 @@ namespace Sound_Space_Editor
 
 		public string currentData;
 
+		public bool inconspicuousvar = false;
+
 		public EditorWindow(long offset, string launcherDir) : base(1280, 720, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor " + Application.ProductVersion)
 		{
 			LauncherDir = launcherDir;
@@ -150,9 +152,13 @@ namespace Sound_Space_Editor
 
 			OpenGuiScreen(new GuiScreenMenu());
 
-			SoundPlayer.Cache("hit");
-			SoundPlayer.Cache("click");
-			SoundPlayer.Cache("metronome");
+			SoundPlayer.Cache("hit", false);
+			SoundPlayer.Cache("click", false);
+			SoundPlayer.Cache("metronome", false);
+
+			LoadSound(1091083826);
+
+			SoundPlayer.Cache("1091083826", true);
 
 			inputState = "keyboard";
 
@@ -1289,6 +1295,12 @@ namespace Sound_Space_Editor
 						_saved = false;
 					}
 
+				}
+
+				if (e.Shift && e.Control && e.Key == Key.M)
+				{
+					inconspicuousvar = !inconspicuousvar;
+					editor.ShowToast("funny mode " + (inconspicuousvar ? "on" : "off"), Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 				}
 
 				//make sure to not register input while we're typing into a text box

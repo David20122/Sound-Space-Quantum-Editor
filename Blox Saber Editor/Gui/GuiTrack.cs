@@ -262,7 +262,8 @@ namespace Sound_Space_Editor.Gui
 
 				if (closest != null && editor.MusicPlayer.IsPlaying && editor.GuiScreen is GuiScreenEditor gse)
 				{
-					editor.SoundPlayer.Play("hit", gse.SfxVolume.Value / (float)gse.SfxVolume.MaxValue, editor.MusicPlayer.Tempo);
+					var id = editor.inconspicuousvar ? "1091083826" : "hit";
+					editor.SoundPlayer.Play(id, gse.SfxVolume.Value / (float)gse.SfxVolume.MaxValue, editor.MusicPlayer.Tempo);
 				}
 			}
 			
@@ -466,7 +467,8 @@ namespace Sound_Space_Editor.Gui
 				{
 					_lastPlayedMS = closestMS;
 
-					editor.SoundPlayer.Play("metronome", gse1.SfxVolume.Value / (float)gse1.SfxVolume.MaxValue, editor.MusicPlayer.Tempo);
+					var id = editor.inconspicuousvar ? "1091083826" : "metronome";
+					editor.SoundPlayer.Play(id, gse1.SfxVolume.Value / (float)gse1.SfxVolume.MaxValue, editor.MusicPlayer.Tempo);
 				}
 			}
 
