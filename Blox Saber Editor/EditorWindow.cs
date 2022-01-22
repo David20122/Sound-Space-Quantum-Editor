@@ -1450,10 +1450,11 @@ namespace Sound_Space_Editor
 					if (Zoom > 0.1f)
 						Zoom = (float)Math.Round(Zoom * 10) / 10;
 				}
-				else if (_altDown)
+				else if (_shiftDown)
 				{
 					editor.BeatSnapDivisor.Value += (int)e.DeltaPrecise;
 					editor.BeatSnapDivisor.Value = MathHelper.Clamp(editor.BeatSnapDivisor.Value, 0, editor.BeatSnapDivisor.MaxValue);
+					GuiTrack.BeatDivisor = editor.BeatSnapDivisor.Value + 1;
 				}
 				else
 				{

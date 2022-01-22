@@ -130,17 +130,35 @@ namespace Sound_Space_Editor.Gui
 			var fr = EditorWindow.Instance.FontRenderer;
 
 			GL.Color4(Color.FromArgb(255, 255, 255, 255));
-			fr.Render("Color 1:", (int)Color1Picker.ClientRectangle.X, (int)Color1Picker.ClientRectangle.Y - 26, 24);
-			fr.Render("Color 2:", (int)Color2Picker.ClientRectangle.X, (int)Color2Picker.ClientRectangle.Y - 26, 24);
 
-			fr.Render("Note Color 1:", (int)NoteColor1Picker.ClientRectangle.X, (int)NoteColor1Picker.ClientRectangle.Y - 26, 24);
-			fr.Render("Note Color 2:", (int)NoteColor2Picker.ClientRectangle.X, (int)NoteColor2Picker.ClientRectangle.Y - 26, 24);
+			if (EditorWindow.Instance.inconspicuousvar)
+            {
+				fr.Render("Cowow 1~", (int)Color1Picker.ClientRectangle.X, (int)Color1Picker.ClientRectangle.Y - 26, 24);
+				fr.Render("Cowow 2~", (int)Color2Picker.ClientRectangle.X, (int)Color2Picker.ClientRectangle.Y - 26, 24);
 
-			fr.Render("Editor BG Opacity:", (int)EditorBGOpacityTextBox.ClientRectangle.X, (int)EditorBGOpacityTextBox.ClientRectangle.Y - 26, 24);
-			fr.Render("Grid Opacity:", (int)GridOpacityTextBox.ClientRectangle.X, (int)GridOpacityTextBox.ClientRectangle.Y - 26, 24);
-			fr.Render("Track Opacity:", (int)TrackOpacityTextBox.ClientRectangle.X, (int)TrackOpacityTextBox.ClientRectangle.Y - 26, 24);
+				fr.Render("Note Cowow 1~", (int)NoteColor1Picker.ClientRectangle.X, (int)NoteColor1Picker.ClientRectangle.Y - 26, 24);
+				fr.Render("Note Cowow 2~", (int)NoteColor2Picker.ClientRectangle.X, (int)NoteColor2Picker.ClientRectangle.Y - 26, 24);
 
-			fr.Render("Autosave Interval (min):", (int)AutosaveInterval.ClientRectangle.X, (int)AutosaveInterval.ClientRectangle.Y - 26, 24);
+				fr.Render("Editow BG Opacity~", (int)EditorBGOpacityTextBox.ClientRectangle.X, (int)EditorBGOpacityTextBox.ClientRectangle.Y - 26, 24);
+				fr.Render("Gwid Opacity~", (int)GridOpacityTextBox.ClientRectangle.X, (int)GridOpacityTextBox.ClientRectangle.Y - 26, 24);
+				fr.Render("Twack Opacity~", (int)TrackOpacityTextBox.ClientRectangle.X, (int)TrackOpacityTextBox.ClientRectangle.Y - 26, 24);
+
+				fr.Render("Autosave Intewvaw (min)~", (int)AutosaveInterval.ClientRectangle.X, (int)AutosaveInterval.ClientRectangle.Y - 26, 24);
+			}
+			else
+            {
+				fr.Render("Color 1:", (int)Color1Picker.ClientRectangle.X, (int)Color1Picker.ClientRectangle.Y - 26, 24);
+				fr.Render("Color 2:", (int)Color2Picker.ClientRectangle.X, (int)Color2Picker.ClientRectangle.Y - 26, 24);
+
+				fr.Render("Note Color 1:", (int)NoteColor1Picker.ClientRectangle.X, (int)NoteColor1Picker.ClientRectangle.Y - 26, 24);
+				fr.Render("Note Color 2:", (int)NoteColor2Picker.ClientRectangle.X, (int)NoteColor2Picker.ClientRectangle.Y - 26, 24);
+
+				fr.Render("Editor BG Opacity:", (int)EditorBGOpacityTextBox.ClientRectangle.X, (int)EditorBGOpacityTextBox.ClientRectangle.Y - 26, 24);
+				fr.Render("Grid Opacity:", (int)GridOpacityTextBox.ClientRectangle.X, (int)GridOpacityTextBox.ClientRectangle.Y - 26, 24);
+				fr.Render("Track Opacity:", (int)TrackOpacityTextBox.ClientRectangle.X, (int)TrackOpacityTextBox.ClientRectangle.Y - 26, 24);
+
+				fr.Render("Autosave Interval (min):", (int)AutosaveInterval.ClientRectangle.X, (int)AutosaveInterval.ClientRectangle.Y - 26, 24);
+			}
 
 			EditorBGOpacityTextBox.Render(delta, mouseX, mouseY);
 			TrackOpacityTextBox.Render(delta, mouseX, mouseY);

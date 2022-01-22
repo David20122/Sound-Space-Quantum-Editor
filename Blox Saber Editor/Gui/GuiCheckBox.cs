@@ -76,8 +76,19 @@ namespace Sound_Space_Editor.Gui
 			var fr = EditorWindow.Instance.FontRenderer;
 			var height = fr.GetHeight(FontSize);
 
+			var finaltext = Text;
+
+			if (EditorWindow.Instance.inconspicuousvar)
+			{
+				finaltext = finaltext.Replace('r', 'w');
+				finaltext = finaltext.Replace('R', 'W');
+				finaltext = finaltext.Replace('l', 'w');
+				finaltext = finaltext.Replace('L', 'W');
+				finaltext = finaltext.Replace(':', '~');
+			}
+
 			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-			fr.Render(Text, (int)(rect.Right + rect.Height / 4), (int)(rect.Y + rect.Height / 2 - height / 2f), FontSize);
+			fr.Render(finaltext, (int)(rect.Right + rect.Height / 4), (int)(rect.Y + rect.Height / 2 - height / 2f), FontSize);
 		}
 
 		public override void OnMouseClick(float x, float y)

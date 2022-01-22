@@ -70,15 +70,26 @@ namespace Sound_Space_Editor.Gui
 			if (Timings)
 				fr = TimingPoints.Instance.FontRenderer;
 
+			var finaltext = Text;
+
+			if (EditorWindow.Instance.inconspicuousvar)
+            {
+				finaltext = finaltext.Replace('r', 'w');
+				finaltext = finaltext.Replace('R', 'W');
+				finaltext = finaltext.Replace('l', 'w');
+				finaltext = finaltext.Replace('L', 'W');
+				finaltext = finaltext.Replace(':', '~');
+			}
+
 			if (Centered)
 			{
-				var w = fr.GetWidth(Text, FontSize);
+				var w = fr.GetWidth(finaltext, FontSize);
 				var h = fr.GetHeight(FontSize);
 
-				fr.Render(Text, (int)(ClientRectangle.X - w / 2f), (int)(ClientRectangle.Y - h / 2f), FontSize);
+				fr.Render(finaltext, (int)(ClientRectangle.X - w / 2f), (int)(ClientRectangle.Y - h / 2f), FontSize);
 			}
 			else
-				fr.Render(Text, (int)ClientRectangle.X, (int)ClientRectangle.Y, FontSize);
+				fr.Render(finaltext, (int)ClientRectangle.X, (int)ClientRectangle.Y, FontSize);
 		}
 	}
 }

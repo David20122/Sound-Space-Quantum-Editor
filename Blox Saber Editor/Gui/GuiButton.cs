@@ -168,11 +168,22 @@ namespace Sound_Space_Editor.Gui
 			var width = fr.GetWidth(Text, (int)ClientRectangle.Height / 2);
 			var height = fr.GetHeight((int)ClientRectangle.Height / 2);
 
+			var finaltext = Text;
+
+			if (EditorWindow.Instance.inconspicuousvar)
+			{
+				finaltext = finaltext.Replace('r', 'w');
+				finaltext = finaltext.Replace('R', 'W');
+				finaltext = finaltext.Replace('l', 'w');
+				finaltext = finaltext.Replace('L', 'W');
+				finaltext = finaltext.Replace(':', '~');
+			}
+
 			GL.Color3(color1,color2,color3);
 			if (!Timings)
-				fr.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
+				fr.Render(finaltext, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
 			else
-				TimingPoints.Instance.FontRenderer.Render(Text, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
+				TimingPoints.Instance.FontRenderer.Render(finaltext, (int)(ClientRectangle.X + ClientRectangle.Width / 2 - width / 2f), (int)(ClientRectangle.Y + ClientRectangle.Height / 2 - height / 2f), (int)ClientRectangle.Height / 2);
 		}
 
 
