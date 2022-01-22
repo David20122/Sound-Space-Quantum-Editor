@@ -1636,33 +1636,33 @@ namespace Sound_Space_Editor
 			*/
 			if (GuiTrack.BPMs.Count == 0 || GuiTrack.BPMs[0].Ms - 5 > ms)
 				return -1;
-			
-			float closestms = -1;
+
+			double closestms = -1;
 			int index = 0;
-			var bpmints = new List<float>();
+			var bpmints = new List<double>();
 
 			for (int i = 0; i < GuiTrack.BPMs.Count; i++)
             {
 				var bpm = GuiTrack.BPMs[i];
 				if (bpm.bpm > 33 && (!draggingpoint || bpm.Ms < ms))
                 {
-					float curms = bpm.Ms;
+					double curms = bpm.Ms;
 					var nextms = MusicPlayer.TotalTime.TotalMilliseconds;
 
 					if (i + 1 < GuiTrack.BPMs.Count && !draggingpoint)
 						nextms = GuiTrack.BPMs[i + 1].Ms;
 
-					float interval = 60000 / bpm.bpm / GuiTrack.BeatDivisor;
+					double interval = 60000 / bpm.bpm / GuiTrack.BeatDivisor;
 
 					while (curms < nextms)
                     {
-						bpmints.Add((long)curms);
+						bpmints.Add(curms);
 						curms += interval;
                     }
                 }
             }
 
-			bpmints.Add((float)MusicPlayer.TotalTime.TotalMilliseconds - 1);
+			bpmints.Add(MusicPlayer.TotalTime.TotalMilliseconds - 1);
 
 			for (int i = 0; i < bpmints.Count; i++)
             {
