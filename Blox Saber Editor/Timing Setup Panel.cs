@@ -24,7 +24,7 @@ namespace Sound_Space_Editor
                 BPMBox.Text = "5000";
             if (long.TryParse(OffsetBox.Text, out long Offset) && Offset > EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds)
                 OffsetBox.Text = EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds.ToString();
-            if (float.TryParse(BPMBox.Text, out float bpm) && bpm > 33 && long.TryParse(OffsetBox.Text, out long offset) && offset >= 0)
+            if (float.TryParse(BPMBox.Text, out float bpm) && bpm > 33 && long.TryParse(OffsetBox.Text, out long offset))
             {
                 var exists = false;
                 foreach (var point in GuiTrack.BPMs)
@@ -60,7 +60,7 @@ namespace Sound_Space_Editor
                 OffsetBox.Text = EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds.ToString();
             if (PointList.SelectedRows.Count > 0)
             {
-                if (float.TryParse(BPMBox.Text, out float bpm) && bpm > 33 && long.TryParse(OffsetBox.Text, out long offset) && offset >= 0)
+                if (float.TryParse(BPMBox.Text, out float bpm) && bpm > 33 && long.TryParse(OffsetBox.Text, out long offset))
                 {
                     var selectedpoint = GuiTrack.BPMs[PointList.CurrentRow.Index];
                     var exists = false;

@@ -1102,6 +1102,8 @@ namespace Sound_Space_Editor
 						long closestBeat =
 							GetClosestBeat((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, stepSmall < 0, false);
 
+						closestBeat = Math.Max(0, closestBeat);
+
                         try
                         {
 							MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
@@ -1752,9 +1754,9 @@ namespace Sound_Space_Editor
 
 			if (GuiScreen is GuiScreenEditor gui && _draggedPoint != null)
             {
-				var clickMs = (int)(Math.Max(0, _clickedMouse.X - gui.Track.ScreenX + audioTime / 1000 * CubeStep) / CubeStep * 1000);
+				var clickMs = (int)((_clickedMouse.X - gui.Track.ScreenX + audioTime / 1000 * CubeStep) / CubeStep * 1000);
 				var clickOff = clickMs - _dragPointStartMs;
-				var cursorMs = (int)(Math.Max(0, mouseX - gui.Track.ScreenX + audioTime / 1000 * CubeStep) / CubeStep * 1000) - clickOff;
+				var cursorMs = (int)((mouseX - gui.Track.ScreenX + audioTime / 1000 * CubeStep) / CubeStep * 1000 - clickOff);
 
 				var lineSpace = 60 / GetCurrentBpm(cursorMs, true).bpm * CubeStep;
 				var stepSmall = lineSpace / GuiTrack.BeatDivisor;
@@ -1772,9 +1774,12 @@ namespace Sound_Space_Editor
 				if (Math.Abs(snappedMs - cursorMs) / 1000f * CubeStep <= threshold) //8 pixels
 					msDiff = -(_draggedPoint.DragStartMs - snappedMs);
 
+				if (Math.Abs(cursorMs) / 1000f * CubeStep <= threshold) //8 pixels
+					msDiff = -_draggedPoint.DragStartMs;
+
 				var time = _draggedPoint.DragStartMs + (int)msDiff;
 
-				time = (int)Math.Max(0, Math.Min(MusicPlayer.TotalTime.TotalMilliseconds, time));
+				time = (int)Math.Min(MusicPlayer.TotalTime.TotalMilliseconds, time);
 
 				_draggedPoint.Ms = time;
 
@@ -1930,8 +1935,6 @@ namespace Sound_Space_Editor
 
 				var time = _dragStartMs - (int)msDiff;
 
-				time = (int)Math.Max(0, Math.Min(MusicPlayer.TotalTime.TotalMilliseconds - 1, time));
-
 				var bpm = GetCurrentBpm(time, false);
 
 				if (bpm.bpm > 33 && time >= bpm.Ms && time < MusicPlayer.TotalTime.TotalMilliseconds - 1)
@@ -1942,6 +1945,8 @@ namespace Sound_Space_Editor
 
 					time = (long)((long)(time / (decimal)bpmDivided) * bpmDivided + offset);
 				}
+
+				time = (int)Math.Max(0, Math.Min(MusicPlayer.TotalTime.TotalMilliseconds - 1, time));
 
 				MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(time);
 			}
