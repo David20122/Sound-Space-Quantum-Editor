@@ -58,7 +58,7 @@ namespace Sound_Space_Editor.Gui
 
 			var fr = editor.FontRenderer;
 
-			float cellSize = rect.Height;
+			float cellSize = 64f;
 			float noteSize = cellSize * 0.65f;
 
 			var gap = cellSize - noteSize;
@@ -333,7 +333,7 @@ namespace Sound_Space_Editor.Gui
 							GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 							GL.Begin(PrimitiveType.Lines);
 							GL.Vertex2((int)lineX + 0.5f, rect.Bottom);
-							GL.Vertex2((int)lineX + 0.5f, rect.Bottom - 11);
+							GL.Vertex2((int)lineX + 0.5f, rect.Bottom - 20);
 							GL.End();
 
 							for (int j = 1; j <= BeatDivisor; j++)
@@ -351,7 +351,7 @@ namespace Sound_Space_Editor.Gui
 										GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 
 									GL.Begin(PrimitiveType.Lines);
-									GL.Vertex2((int)xo + 0.5f, rect.Bottom - (half ? 7 : 4));
+									GL.Vertex2((int)xo + 0.5f, rect.Bottom - (half ? 12 : 6));
 									GL.Vertex2((int)xo + 0.5f, rect.Bottom);
 									GL.End();
 								}
