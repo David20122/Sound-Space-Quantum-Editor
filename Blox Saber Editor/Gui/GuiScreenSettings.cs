@@ -85,7 +85,7 @@ namespace Sound_Space_Editor.Gui
 
 			WaveformCheckbox = new GuiCheckBox(1, "Waveform", 0, 0, 72, 72, 32, EditorSettings.Waveform);
 			//BPMFormCheckbox = new GuiCheckBox(1, "Use Timings Form", 0, 0, 72, 72, 32, EditorSettings.BPMForm);
-			AutosaveCheckbox = new GuiCheckBox(3, "Enable Autosave", 0, 0, 72, 72, 32, EditorSettings.EnableAutosave);
+			AutosaveCheckbox = new GuiCheckBox(1, "Enable Autosave", 0, 0, 72, 72, 32, EditorSettings.EnableAutosave);
 
 			Buttons.Add(_openFolderButton);
 			Buttons.Add(_resetButton);
@@ -415,6 +415,7 @@ namespace Sound_Space_Editor.Gui
 					notecolor1 = Color.FromArgb(255, 0, 255);
 					notecolor2 = Color.FromArgb(0, 255, 200);
 					EditorSettings.Waveform = true;
+					EditorSettings.EnableAutosave = true;
 					//EditorSettings.BPMForm = false;
 					EditorBGOpacityTextBox.Text = "255";
 					GridOpacityTextBox.Text = "255";
