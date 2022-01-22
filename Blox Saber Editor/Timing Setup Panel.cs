@@ -424,5 +424,15 @@ namespace Sound_Space_Editor
 
             }
         }
+
+        private void OpenTapper_Click(object sender, EventArgs e)
+        {
+            var tapper = new BPMTapper();
+            if (tapper.ShowDialog() == DialogResult.OK)
+            {
+                var returned = tapper.Bpm;
+                BPMBox.Text = returned.ToString();
+            }
+        }
     }
 }

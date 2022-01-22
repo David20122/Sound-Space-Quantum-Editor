@@ -45,6 +45,7 @@
             this.ImportCH = new System.Windows.Forms.Button();
             this.ImportOSU = new System.Windows.Forms.Button();
             this.ImportADOFAI = new System.Windows.Forms.Button();
+            this.OpenTapper = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.PointList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MoveBox)).BeginInit();
             this.SuspendLayout();
@@ -203,9 +204,9 @@
             // ImportCH
             // 
             this.ImportCH.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.ImportCH.Location = new System.Drawing.Point(230, 494);
+            this.ImportCH.Location = new System.Drawing.Point(175, 494);
             this.ImportCH.Name = "ImportCH";
-            this.ImportCH.Size = new System.Drawing.Size(105, 47);
+            this.ImportCH.Size = new System.Drawing.Size(77, 47);
             this.ImportCH.TabIndex = 13;
             this.ImportCH.Text = "Import Clone Hero Timings";
             this.ImportCH.UseVisualStyleBackColor = true;
@@ -216,7 +217,7 @@
             this.ImportOSU.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.ImportOSU.Location = new System.Drawing.Point(9, 494);
             this.ImportOSU.Name = "ImportOSU";
-            this.ImportOSU.Size = new System.Drawing.Size(105, 47);
+            this.ImportOSU.Size = new System.Drawing.Size(77, 47);
             this.ImportOSU.TabIndex = 14;
             this.ImportOSU.Text = "Import OSU Timings";
             this.ImportOSU.UseVisualStyleBackColor = true;
@@ -225,19 +226,30 @@
             // ImportADOFAI
             // 
             this.ImportADOFAI.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.ImportADOFAI.Location = new System.Drawing.Point(120, 494);
+            this.ImportADOFAI.Location = new System.Drawing.Point(92, 494);
             this.ImportADOFAI.Name = "ImportADOFAI";
-            this.ImportADOFAI.Size = new System.Drawing.Size(104, 47);
+            this.ImportADOFAI.Size = new System.Drawing.Size(77, 47);
             this.ImportADOFAI.TabIndex = 15;
             this.ImportADOFAI.Text = "Import ADOFAI Timings";
             this.ImportADOFAI.UseVisualStyleBackColor = true;
             this.ImportADOFAI.Click += new System.EventHandler(this.ImportADOFAI_Click);
+            // 
+            // OpenTapper
+            // 
+            this.OpenTapper.Location = new System.Drawing.Point(258, 494);
+            this.OpenTapper.Name = "OpenTapper";
+            this.OpenTapper.Size = new System.Drawing.Size(77, 47);
+            this.OpenTapper.TabIndex = 16;
+            this.OpenTapper.Text = "Open BPM Tapper";
+            this.OpenTapper.UseVisualStyleBackColor = true;
+            this.OpenTapper.Click += new System.EventHandler(this.OpenTapper_Click);
             // 
             // TimingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(345, 550);
+            this.Controls.Add(this.OpenTapper);
             this.Controls.Add(this.ImportADOFAI);
             this.Controls.Add(this.ImportOSU);
             this.Controls.Add(this.ImportCH);
@@ -284,5 +296,6 @@
         private System.Windows.Forms.Button ImportCH;
         private System.Windows.Forms.Button ImportOSU;
         private System.Windows.Forms.Button ImportADOFAI;
+        private System.Windows.Forms.Button OpenTapper;
     }
 }
