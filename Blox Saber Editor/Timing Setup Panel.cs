@@ -430,7 +430,7 @@ namespace Sound_Space_Editor
             var tapper = new BPMTapper();
             if (tapper.ShowDialog() == DialogResult.OK)
             {
-                var returned = tapper.Bpm;
+                var returned = Math.Round(tapper.Bpm);
                 BPMBox.Text = returned.ToString();
             }
         }

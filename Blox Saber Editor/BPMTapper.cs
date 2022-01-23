@@ -43,12 +43,14 @@ namespace Sound_Space_Editor
                 Tapping = true;
                 StartTime = DateTime.Now;
                 BPM.Text = "0";
+                BPMDecimals.Text = "0";
             }
             else
             {
                 var mins = (DateTime.Now - StartTime).TotalMilliseconds / 60000;
-                Bpm = (int)((Taps - 1) / mins * 100) / 100d;
-                BPM.Text = Bpm.ToString();
+                Bpm = (Taps - 1) / mins;
+                BPM.Text = ((int)(Bpm + 0.5d)).ToString();
+                BPMDecimals.Text = Math.Round(Bpm, (int)DecimalPlaces.Value).ToString();
             }
         }
 
@@ -58,6 +60,34 @@ namespace Sound_Space_Editor
             Taps = 0;
             Bpm = 0;
             BPM.Text = "";
+            BPMDecimals.Text = "";
+        }
+
+        private bool ButtonsFocused()
+        {
+            return CancelButton.Focused || OKButton.Focused || TapButton.Focused || ResetButton.Focused;
+        }
+
+        private void BPMTapper_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!DecimalPlaces.Focused && (e.KeyChar != ' ' || !ButtonsFocused()))
+            {
+                Taps += 1;
+                if (!Tapping)
+                {
+                    Tapping = true;
+                    StartTime = DateTime.Now;
+                    BPM.Text = "0";
+                    BPMDecimals.Text = "0";
+                }
+                else
+                {
+                    var mins = (DateTime.Now - StartTime).TotalMilliseconds / 60000;
+                    Bpm = (Taps - 1) / mins;
+                    BPM.Text = ((int)(Bpm + 0.5d)).ToString();
+                    BPMDecimals.Text = Math.Round(Bpm, (int)DecimalPlaces.Value).ToString();
+                }
+            }
         }
     }
 }
