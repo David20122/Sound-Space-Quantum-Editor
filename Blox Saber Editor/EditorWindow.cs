@@ -1517,7 +1517,7 @@ namespace Sound_Space_Editor
 
 		public bool WillClose()
 		{
-			if (!_saved && _soundId != -1 && currentData != ParseData())
+			if (!_saved && _soundId != -1 && currentData != ParseData(false))
 			{
 				var wasPlaying = MusicPlayer.IsPlaying;
 
@@ -2221,7 +2221,7 @@ namespace Sound_Space_Editor
 			return false;
 		}
 
-		public string ParseData()
+		public string ParseData(bool copy)
 		{
 			try
 			{
@@ -2232,14 +2232,21 @@ namespace Sound_Space_Editor
 				for (int i = 0; i < Notes.Count; i++)
 				{
 					Note note = Notes[i];
+					var ms = note.Ms;
 					var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
 					culture.NumberFormat.NumberDecimalSeparator = ".";
 					var gridX = Math.Round(2 - note.X, 2);
 					var gridY = Math.Round(2 - note.Y, 2);
+					if (copy && EditorSettings.CorrectOnCopy)
+                    {
+						gridX = MathHelper.Clamp(gridX, -0.850, 2.850);
+						gridY = MathHelper.Clamp(gridY, -0.850, 2.850);
+						ms = (long)MathHelper.Clamp(ms, 0, MusicPlayer.TotalTime.TotalMilliseconds - 1);
+                    }
 					string xp = gridX.ToString(culture);
 					string yp = gridY.ToString(culture);
 
-					sb.Append($",{xp}|{yp}|{note.Ms}");
+					sb.Append($",{xp}|{yp}|{ms}");
 				}
 				return sb.ToString();
 			}
@@ -2258,7 +2265,7 @@ namespace Sound_Space_Editor
 			
 			try
 			{
-				var data = ParseData();
+				var data = ParseData(false);
 
 				File.WriteAllText(file, data, Encoding.UTF8);
 
@@ -2294,7 +2301,7 @@ namespace Sound_Space_Editor
             {
 				if (_file == null)
                 {
-					Settings.Default.AutosavedFile = ParseData();
+					Settings.Default.AutosavedFile = ParseData(false);
 
 					editor.ShowToast("AUTOSAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 				}

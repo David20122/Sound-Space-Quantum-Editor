@@ -732,7 +732,7 @@ namespace Sound_Space_Editor.Gui
 				case 4:
                     try
                     {
-                        Clipboard.SetText(EditorWindow.Instance.ParseData());
+                        Clipboard.SetText(EditorWindow.Instance.ParseData(true));
                         ShowToast("COPIED TO CLIPBOARD", Color.FromArgb(0, 255, 200));
                     }
                     catch

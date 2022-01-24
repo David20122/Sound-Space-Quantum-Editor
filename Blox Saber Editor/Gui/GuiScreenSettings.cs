@@ -39,6 +39,8 @@ namespace Sound_Space_Editor.Gui
 		private GuiCheckBox AutosaveCheckbox;
 		private GuiTextBox AutosaveInterval;
 
+		private GuiCheckBox CorrectOnCopy;
+
 		public GuiScreenSettings() : base(0, 0, EditorWindow.Instance.ClientSize.Width, EditorWindow.Instance.ClientSize.Height)
 		{
 			var Color1Str = Array.ConvertAll(EditorSettings.Color1.Split(','), int.Parse);
@@ -87,13 +89,15 @@ namespace Sound_Space_Editor.Gui
 			//BPMFormCheckbox = new GuiCheckBox(1, "Use Timings Form", 0, 0, 72, 72, 32, EditorSettings.BPMForm);
 			AutosaveCheckbox = new GuiCheckBox(1, "Enable Autosave", 0, 0, 72, 72, 32, EditorSettings.EnableAutosave);
 
+			CorrectOnCopy = new GuiCheckBox(1, "Correct Errors on Copy", 0, 0, 72, 72, 32, EditorSettings.CorrectOnCopy);
+
 			Buttons.Add(_openFolderButton);
 			Buttons.Add(_resetButton);
 			Buttons.Add(_backButton);
 			Buttons.Add(WaveformCheckbox);
 			//Buttons.Add(BPMFormCheckbox);
 			Buttons.Add(AutosaveCheckbox);
-
+			Buttons.Add(CorrectOnCopy);
 			Buttons.Add(Color1Picker);
 			Buttons.Add(Color2Picker);
 			Buttons.Add(NoteColor1Picker);
@@ -216,6 +220,10 @@ namespace Sound_Space_Editor.Gui
 
 			AutosaveInterval.ClientRectangle.Location = new PointF(ClientRectangle.Width / 2 - AutosaveInterval.ClientRectangle.Width / 2, 360 * heightdiff);
 			AutosaveCheckbox.ClientRectangle.Location = new PointF(AutosaveInterval.ClientRectangle.X, 195 * heightdiff);
+
+			CorrectOnCopy.ClientRectangle.Size = new SizeF(72 * widthdiff, 72 * heightdiff);
+
+			CorrectOnCopy.ClientRectangle.Location = new PointF(AutosaveInterval.ClientRectangle.X, 510 * heightdiff);
 
 			//BPMFormCheckbox.ClientRectangle.Location = new PointF(760 * widthdiff, 240 * heightdiff);
 
@@ -403,6 +411,7 @@ namespace Sound_Space_Editor.Gui
 					EditorSettings.GridOpacity = gridOpacity;
 					EditorSettings.TrackOpacity = trackOpacity;
 					EditorSettings.AutosaveInterval = autosaveInterval;
+					EditorSettings.CorrectOnCopy = CorrectOnCopy.Toggle;
 					EditorSettings.Save();
 					EditorSettings.Load();
 					EditorWindow.Instance.UpdateColors();
@@ -421,6 +430,7 @@ namespace Sound_Space_Editor.Gui
 					GridOpacityTextBox.Text = "255";
 					TrackOpacityTextBox.Text = "255";
 					AutosaveInterval.Text = "5";
+					EditorSettings.CorrectOnCopy = true;
 					break;
 				case 2:
 					System.Diagnostics.Process.Start(Environment.CurrentDirectory);

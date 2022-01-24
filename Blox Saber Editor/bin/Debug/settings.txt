@@ -9,3 +9,4 @@ NoteColor1=255,0,255
 NoteColor2=0,255,200
 EnableAutosave=True
 AutosaveInterval=5
+CorrectOnCopy=True
