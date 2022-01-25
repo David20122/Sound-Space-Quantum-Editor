@@ -30,8 +30,6 @@
         {
             this.TapButton = new System.Windows.Forms.Button();
             this.BPM = new System.Windows.Forms.TextBox();
-            this.CancelButton = new System.Windows.Forms.Button();
-            this.OKButton = new System.Windows.Forms.Button();
             this.ResetButton = new System.Windows.Forms.Button();
             this.DecimalPlaces = new System.Windows.Forms.NumericUpDown();
             this.DecimalPlacesLabel = new System.Windows.Forms.Label();
@@ -60,28 +58,6 @@
             this.BPM.TabIndex = 1;
             this.BPM.TabStop = false;
             this.BPM.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // CancelButton
-            // 
-            this.CancelButton.Location = new System.Drawing.Point(109, 221);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(87, 26);
-            this.CancelButton.TabIndex = 2;
-            this.CancelButton.TabStop = false;
-            this.CancelButton.Text = "Cancel";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
-            // 
-            // OKButton
-            // 
-            this.OKButton.Location = new System.Drawing.Point(12, 221);
-            this.OKButton.Name = "OKButton";
-            this.OKButton.Size = new System.Drawing.Size(87, 26);
-            this.OKButton.TabIndex = 3;
-            this.OKButton.TabStop = false;
-            this.OKButton.Text = "OK";
-            this.OKButton.UseVisualStyleBackColor = true;
-            this.OKButton.Click += new System.EventHandler(this.OKButton_Click);
             // 
             // ResetButton
             // 
@@ -130,13 +106,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(210, 259);
+            this.ClientSize = new System.Drawing.Size(210, 227);
             this.Controls.Add(this.BPMDecimals);
             this.Controls.Add(this.DecimalPlacesLabel);
             this.Controls.Add(this.DecimalPlaces);
             this.Controls.Add(this.ResetButton);
-            this.Controls.Add(this.OKButton);
-            this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.BPM);
             this.Controls.Add(this.TapButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -155,8 +129,6 @@
 
         private System.Windows.Forms.Button TapButton;
         private System.Windows.Forms.TextBox BPM;
-        private System.Windows.Forms.Button CancelButton;
-        private System.Windows.Forms.Button OKButton;
         private System.Windows.Forms.Button ResetButton;
         private System.Windows.Forms.NumericUpDown DecimalPlaces;
         private System.Windows.Forms.Label DecimalPlacesLabel;

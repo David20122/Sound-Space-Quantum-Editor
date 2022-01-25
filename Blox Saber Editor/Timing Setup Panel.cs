@@ -427,12 +427,9 @@ namespace Sound_Space_Editor
 
         private void OpenTapper_Click(object sender, EventArgs e)
         {
-            var tapper = new BPMTapper();
-            if (tapper.ShowDialog() == DialogResult.OK)
-            {
-                var returned = Math.Round(tapper.Bpm);
-                BPMBox.Text = returned.ToString();
-            }
+            if (BPMTapper.inst != null)
+                BPMTapper.inst.Close();
+            new BPMTapper().Show();
         }
     }
 }

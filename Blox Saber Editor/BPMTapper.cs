@@ -12,7 +12,9 @@ namespace Sound_Space_Editor
 {
     public partial class BPMTapper : Form
     {
-        public double Bpm = 0;
+        public static BPMTapper inst;
+
+        private double Bpm = 0;
 
         private DateTime StartTime;
         private int Taps = 0;
@@ -20,19 +22,8 @@ namespace Sound_Space_Editor
 
         public BPMTapper()
         {
+            inst = this;
             InitializeComponent();
-        }
-
-        private void CancelButton_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.Cancel;
-            Close();
-        }
-
-        private void OKButton_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
-            Close();
         }
 
         private void TapButton_Click(object sender, EventArgs e)
@@ -65,7 +56,7 @@ namespace Sound_Space_Editor
 
         private bool ButtonsFocused()
         {
-            return CancelButton.Focused || OKButton.Focused || TapButton.Focused || ResetButton.Focused;
+            return TapButton.Focused || ResetButton.Focused;
         }
 
         private void BPMTapper_KeyPress(object sender, KeyPressEventArgs e)
