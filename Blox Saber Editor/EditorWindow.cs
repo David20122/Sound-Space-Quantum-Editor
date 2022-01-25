@@ -1175,7 +1175,6 @@ namespace Sound_Space_Editor
 								SelectedNotes.Clear();
 
 								SelectedNotes.AddRange(copied);
-								_draggedNotes.AddRange(copied);
 
 								Notes.AddAll(copied);
 
@@ -1192,7 +1191,6 @@ namespace Sound_Space_Editor
 									_draggedNotes.Clear();
 									SelectedNotes.Clear();
 									SelectedNotes.AddRange(copied);
-									_draggedNotes.AddRange(copied);
 
 									_draggingNoteGrid = false;
 									_draggingNoteTimeline = false;
