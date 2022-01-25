@@ -36,6 +36,8 @@ namespace Sound_Space_Editor
 
 		public bool IsPaused { get; private set; }
 
+		private bool Autosaving = false;
+
 		public GuiScreen GuiScreen { get; private set; }
 
 		public MusicPlayer MusicPlayer;
@@ -2352,6 +2354,7 @@ namespace Sound_Space_Editor
 
 		private void RunAutosave()
         {
+			Autosaving = true;
 			if (EditorSettings.EnableAutosave && GuiScreen is GuiScreenEditor)
             {
 				var delay = Task.Delay(EditorSettings.AutosaveInterval * 60000).ContinueWith(_ =>
@@ -2389,7 +2392,8 @@ namespace Sound_Space_Editor
 
 			GuiScreen = s;
 
-			RunAutosave();
+			if (!Autosaving)
+				RunAutosave();
 		}
 
 		public void SaveState(bool state)
