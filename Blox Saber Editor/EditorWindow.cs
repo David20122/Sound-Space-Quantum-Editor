@@ -84,7 +84,6 @@ namespace Sound_Space_Editor
 
 		private long _mouseDownMs;
 
-		private bool _saved;
 		private bool _rightDown;
 		private bool _controlDown;
 		private bool _altDown;
@@ -879,8 +878,6 @@ namespace Sound_Space_Editor
 								startMs[i] = notes[i].DragStartMs;
 							}
 
-							var saveState = _saved;
-
 							UndoRedo.AddUndoRedo("MOVE NOTE" + (_draggedNotes.Count > 1 ? "S" : ""), () =>
 							{
 								for (var index = 0; index < notes.Count; index++)
@@ -892,8 +889,6 @@ namespace Sound_Space_Editor
 								}
 
 								Notes.Sort();
-
-								_saved = saveState;
 							}, () =>
 							{
 								for (var index = 0; index < notes.Count; index++)
@@ -905,11 +900,7 @@ namespace Sound_Space_Editor
 								}
 
 								Notes.Sort();
-
-								_saved = false;
 							});
-
-							_saved = false;
 						}
 					}
 				}
@@ -926,21 +917,16 @@ namespace Sound_Space_Editor
 
 					if (diff != 0)
                     {
-						var saveState = _saved;
-
 						UndoRedo.AddUndoRedo("MOVE POINT", () =>
 						{
 							point.Ms = start;
 							GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
-							_saved = false;
 						}, () =>
 						{
 							point.Ms = start + diff;
 							GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
-							_saved = false;
 						});
 
-						_saved = false;
 						GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
 					}
                 }
@@ -956,7 +942,6 @@ namespace Sound_Space_Editor
 
 				if (note2.X != _dragStartIndexX || note2.Y != _dragStartIndexY)
 				{
-					var saveState = _saved;
 					var selectednotes = _draggedNotes.ToList();
 
 					UndoRedo.AddUndoRedo("REPOSITION NOTE" + (_draggedNotes.Count > 1 ? "S" : ""), () =>
@@ -966,8 +951,6 @@ namespace Sound_Space_Editor
 							note.X -= xdiff;
 							note.Y -= ydiff;
                         }
-
-						_saved = saveState;
 					}, () =>
 					{
 						foreach (var note in selectednotes)
@@ -975,11 +958,7 @@ namespace Sound_Space_Editor
 							note.X += xdiff;
 							note.Y += ydiff;
                         }
-
-						_saved = false;
 					});
-
-					_saved = false;
 				}
 			}
 
@@ -1117,7 +1096,7 @@ namespace Sound_Space_Editor
 				}
 				else if (e.Key == Key.S && e.Control)
 				{
-					if (e.Shift || !_saved && _file == null)
+					if (e.Shift || _file == null)
 					{
 						var wasPlaying = MusicPlayer.IsPlaying;
 
@@ -1125,8 +1104,6 @@ namespace Sound_Space_Editor
 
 						if (PromptSave())
 						{
-							_saved = true;
-
 							editor.ShowToast("SAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 						}
 
@@ -1137,8 +1114,6 @@ namespace Sound_Space_Editor
 					{
 						if (WriteFile(_file))
 						{
-							_saved = true;
-
 							editor.ShowToast("SAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 						}
 					}
@@ -1207,13 +1182,9 @@ namespace Sound_Space_Editor
 								_draggingNoteGrid = false;
 								_draggingNoteTimeline = false;
 
-								var saveState = _saved;
-
 								UndoRedo.AddUndoRedo("PASTE NOTES", () =>
 								{
 									Notes.RemoveAll(copied);
-
-									_saved = saveState;
 								}, () =>
 								{
 									Notes.AddAll(copied);
@@ -1225,11 +1196,7 @@ namespace Sound_Space_Editor
 
 									_draggingNoteGrid = false;
 									_draggingNoteTimeline = false;
-
-									_saved = false;
 								});
-
-								_saved = false;
 							}
 						}
 						catch
@@ -1266,8 +1233,6 @@ namespace Sound_Space_Editor
 							}
 
 						});
-
-						_saved = false;
 					}
 
 					if (e.Key == Key.V)
@@ -1295,8 +1260,6 @@ namespace Sound_Space_Editor
 							}
 
 						});
-
-						_saved = false;
 					}
 
 				}
@@ -1313,7 +1276,6 @@ namespace Sound_Space_Editor
 				{
 					if (e.Key == Key.Left)
 					{
-						_saved = false;
 						foreach (var node in SelectedNotes)
 						{
 							node.Ms--;
@@ -1323,7 +1285,6 @@ namespace Sound_Space_Editor
 					}
 					if (e.Key == Key.Right)
 					{
-						_saved = false;
 						foreach (var node in SelectedNotes)
 						{
 							node.Ms++;
@@ -1391,19 +1352,13 @@ namespace Sound_Space_Editor
 
 							}
 						}
-						var saveState = _saved;
 						UndoRedo.AddUndoRedo("ADD NOTE", () =>
 						{
 							Notes.Remove(note);
-
-							_saved = saveState;
 						}, () =>
 						{
 							Notes.Add(note);
-							_saved = false;
 						});
-
-						_saved = false;
 					}
 
 					if ((e.Key == Key.Delete || e.Key == Key.BackSpace) && SelectedNotes.Count > 0)
@@ -1414,20 +1369,13 @@ namespace Sound_Space_Editor
 
 							Notes.RemoveAll(toRemove);
 
-							var saveState = _saved;
 							UndoRedo.AddUndoRedo("DELETE NOTE" + (toRemove.Count > 1 ? "S" : ""), () =>
 							{
 								Notes.AddAll(toRemove);
-
-								_saved = saveState;
 							}, () =>
 							{
 								Notes.RemoveAll(toRemove);
-
-								_saved = false;
 							});
-
-							_saved = false;
 
 							SelectedNotes.Clear();
 							_draggingNoteGrid = false;
@@ -1519,7 +1467,7 @@ namespace Sound_Space_Editor
 
 		public bool WillClose()
 		{
-			if (!_saved && _soundId != -1 && currentData != ParseData(false))
+			if (_soundId != -1 && currentData != ParseData(false))
 			{
 				var wasPlaying = MusicPlayer.IsPlaying;
 
@@ -2002,7 +1950,6 @@ namespace Sound_Space_Editor
 			if (LoadMap(data, true) && GuiScreen is GuiScreenEditor gse)
 			{
 				_file = file;
-				_saved = true;
 
 				GuiTrack.BPMs.Clear();
 				gse.Offset.Text = "0";
@@ -2309,8 +2256,6 @@ namespace Sound_Space_Editor
 				}
 				else if (WriteFile(_file))
 				{
-					_saved = true;
-
 					editor.ShowToast("AUTOSAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 				}
 			}
@@ -2372,7 +2317,6 @@ namespace Sound_Space_Editor
 				_brightness = 0;
 				_draggedNote = null;
 
-				_saved = false;
 				_rightDown = false;
 				_controlDown = false;
 				_altDown = false;
@@ -2395,11 +2339,6 @@ namespace Sound_Space_Editor
 			if (!Autosaving)
 				RunAutosave();
 		}
-
-		public void SaveState(bool state)
-        {
-			_saved = state;
-        }
 	}
 
 	class SecureWebClient : WebClient

@@ -715,8 +715,6 @@ namespace Sound_Space_Editor.Gui
 
 						GuiTrack.NoteOffset = oldOffset;
 					}, Redo);
-
-					EditorWindow.Instance.SaveState(false);
 					break;
 				case 3:
 					if (EditorWindow.Instance.WillClose())
@@ -798,8 +796,6 @@ namespace Sound_Space_Editor.Gui
 							node.Y = (float)(Math.Sin(finalradians) * distance + 1);
 						}
 					});
-
-					EditorWindow.Instance.SaveState(false);
 					break;
 				case 8:
 					/*
@@ -862,7 +858,6 @@ namespace Sound_Space_Editor.Gui
 								EditorWindow.Instance.Notes.RemoveAll(finalnodes);
 								EditorWindow.Instance.Notes.AddAll(finalnotes);
 							});
-							EditorWindow.Instance.SaveState(false);
 						}
 						catch (OverflowException)
                         {
@@ -896,8 +891,6 @@ namespace Sound_Space_Editor.Gui
 						}
 
 					});
-
-					EditorWindow.Instance.SaveState(false);
 					break;
 				case 12:
 					var selectedV = EditorWindow.Instance.SelectedNotes.ToList();
@@ -921,8 +914,6 @@ namespace Sound_Space_Editor.Gui
 						}
 
 					});
-
-					EditorWindow.Instance.SaveState(false);
 					break;
 				case 13:
 					if (EditorWindow.Instance.SelectedNotes.Count > 1)
@@ -977,8 +968,6 @@ namespace Sound_Space_Editor.Gui
 							}
 
 						});
-
-						EditorWindow.Instance.SaveState(false);
                     }
 					break;
 			}
