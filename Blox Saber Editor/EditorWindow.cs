@@ -1410,7 +1410,7 @@ namespace Sound_Space_Editor
 				{
 					MusicPlayer.Pause();
 					var time = (long)MusicPlayer.CurrentTime.TotalMilliseconds;
-					var maxTime = (long)MusicPlayer.TotalTime.TotalMilliseconds;
+					var maxTime = (long)MusicPlayer.TotalTime.TotalMilliseconds - 1;
 
 					var closest = GetClosestBeat(time, true, e.DeltaPrecise < 0, false);
 					var bpm = GetCurrentBpm(0, false);
