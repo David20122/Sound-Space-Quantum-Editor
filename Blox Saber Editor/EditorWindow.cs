@@ -599,8 +599,20 @@ namespace Sound_Space_Editor
 
 					var tick = (int)MathHelper.Clamp(Math.Round((e.X - rect.X - rect.Height / 2) / step), 0, editor.NoteAlign.MaxValue);
 
-					editor.NoteAlign.Value = (int)tick;
+					editor.NoteAlign.Value = tick;
 				}
+				if (editor.TrackHeight.Dragging)
+                {
+					var rect = editor.TrackHeight.ClientRectangle;
+					var lineSize = rect.Height - rect.Width;
+					var step = lineSize / editor.TrackHeight.MaxValue;
+
+					var tick = MathHelper.Clamp(Math.Round((lineSize - (e.Y - rect.Y - rect.Width / 2)) / step), 0, editor.TrackHeight.MaxValue);
+
+					editor.TrackHeight.Value = (int)tick;
+
+					editor.OnResize(ClientSize);
+                }
 
 				if (_draggingNoteGrid)
 				{
@@ -802,6 +814,11 @@ namespace Sound_Space_Editor
 						editor.NoteAlign.Dragging = true;
 						OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
 					}
+					else if (editor.TrackHeight.ClientRectangle.Contains(e.Position) && editor.TrackHeight.Visible)
+                    {
+						editor.TrackHeight.Dragging = true;
+						OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
+                    }
 					else if (editor.CanClick(e.Position))
 					{
 						SelectedNotes.Clear();
@@ -990,6 +1007,7 @@ namespace Sound_Space_Editor
 				editor.Timeline.Dragging = false;
 				editor.Tempo.Dragging = false;
 				editor.NoteAlign.Dragging = false;
+				editor.TrackHeight.Dragging = false;
 			}
 
 			if (GuiScreen is GuiScreenMenu menu)

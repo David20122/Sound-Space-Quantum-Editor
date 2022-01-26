@@ -67,6 +67,8 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiTextBox ScaleBox;
 		public readonly GuiButton ScaleButton;
 
+		public readonly GuiSlider TrackHeight;
+
 		private bool OptionsNavEnabled = false;
 		private bool TimingNavEnabled = false;
 		private bool PatternsNavEnabled = false;
@@ -185,6 +187,12 @@ namespace Sound_Space_Editor.Gui
 				MaxValue = 50
 			};
 
+			TrackHeight = new GuiSlider(0, 0, 32, 128)
+			{
+				MaxValue = 32,
+				Value = 16,
+			};
+
 			SetOffset = new GuiButton(2, 0, 0, 64, 32, "SET", false);
 			BackButton = new GuiButton(3, 0, 0, Grid.ClientRectangle.Width + 1, 42, "BACK TO MENU", false);
 			CopyButton = new GuiButton(4, 0, 0, Grid.ClientRectangle.Width + 1, 42, "COPY MAP DATA", false);
@@ -281,6 +289,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(TimingNav);
 			Buttons.Add(PatternsNav);
 			Buttons.Add(ScaleButton);
+			Buttons.Add(TrackHeight);
 
 			Boxes.Add(Offset);
 			Boxes.Add(SfxOffset);
@@ -308,7 +317,6 @@ namespace Sound_Space_Editor.Gui
 
 		public bool CanClick(Point pos)
         {
-			//todo: fix deselect on some boxes
 			foreach (var button in Buttons)
             {
 				if (button.ClientRectangle.Contains(pos))
@@ -372,6 +380,22 @@ namespace Sound_Space_Editor.Gui
 			GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 			fr.Render($"{Math.Round(EditorWindow.Instance.Zoom, 2) * 100}%", (int)OptionsNav.ClientRectangle.Right + zoomW + 10, (int)OptionsNav.ClientRectangle.Y, 24);
 			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+
+			var th = 64 + (32 - TrackHeight.Value);
+
+			if (OptionsNavEnabled)
+            {
+				if (rl)
+                {
+					var thw = fr.GetWidth($"Twack Height~ 00", 24);
+					fr.Render($"Twack Height~ {th}", (int)TrackHeight.ClientRectangle.Left - thw, (int)Metronome.ClientRectangle.Bottom + 10, 24);
+				}
+				else
+                {
+					var thw = fr.GetWidth($"Track Height: 00", 24);
+					fr.Render($"Track Height: {th}", (int)TrackHeight.ClientRectangle.Left - thw, (int)Metronome.ClientRectangle.Bottom + 10, 24);
+				}
+			}
 			if (rl)
             {
 				if (TimingNavEnabled)
@@ -580,6 +604,7 @@ namespace Sound_Space_Editor.Gui
 			QuantumGridLines.Visible = false;
 			QuantumGridSnap.Visible = false;
 			Metronome.Visible = false;
+			TrackHeight.Visible = false;
 
 			//timing
 			Offset.Visible = false;
@@ -616,8 +641,9 @@ namespace Sound_Space_Editor.Gui
 				QuantumGridLines.Visible = true;
 				QuantumGridSnap.Visible = true;
 				Metronome.Visible = true;
+				TrackHeight.Visible = true;
 
-				TimingNav.ClientRectangle.Y = Metronome.ClientRectangle.Bottom + 20 * heightdiff;
+				TimingNav.ClientRectangle.Y = TrackHeight.ClientRectangle.Bottom + 20 * heightdiff;
 				PatternsNav.ClientRectangle.Y = TimingNav.ClientRectangle.Bottom + 10 * heightdiff;
 
 				OptionsNav.Text = "OPTIONS <";
@@ -979,10 +1005,13 @@ namespace Sound_Space_Editor.Gui
 
 			ClientRectangle = new RectangleF(0, size.Height - 64, size.Width - 512 - 64, 64);
 
+			Track.ClientRectangle.Height = 64 + (32 - TrackHeight.Value);
+
 			Track.OnResize(size);
 			Tempo.OnResize(size);
 			MasterVolume.OnResize(size);
 			NoteAlign.OnResize(size);
+			TrackHeight.OnResize(size);
 
 			MasterVolume.ClientRectangle.Location = new PointF(EditorWindow.Instance.ClientSize.Width - 64, EditorWindow.Instance.ClientSize.Height - MasterVolume.ClientRectangle.Height - 64);
 			SfxVolume.ClientRectangle.Location = new PointF(MasterVolume.ClientRectangle.X - 64, EditorWindow.Instance.ClientSize.Height - SfxVolume.ClientRectangle.Height - 64);
@@ -1021,6 +1050,7 @@ namespace Sound_Space_Editor.Gui
 			QuantumGridLines.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			QuantumGridSnap.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			Metronome.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
+			TrackHeight.ClientRectangle.Size = new SizeF(32 * widthdiff, 256 * heightdiff);
 
 			//patterns
 			HFlip.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
@@ -1061,6 +1091,7 @@ namespace Sound_Space_Editor.Gui
 			QuantumGridLines.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, Numpad.ClientRectangle.Bottom + 10 * heightdiff);
 			QuantumGridSnap.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, QuantumGridLines.ClientRectangle.Bottom + 10 * heightdiff);
 			Metronome.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, QuantumGridSnap.ClientRectangle.Bottom + 10 * heightdiff);
+			TrackHeight.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.Right - TrackHeight.ClientRectangle.Width, Metronome.ClientRectangle.Bottom + 50 * heightdiff - TrackHeight.ClientRectangle.Height);
 
 			//patterns
 			HFlip.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, PatternsNav.ClientRectangle.Bottom + 20 * heightdiff);
@@ -1095,6 +1126,7 @@ namespace Sound_Space_Editor.Gui
 			SfxVolume.Dragging = false;
 			NoteAlign.Dragging = false;
 			BeatSnapDivisor.Dragging = false;
+			TrackHeight.Dragging = false;
 		}
 
 		private void UpdateTrack()

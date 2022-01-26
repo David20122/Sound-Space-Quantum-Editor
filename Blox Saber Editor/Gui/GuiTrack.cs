@@ -327,13 +327,15 @@ namespace Sound_Space_Editor.Gui
 						GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 						fr.Render($"{msText}ms", (int)x + 3, (int)(rect.Y + rect.Height + fr.GetHeight(16)) + 3 + 2 + 28, 16);
 
+						var gapf = rect.Height - noteSize - y;
+
 						//render BPM lines
 						while (lineSpace > 0 && lineX < rect.Width && lineX < endLineX && lineX < nextLineX)
 						{
 							GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
 							GL.Begin(PrimitiveType.Lines);
 							GL.Vertex2((int)lineX + 0.5f, rect.Bottom);
-							GL.Vertex2((int)lineX + 0.5f, rect.Bottom - 20);
+							GL.Vertex2((int)lineX + 0.5f, rect.Bottom - gapf);
 							GL.End();
 
 							for (int j = 1; j <= BeatDivisor; j++)
@@ -351,7 +353,7 @@ namespace Sound_Space_Editor.Gui
 										GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 
 									GL.Begin(PrimitiveType.Lines);
-									GL.Vertex2((int)xo + 0.5f, rect.Bottom - (half ? 12 : 6));
+									GL.Vertex2((int)xo + 0.5f, rect.Bottom - (half ? 3 * gapf / 5 : 3 * gapf / 10));
 									GL.Vertex2((int)xo + 0.5f, rect.Bottom);
 									GL.End();
 								}
