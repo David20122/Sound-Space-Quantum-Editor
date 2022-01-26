@@ -1105,6 +1105,7 @@ namespace Sound_Space_Editor
 						if (PromptSave())
 						{
 							editor.ShowToast("SAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							currentData = ParseData(false);
 						}
 
 						if (wasPlaying)
@@ -1115,6 +1116,7 @@ namespace Sound_Space_Editor
 						if (WriteFile(_file))
 						{
 							editor.ShowToast("SAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							currentData = ParseData(false);
 						}
 					}
 
@@ -2047,8 +2049,6 @@ namespace Sound_Space_Editor
 
 			_draggedNote = null;
 
-			currentData = null;
-
 			if (!fromFile)
 			{
 				UpdateActivity("Untitled");
@@ -2255,6 +2255,7 @@ namespace Sound_Space_Editor
 				else if (WriteFile(_file))
 				{
 					editor.ShowToast("AUTOSAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+					currentData = ParseData(false);
 				}
 			}
 		}
@@ -2312,6 +2313,8 @@ namespace Sound_Space_Editor
 		{
 			if (GuiScreen is GuiScreenEditor)
 			{
+				currentData = null;
+
 				_brightness = 0;
 				_draggedNote = null;
 
