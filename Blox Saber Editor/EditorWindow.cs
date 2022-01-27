@@ -216,7 +216,8 @@ namespace Sound_Space_Editor
 					Settings.Default.Metronome,
 					Settings.Default.LegacyBPM,
 					Settings.Default.DynamicBezier,
-					Settings.Default.AutosavedFile,
+					Settings.Default.AutosavedFile.Replace(',', '&'),
+					Settings.Default.TrackHeight,
 					};
 
 					try
@@ -993,10 +994,11 @@ namespace Sound_Space_Editor
 
 			if (GuiScreen is GuiScreenEditor editor)
 			{
-				if (editor.MasterVolume.Dragging || editor.SfxVolume.Dragging)
+				if (editor.MasterVolume.Dragging || editor.SfxVolume.Dragging || editor.TrackHeight.Dragging)
 				{
 					Settings.Default.MasterVolume = (decimal)editor.MasterVolume.Value / editor.MasterVolume.MaxValue;
 					Settings.Default.SFXVolume = (decimal)editor.SfxVolume.Value / editor.SfxVolume.MaxValue;
+					Settings.Default.TrackHeight = editor.TrackHeight.Value;
 
 					Settings.Default.Save();
 				}

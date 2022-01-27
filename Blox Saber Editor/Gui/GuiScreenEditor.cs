@@ -329,14 +329,15 @@ namespace Sound_Space_Editor.Gui
 
 			HideShowElements();
 
-			OnResize(EditorWindow.Instance.ClientSize);
-
 			EditorWindow.Instance.MusicPlayer.Volume = (float)Settings.Default.MasterVolume;
 
 			SfxOffset.Text = Settings.Default.SfxOffset;
 			MasterVolume.Value = (int)(Settings.Default.MasterVolume * MasterVolume.MaxValue);
 			SfxVolume.Value = (int)(Settings.Default.SFXVolume * SfxVolume.MaxValue);
+			TrackHeight.Value = Settings.Default.TrackHeight;
 			// NoteAlign.Value = (int)(Settings.Default.NoteAlign * NoteAlign.MaxValue);
+
+			OnResize(EditorWindow.Instance.ClientSize);
 
 			SfxOffset.OnChanged += (_, value) =>
 			{

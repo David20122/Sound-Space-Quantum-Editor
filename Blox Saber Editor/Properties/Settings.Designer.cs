@@ -226,5 +226,17 @@ namespace Sound_Space_Editor.Properties {
                 this["DynamicBezier"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("80")]
+        public int TrackHeight {
+            get {
+                return ((int)(this["TrackHeight"]));
+            }
+            set {
+                this["TrackHeight"] = value;
+            }
+        }
     }
 }
