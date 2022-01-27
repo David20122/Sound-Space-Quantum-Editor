@@ -340,7 +340,8 @@ namespace Sound_Space_Editor.Gui
 
 							for (int j = 1; j <= BeatDivisor; j++)
 							{
-								var xo = lineX + j * stepSmall;
+								var xo = Math.Round((lineX - ScreenX + posX) / cubeStep * 1000f);
+								xo = xo / 1000f * cubeStep + ScreenX - posX + j * stepSmall;
 
 								if (j < BeatDivisor && xo < endLineX && xo < nextLineX)
 								{
@@ -353,8 +354,8 @@ namespace Sound_Space_Editor.Gui
 										GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
 
 									GL.Begin(PrimitiveType.Lines);
-									GL.Vertex2((int)xo + 0.5f, rect.Bottom - (half ? 3 * gapf / 5 : 3 * gapf / 10));
-									GL.Vertex2((int)xo + 0.5f, rect.Bottom);
+									GL.Vertex2(Math.Round(xo) + 0.5f, rect.Bottom - (half ? 3 * gapf / 5 : 3 * gapf / 10));
+									GL.Vertex2(Math.Round(xo) + 0.5f, rect.Bottom);
 									GL.End();
 								}
 							}
