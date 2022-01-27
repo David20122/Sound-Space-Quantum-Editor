@@ -62,7 +62,7 @@ namespace Sound_Space_Editor
 		public bool IsDraggingNoteOnTimeLine => _draggingNoteTimeline && _draggedNotes.FirstOrDefault() is Note n && n.DragStartMs != n.Ms;
 		public bool IsDraggingPointOnTimeline => _draggingPointTimeline && _draggedPoint is BPM n && n.DragStartMs != n.Ms;
 		public List<Note> SelectedNotes = new List<Note>();
-		private List<Note> _draggedNotes = new List<Note>();
+		public List<Note> _draggedNotes = new List<Note>();
 		private Note _draggedNote;
 		public BPM _draggedPoint;
 

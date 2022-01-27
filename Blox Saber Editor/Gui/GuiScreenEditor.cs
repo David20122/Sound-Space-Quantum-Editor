@@ -69,6 +69,10 @@ namespace Sound_Space_Editor.Gui
 
 		public readonly GuiSlider TrackHeight;
 
+		public readonly GuiTextBox MSBoundLower;
+		public readonly GuiTextBox MSBoundHigher;
+		public readonly GuiButton SelectBound;
+
 		private bool OptionsNavEnabled = false;
 		private bool TimingNavEnabled = false;
 		private bool PatternsNavEnabled = false;
@@ -134,6 +138,20 @@ namespace Sound_Space_Editor.Gui
 				CanBeNegative = false
 			};
 			JumpMSBox = new GuiTextBox(0, 0, 128, 32)
+			{
+				Text = "0",
+				Centered = true,
+				Numeric = true,
+				CanBeNegative = false,
+			};
+			MSBoundLower = new GuiTextBox(0, 0, 128, 32)
+			{
+				Text = "0",
+				Centered = true,
+				Numeric = true,
+				CanBeNegative = false,
+			};
+			MSBoundHigher = new GuiTextBox(0, 0, 128, 32)
 			{
 				Text = "0",
 				Centered = true,
@@ -213,6 +231,8 @@ namespace Sound_Space_Editor.Gui
 			TimingNav = new GuiButton(16, 0, 0, 200, 50, "TIMING >", false);
 			PatternsNav = new GuiButton(17, 0, 0, 200, 50, "PATTERNS >", false);
 
+			SelectBound = new GuiButton(19, 0, 0, 64, 32, "SELECT", false);
+
 			Autoplay = new GuiCheckBox(5, "Autoplay", 0, 0, 32, 32, Settings.Default.Autoplay);
 			ApproachSquares = new GuiCheckBox(5, "Approach Squares", 0, 0, 32, 32, Settings.Default.ApproachSquares);
 			GridNumbers = new GuiCheckBox(5, "Grid Numbers", 0, 0, 32, 32, Settings.Default.GridNumbers);
@@ -240,6 +260,8 @@ namespace Sound_Space_Editor.Gui
 			RotateBox.Focused = true;
 			BezierBox.Focused = true;
 			ScaleBox.Focused = true;
+			MSBoundLower.Focused = true;
+			MSBoundHigher.Focused = true;
 
 			Offset.OnKeyDown(Key.Right, false);
 			SfxOffset.OnKeyDown(Key.Right, false);
@@ -247,6 +269,8 @@ namespace Sound_Space_Editor.Gui
 			RotateBox.OnKeyDown(Key.Right, false);
 			BezierBox.OnKeyDown(Key.Right, false);
 			ScaleBox.OnKeyDown(Key.Right, false);
+			MSBoundLower.OnKeyDown(Key.Right, false);
+			MSBoundHigher.OnKeyDown(Key.Right, false);
 
 			Offset.Focused = false;
 			SfxOffset.Focused = false;
@@ -254,6 +278,8 @@ namespace Sound_Space_Editor.Gui
 			RotateBox.Focused = false;
 			BezierBox.Focused = false;
 			ScaleBox.Focused = false;
+			MSBoundLower.Focused = false;
+			MSBoundHigher.Focused = false;
 
 			Buttons.Add(playPause);
 			Buttons.Add(Timeline);
@@ -290,6 +316,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(PatternsNav);
 			Buttons.Add(ScaleButton);
 			Buttons.Add(TrackHeight);
+			Buttons.Add(SelectBound);
 
 			Boxes.Add(Offset);
 			Boxes.Add(SfxOffset);
@@ -297,6 +324,8 @@ namespace Sound_Space_Editor.Gui
 			Boxes.Add(RotateBox);
 			Boxes.Add(BezierBox);
 			Boxes.Add(ScaleBox);
+			Boxes.Add(MSBoundLower);
+			Boxes.Add(MSBoundHigher);
 
 			HideShowElements();
 
@@ -402,6 +431,7 @@ namespace Sound_Space_Editor.Gui
 					fr.Render("Offset[ms]~", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
 				fr.Render("SFX Offset[ms]~", (int)SfxOffset.ClientRectangle.X, (int)SfxOffset.ClientRectangle.Y - 24, 24);
 				fr.Render("Jump to MS~", (int)JumpMSBox.ClientRectangle.X, (int)JumpMSBox.ClientRectangle.Y - 24, 24);
+				fr.Render("Sewect between MS~", (int)MSBoundLower.ClientRectangle.X, (int)MSBoundLower.ClientRectangle.Y - 24, 24);
 			}
 			else
             {
@@ -409,6 +439,7 @@ namespace Sound_Space_Editor.Gui
 					fr.Render("Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
 				fr.Render("SFX Offset[ms]:", (int)SfxOffset.ClientRectangle.X, (int)SfxOffset.ClientRectangle.Y - 24, 24);
 				fr.Render("Jump to MS:", (int)JumpMSBox.ClientRectangle.X, (int)JumpMSBox.ClientRectangle.Y - 24, 24);
+				fr.Render("Select between MS:", (int)MSBoundLower.ClientRectangle.X, (int)MSBoundLower.ClientRectangle.Y - 24, 24);
 			}
 			if (PatternsNavEnabled)
             {
@@ -560,6 +591,8 @@ namespace Sound_Space_Editor.Gui
 			RotateBox.OnKeyTyped(key);
 			BezierBox.OnKeyTyped(key);
 			ScaleBox.OnKeyTyped(key);
+			MSBoundLower.OnKeyTyped(key);
+			MSBoundHigher.OnKeyTyped(key);
 
 			UpdateTrack();
 		}
@@ -572,6 +605,8 @@ namespace Sound_Space_Editor.Gui
 			RotateBox.OnKeyDown(key, control);
 			BezierBox.OnKeyDown(key, control);
 			ScaleBox.OnKeyDown(key, control);
+			MSBoundLower.OnKeyDown(key, control);
+			MSBoundHigher.OnKeyDown(key, control);
 
 			UpdateTrack();
 		}
@@ -584,6 +619,8 @@ namespace Sound_Space_Editor.Gui
 			RotateBox.OnMouseClick(x, y);
 			BezierBox.OnMouseClick(x, y);
 			ScaleBox.OnMouseClick(x, y);
+			MSBoundLower.OnMouseClick(x, y);
+			MSBoundHigher.OnMouseClick(x, y);
 
 			base.OnMouseClick(x, y);
 		}
@@ -996,6 +1033,25 @@ namespace Sound_Space_Editor.Gui
 						});
                     }
 					break;
+				case 19:
+					if (long.TryParse(MSBoundHigher.Text, out var mshigh) && long.TryParse(MSBoundLower.Text, out var mslow))
+                    {
+						var mstop = mshigh;
+						var msbot = mslow;
+
+						EditorWindow.Instance.SelectedNotes.Clear();
+
+						foreach (var note in EditorWindow.Instance.Notes.ToList())
+                        {
+							if ((note.Ms > msbot && note.Ms < mstop) || (note.Ms < msbot && note.Ms > mstop))
+                            {
+								EditorWindow.Instance.SelectedNotes.Add(note);
+                            }
+                        }
+
+						EditorWindow.Instance._draggedNotes = EditorWindow.Instance.SelectedNotes;
+                    }
+					break;
 			}
 		}
 
@@ -1066,10 +1122,14 @@ namespace Sound_Space_Editor.Gui
 			ScaleButton.ClientRectangle.Size = SetOffset.ClientRectangle.Size;
 
 			//etc
-			JumpMSButton.ClientRectangle.Size = SetOffset.ClientRectangle.Size;
-			SfxOffset.ClientRectangle.Size = Offset.ClientRectangle.Size;
-			JumpMSBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
+			JumpMSButton.ClientRectangle.Size = new SizeF(192 * widthdiff, 40 * heightdiff);
+			SfxOffset.ClientRectangle.Size = JumpMSButton.ClientRectangle.Size;
+			JumpMSBox.ClientRectangle.Size = JumpMSButton.ClientRectangle.Size;
 			AutoAdvance.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
+
+			MSBoundLower.ClientRectangle.Size = JumpMSButton.ClientRectangle.Size;
+			MSBoundHigher.ClientRectangle.Size = JumpMSButton.ClientRectangle.Size;
+			SelectBound.ClientRectangle.Size = JumpMSButton.ClientRectangle.Size;
 			
 
 			OptionsNav.ClientRectangle.Location = new PointF(10 * widthdiff, Track.ClientRectangle.Bottom + 60 * heightdiff);
@@ -1110,10 +1170,14 @@ namespace Sound_Space_Editor.Gui
 			BackButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Bottom + 84 * heightdiff);
 			CopyButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 75 * heightdiff);
 
-			JumpMSButton.ClientRectangle.Location = new PointF(SfxVolume.ClientRectangle.Left - JumpMSButton.ClientRectangle.Width - 10 * widthdiff, Tempo.ClientRectangle.Top - JumpMSButton.ClientRectangle.Height - 95 * heightdiff);
-			SfxOffset.ClientRectangle.Location = new PointF(JumpMSButton.ClientRectangle.Left - SfxOffset.ClientRectangle.Width - 5 * widthdiff, JumpMSButton.ClientRectangle.Y + 80 * heightdiff);
-			JumpMSBox.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, JumpMSButton.ClientRectangle.Y);
+			SfxOffset.ClientRectangle.Location = new PointF(SfxVolume.ClientRectangle.Left - SfxOffset.ClientRectangle.Width - 10 * widthdiff, Tempo.ClientRectangle.Top - SfxOffset.ClientRectangle.Height - 15 * heightdiff);
+			JumpMSButton.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, SfxOffset.ClientRectangle.Top - JumpMSButton.ClientRectangle.Height - 30);
+			JumpMSBox.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, JumpMSButton.ClientRectangle.Top - JumpMSBox.ClientRectangle.Height - 10 * heightdiff);
 			AutoAdvance.ClientRectangle.Location = new PointF(BeatSnapDivisor.ClientRectangle.X + 20 * widthdiff, CopyButton.ClientRectangle.Y + 35 * heightdiff);
+			SelectBound.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, JumpMSBox.ClientRectangle.Top - SelectBound.ClientRectangle.Height - 30);
+			MSBoundHigher.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, SelectBound.ClientRectangle.Top - MSBoundHigher.ClientRectangle.Height - 10 * heightdiff);
+			MSBoundLower.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, MSBoundHigher.ClientRectangle.Top - MSBoundLower.ClientRectangle.Height - 10 * heightdiff);
+
 
 			HideShowElements();
 		}
