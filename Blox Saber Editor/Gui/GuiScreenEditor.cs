@@ -984,7 +984,8 @@ namespace Sound_Space_Editor.Gui
 						beziernodes = EditorWindow.Instance.SelectedNotes.ToList();
 					break;
 				case 14:
-					beziernodes.Clear();
+					if (beziernodes != null)
+						beziernodes.Clear();
 					break;
 				case 15:
 					OptionsNavEnabled = !OptionsNavEnabled;
