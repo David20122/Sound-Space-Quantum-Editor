@@ -44,6 +44,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiCheckBox QuantumGridSnap;
 		public readonly GuiCheckBox Metronome;
 		public readonly GuiCheckBox DynamicBezier;
+		public readonly GuiCheckBox CurveBezier;
 		//public readonly GuiCheckBox LegacyBPM;
 		public readonly GuiButton BackButton;
 		public readonly GuiButton CopyButton;
@@ -243,6 +244,7 @@ namespace Sound_Space_Editor.Gui
 			QuantumGridSnap = new GuiCheckBox(5, "Snap to Grid", 0, 0, 32, 32, Settings.Default.QuantumGridSnap);
 			Metronome = new GuiCheckBox(5, "Metronome", 0, 0, 32, 32, Settings.Default.Metronome);
 			DynamicBezier = new GuiCheckBox(5, "Show Bezier Preview", 0, 0, 32, 32, Settings.Default.DynamicBezier);
+			CurveBezier = new GuiCheckBox(5, "Curve Bezier", 0, 0, 32, 32, Settings.Default.CurveBezier);
 			//LegacyBPM = new GuiCheckBox(5, "Use Legacy Panel", 0, 0, 24, 24, Settings.Default.LegacyBPM);
 
 			ScaleBox = new GuiTextBox(0, 0, 128, 32)
@@ -298,6 +300,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(QuantumGridSnap);
 			Buttons.Add(Metronome);
 			Buttons.Add(DynamicBezier);
+			Buttons.Add(CurveBezier);
 			//Buttons.Add(LegacyBPM);
 			Buttons.Add(SetOffset);
 			Buttons.Add(BackButton);
@@ -536,36 +539,77 @@ namespace Sound_Space_Editor.Gui
 					double d = 1f / (bezdivisor * k);
 					float xprev = beziernodes[0].X * Grid.ClientRectangle.Width / 3 + Grid.ClientRectangle.X + Grid.ClientRectangle.Width / 6;
 					float yprev = beziernodes[0].Y * Grid.ClientRectangle.Width / 3 + Grid.ClientRectangle.Y + Grid.ClientRectangle.Width / 6;
-					for (double t = 0; t <= 1; t += d)
-					{
-						float xf = 0;
-						float yf = 0;
-						for (int v = 0; v <= k; v++)
+					if (!Settings.Default.CurveBezier)
+						d = 1f / bezdivisor;
+					if (Settings.Default.CurveBezier)
+                    {
+						for (double t = 0; t <= 1; t += d)
 						{
-							var note = beziernodes[v];
-							var bez = (double)BinomialCoefficient(k, v) * (Math.Pow(1 - t, k - v) * Math.Pow(t, v));
+							float xf = 0;
+							float yf = 0;
+							for (int v = 0; v <= k; v++)
+							{
+								var note = beziernodes[v];
+								var bez = (double)BinomialCoefficient(k, v) * (Math.Pow(1 - t, k - v) * Math.Pow(t, v));
 
-							xf += (float)(bez * note.X);
-							yf += (float)(bez * note.Y);
+								xf += (float)(bez * note.X);
+								yf += (float)(bez * note.Y);
+							}
+
+							xf *= Grid.ClientRectangle.Width / 3;
+							yf *= Grid.ClientRectangle.Width / 3;
+
+							xf += Grid.ClientRectangle.X + Grid.ClientRectangle.Width / 6;
+							yf += Grid.ClientRectangle.Y + Grid.ClientRectangle.Width / 6;
+
+							GL.Color3(Color.FromArgb(255, 255, 255));
+							GL.Begin(PrimitiveType.Lines);
+							GL.Vertex2(xprev, yprev);
+							GL.Vertex2(xf, yf);
+							GL.End();
+							GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							Glu.RenderCircle(xf, yf, 4);
+
+							xprev = xf;
+							yprev = yf;
 						}
-
-						xf *= Grid.ClientRectangle.Width / 3;
-						yf *= Grid.ClientRectangle.Width / 3;
-
-						xf += Grid.ClientRectangle.X + Grid.ClientRectangle.Width / 6;
-						yf += Grid.ClientRectangle.Y + Grid.ClientRectangle.Width / 6;
-
-						GL.Color3(Color.FromArgb(255, 255, 255));
-						GL.Begin(PrimitiveType.Lines);
-						GL.Vertex2(xprev, yprev);
-						GL.Vertex2(xf, yf);
-						GL.End();
-						GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
-						Glu.RenderCircle(xf, yf, 4);
-
-						xprev = xf;
-						yprev = yf;
 					}
+					else
+                    {
+						for (int v = 0; v < k; v++)
+                        {
+							var note = beziernodes[v];
+							var nextnote = beziernodes[v + 1];
+							var xdist = nextnote.X - note.X;
+							var ydist = nextnote.Y - note.Y;
+
+							float xf = 0;
+							float yf = 0;
+
+							for (double t = 0; t <= 1; t += d)
+                            {
+								xf = note.X + xdist * (float)t;
+								yf = note.Y + ydist * (float)t;
+
+								xf *= Grid.ClientRectangle.Width / 3;
+								yf *= Grid.ClientRectangle.Width / 3;
+
+								xf += Grid.ClientRectangle.X + Grid.ClientRectangle.Width / 6;
+								yf += Grid.ClientRectangle.Y + Grid.ClientRectangle.Width / 6;
+
+								GL.Color3(Color.FromArgb(255, 255, 255));
+								GL.Begin(PrimitiveType.Lines);
+								GL.Vertex2(xprev, yprev);
+								GL.Vertex2(xf, yf);
+								GL.End();
+								GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+								Glu.RenderCircle(xf, yf, 4);
+
+								xprev = xf;
+								yprev = yf;
+							}
+                        }
+                    }
 				}
 				catch
                 {
@@ -654,6 +698,7 @@ namespace Sound_Space_Editor.Gui
 			RotateBox.Visible = false;
 			BezierBox.Visible = false;
 			DynamicBezier.Visible = false;
+			CurveBezier.Visible = false;
 			RotateButton.Visible = false;
 			BezierButton.Visible = false;
 			BezierStoreButton.Visible = false;
@@ -704,6 +749,7 @@ namespace Sound_Space_Editor.Gui
 				RotateBox.Visible = true;
 				BezierBox.Visible = true;
 				DynamicBezier.Visible = true;
+				CurveBezier.Visible = true;
 				RotateButton.Visible = true;
 				BezierButton.Visible = true;
 				BezierStoreButton.Visible = true;
@@ -814,13 +860,16 @@ namespace Sound_Space_Editor.Gui
 					Settings.Default.Metronome = Metronome.Toggle;
 					Settings.Default.SfxOffset = SfxOffset.Text;
 					Settings.Default.DynamicBezier = DynamicBezier.Toggle;
+					Settings.Default.CurveBezier = CurveBezier.Toggle;
 					//Settings.Default.LegacyBPM = LegacyBPM.Toggle;
 					Settings.Default.Save();
 					break;
 				case 6:
-					var time = long.Parse(JumpMSBox.Text);
-					if (time <= EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds)
-						EditorWindow.Instance.MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(time);
+					if (long.TryParse(JumpMSBox.Text, out var time))
+                    {
+						if (time <= EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds)
+							EditorWindow.Instance.MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(time);
+					}
 					break;
 				case 7:
 					var degrees = float.Parse(RotateBox.Text);
@@ -895,22 +944,52 @@ namespace Sound_Space_Editor.Gui
 							var k = finalnodes.Count - 1;
 							float tdiff = finalnodes[k].Ms - finalnodes[0].Ms;
 							double d = 1f / (divisor * k);
-							for (double t = 0; t <= 1; t += d)
-							{
-								float xf = 0;
-								float yf = 0;
-								double tf = finalnodes[0].Ms + tdiff * t;
-								for (int v = 0; v <= k; v++)
+							if (!Settings.Default.CurveBezier)
+								d = 1f / divisor;
+							if (Settings.Default.CurveBezier)
+                            {
+								for (double t = 0; t <= 1; t += d)
 								{
-									var note = finalnodes[v];
-									var bez = (double)BinomialCoefficient(k, v) * (Math.Pow(1 - t, k - v) * Math.Pow(t, v));
+									float xf = 0;
+									float yf = 0;
+									double tf = finalnodes[0].Ms + tdiff * t;
+									for (int v = 0; v <= k; v++)
+									{
+										var note = finalnodes[v];
+										var bez = (double)BinomialCoefficient(k, v) * (Math.Pow(1 - t, k - v) * Math.Pow(t, v));
 
-									xf += (float)(bez * note.X);
-									yf += (float)(bez * note.Y);
+										xf += (float)(bez * note.X);
+										yf += (float)(bez * note.Y);
+									}
+									finalnotes.Add(new Note(xf, yf, (long)tf));
 								}
-								finalnotes.Add(new Note(xf, yf, (long)tf));
+							}
+							else
+                            {
+								for (int v = 0; v < k; v++)
+                                {
+									var note = finalnodes[v];
+									var nextnote = finalnodes[v + 1];
+									var xdist = nextnote.X - note.X;
+									var ydist = nextnote.Y - note.Y;
+									var tdist = nextnote.Ms - note.Ms;
+
+									for (double t = 0; t < 1; t += d)
+                                    {
+										if (t > 0)
+                                        {
+											var xf = note.X + xdist * t;
+											var yf = note.Y + ydist * t;
+											var tf = note.Ms + tdist * t;
+
+											finalnotes.Add(new Note((float)xf, (float)yf, (long)tf));
+										}
+                                    }
+                                }
 							}
 							EditorWindow.Instance.SelectedNotes.Clear();
+							if (!Settings.Default.CurveBezier)
+								finalnodes = new List<Note>();
 							EditorWindow.Instance.Notes.RemoveAll(finalnodes);
 							EditorWindow.Instance.Notes.AddAll(finalnotes);
 							EditorWindow.Instance.UndoRedo.AddUndoRedo("DRAW BEZIER", () =>
@@ -1116,6 +1195,7 @@ namespace Sound_Space_Editor.Gui
 			BezierStoreButton.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
 			BezierClearButton.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
 			DynamicBezier.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
+			CurveBezier.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			BezierBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
 			BezierButton.ClientRectangle.Size = SetOffset.ClientRectangle.Size;
 			RotateBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
@@ -1161,7 +1241,8 @@ namespace Sound_Space_Editor.Gui
 			BezierStoreButton.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, VFlip.ClientRectangle.Bottom + 20 * heightdiff);
 			BezierClearButton.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, BezierStoreButton.ClientRectangle.Bottom + 10 * heightdiff);
 			DynamicBezier.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, BezierClearButton.ClientRectangle.Bottom + 10 * heightdiff);
-			BezierBox.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, DynamicBezier.ClientRectangle.Bottom + 32 * heightdiff);
+			CurveBezier.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, DynamicBezier.ClientRectangle.Bottom + 10 * heightdiff);
+			BezierBox.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, CurveBezier.ClientRectangle.Bottom + 32 * heightdiff);
 			BezierButton.ClientRectangle.Location = new PointF(BezierBox.ClientRectangle.Right + 5 * widthdiff, BezierBox.ClientRectangle.Y);
 			RotateBox.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, BezierBox.ClientRectangle.Bottom + 35 * heightdiff);
 			RotateButton.ClientRectangle.Location = new PointF(RotateBox.ClientRectangle.Right + 5 * widthdiff, RotateBox.ClientRectangle.Y);

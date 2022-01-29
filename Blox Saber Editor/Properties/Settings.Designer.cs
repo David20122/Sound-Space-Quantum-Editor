@@ -238,5 +238,17 @@ namespace Sound_Space_Editor.Properties {
                 this["TrackHeight"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool CurveBezier {
+            get {
+                return ((bool)(this["CurveBezier"]));
+            }
+            set {
+                this["CurveBezier"] = value;
+            }
+        }
     }
 }
