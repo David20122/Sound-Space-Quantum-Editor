@@ -46,6 +46,7 @@
             this.ImportOSU = new System.Windows.Forms.Button();
             this.ImportADOFAI = new System.Windows.Forms.Button();
             this.OpenTapper = new System.Windows.Forms.Button();
+            this.OpenBeatmap = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.PointList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MoveBox)).BeginInit();
             this.SuspendLayout();
@@ -66,7 +67,7 @@
             this.PointList.ReadOnly = true;
             this.PointList.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.PointList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.PointList.Size = new System.Drawing.Size(326, 409);
+            this.PointList.Size = new System.Drawing.Size(326, 351);
             this.PointList.TabIndex = 9;
             this.PointList.SelectionChanged += new System.EventHandler(this.PointList_SelectionChanged);
             // 
@@ -91,7 +92,7 @@
             // RemoveButton
             // 
             this.RemoveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.RemoveButton.Location = new System.Drawing.Point(247, 421);
+            this.RemoveButton.Location = new System.Drawing.Point(247, 363);
             this.RemoveButton.Name = "RemoveButton";
             this.RemoveButton.Size = new System.Drawing.Size(88, 22);
             this.RemoveButton.TabIndex = 5;
@@ -102,7 +103,7 @@
             // UpdateButton
             // 
             this.UpdateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.UpdateButton.Location = new System.Drawing.Point(247, 444);
+            this.UpdateButton.Location = new System.Drawing.Point(247, 386);
             this.UpdateButton.Name = "UpdateButton";
             this.UpdateButton.Size = new System.Drawing.Size(88, 22);
             this.UpdateButton.TabIndex = 4;
@@ -113,7 +114,7 @@
             // AddButton
             // 
             this.AddButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.AddButton.Location = new System.Drawing.Point(158, 421);
+            this.AddButton.Location = new System.Drawing.Point(158, 363);
             this.AddButton.Name = "AddButton";
             this.AddButton.Size = new System.Drawing.Size(88, 22);
             this.AddButton.TabIndex = 3;
@@ -123,7 +124,7 @@
             // 
             // BPMLabel
             // 
-            this.BPMLabel.Location = new System.Drawing.Point(9, 426);
+            this.BPMLabel.Location = new System.Drawing.Point(9, 368);
             this.BPMLabel.Margin = new System.Windows.Forms.Padding(0);
             this.BPMLabel.Name = "BPMLabel";
             this.BPMLabel.Size = new System.Drawing.Size(68, 16);
@@ -132,7 +133,7 @@
             // 
             // OffsetLabel
             // 
-            this.OffsetLabel.Location = new System.Drawing.Point(9, 447);
+            this.OffsetLabel.Location = new System.Drawing.Point(9, 389);
             this.OffsetLabel.Margin = new System.Windows.Forms.Padding(0);
             this.OffsetLabel.Name = "OffsetLabel";
             this.OffsetLabel.Size = new System.Drawing.Size(68, 16);
@@ -141,14 +142,14 @@
             // 
             // OffsetBox
             // 
-            this.OffsetBox.Location = new System.Drawing.Point(80, 444);
+            this.OffsetBox.Location = new System.Drawing.Point(80, 386);
             this.OffsetBox.Name = "OffsetBox";
             this.OffsetBox.Size = new System.Drawing.Size(72, 20);
             this.OffsetBox.TabIndex = 2;
             // 
             // BPMBox
             // 
-            this.BPMBox.Location = new System.Drawing.Point(80, 422);
+            this.BPMBox.Location = new System.Drawing.Point(80, 364);
             this.BPMBox.Name = "BPMBox";
             this.BPMBox.Size = new System.Drawing.Size(72, 20);
             this.BPMBox.TabIndex = 1;
@@ -156,7 +157,7 @@
             // CurrentButton
             // 
             this.CurrentButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.CurrentButton.Location = new System.Drawing.Point(158, 444);
+            this.CurrentButton.Location = new System.Drawing.Point(158, 386);
             this.CurrentButton.Name = "CurrentButton";
             this.CurrentButton.Size = new System.Drawing.Size(88, 22);
             this.CurrentButton.TabIndex = 4;
@@ -166,7 +167,7 @@
             // 
             // MoveLabel
             // 
-            this.MoveLabel.Location = new System.Drawing.Point(9, 470);
+            this.MoveLabel.Location = new System.Drawing.Point(9, 412);
             this.MoveLabel.Margin = new System.Windows.Forms.Padding(0);
             this.MoveLabel.Name = "MoveLabel";
             this.MoveLabel.Size = new System.Drawing.Size(143, 16);
@@ -175,7 +176,7 @@
             // 
             // MoveBox
             // 
-            this.MoveBox.Location = new System.Drawing.Point(158, 468);
+            this.MoveBox.Location = new System.Drawing.Point(158, 410);
             this.MoveBox.Maximum = new decimal(new int[] {
             268435455,
             1042612833,
@@ -193,7 +194,7 @@
             // MoveButton
             // 
             this.MoveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.MoveButton.Location = new System.Drawing.Point(247, 467);
+            this.MoveButton.Location = new System.Drawing.Point(247, 409);
             this.MoveButton.Name = "MoveButton";
             this.MoveButton.Size = new System.Drawing.Size(88, 22);
             this.MoveButton.TabIndex = 12;
@@ -204,7 +205,7 @@
             // ImportCH
             // 
             this.ImportCH.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.ImportCH.Location = new System.Drawing.Point(175, 494);
+            this.ImportCH.Location = new System.Drawing.Point(175, 436);
             this.ImportCH.Name = "ImportCH";
             this.ImportCH.Size = new System.Drawing.Size(77, 47);
             this.ImportCH.TabIndex = 13;
@@ -215,7 +216,7 @@
             // ImportOSU
             // 
             this.ImportOSU.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.ImportOSU.Location = new System.Drawing.Point(9, 494);
+            this.ImportOSU.Location = new System.Drawing.Point(9, 436);
             this.ImportOSU.Name = "ImportOSU";
             this.ImportOSU.Size = new System.Drawing.Size(77, 47);
             this.ImportOSU.TabIndex = 14;
@@ -226,7 +227,7 @@
             // ImportADOFAI
             // 
             this.ImportADOFAI.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.ImportADOFAI.Location = new System.Drawing.Point(92, 494);
+            this.ImportADOFAI.Location = new System.Drawing.Point(92, 436);
             this.ImportADOFAI.Name = "ImportADOFAI";
             this.ImportADOFAI.Size = new System.Drawing.Size(77, 47);
             this.ImportADOFAI.TabIndex = 15;
@@ -236,19 +237,31 @@
             // 
             // OpenTapper
             // 
-            this.OpenTapper.Location = new System.Drawing.Point(258, 494);
+            this.OpenTapper.Location = new System.Drawing.Point(92, 489);
             this.OpenTapper.Name = "OpenTapper";
-            this.OpenTapper.Size = new System.Drawing.Size(77, 47);
+            this.OpenTapper.Size = new System.Drawing.Size(160, 47);
             this.OpenTapper.TabIndex = 16;
             this.OpenTapper.Text = "Open BPM Tapper";
             this.OpenTapper.UseVisualStyleBackColor = true;
             this.OpenTapper.Click += new System.EventHandler(this.OpenTapper_Click);
             // 
+            // OpenBeatmap
+            // 
+            this.OpenBeatmap.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.OpenBeatmap.Location = new System.Drawing.Point(258, 436);
+            this.OpenBeatmap.Name = "OpenBeatmap";
+            this.OpenBeatmap.Size = new System.Drawing.Size(77, 47);
+            this.OpenBeatmap.TabIndex = 17;
+            this.OpenBeatmap.Text = "Open Beatmap Timings";
+            this.OpenBeatmap.UseVisualStyleBackColor = true;
+            this.OpenBeatmap.Click += new System.EventHandler(this.OpenBeatmap_Click);
+            // 
             // TimingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(345, 550);
+            this.ClientSize = new System.Drawing.Size(345, 546);
+            this.Controls.Add(this.OpenBeatmap);
             this.Controls.Add(this.OpenTapper);
             this.Controls.Add(this.ImportADOFAI);
             this.Controls.Add(this.ImportOSU);
@@ -297,5 +310,6 @@
         private System.Windows.Forms.Button ImportOSU;
         private System.Windows.Forms.Button ImportADOFAI;
         private System.Windows.Forms.Button OpenTapper;
+        private System.Windows.Forms.Button OpenBeatmap;
     }
 }

@@ -5,6 +5,7 @@ using Sound_Space_Editor.Gui;
 using OpenTK;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 
 namespace Sound_Space_Editor
 {
@@ -82,7 +83,7 @@ namespace Sound_Space_Editor
 
     private void CurrentButton_Click(object sender, EventArgs e)
     {
-      OffsetBox.Text = EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds.ToString();
+        OffsetBox.Text = EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds.ToString();
     }
 
     public void ResetList(int index)
@@ -129,13 +130,12 @@ namespace Sound_Space_Editor
             ResetList(0);
         }
 
-        private void ImportOSU_Click(object sender, EventArgs e)
+        private void ParseOSU(string data)
         {
             try
             {
                 var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
                 culture.NumberFormat.NumberDecimalSeparator = ".";
-                string data = Clipboard.GetText();
                 int rep;
                 string reps;
                 if (data.Contains("TimingPoints") == true)
@@ -168,19 +168,19 @@ namespace Sound_Space_Editor
                 }
                 ResetList(0);
             }
-            catch
+            catch (Exception ex)
             {
-
+                MessageBox.Show($"Failed to parse beatmap [OSU | {ex.GetType().Name}]", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ResetList(0);
             }
         }
 
-        private void ImportCH_Click(object sender, EventArgs e)
+        private void ParseCH(string data)
         {
             try
             {
                 var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
                 culture.NumberFormat.NumberDecimalSeparator = ".";
-                string data = Clipboard.GetText();
                 int rep;
                 string reps;
                 string reps2;
@@ -249,41 +249,19 @@ namespace Sound_Space_Editor
                 }
                 ResetList(0);
             }
-            catch
+            catch (Exception ex)
             {
-
+                MessageBox.Show($"Failed to parse beatmap [CH | {ex.GetType().Name}]", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ResetList(0);
             }
         }
 
-        public double Deg(char c)
-        {
-            double degree = 69;
-
-            List<char> characters = new List<char>()
-            {
-                'R','J','E','T','U','G','Q','H','L','N','Z','F','D','B','C','M','x','W','A','p','q','Y','o','V',
-            };
-            List<double> degrees = new List<double>()
-            {
-                0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330,195,165,345,15,105,285,75,255,
-            };
-
-            int index = characters.IndexOf(c);
-            if (index == -1 && !double.TryParse(c.ToString(), out var _))
-                Console.WriteLine(c);
-            else
-                degree = degrees[index];
-
-            return degree;
-        }
-
-        private void ImportADOFAI_Click(object sender, EventArgs e)
+        private void ParseADOFAI(string data)
         {
             try
             {
                 var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
                 culture.NumberFormat.NumberDecimalSeparator = ".";
-                string data = Clipboard.GetText();
                 string curbpm = data.Substring(data.IndexOf("bpm"), data.Length - data.IndexOf("bpm"));
                 string mapdata = data.Substring(data.IndexOf("pathData"), data.IndexOf(",") - data.IndexOf("pathData"));
                 mapdata = mapdata.Replace("pathData\": \"", "");
@@ -419,9 +397,78 @@ namespace Sound_Space_Editor
                 }
                 ResetList(0);
             }
-            catch
+            catch (Exception ex)
             {
+                MessageBox.Show($"Failed to parse beatmap [ADOFAI | {ex.GetType().Name}]", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ResetList(0);
+            }
+        }
 
+        public double Deg(char c)
+        {
+            double degree = 69;
+
+            List<char> characters = new List<char>()
+            {
+                'R','J','E','T','U','G','Q','H','L','N','Z','F','D','B','C','M','x','W','A','p','q','Y','o','V',
+            };
+            List<double> degrees = new List<double>()
+            {
+                0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330,195,165,345,15,105,285,75,255,
+            };
+
+            int index = characters.IndexOf(c);
+            if (index == -1 && !double.TryParse(c.ToString(), out var _))
+                Console.WriteLine(c);
+            else
+                degree = degrees[index];
+
+            return degree;
+        }
+
+        private void ImportOSU_Click(object sender, EventArgs e)
+        {
+            ParseOSU(Clipboard.GetText());
+        }
+
+        private void ImportCH_Click(object sender, EventArgs e)
+        {
+            ParseCH(Clipboard.GetText());
+        }
+
+        private void ImportADOFAI_Click(object sender, EventArgs e)
+        {
+            ParseADOFAI(Clipboard.GetText());
+        }
+
+        private void OpenBeatmap_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new OpenFileDialog
+            {
+                Title = "Select Beatmap",
+                Filter = "Beatmaps (*.osu; *.chart; *.adofai)|*.osu;*.chart;*.adofai"
+            })
+            {
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    var file = dialog.FileName;
+                    var split = file.Split('.');
+                    var ext = split[split.Length - 1];
+                    var data = File.ReadAllText(file);
+
+                    switch (ext)
+                    {
+                        case "osu":
+                            ParseOSU(data);
+                            break;
+                        case "chart":
+                            ParseCH(data);
+                            break;
+                        case "adofai":
+                            ParseADOFAI(data);
+                            break;
+                    }
+                }
             }
         }
 
