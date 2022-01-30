@@ -21,8 +21,8 @@ namespace Sound_Space_Editor.Gui
 
 		private float _alpha;
 
-		public int[] Color1;
-		public int[] Color2;
+		public Color Color1;
+		public Color Color2;
 
 		public GuiSlider(float x, float y, float sx, float sy) : base(int.MinValue, x, y, sx, sy, "", false)
 		{
@@ -33,8 +33,8 @@ namespace Sound_Space_Editor.Gui
 		{
 			if (EditorWindow.Instance.GuiScreen is GuiScreenMenu menu)
 			{
-				Color1 = new int[] { 255, 255, 255 };
-				Color2 = new int[] { 50, 50, 50 };
+				Color1 = Color.FromArgb(255, 255, 255);
+				Color2 = Color.FromArgb(50, 50, 50);
 
 			}
 			else
@@ -70,7 +70,7 @@ namespace Sound_Space_Editor.Gui
 				if (_alpha > 0)
 				{
 					GL.PolygonMode(MaterialFace.Front, PolygonMode.Line);
-					GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+					GL.Color4(Color1);
 					Glu.RenderCircle(0, 0, 12 * _alpha);
 				}
 
@@ -78,7 +78,7 @@ namespace Sound_Space_Editor.Gui
 				GL.Translate(-cursorPos.X, -cursorPos.Y, 0);
 
 				GL.PolygonMode(MaterialFace.Front, PolygonMode.Fill);
-				GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+				GL.Color4(Color1);
 				Glu.RenderCircle(cursorPos.X, cursorPos.Y, 4, 16);
 				//GL.LineWidth(1);
 			}
@@ -87,9 +87,9 @@ namespace Sound_Space_Editor.Gui
 		protected virtual void RenderTimeline(RectangleF rect)
 		{
 
-			GL.Color4(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+			GL.Color4(Color2);
 			Glu.RenderQuad(rect);
-			GL.Color4(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+			GL.Color4(Color2);
 			Glu.RenderOutline(rect);
 		}
 

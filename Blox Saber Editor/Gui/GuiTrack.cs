@@ -41,8 +41,8 @@ namespace Sound_Space_Editor.Gui
 
 			int trackdim = EditorSettings.TrackOpacity;
 
-			int[] Color1 = EditorWindow.Instance.Color1;
-			int[] Color2 = EditorWindow.Instance.Color2;
+			Color Color1 = EditorWindow.Instance.Color1;
+			Color Color2 = EditorWindow.Instance.Color2;
 
 			// waveform
 
@@ -131,7 +131,7 @@ namespace Sound_Space_Editor.Gui
 
 			//draw start line
 			GL.LineWidth(2);
-			GL.Color4(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+			GL.Color4(Color2);
 			GL.Begin(PrimitiveType.Lines);
 			GL.Vertex2((int)(ScreenX - posX), rect.Y);
 			GL.Vertex2((int)(ScreenX - posX), rect.Y + rect.Height);
@@ -242,10 +242,10 @@ namespace Sound_Space_Editor.Gui
 				if (msText == "")
 					msText = "0";
 
-				GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+				GL.Color3(Color1);
 				fr.Render($"Note {numText}", (int)x + 3, (int)(rect.Y + rect.Height) + 3, 16);
 
-				GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+				GL.Color3(Color2);
 				fr.Render($"{msText}ms", (int)x + 3, (int)(rect.Y + rect.Height + fr.GetHeight(16)) + 3 + 2, 16);
 
 				//draw line
@@ -317,14 +317,14 @@ namespace Sound_Space_Editor.Gui
 						if (numText == "")
 							numText = "0";
 
-						GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+						GL.Color3(Color1);
 						fr.Render($"{numText} BPM", (int)x + 3, (int)(rect.Y + rect.Height) + 3 + 28, 16);
 
 						var msText = $"{Bpm.Ms:##,###}";
 						if (msText == "")
 							msText = "0";
 
-						GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+						GL.Color3(Color2);
 						fr.Render($"{msText}ms", (int)x + 3, (int)(rect.Y + rect.Height + fr.GetHeight(16)) + 3 + 2 + 28, 16);
 
 						var gapf = rect.Height - noteSize - y;
@@ -332,7 +332,7 @@ namespace Sound_Space_Editor.Gui
 						//render BPM lines
 						while (lineSpace > 0 && lineX < rect.Width && lineX < endLineX && lineX < nextLineX)
 						{
-							GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+							GL.Color3(Color2);
 							GL.Begin(PrimitiveType.Lines);
 							GL.Vertex2((int)lineX + 0.5f, rect.Bottom);
 							GL.Vertex2((int)lineX + 0.5f, rect.Bottom - gapf);
@@ -349,9 +349,9 @@ namespace Sound_Space_Editor.Gui
 									var half = j == BeatDivisor / 2 && BeatDivisor % 2 == 0;
 
 									if (half)
-										GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+										GL.Color3(Color2);
 									else
-										GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+										GL.Color3(Color1);
 
 									GL.Begin(PrimitiveType.Lines);
 									GL.Vertex2(Math.Round(xo) + 0.5f, rect.Bottom - (half ? 3 * gapf / 5 : 3 * gapf / 10));
@@ -414,17 +414,17 @@ namespace Sound_Space_Editor.Gui
 
 					var numText = $"{Bpm:##,###}";
 
-					GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+					GL.Color3(Color1);
 					fr.Render(numText, (int)x + 3, (int)(rect.Y + rect.Height) + 3 + 28, 16);
 
-					GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+					GL.Color3(Color2);
 					fr.Render($"{BpmOffset:##,###}ms", (int)x + 3,
 						(int)(rect.Y + rect.Height + fr.GetHeight(16)) + 3 + 2 + 28, 16);
 
 					//render BPM lines
 					while (lineSpace > 0 && lineX < rect.Width && lineX < endLineX)
 					{
-						GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+						GL.Color3(Color2);
 						GL.Begin(PrimitiveType.Lines);
 						GL.Vertex2((int)lineX + 0.5f, rect.Bottom);
 						GL.Vertex2((int)lineX + 0.5f, rect.Bottom - 11);
@@ -440,9 +440,9 @@ namespace Sound_Space_Editor.Gui
 								var half = j == BeatDivisor / 2 && BeatDivisor % 2 == 0;
 
 								if (half)
-									GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+									GL.Color3(Color2);
 								else
-									GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+									GL.Color3(Color1);
 
 								GL.Begin(PrimitiveType.Lines);
 								GL.Vertex2((int)xo + 0.5f, rect.Bottom - (half ? 7 : 4));

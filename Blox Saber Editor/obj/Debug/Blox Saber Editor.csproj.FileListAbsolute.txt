@@ -45,3 +45,5 @@ F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Blox Saber Edit
 F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound Space Quantum Editor.exe
 F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound Space Quantum Editor.pdb
 F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound_Space_Editor.BPMTapper.resources
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\System.Json.dll
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\System.Json.xml

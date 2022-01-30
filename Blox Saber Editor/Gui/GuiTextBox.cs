@@ -17,8 +17,8 @@ namespace Sound_Space_Editor.Gui
 		public bool Centered;
 		public bool CanBeNegative;
 		public bool Timings;
-		public int[] Color1;
-		public int[] Color2;
+		public Color Color1;
+		public Color Color2;
 		private bool _focused;
 		private string _text = "";
 		private int _cursorPos;
@@ -112,8 +112,8 @@ namespace Sound_Space_Editor.Gui
             {
 				if (EditorWindow.Instance.GuiScreen is GuiScreenSettings settings)
 				{
-					Color1 = new int[] { 255, 255, 255 };
-					Color2 = new int[] { 255, 255, 255 };
+					Color1 = Color.FromArgb(50, 50, 50);
+					Color2 = Color.FromArgb(255, 255, 255);
 
 				}
 				else
@@ -149,7 +149,7 @@ namespace Sound_Space_Editor.Gui
 				if (Centered)
 					GL.Translate(offX, 0, 0);
 
-				GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+				GL.Color3(Color2);
 				fr.Render(renderedText, (int)x, (int)(y - fr.GetHeight(24) / 2f), 24);
 
 				if (Focused)
@@ -162,7 +162,7 @@ namespace Sound_Space_Editor.Gui
 
 					var alpha = (float)(Math.Sin(_timer * MathHelper.TwoPi) + 1) / 2;
 
-					GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+					GL.Color4(Color1);
 					Glu.RenderQuad(x + textToCursorSize, y - cursorHeight / 2, 1, cursorHeight);
 
 					_timer += delta * 1.25f;

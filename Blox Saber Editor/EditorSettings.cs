@@ -7,101 +7,60 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Globalization;
+using System.Json;
 
 namespace Sound_Space_Editor
 {
 	class EditorSettings
 	{
 		public static readonly string file = "settings.txt";
-		public static bool Waveform;
-		//public static bool BPMForm;
-		public static int EditorBGOpacity;
-		public static int GridOpacity;
-		public static int TrackOpacity;
-		public static string Color1;
-		public static string Color2;
-		public static string NoteColor1;
-		public static string NoteColor2;
-		public static bool EnableAutosave;
-		public static int AutosaveInterval;
-		public static bool CorrectOnCopy;
+
+		public static bool Waveform = true;
+		//public static bool BPMForm = true;
+		public static int EditorBGOpacity = 255;
+		public static int GridOpacity = 255;
+		public static int TrackOpacity = 255;
+		public static Color Color1 = Color.FromArgb(0, 255, 200);
+		public static Color Color2 = Color.FromArgb(255, 0, 255);
+		public static Color NoteColor1 = Color.FromArgb(255, 0, 255);
+		public static Color NoteColor2 = Color.FromArgb(0, 255, 200);
+		public static bool EnableAutosave = true;
+		public static int AutosaveInterval = 5;
+		public static bool CorrectOnCopy = true;
 
 		public static void Load()
 		{
 			try
 			{
 				Reset();
-				foreach (string text in File.ReadAllLines(file))
-				{
-					if (text.Contains("--"))
-						continue;
-					string[] setting = text.Trim().Replace(" ", "").Split(new char[] { '=' });
-					string settingName = setting[0];
-					string value = setting[1];
-					Console.WriteLine("{0}, {1}", settingName, value);
-					switch (settingName)
-					{
-						case "Waveform":
-							bool resA;
-							bool.TryParse(value, out resA);
-							Waveform = resA;
-							break;
-						/*
-						case "BPMForm":
-							bool resE;
-							bool.TryParse(value, out resE);
-							BPMForm = resE;
-							break;
-						*/
-						case "EditorBGOpacity":
-							int resB;
-							int.TryParse(value, out resB);
-							EditorBGOpacity = resB;
-							break;
-						case "GridOpacity":
-							int resC;
-							int.TryParse(value, out resC);
-							GridOpacity = resC;
-							break;
-						case "TrackOpacity":
-							int resD;
-							int.TryParse(value, out resD);
-							TrackOpacity = resD;
-							break;
-						case "Color1":
-							Color1 = value;
-							break;
-						case "Color2":
-							Color2 = value;
-							break;
-						case "NoteColor1":
-							NoteColor1 = value;
-							break;
-						case "NoteColor2":
-							NoteColor2 = value;
-							break;
-						case "EnableAutosave":
-							bool resE;
-							bool.TryParse(value, out resE);
-							EnableAutosave = resE;
-							break;
-						case "AutosaveInterval":
-							int resF;
-							int.TryParse(value, out resF);
-							AutosaveInterval = resF;
-							break;
-						case "CorrectOnCopy":
-							bool resG;
-							bool.TryParse(value, out resG);
-							CorrectOnCopy = resG;
-							break;
-					}
-				}
+				var result = JsonValue.Parse(File.ReadAllText(file));
+
+				if (result.ContainsKey("Waveform"))
+					Waveform = result["Waveform"];
+				if (result.ContainsKey("EditorBGOpacity"))
+					EditorBGOpacity = result["EditorBGOpacity"];
+				if (result.ContainsKey("GridOpacity"))
+					GridOpacity = result["GridOpacity"];
+				if (result.ContainsKey("TrackOpacity"))
+					TrackOpacity = result["TrackOpacity"];
+				if (result.ContainsKey("Color1"))
+					Color1 = Color.FromArgb(result["Color1"]["R"], result["Color1"]["G"], result["Color1"]["B"]);
+				if (result.ContainsKey("Color2"))
+					Color2 = Color.FromArgb(result["Color2"]["R"], result["Color2"]["G"], result["Color2"]["B"]);
+				if (result.ContainsKey("NoteColor1"))
+					NoteColor1 = Color.FromArgb(result["NoteColor1"]["R"], result["NoteColor1"]["G"], result["NoteColor1"]["B"]);
+				if (result.ContainsKey("NoteColor2"))
+					NoteColor2 = Color.FromArgb(result["NoteColor2"]["R"], result["NoteColor2"]["G"], result["NoteColor2"]["B"]);
+				if (result.ContainsKey("EnableAutosave"))
+					EnableAutosave = result["EnableAutosave"];
+				if (result.ContainsKey("AutosaveInterval"))
+					AutosaveInterval = result["AutosaveInterval"];
+				if (result.ContainsKey("CorrectOnCopy"))
+					CorrectOnCopy = result["CorrectOnCopy"];
 			}
 			catch
 			{
-				Reset();
-				Console.WriteLine("no settings.txt - loading default settings");
+				Console.WriteLine("error while loading settings");
 			}
 
             Console.WriteLine("Loaded => {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8} | {9} | {10}", Waveform, EditorBGOpacity, GridOpacity, TrackOpacity, Color1, Color2, NoteColor1, NoteColor2, EnableAutosave, AutosaveInterval, CorrectOnCopy);
@@ -110,14 +69,13 @@ namespace Sound_Space_Editor
 		public static void Reset()
 		{
 			Waveform = true;
-			//BPMForm = false;
 			EditorBGOpacity = 255;
 			GridOpacity = 255;
 			TrackOpacity = 255;
-			Color1 = "0,255,200";
-			Color2 = "255,0,255";
-			NoteColor1 = "255,0,255";
-			NoteColor2 = "0,255,200";
+			Color1 = Color.FromArgb(0, 255, 200);
+			Color2 = Color.FromArgb(255, 0, 255);
+			NoteColor1 = Color.FromArgb(255, 0, 255);
+			NoteColor2 = Color.FromArgb(0, 255, 200);
 			EnableAutosave = true;
 			AutosaveInterval = 5;
 			CorrectOnCopy = true;
@@ -125,23 +83,43 @@ namespace Sound_Space_Editor
 
 		public static void Save()
 		{
-			StringBuilder sb = new StringBuilder();
-			sb.AppendLine("-- DON'T EDIT THIS, LAUNCH EDITOR AND GO IN SETTINGS INSTEAD");
-			sb.AppendLine(string.Format("Waveform={0}", Waveform));
-			//sb.AppendLine(string.Format("BPMForm={0}", BPMForm));
-			sb.AppendLine(string.Format("EditorBGOpacity={0}", EditorBGOpacity));
-			sb.AppendLine(string.Format("GridOpacity={0}", GridOpacity));
-			sb.AppendLine(string.Format("TrackOpacity={0}", TrackOpacity));
-			sb.AppendLine(string.Format("Color1={0}", Color1));
-			sb.AppendLine(string.Format("Color2={0}", Color2));
-			sb.AppendLine(string.Format("NoteColor1={0}", NoteColor1));
-			sb.AppendLine(string.Format("NoteColor2={0}", NoteColor2));
-			sb.AppendLine(string.Format("EnableAutosave={0}", EnableAutosave));
-			sb.AppendLine(string.Format("AutosaveInterval={0}", AutosaveInterval));
-			sb.AppendLine(string.Format("CorrectOnCopy={0}", CorrectOnCopy));
+			var jsonFinal = new JsonObject(Array.Empty<KeyValuePair<string, JsonValue>>())
+			{
+				{"Waveform", Waveform},
+				{"EditorBGOpacity", EditorBGOpacity},
+				{"GridOpacity", GridOpacity},
+				{"TrackOpacity", TrackOpacity},
+				{"Color1", new JsonObject(Array.Empty<KeyValuePair<string, JsonValue>>()) {
+						{"R", Color1.R},
+						{"G", Color1.G},
+						{"B", Color1.B}
+					}
+				},
+				{"Color2", new JsonObject(Array.Empty<KeyValuePair<string, JsonValue>>()) {
+						{"R", Color2.R},
+						{"G", Color2.G},
+						{"B", Color2.B}
+					}
+				},
+				{"NoteColor1", new JsonObject(Array.Empty<KeyValuePair<string, JsonValue>>()) {
+						{"R", NoteColor1.R},
+						{"G", NoteColor1.G},
+						{"B", NoteColor1.B}
+					}
+				},
+				{"NoteColor2", new JsonObject(Array.Empty<KeyValuePair<string, JsonValue>>()) {
+						{"R", NoteColor2.R},
+						{"G", NoteColor2.G},
+						{"B", NoteColor2.B}
+					}
+				},
+				{"EnableAutosave", EnableAutosave},
+				{"AutosaveInterval",AutosaveInterval},
+				{"CorrectOnCopy",CorrectOnCopy}
+			};
 			try
 			{
-				File.WriteAllText(file, sb.ToString());
+				File.WriteAllText(file, jsonFinal.ToString());
 				Console.WriteLine("Saved => {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8} | {9} | {10}", Waveform, EditorBGOpacity, GridOpacity, TrackOpacity, Color1, Color2, NoteColor1, NoteColor2, EnableAutosave, AutosaveInterval, CorrectOnCopy);
 			}
 			catch

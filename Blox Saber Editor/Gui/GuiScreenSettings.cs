@@ -43,15 +43,10 @@ namespace Sound_Space_Editor.Gui
 
 		public GuiScreenSettings() : base(0, 0, EditorWindow.Instance.ClientSize.Width, EditorWindow.Instance.ClientSize.Height)
 		{
-			var Color1Str = Array.ConvertAll(EditorSettings.Color1.Split(','), int.Parse);
-			var Color2Str = Array.ConvertAll(EditorSettings.Color2.Split(','), int.Parse);
-			var NoteColor1Str = Array.ConvertAll(EditorSettings.NoteColor1.Split(','), int.Parse);
-			var NoteColor2Str = Array.ConvertAll(EditorSettings.NoteColor2.Split(','), int.Parse);
-
-			color1 = Color.FromArgb(Color1Str[0], Color1Str[1], Color1Str[2]);
-			color2 = Color.FromArgb(Color2Str[0], Color2Str[1], Color2Str[2]);
-			notecolor1 = Color.FromArgb(NoteColor1Str[0], NoteColor1Str[1], NoteColor1Str[2]);
-			notecolor2 = Color.FromArgb(NoteColor2Str[0], NoteColor2Str[1], NoteColor2Str[2]);
+			color1 = EditorSettings.Color1;
+			color2 = EditorSettings.Color2;
+			notecolor1 = EditorSettings.NoteColor1;
+			notecolor2 = EditorSettings.NoteColor2;
 
 			EditorBGOpacityTextBox = new GuiTextBox(0, 0, 200, 50)
 			{
@@ -400,10 +395,10 @@ namespace Sound_Space_Editor.Gui
 					int gridOpacity = int.TryParse(GridOpacityTextBox.Text, out var val2) ? val2 : EditorSettings.GridOpacity;
 					int trackOpacity = int.TryParse(TrackOpacityTextBox.Text, out var val3) ? val3 : EditorSettings.TrackOpacity;
 					int autosaveInterval = int.TryParse(AutosaveInterval.Text, out var val4) && val4 > 0 ? val4 : EditorSettings.AutosaveInterval;
-					EditorSettings.Color1 = $"{color1.R},{color1.G},{color1.B}";
-					EditorSettings.Color2 = $"{color2.R},{color2.G},{color2.B}";
-					EditorSettings.NoteColor1 = $"{notecolor1.R},{notecolor1.G},{notecolor1.B}";
-					EditorSettings.NoteColor2 = $"{notecolor2.R},{notecolor2.G},{notecolor2.B}";
+					EditorSettings.Color1 = color1;
+					EditorSettings.Color2 = color2;
+					EditorSettings.NoteColor1 = notecolor1;
+					EditorSettings.NoteColor2 = notecolor2;
 					EditorSettings.Waveform = WaveformCheckbox.Toggle;
 					//EditorSettings.BPMForm = BPMFormCheckbox.Toggle;
 					EditorSettings.EnableAutosave = AutosaveCheckbox.Toggle;

@@ -13,7 +13,7 @@ namespace Sound_Space_Editor.Gui
 
 		}
 
-		int[] Color1 = EditorWindow.Instance.Color1;
+		Color Color1 = EditorWindow.Instance.Color1;
 
 		protected override void RenderTimeline(RectangleF rect)
 		{
@@ -32,7 +32,7 @@ namespace Sound_Space_Editor.Gui
 				var x = rect.X + progress * rect.Width;
 				var y = rect.Y + rect.Height / 2f;
 
-				GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+				GL.Color4(Color1);
 				Glu.RenderQuad((int)x, y + rect.Height * 2, 1, rect.Height);
 			}
 
@@ -45,7 +45,7 @@ namespace Sound_Space_Editor.Gui
 				var x = rect.X + progress * rect.Width - 1;
 				var y = rect.Y - rect.Height / 2f;
 
-				GL.Color4(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+				GL.Color4(Color1);
 				Glu.RenderQuad((int)x, y - rect.Height * 4, 2, rect.Height * 2);
             }
 		}

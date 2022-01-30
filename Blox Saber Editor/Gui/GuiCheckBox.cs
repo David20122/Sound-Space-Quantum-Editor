@@ -10,8 +10,8 @@ namespace Sound_Space_Editor.Gui
 
 		private float _alpha;
 		public int FontSize;
-		public int[] Color1;
-		public int[] Color2;
+		public Color Color1;
+		public Color Color2;
 
 		public GuiCheckBox(int id, float x, float y, float sx, float sy, bool toggle) : base(id, x, y, sx, sy)
 		{
@@ -39,8 +39,8 @@ namespace Sound_Space_Editor.Gui
 			if (EditorWindow.Instance.GuiScreen is GuiScreenSettings settings)
 			{
 
-				Color1 = new int[] { 255, 255, 255 };
-				Color2 = new int[] { 50, 50, 50 };
+				Color1 = Color.FromArgb(255, 255, 255);
+				Color2 = Color.FromArgb(50, 50, 50);
 
 			}
 			else
@@ -69,7 +69,7 @@ namespace Sound_Space_Editor.Gui
 
 			if (checkSizeX > 0 && checkSizeY > 0)
 			{
-				GL.Color4(Color.FromArgb(255, Color2[0], Color2[1], Color2[2]));
+				GL.Color4(Color2);
 				Glu.RenderQuad(rect.X + gapX, rect.Y + gapY, checkSizeX, checkSizeY);
 			}
 
@@ -87,7 +87,7 @@ namespace Sound_Space_Editor.Gui
 				finaltext = finaltext.Replace(':', '~');
 			}
 
-			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+			GL.Color3(Color1);
 			fr.Render(finaltext, (int)(rect.Right + rect.Height / 4), (int)(rect.Y + rect.Height / 2 - height / 2f), FontSize);
 		}
 

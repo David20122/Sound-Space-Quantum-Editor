@@ -395,10 +395,10 @@ namespace Sound_Space_Editor.Gui
 			_toast.ClientRectangle.Y = size.Height - toastOffY * h * 3.25f + h / 2;
 			_toast.Color = Color.FromArgb((int)(Math.Pow(toastOffY, 3) * 255), _toast.Color);
 
-			int[] Color1 = EditorWindow.Instance.Color1;
-			int[] Color2 = EditorWindow.Instance.Color2;
+			Color Color1 = EditorWindow.Instance.Color1;
+			Color Color2 = EditorWindow.Instance.Color2;
 
-			GL.Color3(Color.FromArgb(Color1[0],Color1[1],Color1[2]));
+			GL.Color3(Color1);
 			var zoomW = fr.GetWidth("Zoom: ", 24);
 			if (rl)
             {
@@ -410,9 +410,9 @@ namespace Sound_Space_Editor.Gui
 				fr.Render("Zoom: ", (int)OptionsNav.ClientRectangle.Right + 10, (int)OptionsNav.ClientRectangle.Y, 24);
 			}
 			
-			GL.Color3(Color.FromArgb(Color2[0], Color2[1], Color2[2]));
+			GL.Color3(Color2);
 			fr.Render($"{Math.Round(EditorWindow.Instance.Zoom, 2) * 100}%", (int)OptionsNav.ClientRectangle.Right + zoomW + 10, (int)OptionsNav.ClientRectangle.Y, 24);
-			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+			GL.Color3(Color1);
 
 			var th = 64 + (32 - TrackHeight.Value);
 
@@ -512,7 +512,7 @@ namespace Sound_Space_Editor.Gui
 
 			fr.Render(notesString, (int)(rect.X + rect.Width / 2 - notesW / 2f), (int)(rect.Y + timelinePos.Y + 12), 24);
 
-			GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+			GL.Color3(Color1);
 			fr.Render(timeString, (int)(rect.X + timelinePos.X - timeW / 2f + rect.Width - rect.Height), (int)(rect.Y + timelinePos.Y + 12), 20);
 			fr.Render(currentTimeString, (int)(rect.X + timelinePos.X - currentTimeW / 2f), (int)(rect.Y + timelinePos.Y + 12), 20);
 			fr.Render(currentMsString, (int)(rect.X + rect.Height / 2 + (rect.Width - rect.Height) * Timeline.Progress - currentMsW / 2f), (int)rect.Y, 20);
@@ -567,7 +567,7 @@ namespace Sound_Space_Editor.Gui
 							GL.Vertex2(xprev, yprev);
 							GL.Vertex2(xf, yf);
 							GL.End();
-							GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							GL.Color3(Color1);
 							Glu.RenderCircle(xf, yf, 4);
 
 							xprev = xf;
@@ -602,7 +602,7 @@ namespace Sound_Space_Editor.Gui
 								GL.Vertex2(xprev, yprev);
 								GL.Vertex2(xf, yf);
 								GL.End();
-								GL.Color3(Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+								GL.Color3(Color1);
 								Glu.RenderCircle(xf, yf, 4);
 
 								xprev = xf;

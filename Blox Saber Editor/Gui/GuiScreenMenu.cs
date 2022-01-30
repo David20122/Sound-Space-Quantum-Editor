@@ -194,7 +194,6 @@ namespace Sound_Space_Editor.Gui
 				while (EditorWindow.Instance.FontRenderer.GetWidth(lineedit, Changelog.FontSize) > 900 * widthdiff && test < 20)
                 {
 					var index = lineedit.LastIndexOf(' ');
-					Console.WriteLine(lineedit);
 					if (index >= 0)
                     {
 						if (EditorWindow.Instance.FontRenderer.GetWidth(lineedit.Substring(0, index), Changelog.FontSize) < 900 * widthdiff)

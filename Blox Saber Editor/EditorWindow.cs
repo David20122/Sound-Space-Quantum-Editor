@@ -105,10 +105,10 @@ namespace Sound_Space_Editor
 
 		public bool draggingoi = false;
 		public string inputState = null;
-		public int[] Color1;
-		public int[] Color2;
-		public int[] NoteColor1;
-		public int[] NoteColor2;
+		public Color Color1;
+		public Color Color2;
+		public Color NoteColor1;
+		public Color NoteColor2;
 		public float Zoom
 		{
 			get => _zoom;
@@ -242,31 +242,15 @@ namespace Sound_Space_Editor
 		{
 			try
 			{
-				string c1 = EditorSettings.Color1;
-				string[] c1values = c1.Split(',');
-				Color1 = Array.ConvertAll<string, int>(c1values, int.Parse);
-
-				string c2 = EditorSettings.Color2;
-				string[] c2values = c2.Split(',');
-				Color2 = Array.ConvertAll<string, int>(c2values, int.Parse);
-
-				string nc1 = EditorSettings.NoteColor1;
-				string[] nc1values = nc1.Split(',');
-				NoteColor1 = Array.ConvertAll<string, int>(nc1values, int.Parse);
-
-				string nc2 = EditorSettings.NoteColor2;
-				string[] nc2values = nc2.Split(',');
-				NoteColor2 = Array.ConvertAll<string, int>(nc2values, int.Parse);
+				Color1 = EditorSettings.Color1;
+				Color2 = EditorSettings.Color2;
+				NoteColor1 = EditorSettings.NoteColor1;
+				NoteColor2 = EditorSettings.NoteColor2;
 
 				Console.WriteLine("Updated Colors => {0} | {1} | {2} | {3}", string.Join(", ", Color1), string.Join(", ", Color2), string.Join(", ", NoteColor1), string.Join(", ", NoteColor2));
 			}
 			catch
 			{
-				EditorSettings.Color1 = "0,255,200";
-				EditorSettings.Color2 = "255,0,255";
-				EditorSettings.NoteColor1 = "255,0,255";
-				EditorSettings.NoteColor2 = "0,255,200";
-
 				UpdateColors();
 
 				MessageBox.Show("Colors have been reset to default beacuse one or more were invalid.");
@@ -1125,7 +1109,7 @@ namespace Sound_Space_Editor
 
 						if (PromptSave())
 						{
-							editor.ShowToast("SAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							editor.ShowToast("SAVED", Color1);
 							currentData = ParseData(false);
 						}
 
@@ -1136,7 +1120,7 @@ namespace Sound_Space_Editor
 					{
 						if (WriteFile(_file))
 						{
-							editor.ShowToast("SAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							editor.ShowToast("SAVED", Color1);
 							currentData = ParseData(false);
 						}
 					}
@@ -1172,11 +1156,11 @@ namespace Sound_Space_Editor
 
 							Clipboard.SetData("notes", copied);
 
-							editor.ShowToast("COPIED NOTES", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							editor.ShowToast("COPIED NOTES", Color1);
 						}
 						catch
 						{
-							editor.ShowToast("FAILED TO COPY", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							editor.ShowToast("FAILED TO COPY", Color1);
 						}
 					}
 					else if (e.Key == Key.V)
@@ -1222,7 +1206,7 @@ namespace Sound_Space_Editor
 						}
 						catch
 						{
-							editor.ShowToast("FAILED TO COPY", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							editor.ShowToast("FAILED TO COPY", Color1);
 						}
 					}
 				}
@@ -1237,7 +1221,7 @@ namespace Sound_Space_Editor
 							node.X = 2 - node.X;
 						}
 						if (selected.Count > 0)
-							editor.ShowToast("Horizontal Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							editor.ShowToast("Horizontal Flip", Color1);
 
 						UndoRedo.AddUndoRedo("HORIZONTAL FLIP", () =>
 						{
@@ -1264,7 +1248,7 @@ namespace Sound_Space_Editor
 							node.Y = 2 - node.Y;
 						}
 						if (selected.Count > 0)
-							editor.ShowToast("Vertical Flip", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+							editor.ShowToast("Vertical Flip", Color1);
 
 						UndoRedo.AddUndoRedo("VERTICAL FLIP", () =>
 						{
@@ -1288,7 +1272,7 @@ namespace Sound_Space_Editor
 				if (e.Shift && e.Control && e.Key == Key.M)
 				{
 					inconspicuousvar = !inconspicuousvar;
-					editor.ShowToast("funny mode " + (inconspicuousvar ? "on" : "off"), Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+					editor.ShowToast("funny mode " + (inconspicuousvar ? "on" : "off"), Color1);
 				}
 
 				//make sure to not register input while we're typing into a text box
@@ -2271,11 +2255,11 @@ namespace Sound_Space_Editor
                 {
 					Settings.Default.AutosavedFile = ParseData(false);
 
-					editor.ShowToast("AUTOSAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+					editor.ShowToast("AUTOSAVED", Color1);
 				}
 				else if (WriteFile(_file))
 				{
-					editor.ShowToast("AUTOSAVED", Color.FromArgb(Color1[0], Color1[1], Color1[2]));
+					editor.ShowToast("AUTOSAVED", Color1);
 					currentData = ParseData(false);
 				}
 			}
