@@ -229,7 +229,7 @@ namespace Sound_Space_Editor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("80")]
+        [global::System.Configuration.DefaultSettingValueAttribute("16")]
         public int TrackHeight {
             get {
                 return ((int)(this["TrackHeight"]));
