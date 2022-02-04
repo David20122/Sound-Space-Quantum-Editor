@@ -209,7 +209,7 @@
             this.ImportCH.Name = "ImportCH";
             this.ImportCH.Size = new System.Drawing.Size(77, 47);
             this.ImportCH.TabIndex = 13;
-            this.ImportCH.Text = "Import Clone Hero Timings";
+            this.ImportCH.Text = "Paste Clone Hero Timings";
             this.ImportCH.UseVisualStyleBackColor = true;
             this.ImportCH.Click += new System.EventHandler(this.ImportCH_Click);
             // 
@@ -220,7 +220,7 @@
             this.ImportOSU.Name = "ImportOSU";
             this.ImportOSU.Size = new System.Drawing.Size(77, 47);
             this.ImportOSU.TabIndex = 14;
-            this.ImportOSU.Text = "Import OSU Timings";
+            this.ImportOSU.Text = "Paste OSU Timings";
             this.ImportOSU.UseVisualStyleBackColor = true;
             this.ImportOSU.Click += new System.EventHandler(this.ImportOSU_Click);
             // 
@@ -231,7 +231,7 @@
             this.ImportADOFAI.Name = "ImportADOFAI";
             this.ImportADOFAI.Size = new System.Drawing.Size(77, 47);
             this.ImportADOFAI.TabIndex = 15;
-            this.ImportADOFAI.Text = "Import ADOFAI Timings";
+            this.ImportADOFAI.Text = "Paste ADOFAI Timings";
             this.ImportADOFAI.UseVisualStyleBackColor = true;
             this.ImportADOFAI.Click += new System.EventHandler(this.ImportADOFAI_Click);
             // 
