@@ -107,6 +107,7 @@ namespace Sound_Space_Editor
 		public string inputState = null;
 		public Color Color1;
 		public Color Color2;
+		public Color Color3;
 		public Color NoteColor1;
 		public Color NoteColor2;
 		public float Zoom
@@ -244,10 +245,11 @@ namespace Sound_Space_Editor
 			{
 				Color1 = EditorSettings.Color1;
 				Color2 = EditorSettings.Color2;
+				Color3 = EditorSettings.Color3;
 				NoteColor1 = EditorSettings.NoteColor1;
 				NoteColor2 = EditorSettings.NoteColor2;
 
-				Console.WriteLine("Updated Colors => {0} | {1} | {2} | {3}", string.Join(", ", Color1), string.Join(", ", Color2), string.Join(", ", NoteColor1), string.Join(", ", NoteColor2));
+				Console.WriteLine("Updated Colors => {0} | {1} | {2} | {3} | {4}", string.Join(", ", Color1), string.Join(", ", Color2), string.Join(", ", Color3), string.Join(", ", NoteColor1), string.Join(", ", NoteColor2));
 			}
 			catch
 			{

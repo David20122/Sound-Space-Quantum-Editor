@@ -22,6 +22,7 @@ namespace Sound_Space_Editor
 		public static int TrackOpacity = 255;
 		public static Color Color1 = Color.FromArgb(0, 255, 200);
 		public static Color Color2 = Color.FromArgb(255, 0, 255);
+		public static Color Color3 = Color.FromArgb(255, 0, 100);
 		public static Color NoteColor1 = Color.FromArgb(255, 0, 255);
 		public static Color NoteColor2 = Color.FromArgb(0, 255, 200);
 		public static bool EnableAutosave = true;
@@ -47,6 +48,8 @@ namespace Sound_Space_Editor
 					Color1 = Color.FromArgb(result["Color1"]["R"], result["Color1"]["G"], result["Color1"]["B"]);
 				if (result.ContainsKey("Color2"))
 					Color2 = Color.FromArgb(result["Color2"]["R"], result["Color2"]["G"], result["Color2"]["B"]);
+				if (result.ContainsKey("Color3"))
+					Color3 = Color.FromArgb(result["Color3"]["R"], result["Color3"]["G"], result["Color3"]["B"]);
 				if (result.ContainsKey("NoteColor1"))
 					NoteColor1 = Color.FromArgb(result["NoteColor1"]["R"], result["NoteColor1"]["G"], result["NoteColor1"]["B"]);
 				if (result.ContainsKey("NoteColor2"))
@@ -63,7 +66,7 @@ namespace Sound_Space_Editor
 				Console.WriteLine("error while loading settings");
 			}
 
-            Console.WriteLine("Loaded => {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8} | {9} | {10}", Waveform, EditorBGOpacity, GridOpacity, TrackOpacity, Color1, Color2, NoteColor1, NoteColor2, EnableAutosave, AutosaveInterval, CorrectOnCopy);
+            Console.WriteLine("Loaded => {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8} | {9} | {10} | {11}", Waveform, EditorBGOpacity, GridOpacity, TrackOpacity, Color1, Color2, Color3, NoteColor1, NoteColor2, EnableAutosave, AutosaveInterval, CorrectOnCopy);
 		}
 
 		public static void Reset()
@@ -74,6 +77,7 @@ namespace Sound_Space_Editor
 			TrackOpacity = 255;
 			Color1 = Color.FromArgb(0, 255, 200);
 			Color2 = Color.FromArgb(255, 0, 255);
+			Color3 = Color.FromArgb(255, 0, 100);
 			NoteColor1 = Color.FromArgb(255, 0, 255);
 			NoteColor2 = Color.FromArgb(0, 255, 200);
 			EnableAutosave = true;
@@ -101,6 +105,12 @@ namespace Sound_Space_Editor
 						{"B", Color2.B}
 					}
 				},
+				{"Color3", new JsonObject(Array.Empty<KeyValuePair<string, JsonValue>>()) {
+						{"R", Color3.R},
+						{"G", Color3.G},
+						{"B", Color3.B}
+					}
+				},
 				{"NoteColor1", new JsonObject(Array.Empty<KeyValuePair<string, JsonValue>>()) {
 						{"R", NoteColor1.R},
 						{"G", NoteColor1.G},
@@ -120,7 +130,7 @@ namespace Sound_Space_Editor
 			try
 			{
 				File.WriteAllText(file, jsonFinal.ToString());
-				Console.WriteLine("Saved => {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8} | {9} | {10}", Waveform, EditorBGOpacity, GridOpacity, TrackOpacity, Color1, Color2, NoteColor1, NoteColor2, EnableAutosave, AutosaveInterval, CorrectOnCopy);
+				Console.WriteLine("Saved => {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8} | {9} | {10} | {11}", Waveform, EditorBGOpacity, GridOpacity, TrackOpacity, Color1, Color2, Color3, NoteColor1, NoteColor2, EnableAutosave, AutosaveInterval, CorrectOnCopy);
 			}
 			catch
 			{

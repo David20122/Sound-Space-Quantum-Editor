@@ -21,11 +21,13 @@ namespace Sound_Space_Editor.Gui
 
 		private GuiButton Color1Picker = new GuiButton(3, 0, 0, 200, 50, "PICK COLOR", "square", 100);
 		private GuiButton Color2Picker = new GuiButton(4, 0, 0, 200, 50, "PICK COLOR", "square", 100);
+		private GuiButton Color3Picker = new GuiButton(7, 0, 0, 200, 50, "PICK COLOR", "square", 100);
 		private GuiButton NoteColor1Picker = new GuiButton(5, 0, 0, 200, 50, "PICK COLOR", "square", 100);
 		private GuiButton NoteColor2Picker = new GuiButton(6, 0, 0, 200, 50, "PICK COLOR", "square", 100);
 
 		private Color color1;
 		private Color color2;
+		private Color color3;
 		private Color notecolor1;
 		private Color notecolor2;
 
@@ -45,6 +47,7 @@ namespace Sound_Space_Editor.Gui
 		{
 			color1 = EditorSettings.Color1;
 			color2 = EditorSettings.Color2;
+			color3 = EditorSettings.Color3;
 			notecolor1 = EditorSettings.NoteColor1;
 			notecolor2 = EditorSettings.NoteColor2;
 
@@ -95,6 +98,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(CorrectOnCopy);
 			Buttons.Add(Color1Picker);
 			Buttons.Add(Color2Picker);
+			Buttons.Add(Color3Picker);
 			Buttons.Add(NoteColor1Picker);
 			Buttons.Add(NoteColor2Picker);
 
@@ -134,6 +138,7 @@ namespace Sound_Space_Editor.Gui
             {
 				fr.Render("Cowow 1~", (int)Color1Picker.ClientRectangle.X, (int)Color1Picker.ClientRectangle.Y - 26, 24);
 				fr.Render("Cowow 2~", (int)Color2Picker.ClientRectangle.X, (int)Color2Picker.ClientRectangle.Y - 26, 24);
+				fr.Render("Cowow 3~", (int)Color3Picker.ClientRectangle.X, (int)Color3Picker.ClientRectangle.Y - 26, 24);
 
 				fr.Render("Note Cowow 1~", (int)NoteColor1Picker.ClientRectangle.X, (int)NoteColor1Picker.ClientRectangle.Y - 26, 24);
 				fr.Render("Note Cowow 2~", (int)NoteColor2Picker.ClientRectangle.X, (int)NoteColor2Picker.ClientRectangle.Y - 26, 24);
@@ -148,6 +153,7 @@ namespace Sound_Space_Editor.Gui
             {
 				fr.Render("Color 1:", (int)Color1Picker.ClientRectangle.X, (int)Color1Picker.ClientRectangle.Y - 26, 24);
 				fr.Render("Color 2:", (int)Color2Picker.ClientRectangle.X, (int)Color2Picker.ClientRectangle.Y - 26, 24);
+				fr.Render("Color 3:", (int)Color3Picker.ClientRectangle.X, (int)Color3Picker.ClientRectangle.Y - 26, 24);
 
 				fr.Render("Note Color 1:", (int)NoteColor1Picker.ClientRectangle.X, (int)NoteColor1Picker.ClientRectangle.Y - 26, 24);
 				fr.Render("Note Color 2:", (int)NoteColor2Picker.ClientRectangle.X, (int)NoteColor2Picker.ClientRectangle.Y - 26, 24);
@@ -188,12 +194,14 @@ namespace Sound_Space_Editor.Gui
 
 			Color1Picker.ClientRectangle.Location = new PointF(160 * widthdiff, 210 * heightdiff);
 			Color2Picker.ClientRectangle.Location = new PointF(160 * widthdiff, 360 * heightdiff);
+			Color3Picker.ClientRectangle.Location = new PointF(160 * widthdiff, 510 * heightdiff);
 
 			Color1Picker.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
 			Color2Picker.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
+			Color3Picker.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
 
-			NoteColor1Picker.ClientRectangle.Location = new PointF(160 * widthdiff, 510 * heightdiff);
-			NoteColor2Picker.ClientRectangle.Location = new PointF(160 * widthdiff, 660 * heightdiff);
+			NoteColor1Picker.ClientRectangle.Location = new PointF(160 * widthdiff, 660 * heightdiff);
+			NoteColor2Picker.ClientRectangle.Location = new PointF(160 * widthdiff, 810 * heightdiff);
 
 			NoteColor1Picker.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
 			NoteColor2Picker.ClientRectangle.Size = new SizeF(200 * widthdiff, 50 * heightdiff);
@@ -239,6 +247,9 @@ namespace Sound_Space_Editor.Gui
 
 			GL.Color3(color2);
 			Glu.RenderQuad(Color2Picker.ClientRectangle.X + 210 * widthdiff, Color2Picker.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
+
+			GL.Color3(color3);
+			Glu.RenderQuad(Color3Picker.ClientRectangle.X + 210 * widthdiff, Color3Picker.ClientRectangle.Y - 15 * heightdiff, 75 * widthdiff, 75 * heightdiff);
 		}
 
 		void ShowNoteColor()
@@ -397,6 +408,7 @@ namespace Sound_Space_Editor.Gui
 					int autosaveInterval = int.TryParse(AutosaveInterval.Text, out var val4) && val4 > 0 ? val4 : EditorSettings.AutosaveInterval;
 					EditorSettings.Color1 = color1;
 					EditorSettings.Color2 = color2;
+					EditorSettings.Color3 = color3;
 					EditorSettings.NoteColor1 = notecolor1;
 					EditorSettings.NoteColor2 = notecolor2;
 					EditorSettings.Waveform = WaveformCheckbox.Toggle;
@@ -416,6 +428,7 @@ namespace Sound_Space_Editor.Gui
 				case 1:
 					color1 = Color.FromArgb(0, 255, 200);
 					color2 = Color.FromArgb(255, 0, 255);
+					color3 = Color.FromArgb(255, 0, 100);
 					notecolor1 = Color.FromArgb(255, 0, 255);
 					notecolor2 = Color.FromArgb(0, 255, 200);
 					EditorSettings.Waveform = true;
@@ -435,36 +448,40 @@ namespace Sound_Space_Editor.Gui
 					ColorDialog1.Color = color1;
 
 					if (ColorDialog1.ShowDialog() == DialogResult.OK)
-                    {
 						color1 = ColorDialog1.Color;
-                    }
+
 					break;
 				case 4:
 					var ColorDialog2 = new ColorDialog();
 					ColorDialog2.Color = color2;
 
 					if (ColorDialog2.ShowDialog() == DialogResult.OK)
-					{
 						color2 = ColorDialog2.Color;
-					}
+					
 					break;
 				case 5:
 					var ColorDialog3 = new ColorDialog();
 					ColorDialog3.Color = notecolor1;
 
 					if (ColorDialog3.ShowDialog() == DialogResult.OK)
-					{
 						notecolor1 = ColorDialog3.Color;
-					}
+					
 					break;
 				case 6:
 					var ColorDialog4 = new ColorDialog();
 					ColorDialog4.Color = notecolor2;
 
 					if (ColorDialog4.ShowDialog() == DialogResult.OK)
-					{
 						notecolor2 = ColorDialog4.Color;
-					}
+					
+					break;
+				case 7:
+					var ColorDialog5 = new ColorDialog();
+					ColorDialog5.Color = color3;
+
+					if (ColorDialog5.ShowDialog() == DialogResult.OK)
+						color3 = ColorDialog5.Color;
+                    
 					break;
 			}
 			base.OnButtonClicked(id);
