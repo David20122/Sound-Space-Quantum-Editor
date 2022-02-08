@@ -206,6 +206,7 @@ namespace Sound_Space_Editor
 						Settings.Default.AutosavedFile.Replace(',', '&'),
 						Settings.Default.TrackHeight,
 						Settings.Default.CurveBezier,
+						Settings.Default.LastFile.Replace(' ', '>').Replace(',', '<'),
 					};
 
 					try
@@ -1901,6 +1902,8 @@ namespace Sound_Space_Editor
 			if (LoadMap(data, true) && GuiScreen is GuiScreenEditor gse)
 			{
 				_file = file;
+				Settings.Default.LastFile = file;
+				Settings.Default.Save();
 
 				GuiTrack.BPMs.Clear();
 				gse.Offset.Text = "0";
@@ -1990,6 +1993,8 @@ namespace Sound_Space_Editor
 
 		public bool LoadMap(string data, bool fromFile)
 		{
+			_file = null;
+
 			Notes.Clear();
 
 			SelectedNotes.Clear();
@@ -2168,6 +2173,9 @@ namespace Sound_Space_Editor
 				File.WriteAllText(file, data, Encoding.UTF8);
 
 				WriteIniFile();
+
+				Settings.Default.LastFile = file;
+				Settings.Default.Save();
 			}
 			catch { return false; }
 
