@@ -6,7 +6,7 @@ namespace Sound_Space_Editor.Gui
 {
 	class GuiCheckBox : GuiButton
 	{
-		public bool Toggle { get; private set; }
+		public bool Toggle { get; set; }
 
 		private float _alpha;
 		public int FontSize;

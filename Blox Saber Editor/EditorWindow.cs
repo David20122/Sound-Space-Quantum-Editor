@@ -103,8 +103,6 @@ namespace Sound_Space_Editor
 
 		private float _zoom = 1;
 
-		public bool draggingoi = false;
-		public string inputState = null;
 		public Color Color1;
 		public Color Color2;
 		public Color Color3;
@@ -162,19 +160,7 @@ namespace Sound_Space_Editor
 
 			SoundPlayer.Cache("1091083826", true);
 
-			inputState = "keyboard";
-
-			KeyMapping.Add(Key.Q, new Tuple<int, int>(0, 0));
-			KeyMapping.Add(Key.W, new Tuple<int, int>(1, 0));
-			KeyMapping.Add(Key.E, new Tuple<int, int>(2, 0));
-
-			KeyMapping.Add(Key.A, new Tuple<int, int>(0, 1));
-			KeyMapping.Add(Key.S, new Tuple<int, int>(1, 1));
-			KeyMapping.Add(Key.D, new Tuple<int, int>(2, 1));
-
-			KeyMapping.Add(Key.Y, new Tuple<int, int>(0, 2)); KeyMapping.Add(Key.Z, new Tuple<int, int>(0, 2));
-			KeyMapping.Add(Key.X, new Tuple<int, int>(1, 2));
-			KeyMapping.Add(Key.C, new Tuple<int, int>(2, 2));
+			EditorSettings.RefreshKeymapping();
 
 			if (discordEnabled)
 			{
@@ -258,47 +244,6 @@ namespace Sound_Space_Editor
 				MessageBox.Show("Colors have been reset to default beacuse one or more were invalid.");
 			}
 		}
-
-		public void ChangeKeyMapping(string input)
-        {
-			if (input == "keyboard")
-            {
-				inputState = "keyboard";
-
-				KeyMapping.Clear();
-
-				KeyMapping.Add(Key.Q, new Tuple<int, int>(0, 0));
-				KeyMapping.Add(Key.W, new Tuple<int, int>(1, 0));
-				KeyMapping.Add(Key.E, new Tuple<int, int>(2, 0));
-
-				KeyMapping.Add(Key.A, new Tuple<int, int>(0, 1));
-				KeyMapping.Add(Key.S, new Tuple<int, int>(1, 1));
-				KeyMapping.Add(Key.D, new Tuple<int, int>(2, 1));
-
-				KeyMapping.Add(Key.Y, new Tuple<int, int>(0, 2)); KeyMapping.Add(Key.Z, new Tuple<int, int>(0, 2));
-				KeyMapping.Add(Key.X, new Tuple<int, int>(1, 2));
-				KeyMapping.Add(Key.C, new Tuple<int, int>(2, 2));
-
-			} else if (input == "numpad")
-            {
-				inputState = "numpad";
-
-				KeyMapping.Clear();
-
-				KeyMapping.Add(Key.Keypad7, new Tuple<int, int>(0, 0));
-				KeyMapping.Add(Key.Keypad8, new Tuple<int, int>(1, 0));
-				KeyMapping.Add(Key.Keypad9, new Tuple<int, int>(2, 0));
-
-				KeyMapping.Add(Key.Keypad4, new Tuple<int, int>(0, 1));
-				KeyMapping.Add(Key.Keypad5, new Tuple<int, int>(1, 1));
-				KeyMapping.Add(Key.Keypad6, new Tuple<int, int>(2, 1));
-
-				KeyMapping.Add(Key.Keypad1, new Tuple<int, int>(0, 2));
-				KeyMapping.Add(Key.Keypad2, new Tuple<int, int>(1, 2));
-				KeyMapping.Add(Key.Keypad3, new Tuple<int, int>(2, 2));
-
-			}
-        }
 
 		public void UpdateActivity(string state)
 		{
@@ -1012,8 +957,72 @@ namespace Sound_Space_Editor
 
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
+			if (GuiScreen is GuiScreen gs && !gs.AllowInput())
+				return;
+
 			GuiScreen.OnKeyTyped(e.KeyChar);
 		}
+
+		private string CompareKeys(KeyboardKeyEventArgs e)
+		{
+			if (e.Key == EditorSettings.SelectAll.Key)
+			{
+				if (EditorSettings.SelectAll.CTRL == _controlDown)
+					if (EditorSettings.SelectAll.SHIFT == _shiftDown)
+						if (EditorSettings.SelectAll.ALT == _altDown)
+							return "SelectAll";
+			}
+
+			if (e.Key == EditorSettings.Save.Key)
+			{
+				if (EditorSettings.Save.CTRL == _controlDown)
+					if (EditorSettings.Save.SHIFT == _shiftDown)
+						if (EditorSettings.Save.ALT == _altDown)
+							return "Save";
+			}
+
+			if (e.Key == EditorSettings.SaveAs.Key)
+			{
+				if (EditorSettings.SaveAs.CTRL == _controlDown)
+					if (EditorSettings.SaveAs.SHIFT == _shiftDown)
+						if (EditorSettings.SaveAs.ALT == _altDown)
+							return "SaveAs";
+			}
+
+			if (e.Key == EditorSettings.Undo.Key)
+			{
+				if (EditorSettings.Undo.CTRL == _controlDown)
+					if (EditorSettings.Undo.SHIFT == _shiftDown)
+						if (EditorSettings.Undo.ALT == _altDown)
+							return "Undo";
+			}
+
+			if (e.Key == EditorSettings.Redo.Key)
+			{
+				if (EditorSettings.Redo.CTRL == _controlDown)
+					if (EditorSettings.Redo.SHIFT == _shiftDown)
+						if (EditorSettings.Redo.ALT == _altDown)
+							return "Redo";
+			}
+
+			if (e.Key == EditorSettings.Copy.Key)
+			{
+				if (EditorSettings.Copy.CTRL == _controlDown)
+					if (EditorSettings.Copy.SHIFT == _shiftDown)
+						if (EditorSettings.Copy.ALT == _altDown)
+							return "Copy";
+			}
+
+			if (e.Key == EditorSettings.Paste.Key)
+			{
+				if (EditorSettings.Paste.CTRL == _controlDown)
+					if (EditorSettings.Paste.SHIFT == _shiftDown)
+						if (EditorSettings.Paste.ALT == _altDown)
+							return "Paste";
+			}
+
+			return "";
+        }
 
 		protected override void OnKeyUp(KeyboardKeyEventArgs e)
 		{
@@ -1046,66 +1055,43 @@ namespace Sound_Space_Editor
 			if (GuiScreen is GuiScreen gs && !gs.AllowInput())
 				return;
 
-			if (e.Key == Key.A && e.Control)
-			{
-				Notes.Sort();
-
-				SelectedNotes = Notes.ToList();
-				_draggedNotes = Notes.ToList();
-
-				return;
-			}
-
-			if (e.Key == Key.G)
-			{
-				if (draggingoi == false)
-				{
-					draggingoi = true;
-				}
-				else
-				{
-					draggingoi = false;
-				}
-			}
-
 			if (GuiScreen is GuiScreenEditor editor)
 			{
-				if ((e.Key == Key.Left || e.Key == Key.Right) && SelectedNotes.Count == 0)
+				switch (CompareKeys(e))
 				{
-					if (MusicPlayer.IsPlaying)
-						MusicPlayer.Pause();
+					case "SelectAll":
+						Notes.Sort();
 
-					var bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm;
+						SelectedNotes = Notes.ToList();
+						_draggedNotes = Notes.ToList();
+						return;
+					case "Save":
+						if (_file == null)
+						{
+							var wasPlaying = MusicPlayer.IsPlaying;
 
-					if (bpm > 0)
-					{
-						var beatDivisor = GuiTrack.BeatDivisor;
+							MusicPlayer.Pause();
 
-						var lineSpace = 60 / bpm;
-						var stepSmall = lineSpace / beatDivisor * 1000;
+							if (PromptSave())
+							{
+								editor.ShowToast("SAVED", Color1);
+								currentData = ParseData(false);
+							}
 
-						if (e.Key == Key.Left)
-							stepSmall = -stepSmall;
-
-						long closestBeat =
-							GetClosestBeat((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, stepSmall < 0, false);
-
-						closestBeat = Math.Max(0, closestBeat);
-
-                        try
-                        {
-							MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
-						} catch
-                        {
-
-                        }
-					}
-				}
-				else if (e.Key == Key.S && e.Control)
-				{
-					if (e.Shift || _file == null)
-					{
-						var wasPlaying = MusicPlayer.IsPlaying;
+							if (wasPlaying)
+								MusicPlayer.Play();
+						}
+						else
+						{
+							if (WriteFile(_file))
+							{
+								editor.ShowToast("SAVED", Color1);
+								currentData = ParseData(false);
+							}
+						}
+						return;
+					case "SaveAs":
+						var wasPlaying1 = MusicPlayer.IsPlaying;
 
 						MusicPlayer.Pause();
 
@@ -1115,43 +1101,26 @@ namespace Sound_Space_Editor
 							currentData = ParseData(false);
 						}
 
-						if (wasPlaying)
+						if (wasPlaying1)
 							MusicPlayer.Play();
-					}
-					else
-					{
-						if (WriteFile(_file))
-						{
-							editor.ShowToast("SAVED", Color1);
-							currentData = ParseData(false);
-						}
-					}
-
-					return;
-				}
-
-				if (e.Control)
-				{
-					if (e.Key == Key.Z)
-					{
+						return;
+					case "Undo":
 						if (UndoRedo.CanUndo)
 						{
 							MusicPlayer.Pause();
 
 							UndoRedo.Undo();
 						}
-					}
-					else if (e.Key == Key.Y)
-					{
+						return;
+					case "Redo":
 						if (UndoRedo.CanRedo)
 						{
 							MusicPlayer.Pause();
 
 							UndoRedo.Redo();
 						}
-					}
-					else if (e.Key == Key.C)
-					{
+						return;
+					case "Copy":
 						try
 						{
 							var copied = SelectedNotes.Select(n => n.Clone()).ToList();
@@ -1164,9 +1133,8 @@ namespace Sound_Space_Editor
 						{
 							editor.ShowToast("FAILED TO COPY", Color1);
 						}
-					}
-					else if (e.Key == Key.V)
-					{
+						return;
+					case "Paste":
 						try
 						{
 							if (Clipboard.ContainsData("notes"))
@@ -1208,67 +1176,41 @@ namespace Sound_Space_Editor
 						}
 						catch
 						{
-							editor.ShowToast("FAILED TO COPY", Color1);
+							editor.ShowToast("FAILED TO PASTE", Color1);
 						}
-					}
+						return;
 				}
 
-				if (e.Shift)
+				if ((e.Key == Key.Left || e.Key == Key.Right) && SelectedNotes.Count == 0)
 				{
-					if (e.Key == Key.H)
+					if (MusicPlayer.IsPlaying)
+						MusicPlayer.Pause();
+
+					var bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm;
+
+					if (bpm > 0)
 					{
-						var selected = SelectedNotes.ToList();
-						foreach (var node in selected)
-						{
-							node.X = 2 - node.X;
-						}
-						if (selected.Count > 0)
-							editor.ShowToast("Horizontal Flip", Color1);
+						var beatDivisor = GuiTrack.BeatDivisor;
 
-						UndoRedo.AddUndoRedo("HORIZONTAL FLIP", () =>
-						{
-							foreach (var node in selected)
-							{
-								node.X = 2 - node.X;
-							}
+						var lineSpace = 60 / bpm;
+						var stepSmall = lineSpace / beatDivisor * 1000;
 
-						}, () =>
-						{
-							foreach (var node in selected)
-							{
-								node.X = 2 - node.X;
-							}
+						if (e.Key == Key.Left)
+							stepSmall = -stepSmall;
 
-						});
+						long closestBeat =
+							GetClosestBeat((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, stepSmall < 0, false);
+
+						closestBeat = Math.Max(0, closestBeat);
+
+                        try
+                        {
+							MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
+						} catch
+                        {
+
+                        }
 					}
-
-					if (e.Key == Key.V)
-					{
-						var selected = SelectedNotes.ToList();
-						foreach (var node in selected)
-						{
-							node.Y = 2 - node.Y;
-						}
-						if (selected.Count > 0)
-							editor.ShowToast("Vertical Flip", Color1);
-
-						UndoRedo.AddUndoRedo("VERTICAL FLIP", () =>
-						{
-							foreach (var node in selected)
-							{
-								node.Y = 2 - node.Y;
-							}
-
-						}, () =>
-						{
-							foreach (var node in selected)
-							{
-								node.Y = 2 - node.Y;
-							}
-
-						});
-					}
-
 				}
 
 				if (e.Shift && e.Control && e.Key == Key.M)
@@ -1326,6 +1268,15 @@ namespace Sound_Space_Editor
 							(int)MusicPlayer.CurrentTime.TotalMilliseconds);
 
 						Notes.Add(note);
+
+						UndoRedo.AddUndoRedo("ADD NOTE", () =>
+						{
+							Notes.Remove(note);
+						}, () =>
+						{
+							Notes.Add(note);
+						});
+
 						if (GuiScreen is GuiScreenEditor gse)
 						{
 							if (gse.AutoAdvance.Toggle)
@@ -1359,13 +1310,6 @@ namespace Sound_Space_Editor
 
 							}
 						}
-						UndoRedo.AddUndoRedo("ADD NOTE", () =>
-						{
-							Notes.Remove(note);
-						}, () =>
-						{
-							Notes.Add(note);
-						});
 					}
 
 					if ((e.Key == Key.Delete || e.Key == Key.BackSpace) && SelectedNotes.Count > 0)
@@ -1454,7 +1398,7 @@ namespace Sound_Space_Editor
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			EditorSettings.Save();
+			EditorSettings.SaveSettings();
 			if (TimingPoints.Instance != null)
 				TimingPoints.Instance.Close();
 

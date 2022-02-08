@@ -129,6 +129,7 @@
       <DependentUpon>BPMTapper.cs</DependentUpon>
     </Compile>
     <Compile Include="EditorSettings.cs" />
+    <Compile Include="Gui\GuiScreenKeybinds.cs" />
     <Compile Include="Gui\GuiScreenSettings.cs" />
     <Compile Include="Gui\GuiScreenTimings.cs" />
     <Compile Include="Timing Setup Panel.cs">

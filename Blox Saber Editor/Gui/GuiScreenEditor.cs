@@ -863,6 +863,7 @@ namespace Sound_Space_Editor.Gui
 					Settings.Default.CurveBezier = CurveBezier.Toggle;
 					//Settings.Default.LegacyBPM = LegacyBPM.Toggle;
 					Settings.Default.Save();
+					EditorSettings.RefreshKeymapping();
 					break;
 				case 6:
 					if (long.TryParse(JumpMSBox.Text, out var time))

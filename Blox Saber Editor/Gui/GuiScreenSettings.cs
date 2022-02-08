@@ -17,6 +17,7 @@ namespace Sound_Space_Editor.Gui
 
 		private GuiButton _backButton = new GuiButton(0, 0, 0, 600, 100, "SAVE AND RETURN", "square", 100);
 		private GuiButton _resetButton = new GuiButton(1, 0, 0, 500, 50, "RESET TO DEFAULT", "square", 100);
+		private GuiButton _keybindsButton = new GuiButton(8, 0, 0, 500, 50, "CHANGE KEYBINDS", "square", 100);
 		private GuiButton _openFolderButton = new GuiButton(2, 0, 0, 500, 50, "OPEN EDITOR FOLDER", "square", 100);
 
 		private GuiButton Color1Picker = new GuiButton(3, 0, 0, 200, 50, "PICK COLOR", "square", 100);
@@ -92,6 +93,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(_openFolderButton);
 			Buttons.Add(_resetButton);
 			Buttons.Add(_backButton);
+			Buttons.Add(_keybindsButton);
 			Buttons.Add(WaveformCheckbox);
 			//Buttons.Add(BPMFormCheckbox);
 			Buttons.Add(AutosaveCheckbox);
@@ -186,10 +188,12 @@ namespace Sound_Space_Editor.Gui
 
 			_backButton.ClientRectangle.Location = new PointF(655 * widthdiff, 930 * heightdiff);
 			_resetButton.ClientRectangle.Location = new PointF(700 * widthdiff, 865 * heightdiff);
+			_keybindsButton.ClientRectangle.Location = new PointF(700 * widthdiff, 755 * heightdiff);
 			_openFolderButton.ClientRectangle.Location = new PointF(700 * widthdiff, 810 * heightdiff);
 
 			_backButton.ClientRectangle.Size = new SizeF(600 * widthdiff, 100 * heightdiff);
 			_resetButton.ClientRectangle.Size = new SizeF(500 * widthdiff, 50 * heightdiff);
+			_keybindsButton.ClientRectangle.Size = new SizeF(500 * widthdiff, 50 * heightdiff);
 			_openFolderButton.ClientRectangle.Size = new SizeF(500 * widthdiff, 50 * heightdiff);
 
 			Color1Picker.ClientRectangle.Location = new PointF(160 * widthdiff, 210 * heightdiff);
@@ -419,10 +423,10 @@ namespace Sound_Space_Editor.Gui
 					EditorSettings.TrackOpacity = trackOpacity;
 					EditorSettings.AutosaveInterval = autosaveInterval;
 					EditorSettings.CorrectOnCopy = CorrectOnCopy.Toggle;
-					EditorSettings.Save();
+					EditorSettings.SaveSettings();
 					EditorSettings.Load();
 					EditorWindow.Instance.UpdateColors();
-					EditorSettings.Save();
+					EditorSettings.SaveSettings();
 					EditorWindow.Instance.OpenGuiScreen(new GuiScreenMenu());
 					break;
 				case 1:
@@ -482,6 +486,9 @@ namespace Sound_Space_Editor.Gui
 					if (ColorDialog5.ShowDialog() == DialogResult.OK)
 						color3 = ColorDialog5.Color;
                     
+					break;
+				case 8:
+					EditorWindow.Instance.OpenGuiScreen(new GuiScreenKeybinds());
 					break;
 			}
 			base.OnButtonClicked(id);

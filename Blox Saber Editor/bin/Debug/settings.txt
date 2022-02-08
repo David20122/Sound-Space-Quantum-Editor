@@ -1,1 +1,89 @@
-{"AutosaveInterval": 5, "Color1": {"B": 200, "G": 255, "R": 0}, "Color2": {"B": 255, "G": 0, "R": 255}, "Color3": {"B": 100, "G": 70, "R": 255}, "CorrectOnCopy": true, "EditorBGOpacity": 255, "EnableAutosave": true, "GridOpacity": 255, "NoteColor1": {"B": 255, "G": 0, "R": 255}, "NoteColor2": {"B": 200, "G": 255, "R": 0}, "TrackOpacity": 255, "Waveform": true}
+{
+     "autosaveInterval": 5,
+     "color1": [
+          0,
+          255,
+          200
+     ],
+     "color2": [
+          255,
+          0,
+          255
+     ],
+     "color3": [
+          255,
+          0,
+          100
+     ],
+     "correctOnCopy": true,
+     "editorBGOpacity": 255,
+     "enableAutosave": true,
+     "gridOpacity": 255,
+     "keybinds": {
+          "copy": [
+               "C",
+               true,
+               false,
+               false
+          ],
+          "gridKeys": [
+               "Q",
+               "W",
+               "E",
+               "A",
+               "S",
+               "D",
+               "Z",
+               "X",
+               "C"
+          ],
+          "paste": [
+               "V",
+               true,
+               false,
+               false
+          ],
+          "redo": [
+               "Y",
+               true,
+               false,
+               false
+          ],
+          "save": [
+               "S",
+               true,
+               false,
+               false
+          ],
+          "saveAs": [
+               "S",
+               true,
+               true,
+               false
+          ],
+          "selectAll": [
+               "A",
+               true,
+               false,
+               false
+          ],
+          "undo": [
+               "Z",
+               true,
+               false,
+               false
+          ]
+     },
+     "noteColor1": [
+          255,
+          0,
+          255
+     ],
+     "noteColor2": [
+          0,
+          255,
+          200
+     ],
+     "trackOpacity": 255,
+     "waveform": true
+}

@@ -282,7 +282,7 @@
             this.Name = "TimingsWindow";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Timing Setup Panel";
+            this.Text = "`";
             ((System.ComponentModel.ISupportInitialize)(this.PointList)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MoveBox)).EndInit();
             this.ResumeLayout(false);
