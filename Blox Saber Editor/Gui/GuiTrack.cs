@@ -339,12 +339,12 @@ namespace Sound_Space_Editor.Gui
 							GL.Vertex2((int)lineX + 0.5f, rect.Bottom - gapf);
 							GL.End();
 
-							for (int j = 1; j <= BeatDivisor; j++)
+							for (int j = 1; j < BeatDivisor; j++)
 							{
-								var xo = Math.Round((lineX - ScreenX + posX) / cubeStep * 1000f);
-								xo = xo / 1000f * cubeStep + ScreenX - posX + j * stepSmall;
+								var xo = Math.Round((lineX + j * stepSmall- ScreenX + posX) / cubeStep * 1000f);
+								xo = xo / 1000f * cubeStep + ScreenX - posX;
 
-								if (j < BeatDivisor && xo < endLineX && xo < nextLineX)
+								if (xo < endLineX && xo < nextLineX)
 								{
 
 									var half = j == BeatDivisor / 2 && BeatDivisor % 2 == 0;

@@ -1585,7 +1585,7 @@ namespace Sound_Space_Editor
 				if (negative)
                 {
 					if (closestms < ms && Math.Abs(closestms - ms) > 5)
-						return (long)closestms;
+						return (long)Math.Round(closestms);
 					if (index > 0)
 						closestms = bpmints[index - 1];
 					else
@@ -1594,13 +1594,13 @@ namespace Sound_Space_Editor
 				else
                 {
 					if (closestms > ms && Math.Abs(closestms - ms) > 5)
-						return (long)closestms;
+						return (long)Math.Round(closestms);
 					if (index + 1 < bpmints.Count)
 						closestms = bpmints[index + 1];
                 }
             }
 
-			return (long)closestms;
+			return (long)Math.Round(closestms);
 		}
 
 		private void OnDraggingTimelineNotes(int mouseX)
