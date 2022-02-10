@@ -177,6 +177,21 @@ namespace Sound_Space_Editor.Gui
 
             fr.Render("Grid", (int)TLBox.ClientRectangle.X, (int)TLBox.ClientRectangle.Y - 26, 24);
 
+            string[] lockedlist =
+            {
+                "Other [LOCKED]",
+                "Zoom: CTRL + SCROLL",
+                "Beat Divisor: SHIFT + SCROLL",
+                "Travel through timeline: SCROLL/LEFT ARROW/RIGHT ARROW",
+                "Play/Pause: SPACE",
+                "Fullscreen: F11",
+                "Remove note(s): DELETE/BACKSPACE",
+            };
+
+            var lockedstring = string.Join("\n>", lockedlist);
+
+            fr.Render(lockedstring, (int)BLReset.ClientRectangle.X, (int)BLReset.ClientRectangle.Bottom + 10, 24);
+
             SelectAllBox.Render(delta, mouseX, mouseY);
             SaveBox.Render(delta, mouseX, mouseY);
             SaveAsBox.Render(delta, mouseX, mouseY);
