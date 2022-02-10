@@ -959,9 +959,6 @@ namespace Sound_Space_Editor
 
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
-			if (GuiScreen is GuiScreen gs && !gs.AllowInput())
-				return;
-
 			GuiScreen.OnKeyTyped(e.KeyChar);
 		}
 
