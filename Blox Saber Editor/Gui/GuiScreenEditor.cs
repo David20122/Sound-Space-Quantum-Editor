@@ -37,6 +37,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiCheckBox Autoplay;
 		public readonly GuiCheckBox ApproachSquares;
 		public readonly GuiCheckBox GridNumbers;
+		public readonly GuiCheckBox GridLetters;
 		public readonly GuiCheckBox Quantum;
 		public readonly GuiCheckBox Numpad;
 		public readonly GuiCheckBox AutoAdvance;
@@ -237,6 +238,7 @@ namespace Sound_Space_Editor.Gui
 			Autoplay = new GuiCheckBox(5, "Autoplay", 0, 0, 32, 32, Settings.Default.Autoplay);
 			ApproachSquares = new GuiCheckBox(5, "Approach Squares", 0, 0, 32, 32, Settings.Default.ApproachSquares);
 			GridNumbers = new GuiCheckBox(5, "Grid Numbers", 0, 0, 32, 32, Settings.Default.GridNumbers);
+			GridLetters = new GuiCheckBox(5, "Grid Letters", 0, 0, 32, 32, Settings.Default.GridLetters);
 			Quantum = new GuiCheckBox(5, "Quantum", 0, 0, 32, 32, Settings.Default.Quantum);
 			AutoAdvance = new GuiCheckBox(5, "Auto-Advance", 0, 0, 32, 32, Settings.Default.AutoAdvance);
 			Numpad = new GuiCheckBox(5, "Use Numpad", 0, 0, 32, 32, Settings.Default.Numpad);
@@ -293,6 +295,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(Autoplay);
 			Buttons.Add(ApproachSquares);
 			Buttons.Add(GridNumbers);
+			Buttons.Add(GridLetters);
 			Buttons.Add(Quantum);
 			Buttons.Add(AutoAdvance);
 			Buttons.Add(Numpad);
@@ -681,6 +684,7 @@ namespace Sound_Space_Editor.Gui
 			Autoplay.Visible = false;
 			ApproachSquares.Visible = false;
 			GridNumbers.Visible = false;
+			GridLetters.Visible = false;
 			Quantum.Visible = false;
 			Numpad.Visible = false;
 			QuantumGridLines.Visible = false;
@@ -719,6 +723,7 @@ namespace Sound_Space_Editor.Gui
 				Autoplay.Visible = true;
 				ApproachSquares.Visible = true;
 				GridNumbers.Visible = true;
+				GridLetters.Visible = true;
 				Quantum.Visible = true;
 				Numpad.Visible = true;
 				QuantumGridLines.Visible = true;
@@ -852,6 +857,7 @@ namespace Sound_Space_Editor.Gui
 					Settings.Default.Autoplay = Autoplay.Toggle;
 					Settings.Default.ApproachSquares = ApproachSquares.Toggle;
 					Settings.Default.GridNumbers = GridNumbers.Toggle;
+					Settings.Default.GridLetters = GridLetters.Toggle;
 					Settings.Default.Quantum = Quantum.Toggle;
 					Settings.Default.AutoAdvance = AutoAdvance.Toggle;
 					Settings.Default.Numpad = Numpad.Toggle;
@@ -1183,6 +1189,7 @@ namespace Sound_Space_Editor.Gui
 			Autoplay.ClientRectangle.Size = new SizeF(40 * widthdiff, 40 * heightdiff);
 			ApproachSquares.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			GridNumbers.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
+			GridLetters.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			Quantum.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			Numpad.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			QuantumGridLines.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
@@ -1229,7 +1236,8 @@ namespace Sound_Space_Editor.Gui
 			Autoplay.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, OptionsNav.ClientRectangle.Bottom + 20 * heightdiff);
 			ApproachSquares.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, Autoplay.ClientRectangle.Bottom + 10 * heightdiff);
 			GridNumbers.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, ApproachSquares.ClientRectangle.Bottom + 10 * heightdiff);
-			Quantum.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, GridNumbers.ClientRectangle.Bottom + 10 * heightdiff);
+			GridLetters.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, GridNumbers.ClientRectangle.Bottom + 10 * heightdiff);
+			Quantum.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, GridLetters.ClientRectangle.Bottom + 10 * heightdiff);
 			Numpad.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, Quantum.ClientRectangle.Bottom + 10 * heightdiff);
 			QuantumGridLines.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, Numpad.ClientRectangle.Bottom + 10 * heightdiff);
 			QuantumGridSnap.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, QuantumGridLines.ClientRectangle.Bottom + 10 * heightdiff);

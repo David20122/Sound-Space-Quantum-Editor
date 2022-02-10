@@ -78,19 +78,22 @@ namespace Sound_Space_Editor.Gui
 			var fr = EditorWindow.Instance.FontRenderer;
 
 			GL.Color3(0.2f, 0.2f, 0.2f);
-			foreach (var pair in EditorWindow.Instance.KeyMapping)
-			{
-				var letter = pair.Key.ToString().Replace("Keypad", "");
+			if (Settings.Default.GridLetters)
+            {
+				foreach (var pair in EditorWindow.Instance.KeyMapping)
+				{
+					var letter = pair.Key.ToString().Replace("Keypad", "");
 
-				var tuple = pair.Value;
+					var tuple = pair.Value;
 
-				var x = rect.X + tuple.Item1 * cellSize + cellSize / 2;
-				var y = rect.Y + tuple.Item2 * cellSize + cellSize / 2;
+					var x = rect.X + tuple.Item1 * cellSize + cellSize / 2;
+					var y = rect.Y + tuple.Item2 * cellSize + cellSize / 2;
 
-				var width = fr.GetWidth(letter, 38);
-				var height = fr.GetHeight(38);
+					var width = fr.GetWidth(letter, 38);
+					var height = fr.GetHeight(38);
 
-				fr.Render(letter, (int)(x - width / 2f), (int)(y - height / 2), 38);
+					fr.Render(letter, (int)(x - width / 2f), (int)(y - height / 2), 38);
+				}
 			}
 
 			Note last = null;

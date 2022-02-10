@@ -262,5 +262,17 @@ namespace Sound_Space_Editor.Properties {
                 this["LastFile"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool GridLetters {
+            get {
+                return ((bool)(this["GridLetters"]));
+            }
+            set {
+                this["GridLetters"] = value;
+            }
+        }
     }
 }

@@ -207,6 +207,7 @@ namespace Sound_Space_Editor
 						Settings.Default.TrackHeight,
 						Settings.Default.CurveBezier,
 						Settings.Default.LastFile.Replace(' ', '>').Replace(',', '<'),
+						Settings.Default.GridLetters,
 					};
 
 					try

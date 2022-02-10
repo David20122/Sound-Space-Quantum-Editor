@@ -43,6 +43,7 @@ namespace Sound_Space_Editor
 					Settings.Default.TrackHeight = int.Parse(args[17]);
 					Settings.Default.CurveBezier = bool.Parse(args[18]);
 					Settings.Default.LastFile = args[19].Replace('>', ' ').Replace('<', ',');
+					Settings.Default.GridLetters = bool.Parse(args[20]);
 				}
 			}
 			catch

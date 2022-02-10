@@ -17,7 +17,11 @@ namespace Sound_Space_Editor
             inst = this;
             InitializeComponent();
             ResetList(0);
+            culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+            culture.NumberFormat.NumberDecimalSeparator = ".";
         }
+
+        private CultureInfo culture;
 
         private void AddButton_Click(object sender, EventArgs e)
         {
@@ -134,8 +138,6 @@ namespace Sound_Space_Editor
         {
             try
             {
-                var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-                culture.NumberFormat.NumberDecimalSeparator = ".";
                 int rep;
                 string reps;
                 if (data.Contains("TimingPoints") == true)
@@ -158,8 +160,8 @@ namespace Sound_Space_Editor
                             cleared = true;
                         }
                         string[] items = line.Split(',');
-                        var time = long.Parse(items[0]);
-                        var bpm = Math.Round(60000 / double.Parse(items[1]), 5);
+                        var time = long.Parse(items[0], culture);
+                        var bpm = Math.Round(60000 / double.Parse(items[1], culture), 5);
                         if (bpm > 0)
                         {
                             GuiTrack.BPMs.Add(new BPM((float)bpm, time));
@@ -179,8 +181,6 @@ namespace Sound_Space_Editor
         {
             try
             {
-                var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-                culture.NumberFormat.NumberDecimalSeparator = ".";
                 int rep;
                 string reps;
                 string reps2;
@@ -196,7 +196,7 @@ namespace Sound_Space_Editor
                 rep = reps2.IndexOf("\n");
                 reps2 = reps2.Substring(0, rep);
                 reps2 = reps2.Replace("Resolution = ", "");
-                resolution = decimal.Parse(reps2);
+                resolution = decimal.Parse(reps2, culture);
                 rep = data.IndexOf("SyncTrack");
                 reps = data.Substring(0, rep);
                 reps2 = data.Replace(reps, "");
@@ -228,15 +228,15 @@ namespace Sound_Space_Editor
                     listIndex = timeList.IndexOf(item);
                     if (listIndex != 0)
                     {
-                        difference = decimal.Parse(item) - decimal.Parse(timeList[listIndex - 1]);
-                        bpm = decimal.Parse(bpmList[listIndex - 1]);
+                        difference = decimal.Parse(item, culture) - decimal.Parse(timeList[listIndex - 1], culture);
+                        bpm = decimal.Parse(bpmList[listIndex - 1], culture);
                         difference = Math.Round(1000 * (difference / (bpm * resolution / 60)), 2);
-                        diffFinal = difference + decimal.Parse(msList[listIndex - 1]);
+                        diffFinal = difference + decimal.Parse(msList[listIndex - 1], culture);
                         msList.Add(diffFinal.ToString());
                     }
                     else
                     {
-                        difference = decimal.Parse(timeList[listIndex]);
+                        difference = decimal.Parse(timeList[listIndex], culture);
                         msList.Add(timeList[listIndex]);
                     }
                 }
@@ -260,8 +260,6 @@ namespace Sound_Space_Editor
         {
             try
             {
-                var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-                culture.NumberFormat.NumberDecimalSeparator = ".";
                 string curbpm = data.Substring(data.IndexOf("bpm"), data.Length - data.IndexOf("bpm"));
                 string mapdata = data.Substring(data.IndexOf("pathData"), data.IndexOf(",") - data.IndexOf("pathData"));
                 mapdata = mapdata.Replace("pathData\": \"", "");
@@ -299,7 +297,7 @@ namespace Sound_Space_Editor
                     {
                         string liner = line.Substring(line.IndexOf(":"), line.Length - line.IndexOf(":"));
                         liner = liner.Substring(2, liner.IndexOf(',') - 2);
-                        bpmnotes.Add(int.Parse(liner));
+                        bpmnotes.Add(int.Parse(liner, culture));
                         if (line.Contains("speedType\": \"Multiplier"))
                         {
                             string mult = line.Substring(line.IndexOf("bpmMultiplier"), line.Length - line.IndexOf("bpmMultiplier"));
@@ -322,7 +320,7 @@ namespace Sound_Space_Editor
                     {
                         string liner = line.Substring(line.IndexOf(":"), line.Length - line.IndexOf(":"));
                         liner = liner.Substring(2, liner.IndexOf(',') - 2);
-                        twirlnotes.Add(int.Parse(liner));
+                        twirlnotes.Add(int.Parse(liner, culture));
                     }
                 }
                 bool clock = true;
@@ -418,7 +416,7 @@ namespace Sound_Space_Editor
             };
 
             int index = characters.IndexOf(c);
-            if (index == -1 && !double.TryParse(c.ToString(), out var _))
+            if (index == -1 && !double.TryParse(c.ToString(), NumberStyles.Any, culture, out var _))
                 Console.WriteLine(c);
             else
                 degree = degrees[index];
