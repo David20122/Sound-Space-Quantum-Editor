@@ -1603,6 +1603,19 @@ namespace Sound_Space_Editor
 			return (long)Math.Round(closestms);
 		}
 
+		private long GetClosestNote(long ms)
+        {
+			double closestms = -1;
+
+			foreach (var note in Notes.ToList())
+            {
+				if (Math.Abs(note.Ms - ms) < Math.Abs(closestms - ms))
+					closestms = note.Ms;
+            }
+
+			return (long)Math.Round(closestms);
+        }
+
 		private void OnDraggingTimelineNotes(int mouseX)
 		{
 			var pixels = mouseX - _dragStartX;
@@ -1673,6 +1686,10 @@ namespace Sound_Space_Editor
 					threshold = 12;
 
 				var snappedMs = GetClosestBeat(_draggedPoint.Ms, false, false, true);
+				var snappedNote = GetClosestNote(_draggedPoint.Ms);
+
+				if (Math.Abs(snappedNote - cursorMs) < Math.Abs(snappedMs - cursorMs))
+					snappedMs = snappedNote;
 
 				if (Math.Abs(snappedMs - cursorMs) / 1000f * CubeStep <= threshold) //8 pixels
 					msDiff = -(_draggedPoint.DragStartMs - snappedMs);
