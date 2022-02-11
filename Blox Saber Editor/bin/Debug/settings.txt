@@ -26,6 +26,12 @@
                false,
                false
           ],
+          "delete": [
+               "Delete",
+               false,
+               false,
+               false
+          ],
           "gridKeys": [
                "Q",
                "W",

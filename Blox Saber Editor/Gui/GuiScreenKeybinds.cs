@@ -57,6 +57,12 @@ namespace Sound_Space_Editor.Gui
         private readonly GuiCheckBox PasteALT = new GuiCheckBox(72, "ALT", 0, 0, 0, 0, EditorSettings.Paste.ALT);
         private readonly GuiButton PasteReset = new GuiButton(73, 0, 0, 0, 0, "RESET", false);
 
+        private readonly GuiTextBox DeleteBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.Delete.Key.ToString().ToUpper(), Centered = true };
+        private readonly GuiCheckBox DeleteCTRL = new GuiCheckBox(90, "CTRL", 0, 0, 0, 0, EditorSettings.Delete.CTRL);
+        private readonly GuiCheckBox DeleteSHIFT = new GuiCheckBox(91, "SHIFT", 0, 0, 0, 0, EditorSettings.Delete.SHIFT);
+        private readonly GuiCheckBox DeleteALT = new GuiCheckBox(92, "ALT", 0, 0, 0, 0, EditorSettings.Delete.ALT);
+        private readonly GuiButton DeleteReset = new GuiButton(92, 0, 0, 0, 0, "RESET", false);
+
         private readonly GuiTextBox TLBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.GridKeys.TL.ToString().ToUpper(), Centered = true };
         private readonly GuiButton TLReset = new GuiButton(80, 0, 0, 0, 0, "RESET", false);
 
@@ -124,6 +130,11 @@ namespace Sound_Space_Editor.Gui
             Buttons.Add(PasteALT);
             Buttons.Add(PasteReset);
 
+            Buttons.Add(DeleteCTRL);
+            Buttons.Add(DeleteSHIFT);
+            Buttons.Add(DeleteALT);
+            Buttons.Add(DeleteReset);
+
             Buttons.Add(TLReset);
             Buttons.Add(TCReset);
             Buttons.Add(TRReset);
@@ -174,6 +185,7 @@ namespace Sound_Space_Editor.Gui
             fr.Render("Redo", (int)RedoBox.ClientRectangle.X, (int)RedoBox.ClientRectangle.Y - 26, 24);
             fr.Render("Copy", (int)CopyBox.ClientRectangle.X, (int)CopyBox.ClientRectangle.Y - 26, 24);
             fr.Render("Paste", (int)PasteBox.ClientRectangle.X, (int)PasteBox.ClientRectangle.Y - 26, 24);
+            fr.Render("Delete Note(s)", (int)DeleteBox.ClientRectangle.X, (int)DeleteBox.ClientRectangle.Y - 26, 24);
 
             fr.Render("Grid", (int)TLBox.ClientRectangle.X, (int)TLBox.ClientRectangle.Y - 26, 24);
 
@@ -185,7 +197,6 @@ namespace Sound_Space_Editor.Gui
                 "Travel through timeline: SCROLL/LEFT ARROW/RIGHT ARROW",
                 "Play/Pause: SPACE",
                 "Fullscreen: F11",
-                "Remove note(s): DELETE/BACKSPACE",
             };
 
             var lockedstring = string.Join("\n>", lockedlist);
@@ -199,6 +210,7 @@ namespace Sound_Space_Editor.Gui
             RedoBox.Render(delta, mouseX, mouseY);
             CopyBox.Render(delta, mouseX, mouseY);
             PasteBox.Render(delta, mouseX, mouseY);
+            DeleteBox.Render(delta, mouseX, mouseY);
 
             TLBox.Render(delta, mouseX, mouseY);
             TCBox.Render(delta, mouseX, mouseY);
@@ -260,6 +272,12 @@ namespace Sound_Space_Editor.Gui
             PasteSHIFT.ClientRectangle.Size = SelectAllCTRL.ClientRectangle.Size;
             PasteALT.ClientRectangle.Size = SelectAllCTRL.ClientRectangle.Size;
             PasteReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+
+            DeleteBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+            DeleteCTRL.ClientRectangle.Size = SelectAllCTRL.ClientRectangle.Size;
+            DeleteSHIFT.ClientRectangle.Size = SelectAllCTRL.ClientRectangle.Size;
+            DeleteALT.ClientRectangle.Size = SelectAllCTRL.ClientRectangle.Size;
+            DeleteReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
 
             TLBox.ClientRectangle.Size = new SizeF(128 * widthdiff, 62 * heightdiff);
             TLReset.ClientRectangle.Size = TLBox.ClientRectangle.Size;
@@ -325,6 +343,12 @@ namespace Sound_Space_Editor.Gui
             PasteALT.ClientRectangle.Location = new PointF(SelectAllALT.ClientRectangle.X, PasteBox.ClientRectangle.Y);
             PasteReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, PasteBox.ClientRectangle.Y);
 
+            DeleteBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, PasteBox.ClientRectangle.Bottom + 30 * heightdiff);
+            DeleteCTRL.ClientRectangle.Location = new PointF(SelectAllCTRL.ClientRectangle.X, DeleteBox.ClientRectangle.Y);
+            DeleteSHIFT.ClientRectangle.Location = new PointF(SelectAllSHIFT.ClientRectangle.X, DeleteBox.ClientRectangle.Y);
+            DeleteALT.ClientRectangle.Location = new PointF(SelectAllALT.ClientRectangle.X, DeleteBox.ClientRectangle.Y);
+            DeleteReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, DeleteBox.ClientRectangle.Y);
+
             TLBox.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.Right + 110 * widthdiff, SelectAllBox.ClientRectangle.Y);
             TLReset.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.X, TLBox.ClientRectangle.Bottom + 4 * heightdiff);
             TCBox.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.Right + 10 * widthdiff, TLBox.ClientRectangle.Y);
@@ -366,6 +390,8 @@ namespace Sound_Space_Editor.Gui
                 return "Copy";
             if (PasteBox.Focused)
                 return "Paste";
+            if (DeleteBox.Focused)
+                return "Delete";
 
             if (TLBox.Focused)
                 return "TL";
@@ -389,8 +415,13 @@ namespace Sound_Space_Editor.Gui
             return "";
         }
 
-        public override void OnKeyDown(Key key, bool control)
+        public override void OnKeyDown(Key keyf, bool control)
         {
+            var key = keyf;
+
+            if (keyf == Key.BackSpace)
+                key = Key.Delete;
+
             switch (GetFocused())
             {
                 case "SelectAll":
@@ -420,6 +451,10 @@ namespace Sound_Space_Editor.Gui
                 case "Paste":
                     PasteBox.Text = key.ToString().ToUpper();
                     EditorSettings.Paste.Key = key;
+                    break;
+                case "Delete":
+                    DeleteBox.Text = key.ToString().ToUpper();
+                    EditorSettings.Delete.Key = key;
                     break;
                 case "TL":
                     TLBox.Text = key.ToString().ToUpper();
@@ -469,6 +504,7 @@ namespace Sound_Space_Editor.Gui
             RedoBox.OnMouseClick(x, y);
             CopyBox.OnMouseClick(x, y);
             PasteBox.OnMouseClick(x, y);
+            DeleteBox.OnMouseClick(x, y);
 
             TLBox.OnMouseClick(x, y);
             TCBox.OnMouseClick(x, y);
@@ -622,6 +658,25 @@ namespace Sound_Space_Editor.Gui
                     PasteCTRL.Toggle = true;
                     PasteSHIFT.Toggle = false;
                     PasteALT.Toggle = false;
+                    break;
+                case 90:
+                    EditorSettings.Delete.CTRL = DeleteCTRL.Toggle;
+                    break;
+                case 91:
+                    EditorSettings.Delete.SHIFT = DeleteSHIFT.Toggle;
+                    break;
+                case 92:
+                    EditorSettings.Delete.ALT = DeleteALT.Toggle;
+                    break;
+                case 93:
+                    EditorSettings.Delete.Key = Key.Delete;
+                    EditorSettings.Delete.CTRL = false;
+                    EditorSettings.Delete.SHIFT = false;
+                    EditorSettings.Delete.ALT = false;
+                    DeleteBox.Text = "DELETE";
+                    DeleteCTRL.Toggle = false;
+                    DeleteSHIFT.Toggle = false;
+                    DeleteALT.Toggle = false;
                     break;
                 case 80:
                     EditorSettings.GridKeys.TL = Key.Q;

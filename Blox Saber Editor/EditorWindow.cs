@@ -964,7 +964,11 @@ namespace Sound_Space_Editor
 
 		private string CompareKeys(KeyboardKeyEventArgs e)
 		{
-			if (e.Key == EditorSettings.SelectAll.Key)
+			var key = e.Key;
+			if (key == Key.BackSpace)
+				key = Key.Delete;
+
+			if (key == EditorSettings.SelectAll.Key)
 			{
 				if (EditorSettings.SelectAll.CTRL == _controlDown)
 					if (EditorSettings.SelectAll.SHIFT == _shiftDown)
@@ -972,7 +976,7 @@ namespace Sound_Space_Editor
 							return "SelectAll";
 			}
 
-			if (e.Key == EditorSettings.Save.Key)
+			if (key == EditorSettings.Save.Key)
 			{
 				if (EditorSettings.Save.CTRL == _controlDown)
 					if (EditorSettings.Save.SHIFT == _shiftDown)
@@ -980,7 +984,7 @@ namespace Sound_Space_Editor
 							return "Save";
 			}
 
-			if (e.Key == EditorSettings.SaveAs.Key)
+			if (key == EditorSettings.SaveAs.Key)
 			{
 				if (EditorSettings.SaveAs.CTRL == _controlDown)
 					if (EditorSettings.SaveAs.SHIFT == _shiftDown)
@@ -988,7 +992,7 @@ namespace Sound_Space_Editor
 							return "SaveAs";
 			}
 
-			if (e.Key == EditorSettings.Undo.Key)
+			if (key == EditorSettings.Undo.Key)
 			{
 				if (EditorSettings.Undo.CTRL == _controlDown)
 					if (EditorSettings.Undo.SHIFT == _shiftDown)
@@ -996,7 +1000,7 @@ namespace Sound_Space_Editor
 							return "Undo";
 			}
 
-			if (e.Key == EditorSettings.Redo.Key)
+			if (key == EditorSettings.Redo.Key)
 			{
 				if (EditorSettings.Redo.CTRL == _controlDown)
 					if (EditorSettings.Redo.SHIFT == _shiftDown)
@@ -1004,7 +1008,7 @@ namespace Sound_Space_Editor
 							return "Redo";
 			}
 
-			if (e.Key == EditorSettings.Copy.Key)
+			if (key == EditorSettings.Copy.Key)
 			{
 				if (EditorSettings.Copy.CTRL == _controlDown)
 					if (EditorSettings.Copy.SHIFT == _shiftDown)
@@ -1012,13 +1016,21 @@ namespace Sound_Space_Editor
 							return "Copy";
 			}
 
-			if (e.Key == EditorSettings.Paste.Key)
+			if (key == EditorSettings.Paste.Key)
 			{
 				if (EditorSettings.Paste.CTRL == _controlDown)
 					if (EditorSettings.Paste.SHIFT == _shiftDown)
 						if (EditorSettings.Paste.ALT == _altDown)
 							return "Paste";
 			}
+
+			if (key == EditorSettings.Delete.Key)
+            {
+				if (EditorSettings.Delete.CTRL == _controlDown)
+					if (EditorSettings.Delete.SHIFT == _shiftDown)
+						if (EditorSettings.Delete.ALT == _altDown)
+							return "Delete";
+            }
 
 			return "";
         }
@@ -1178,6 +1190,29 @@ namespace Sound_Space_Editor
 							editor.ShowToast("FAILED TO PASTE", Color1);
 						}
 						return;
+					case "Delete":
+						if (SelectedNotes.Count > 0)
+                        {
+							if (editor.AllowInput())
+							{
+								var toRemove = new List<Note>(SelectedNotes);
+
+								Notes.RemoveAll(toRemove);
+
+								UndoRedo.AddUndoRedo("DELETE NOTE" + (toRemove.Count > 1 ? "S" : ""), () =>
+								{
+									Notes.AddAll(toRemove);
+								}, () =>
+								{
+									Notes.RemoveAll(toRemove);
+								});
+
+								SelectedNotes.Clear();
+								_draggingNoteGrid = false;
+								_draggingNoteTimeline = false;
+							}
+						}
+						return;
 				}
 
 				if ((e.Key == Key.Left || e.Key == Key.Right) && SelectedNotes.Count == 0)
@@ -1310,28 +1345,6 @@ namespace Sound_Space_Editor
 							}
 						}
 					}
-
-					if ((e.Key == Key.Delete || e.Key == Key.BackSpace) && SelectedNotes.Count > 0)
-                    {
-						if (!editor.Offset.Focused && !editor.SfxOffset.Focused && !editor.JumpMSBox.Focused && !editor.RotateBox.Focused)
-                        {
-							var toRemove = new List<Note>(SelectedNotes);
-
-							Notes.RemoveAll(toRemove);
-
-							UndoRedo.AddUndoRedo("DELETE NOTE" + (toRemove.Count > 1 ? "S" : ""), () =>
-							{
-								Notes.AddAll(toRemove);
-							}, () =>
-							{
-								Notes.RemoveAll(toRemove);
-							});
-
-							SelectedNotes.Clear();
-							_draggingNoteGrid = false;
-							_draggingNoteTimeline = false;
-						}
-                    }
 				}
 			}
 		}

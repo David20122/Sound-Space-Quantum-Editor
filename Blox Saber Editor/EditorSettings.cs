@@ -38,6 +38,7 @@ namespace Sound_Space_Editor
 		public static KeyType Redo = new KeyType() { Key = Key.Y, CTRL = true, SHIFT = false, ALT = false };
 		public static KeyType Copy = new KeyType() { Key = Key.C, CTRL = true, SHIFT = false, ALT = false };
 		public static KeyType Paste = new KeyType() { Key = Key.V, CTRL = true, SHIFT = false, ALT = false };
+		public static KeyType Delete = new KeyType() { Key = Key.Delete, CTRL = false, SHIFT = false, ALT = false };
 
 		public static GridKeySet GridKeys = new GridKeySet() { TL = Key.Q, TC = Key.W, TR = Key.E, ML = Key.A, MC = Key.S, MR = Key.D, BL = Key.Z, BC = Key.X, BR = Key.C };
 
@@ -125,6 +126,13 @@ namespace Sound_Space_Editor
 						Paste.SHIFT = value[2];
 						Paste.ALT = value[3];
 					}
+					if (keybinds.TryGetValue("delete", out value))
+                    {
+						Delete.Key = ConvertToKey(value[0]);
+						Delete.CTRL = value[1];
+						Delete.SHIFT = value[2];
+						Delete.ALT = value[3];
+                    }
 					if (keybinds.TryGetValue("gridKeys", out value))
 					{
 						GridKeys.TL = ConvertToKey(value[0]);
@@ -229,6 +237,7 @@ namespace Sound_Space_Editor
 						{"redo", new JsonArray(Redo.Key.ToString(), Redo.CTRL, Redo.SHIFT, Redo.ALT)},
 						{"copy", new JsonArray(Copy.Key.ToString(), Copy.CTRL, Copy.SHIFT, Copy.ALT)},
 						{"paste", new JsonArray(Paste.Key.ToString(), Paste.CTRL, Paste.SHIFT, Paste.ALT)},
+						{"delete", new JsonArray(Delete.Key.ToString(), Delete.CTRL, Delete.SHIFT, Delete.ALT)},
 						{"gridKeys", new JsonArray(GridKeys.TL.ToString(), GridKeys.TC.ToString(), GridKeys.TR.ToString(), GridKeys.ML.ToString(), GridKeys.MC.ToString(), GridKeys.MR.ToString(), GridKeys.BL.ToString(), GridKeys.BC.ToString(), GridKeys.BR.ToString())},
 					} 
 				}
