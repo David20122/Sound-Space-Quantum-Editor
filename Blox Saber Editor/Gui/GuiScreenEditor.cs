@@ -474,7 +474,7 @@ namespace Sound_Space_Editor.Gui
 			var tempoval = Tempo.Value;
 			if (tempoval > 15)
 				tempoval = (tempoval - 16) * 2 + 16;
-            var tempo = $"TEMPO - {tempoval * 5 + 20}%";
+            var tempo = rl ? $"PWAYBACK SPEED ~ {tempoval * 5 + 20}%" : $"PLAYBACK SPEED - {tempoval * 5 + 20}%";
 			var tempoW = fr.GetWidth(tempo, 24);
 
 			fr.Render(tempo, (int)(Tempo.ClientRectangle.X + Tempo.ClientRectangle.Width / 2 - tempoW / 2f), (int)Tempo.ClientRectangle.Bottom - 24, 24);
