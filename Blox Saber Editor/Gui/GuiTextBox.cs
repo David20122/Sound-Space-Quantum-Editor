@@ -162,7 +162,7 @@ namespace Sound_Space_Editor.Gui
 
 					var alpha = (float)(Math.Sin(_timer * MathHelper.TwoPi) + 1) / 2;
 
-					GL.Color4(Color1);
+					GL.Color4(Color2);
 					Glu.RenderQuad(x + textToCursorSize, y - cursorHeight / 2, 1, cursorHeight);
 
 					_timer += delta * 1.25f;
