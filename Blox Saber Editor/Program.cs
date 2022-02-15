@@ -44,6 +44,7 @@ namespace Sound_Space_Editor
 					Settings.Default.CurveBezier = bool.Parse(args[18]);
 					Settings.Default.LastFile = args[19].Replace('>', ' ').Replace('<', ',');
 					Settings.Default.GridLetters = bool.Parse(args[20]);
+					Settings.Default.CursorPos = int.Parse(args[21]);
 				}
 			}
 			catch

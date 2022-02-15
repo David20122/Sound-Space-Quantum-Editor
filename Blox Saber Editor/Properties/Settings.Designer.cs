@@ -274,5 +274,17 @@ namespace Sound_Space_Editor.Properties {
                 this["GridLetters"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("40")]
+        public int CursorPos {
+            get {
+                return ((int)(this["CursorPos"]));
+            }
+            set {
+                this["CursorPos"] = value;
+            }
+        }
     }
 }

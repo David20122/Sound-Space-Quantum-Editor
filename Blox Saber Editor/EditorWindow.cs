@@ -208,6 +208,7 @@ namespace Sound_Space_Editor
 						Settings.Default.CurveBezier,
 						Settings.Default.LastFile.Replace(' ', '>').Replace(',', '<'),
 						Settings.Default.GridLetters,
+						Settings.Default.CursorPos,
 					};
 
 					try
@@ -548,6 +549,16 @@ namespace Sound_Space_Editor
 
 					editor.OnResize(ClientSize);
                 }
+				if (editor.TrackCursorPos.Dragging)
+                {
+					var rect = editor.TrackCursorPos.ClientRectangle;
+					var step = (rect.Width - rect.Height) / editor.TrackCursorPos.MaxValue;
+
+					var tick = (int)MathHelper.Clamp(Math.Round((e.X - rect.X - rect.Height / 2) / step), 0, editor.TrackCursorPos.MaxValue);
+
+					editor.TrackCursorPos.Value = tick;
+					GuiTrack.CursorPos = editor.TrackCursorPos.Value;
+                }
 
 				if (_draggingNoteGrid)
 				{
@@ -754,6 +765,11 @@ namespace Sound_Space_Editor
 						editor.TrackHeight.Dragging = true;
 						OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
                     }
+					else if (editor.TrackCursorPos.ClientRectangle.Contains(e.Position) && editor.TrackCursorPos.Visible)
+                    {
+						editor.TrackCursorPos.Dragging = true;
+						OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
+                    }
 					else if (editor.CanClick(e.Position))
 					{
 						SelectedNotes.Clear();
@@ -928,11 +944,12 @@ namespace Sound_Space_Editor
 
 			if (GuiScreen is GuiScreenEditor editor)
 			{
-				if (editor.MasterVolume.Dragging || editor.SfxVolume.Dragging || editor.TrackHeight.Dragging)
+				if (editor.MasterVolume.Dragging || editor.SfxVolume.Dragging || editor.TrackHeight.Dragging || editor.TrackCursorPos.Dragging)
 				{
 					Settings.Default.MasterVolume = (decimal)editor.MasterVolume.Value / editor.MasterVolume.MaxValue;
 					Settings.Default.SFXVolume = (decimal)editor.SfxVolume.Value / editor.SfxVolume.MaxValue;
 					Settings.Default.TrackHeight = editor.TrackHeight.Value;
+					Settings.Default.CursorPos = editor.TrackCursorPos.Value;
 
 					Settings.Default.Save();
 				}
@@ -944,6 +961,7 @@ namespace Sound_Space_Editor
 				editor.Tempo.Dragging = false;
 				editor.NoteAlign.Dragging = false;
 				editor.TrackHeight.Dragging = false;
+				editor.TrackCursorPos.Dragging = false;
 			}
 
 			if (GuiScreen is GuiScreenMenu menu)

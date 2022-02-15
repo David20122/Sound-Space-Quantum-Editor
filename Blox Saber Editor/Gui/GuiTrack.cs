@@ -26,6 +26,7 @@ namespace Sound_Space_Editor.Gui
 		public static float TextBpm = 0;
 		public static bool waveform;
 		public static int BeatDivisor = 4;
+		public static int CursorPos = Settings.Default.CursorPos;
 
 		public GuiTrack(float y, float sy) : base(0, y, EditorWindow.Instance.ClientSize.Width, sy)
 		{
@@ -35,6 +36,7 @@ namespace Sound_Space_Editor.Gui
 
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
+			ScreenX = ClientRectangle.Width * CursorPos / 100f;
 			// track transparency
 
 			var editor = EditorWindow.Instance;
@@ -492,8 +494,6 @@ namespace Sound_Space_Editor.Gui
 		public override void OnResize(Size size)
 		{
 			ClientRectangle = new RectangleF(0, ClientRectangle.Y, size.Width, ClientRectangle.Height);
-
-			ScreenX = ClientRectangle.Width / 2.5f;
 		}
 
 		public List<Note> GetNotesInRect(RectangleF selectionRect)
