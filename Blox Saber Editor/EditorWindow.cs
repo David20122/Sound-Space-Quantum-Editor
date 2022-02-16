@@ -350,6 +350,11 @@ namespace Sound_Space_Editor
 
 			if (GuiScreen is GuiScreenEditor editor)
 			{
+				if (_drawPreview)
+				{
+					editor.Grid.RenderFakeNote(_previewNote.X, _previewNote.Y, null);
+				}
+
 				editor.Timeline.Progress = (float)MusicPlayer.Progress;
 
 				if (_draggingNoteTimeline)
@@ -440,7 +445,8 @@ namespace Sound_Space_Editor
 				catch { }
 			}
 		}
-
+		private PointF _previewNote;
+		private bool _drawPreview = false;
 		protected override void OnMouseMove(MouseMoveEventArgs e)
 		{
 			_lastMouse = e.Position;
@@ -459,7 +465,7 @@ namespace Sound_Space_Editor
 
 			if (GuiScreen is GuiScreenEditor editor)
 			{
-				if (_placingNotes)
+				if (_placingNotes || (editor.ClickToPlace.Toggle && editor.Grid.ClientRectangle.Contains(e.Position)))
 				{
 					var pos = e.Position;
 					var rect = editor.Grid.ClientRectangle;
@@ -478,34 +484,44 @@ namespace Sound_Space_Editor
 					x = (float)Math.Min(2.850d, x);
 					y = (float)Math.Max(-0.850d, y);
 					y = (float)Math.Min(2.850d, y);
-					if (_lastPos.X == x && _lastPos.Y == y) return;
-					_lastPos = new PointF(x, y);
-					var note = new Note(x, y, (int)MusicPlayer.CurrentTime.TotalMilliseconds);
-					Notes.Add(note);
-					UndoRedo.AddUndoRedo("ADD NOTE", () =>
+					if (_placingNotes)
 					{
-						Notes.Remove(note);
-					}, () =>
-					{
+						_drawPreview = false;
+						if (_lastPos.X == x && _lastPos.Y == y) return;
+						_lastPos = new PointF(x, y);
+						var note = new Note(x, y, (int)MusicPlayer.CurrentTime.TotalMilliseconds);
 						Notes.Add(note);
-					});
-					if (editor.AutoAdvance.Toggle)
-					{
-						var bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm;
-						if (bpm >= 1)
+						UndoRedo.AddUndoRedo("ADD NOTE", () =>
 						{
-							var beatDivisor = GuiTrack.BeatDivisor;
-							var lineSpace = 60 / bpm;
-							var stepSmall = lineSpace / beatDivisor * 1000;
-							long closestBeat = GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
-							try
+							Notes.Remove(note);
+						}, () =>
+						{
+							Notes.Add(note);
+						});
+						if (editor.AutoAdvance.Toggle)
+						{
+							var bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm;
+							if (bpm >= 1)
 							{
-								MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
+								var beatDivisor = GuiTrack.BeatDivisor;
+								var lineSpace = 60 / bpm;
+								var stepSmall = lineSpace / beatDivisor * 1000;
+								long closestBeat = GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+								try
+								{
+									MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
+								}
+								catch { }
 							}
-							catch { }
 						}
+					} else
+					{
+						_drawPreview = true;
+						_previewNote = new PointF(x, y);
 					}
-					return;
+				} else
+				{
+					_drawPreview = false;
 				}
 				if (_draggingNoteTimeline)
 				{

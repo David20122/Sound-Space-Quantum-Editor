@@ -20,6 +20,20 @@ namespace Sound_Space_Editor.Gui
 
 		}
 
+		public void RenderFakeNote(float x, float y, Color? color)
+		{
+			var rect = ClientRectangle;
+			var cellSize = rect.Width / 3f;
+			var noteSize = cellSize * 0.65f;
+			var gap = cellSize - noteSize;
+			x = rect.X + x * cellSize + gap / 2;
+			y = rect.Y + y * cellSize + gap / 2;
+			var noteRect = new RectangleF(x, y, noteSize, noteSize);
+			GL.Color4(color != null ? Color.FromArgb(24, (Color)color) : Color.FromArgb(24, 128, 128, 128));
+			Glu.RenderQuad(noteRect);
+			GL.Color4(color != null ? Color.FromArgb(32, (Color)color) : Color.FromArgb(32, 128, 128, 128));
+			Glu.RenderOutline(noteRect);
+		}
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
 			var editor = (GuiScreenEditor)EditorWindow.Instance.GuiScreen;

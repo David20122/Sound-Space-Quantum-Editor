@@ -44,7 +44,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiCheckBox QuantumGridLines;
 		public readonly GuiCheckBox QuantumGridSnap;
 		public readonly GuiCheckBox Metronome;
-		public readonly GuiCheckBox DynamicBezier;
+		//public readonly GuiCheckBox DynamicBezier;
 		public readonly GuiCheckBox CurveBezier;
 		public readonly GuiCheckBox ClickToPlace;
 		//public readonly GuiCheckBox LegacyBPM;
@@ -253,7 +253,7 @@ namespace Sound_Space_Editor.Gui
 			QuantumGridLines = new GuiCheckBox(5, "Quantum Grid Lines", 0, 0, 32, 32, Settings.Default.QuantumGridLines);
 			QuantumGridSnap = new GuiCheckBox(5, "Snap to Grid", 0, 0, 32, 32, Settings.Default.QuantumGridSnap);
 			Metronome = new GuiCheckBox(5, "Metronome", 0, 0, 32, 32, Settings.Default.Metronome);
-			DynamicBezier = new GuiCheckBox(5, "Show Bezier Preview", 0, 0, 32, 32, Settings.Default.DynamicBezier);
+			//DynamicBezier = new GuiCheckBox(5, "Show Bezier Preview", 0, 0, 32, 32, Settings.Default.DynamicBezier);
 			CurveBezier = new GuiCheckBox(5, "Curve Bezier", 0, 0, 32, 32, Settings.Default.CurveBezier);
 			ClickToPlace = new GuiCheckBox(5, "Click to Place", 0, 0, 32, 32, Settings.Default.ClickToPlace);
 			//LegacyBPM = new GuiCheckBox(5, "Use Legacy Panel", 0, 0, 24, 24, Settings.Default.LegacyBPM);
@@ -311,7 +311,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(QuantumGridLines);
 			Buttons.Add(QuantumGridSnap);
 			Buttons.Add(Metronome);
-			Buttons.Add(DynamicBezier);
+			//Buttons.Add(DynamicBezier);
 			Buttons.Add(CurveBezier);
 			Buttons.Add(ClickToPlace);
 			//Buttons.Add(LegacyBPM);
@@ -412,6 +412,7 @@ namespace Sound_Space_Editor.Gui
 
 			Color Color1 = EditorWindow.Instance.Color1;
 			Color Color2 = EditorWindow.Instance.Color2;
+			Color Color3 = EditorWindow.Instance.Color3;
 
 			GL.Color3(Color1);
 			var zoomW = fr.GetWidth("Zoom: ", 24);
@@ -548,7 +549,7 @@ namespace Sound_Space_Editor.Gui
 
 			//bezier lines
 			GL.LineWidth(2);
-			if (Settings.Default.DynamicBezier && int.TryParse(BezierBox.Text, out var bezdivisor) && bezdivisor > 0 && ((!Settings.Default.DynamicBezier && EditorWindow.Instance.SelectedNotes.Count > 1) || (Settings.Default.DynamicBezier && beziernodes != null && beziernodes.Count > 1)))
+			if (int.TryParse(BezierBox.Text, out var bezdivisor) && bezdivisor > 0 && (beziernodes != null && beziernodes.Count > 1))
 			{
 				try
                 {
@@ -562,6 +563,8 @@ namespace Sound_Space_Editor.Gui
                     {
 						for (double t = 0; t <= 1; t += d)
 						{
+							float xg = 0;
+							float yg = 0;
 							float xf = 0;
 							float yf = 0;
 							for (int v = 0; v <= k; v++)
@@ -571,6 +574,8 @@ namespace Sound_Space_Editor.Gui
 
 								xf += (float)(bez * note.X);
 								yf += (float)(bez * note.Y);
+								xg = xf;
+								yg = yf;
 							}
 
 							xf *= Grid.ClientRectangle.Width / 3;
@@ -584,8 +589,9 @@ namespace Sound_Space_Editor.Gui
 							GL.Vertex2(xprev, yprev);
 							GL.Vertex2(xf, yf);
 							GL.End();
-							GL.Color3(Color1);
-							Glu.RenderCircle(xf, yf, 4);
+							//GL.Color3(Color1);
+							//Glu.RenderCircle(xf, yf, 4);
+							Grid.RenderFakeNote(xg, yg, Color3);
 
 							xprev = xf;
 							yprev = yf;
@@ -600,6 +606,8 @@ namespace Sound_Space_Editor.Gui
 							var xdist = nextnote.X - note.X;
 							var ydist = nextnote.Y - note.Y;
 
+							float xg = 0;
+							float yg = 0;
 							float xf = 0;
 							float yf = 0;
 
@@ -607,6 +615,8 @@ namespace Sound_Space_Editor.Gui
                             {
 								xf = note.X + xdist * (float)t;
 								yf = note.Y + ydist * (float)t;
+								xg = xf;
+								yg = yf;
 
 								xf *= Grid.ClientRectangle.Width / 3;
 								yf *= Grid.ClientRectangle.Width / 3;
@@ -619,8 +629,9 @@ namespace Sound_Space_Editor.Gui
 								GL.Vertex2(xprev, yprev);
 								GL.Vertex2(xf, yf);
 								GL.End();
-								GL.Color3(Color1);
-								Glu.RenderCircle(xf, yf, 4);
+								//GL.Color3(Color1);
+								//Glu.RenderCircle(xf, yf, 4);
+								Grid.RenderFakeNote(xg, yg, Color3);
 
 								xprev = xf;
 								yprev = yf;
@@ -717,7 +728,7 @@ namespace Sound_Space_Editor.Gui
 			//patterns
 			RotateBox.Visible = false;
 			BezierBox.Visible = false;
-			DynamicBezier.Visible = false;
+			//DynamicBezier.Visible = false;
 			CurveBezier.Visible = false;
 			RotateButton.Visible = false;
 			BezierButton.Visible = false;
@@ -771,7 +782,7 @@ namespace Sound_Space_Editor.Gui
             {
 				RotateBox.Visible = true;
 				BezierBox.Visible = true;
-				DynamicBezier.Visible = true;
+				//DynamicBezier.Visible = true;
 				CurveBezier.Visible = true;
 				RotateButton.Visible = true;
 				BezierButton.Visible = true;
@@ -883,7 +894,7 @@ namespace Sound_Space_Editor.Gui
 					Settings.Default.QuantumGridSnap = QuantumGridSnap.Toggle;
 					Settings.Default.Metronome = Metronome.Toggle;
 					Settings.Default.SfxOffset = SfxOffset.Text;
-					Settings.Default.DynamicBezier = DynamicBezier.Toggle;
+					//Settings.Default.DynamicBezier = DynamicBezier.Toggle;
 					Settings.Default.CurveBezier = CurveBezier.Toggle;
 					Settings.Default.ClickToPlace = ClickToPlace.Toggle;
 					//Settings.Default.LegacyBPM = LegacyBPM.Toggle;
@@ -964,8 +975,8 @@ namespace Sound_Space_Editor.Gui
 						try
                         {
 							var finalnodes = EditorWindow.Instance.SelectedNotes.ToList();
-							if (Settings.Default.DynamicBezier)
-								finalnodes = beziernodes;
+							//if (Settings.Default.DynamicBezier)
+							//	finalnodes = beziernodes;
 							var finalnotes = new List<Note>();
 							var k = finalnodes.Count - 1;
 							float tdiff = finalnodes[k].Ms - finalnodes[0].Ms;
@@ -1224,7 +1235,7 @@ namespace Sound_Space_Editor.Gui
 			VFlip.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
 			BezierStoreButton.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
 			BezierClearButton.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
-			DynamicBezier.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
+			//DynamicBezier.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			CurveBezier.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			BezierBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
 			BezierButton.ClientRectangle.Size = SetOffset.ClientRectangle.Size;
@@ -1273,8 +1284,8 @@ namespace Sound_Space_Editor.Gui
 			VFlip.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, HFlip.ClientRectangle.Bottom + 10 * heightdiff);
 			BezierStoreButton.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, VFlip.ClientRectangle.Bottom + 20 * heightdiff);
 			BezierClearButton.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, BezierStoreButton.ClientRectangle.Bottom + 10 * heightdiff);
-			DynamicBezier.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, BezierClearButton.ClientRectangle.Bottom + 10 * heightdiff);
-			CurveBezier.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, DynamicBezier.ClientRectangle.Bottom + 10 * heightdiff);
+			//DynamicBezier.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, BezierClearButton.ClientRectangle.Bottom + 10 * heightdiff);
+			CurveBezier.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, BezierClearButton.ClientRectangle.Bottom + 10 * heightdiff);
 			BezierBox.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, CurveBezier.ClientRectangle.Bottom + 32 * heightdiff);
 			BezierButton.ClientRectangle.Location = new PointF(BezierBox.ClientRectangle.Right + 5 * widthdiff, BezierBox.ClientRectangle.Y);
 			RotateBox.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, BezierBox.ClientRectangle.Bottom + 35 * heightdiff);
