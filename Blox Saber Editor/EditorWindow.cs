@@ -459,6 +459,54 @@ namespace Sound_Space_Editor
 
 			if (GuiScreen is GuiScreenEditor editor)
 			{
+				if (_placingNotes)
+				{
+					var pos = e.Position;
+					var rect = editor.Grid.ClientRectangle;
+					var increment = (float)(editor.NoteAlign.Value + 1f) / 3f;
+
+					var x = (float)((pos.X - (rect.X + (rect.Width / 2))) / rect.Width * 3) + 1;
+					var y = (float)((pos.Y - (rect.Y + (rect.Height / 2))) / rect.Height * 3) + 1;
+
+					if (editor.QuantumGridSnap.Toggle)
+					{
+						x = (float)(Math.Floor((x + 1 / increment / 2) * increment) / increment);
+						y = (float)(Math.Floor((y + 1 / increment / 2) * increment) / increment);
+					}
+
+					x = (float)Math.Max(-0.850d, x);
+					x = (float)Math.Min(2.850d, x);
+					y = (float)Math.Max(-0.850d, y);
+					y = (float)Math.Min(2.850d, y);
+					if (_lastPos.X == x && _lastPos.Y == y) return;
+					_lastPos = new PointF(x, y);
+					var note = new Note(x, y, (int)MusicPlayer.CurrentTime.TotalMilliseconds);
+					Notes.Add(note);
+					UndoRedo.AddUndoRedo("ADD NOTE", () =>
+					{
+						Notes.Remove(note);
+					}, () =>
+					{
+						Notes.Add(note);
+					});
+					if (editor.AutoAdvance.Toggle)
+					{
+						var bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm;
+						if (bpm >= 1)
+						{
+							var beatDivisor = GuiTrack.BeatDivisor;
+							var lineSpace = 60 / bpm;
+							var stepSmall = lineSpace / beatDivisor * 1000;
+							long closestBeat = GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+							try
+							{
+								MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
+							}
+							catch { }
+						}
+					}
+					return;
+				}
 				if (_draggingNoteTimeline)
 				{
 					var x = Math.Abs(e.X - _dragStartX) >= 5 ? e.X : _dragStartX;
@@ -606,7 +654,8 @@ namespace Sound_Space_Editor
 				OnMouseUp(new MouseButtonEventArgs(_lastMouse.X, _lastMouse.Y, MouseButton.Left, false));
 			}
 		}
-
+		private bool _placingNotes = false; // pardon my bad practices -kermet
+		private PointF _lastPos;
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
 			_clickedMouse = e.Position;
@@ -622,6 +671,53 @@ namespace Sound_Space_Editor
 					_draggedNote = null;
 					_draggedPoint = null;
 
+					if (editor.ClickToPlace.Toggle && editor.Grid.ClientRectangle.Contains(e.Position))
+					{
+						_placingNotes = true;
+						var pos = e.Position;
+						var rect = editor.Grid.ClientRectangle;
+						var increment = (float)(editor.NoteAlign.Value + 1f) / 3f;
+
+						var x = (float)((pos.X - (rect.X + (rect.Width / 2))) / rect.Width * 3) + 1;
+						var y = (float)((pos.Y - (rect.Y + (rect.Height / 2))) / rect.Height * 3) + 1;
+
+						if (editor.QuantumGridSnap.Toggle)
+						{
+							x = (float)(Math.Floor((x + 1 / increment / 2) * increment) / increment);
+							y = (float)(Math.Floor((y + 1 / increment / 2) * increment) / increment);
+						}
+
+						x = (float)Math.Max(-0.850d, x);
+						x = (float)Math.Min(2.850d, x);
+						y = (float)Math.Max(-0.850d, y);
+						y = (float)Math.Min(2.850d, y);
+						_lastPos = new PointF(x, y);
+						var note = new Note(x, y, (int)MusicPlayer.CurrentTime.TotalMilliseconds);
+						Notes.Add(note);
+						UndoRedo.AddUndoRedo("ADD NOTE", () =>
+						{
+							Notes.Remove(note);
+						}, () =>
+						{
+							Notes.Add(note);
+						});
+						if (editor.AutoAdvance.Toggle)
+						{
+							var bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm;
+							if (bpm >= 1)
+							{
+								var beatDivisor = GuiTrack.BeatDivisor;
+								var lineSpace = 60 / bpm;
+								var stepSmall = lineSpace / beatDivisor * 1000;
+								long closestBeat = GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+								try
+								{
+									MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
+								} catch { }
+							}
+						}
+						return;
+					}
 					if (editor.Track.MouseOverNote is Note tn)
 					{
 						MusicPlayer.Pause();
@@ -969,6 +1065,7 @@ namespace Sound_Space_Editor
 				menu.ScrollBar.Dragging = false;
             }
 
+			_placingNotes = false;
 			_draggingNoteTimeline = false;
 			_draggingPointTimeline = false;
 			_draggingNoteGrid = false;
@@ -1764,39 +1861,6 @@ namespace Sound_Space_Editor
 				{
 					if (gse.Quantum.Toggle)
 					{
-						// dragging notes by custom value pog
-						/* //old
-                            var vv = (3f/(float)gse.NoteAlign.Value);
-                            var v = 3f / vv;
-							var QGnewX = (int)Math.Floor((pos.X - (rect.X)) / rect.Width * v);
-							var QGnewY = (int)Math.Floor((pos.Y - (rect.Y)) / rect.Height * v);
-                            var QGMnewX = QGnewX * vv;
-                            var QGMnewY = QGnewY * vv;
-
-                        if (QGMnewX < -0.5f || QGMnewX > 2.5f || QGMnewY < -0.5f || QGMnewY > 2.5f)
-							{
-								return;
-							}
-
-
-							note.X = QGMnewX;
-							note.Y = QGMnewY;
-                        */
-						/*
-												var align = gse.NoteAlign.Value;
-												var increment = (align + 1) / 3f;
-
-												var x = (int)Math.Floor((pos.X - rect.X) / rect.Width * 2.5 * increment) / increment;
-												var y = (int)Math.Floor((pos.Y - rect.Y) / rect.Height * 2.5 * increment) / increment;
-
-												//var x = pos.X - rect.X + _lastMouse.X - _clickedMouse.X;
-												//var y = pos.Y - rect.Y + _lastMouse.Y - _clickedMouse.Y;
-
-												var cellSize = 1 / 3 * increment;
-
-												x = (float)Math.Floor(x / cellSize + 0.5) * cellSize;
-												y = (float)Math.Floor(y / cellSize + 0.5) * cellSize;
-												*/
 						var increment = (float)(gse.NoteAlign.Value + 1f) / 3f;
 
 						var newX = (float)((pos.X - (rect.X + (rect.Width / 2))) / rect.Width * 3) + 1;

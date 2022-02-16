@@ -46,6 +46,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiCheckBox Metronome;
 		public readonly GuiCheckBox DynamicBezier;
 		public readonly GuiCheckBox CurveBezier;
+		public readonly GuiCheckBox ClickToPlace;
 		//public readonly GuiCheckBox LegacyBPM;
 		public readonly GuiButton BackButton;
 		public readonly GuiButton CopyButton;
@@ -254,6 +255,7 @@ namespace Sound_Space_Editor.Gui
 			Metronome = new GuiCheckBox(5, "Metronome", 0, 0, 32, 32, Settings.Default.Metronome);
 			DynamicBezier = new GuiCheckBox(5, "Show Bezier Preview", 0, 0, 32, 32, Settings.Default.DynamicBezier);
 			CurveBezier = new GuiCheckBox(5, "Curve Bezier", 0, 0, 32, 32, Settings.Default.CurveBezier);
+			ClickToPlace = new GuiCheckBox(5, "Click to Place", 0, 0, 32, 32, Settings.Default.ClickToPlace);
 			//LegacyBPM = new GuiCheckBox(5, "Use Legacy Panel", 0, 0, 24, 24, Settings.Default.LegacyBPM);
 
 			ScaleBox = new GuiTextBox(0, 0, 128, 32)
@@ -311,6 +313,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(Metronome);
 			Buttons.Add(DynamicBezier);
 			Buttons.Add(CurveBezier);
+			Buttons.Add(ClickToPlace);
 			//Buttons.Add(LegacyBPM);
 			Buttons.Add(SetOffset);
 			Buttons.Add(BackButton);
@@ -433,14 +436,14 @@ namespace Sound_Space_Editor.Gui
 				if (rl)
                 {
 					var thw = fr.GetWidth($"Twack Height~ 00", 24);
-					fr.Render($"Twack Height~ {th}", (int)TrackHeight.ClientRectangle.Left - thw, (int)Metronome.ClientRectangle.Bottom + 10, 24);
-					fr.Render($"Cuwsow Pos~ {TrackCursorPos.Value}%", (int)TrackCursorPos.ClientRectangle.X, (int)Metronome.ClientRectangle.Bottom + 10, 24);
+					fr.Render($"Twack Height~ {th}", (int)TrackHeight.ClientRectangle.Left - thw, (int)ClickToPlace.ClientRectangle.Bottom + 10, 24);
+					fr.Render($"Cuwsow Pos~ {TrackCursorPos.Value}%", (int)TrackCursorPos.ClientRectangle.X, (int)ClickToPlace.ClientRectangle.Bottom + 10, 24);
 				}
 				else
                 {
 					var thw = fr.GetWidth($"Track Height: 00", 24);
-					fr.Render($"Track Height: {th}", (int)TrackHeight.ClientRectangle.Left - thw, (int)Metronome.ClientRectangle.Bottom + 10, 24);
-					fr.Render($"Cursor Pos: {TrackCursorPos.Value}%", (int)TrackCursorPos.ClientRectangle.X, (int)Metronome.ClientRectangle.Bottom + 10, 24);
+					fr.Render($"Track Height: {th}", (int)TrackHeight.ClientRectangle.Left - thw, (int)ClickToPlace.ClientRectangle.Bottom + 10, 24);
+					fr.Render($"Cursor Pos: {TrackCursorPos.Value}%", (int)TrackCursorPos.ClientRectangle.X, (int)ClickToPlace.ClientRectangle.Bottom + 10, 24);
 				}
 			}
 			if (rl)
@@ -507,7 +510,7 @@ namespace Sound_Space_Editor.Gui
 
 			var rect = Timeline.ClientRectangle;
 
-			var timelinePos = new Vector2(rect.Height / 2f, rect.Height / 2f - 5);
+			var timelinePos = new System.Numerics.Vector2(rect.Height / 2f, rect.Height / 2f - 5);
 			var time = EditorWindow.Instance.MusicPlayer.TotalTime;
 			var currentTime = EditorWindow.Instance.MusicPlayer.CurrentTime;
 			
@@ -703,6 +706,7 @@ namespace Sound_Space_Editor.Gui
 			Metronome.Visible = false;
 			TrackHeight.Visible = false;
 			TrackCursorPos.Visible = false;
+			ClickToPlace.Visible = false;
 
 			//timing
 			Offset.Visible = false;
@@ -743,6 +747,7 @@ namespace Sound_Space_Editor.Gui
 				Metronome.Visible = true;
 				TrackHeight.Visible = true;
 				TrackCursorPos.Visible = true;
+				ClickToPlace.Visible = true;
 
 				TimingNav.ClientRectangle.Y = TrackCursorPos.ClientRectangle.Bottom + 20 * heightdiff;
 				PatternsNav.ClientRectangle.Y = TimingNav.ClientRectangle.Bottom + 10 * heightdiff;
@@ -880,6 +885,7 @@ namespace Sound_Space_Editor.Gui
 					Settings.Default.SfxOffset = SfxOffset.Text;
 					Settings.Default.DynamicBezier = DynamicBezier.Toggle;
 					Settings.Default.CurveBezier = CurveBezier.Toggle;
+					Settings.Default.ClickToPlace = ClickToPlace.Toggle;
 					//Settings.Default.LegacyBPM = LegacyBPM.Toggle;
 					Settings.Default.Save();
 					EditorSettings.RefreshKeymapping();
@@ -1209,6 +1215,7 @@ namespace Sound_Space_Editor.Gui
 			QuantumGridLines.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			QuantumGridSnap.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			Metronome.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
+			ClickToPlace.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			TrackHeight.ClientRectangle.Size = new SizeF(32 * widthdiff, 256 * heightdiff);
 			TrackCursorPos.ClientRectangle.Size = new SizeF(OptionsNav.ClientRectangle.Width, 32 * heightdiff);
 
@@ -1257,8 +1264,9 @@ namespace Sound_Space_Editor.Gui
 			QuantumGridLines.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, Numpad.ClientRectangle.Bottom + 10 * heightdiff);
 			QuantumGridSnap.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, QuantumGridLines.ClientRectangle.Bottom + 10 * heightdiff);
 			Metronome.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, QuantumGridSnap.ClientRectangle.Bottom + 10 * heightdiff);
-			TrackHeight.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.Right - TrackHeight.ClientRectangle.Width, Metronome.ClientRectangle.Bottom + 50 * heightdiff - TrackHeight.ClientRectangle.Height);
-			TrackCursorPos.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, Metronome.ClientRectangle.Bottom + 36 * heightdiff);
+			ClickToPlace.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, Metronome.ClientRectangle.Bottom + 10 * heightdiff);
+			TrackHeight.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.Right - TrackHeight.ClientRectangle.Width, ClickToPlace.ClientRectangle.Bottom + 50 * heightdiff - TrackHeight.ClientRectangle.Height);
+			TrackCursorPos.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, ClickToPlace.ClientRectangle.Bottom + 36 * heightdiff);
 
 			//patterns
 			HFlip.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, PatternsNav.ClientRectangle.Bottom + 20 * heightdiff);
