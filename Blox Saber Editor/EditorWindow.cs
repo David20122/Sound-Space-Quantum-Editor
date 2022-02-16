@@ -671,53 +671,6 @@ namespace Sound_Space_Editor
 					_draggedNote = null;
 					_draggedPoint = null;
 
-					if (editor.ClickToPlace.Toggle && editor.Grid.ClientRectangle.Contains(e.Position))
-					{
-						_placingNotes = true;
-						var pos = e.Position;
-						var rect = editor.Grid.ClientRectangle;
-						var increment = (float)(editor.NoteAlign.Value + 1f) / 3f;
-
-						var x = (float)((pos.X - (rect.X + (rect.Width / 2))) / rect.Width * 3) + 1;
-						var y = (float)((pos.Y - (rect.Y + (rect.Height / 2))) / rect.Height * 3) + 1;
-
-						if (editor.QuantumGridSnap.Toggle)
-						{
-							x = (float)(Math.Floor((x + 1 / increment / 2) * increment) / increment);
-							y = (float)(Math.Floor((y + 1 / increment / 2) * increment) / increment);
-						}
-
-						x = (float)Math.Max(-0.850d, x);
-						x = (float)Math.Min(2.850d, x);
-						y = (float)Math.Max(-0.850d, y);
-						y = (float)Math.Min(2.850d, y);
-						_lastPos = new PointF(x, y);
-						var note = new Note(x, y, (int)MusicPlayer.CurrentTime.TotalMilliseconds);
-						Notes.Add(note);
-						UndoRedo.AddUndoRedo("ADD NOTE", () =>
-						{
-							Notes.Remove(note);
-						}, () =>
-						{
-							Notes.Add(note);
-						});
-						if (editor.AutoAdvance.Toggle)
-						{
-							var bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm;
-							if (bpm >= 1)
-							{
-								var beatDivisor = GuiTrack.BeatDivisor;
-								var lineSpace = 60 / bpm;
-								var stepSmall = lineSpace / beatDivisor * 1000;
-								long closestBeat = GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
-								try
-								{
-									MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
-								} catch { }
-							}
-						}
-						return;
-					}
 					if (editor.Track.MouseOverNote is Note tn)
 					{
 						MusicPlayer.Pause();
@@ -807,6 +760,53 @@ namespace Sound_Space_Editor
 						_dragStartIndexY = _draggedNotes.FirstOrDefault().Y;
 
 						SelectedNotes = _draggedNotes;
+					}
+					else if (editor.ClickToPlace.Toggle && editor.Grid.ClientRectangle.Contains(e.Position))
+					{
+						_placingNotes = true;
+						var pos = e.Position;
+						var rect = editor.Grid.ClientRectangle;
+						var increment = (float)(editor.NoteAlign.Value + 1f) / 3f;
+
+						var x = (float)((pos.X - (rect.X + (rect.Width / 2))) / rect.Width * 3) + 1;
+						var y = (float)((pos.Y - (rect.Y + (rect.Height / 2))) / rect.Height * 3) + 1;
+
+						if (editor.QuantumGridSnap.Toggle)
+						{
+							x = (float)(Math.Floor((x + 1 / increment / 2) * increment) / increment);
+							y = (float)(Math.Floor((y + 1 / increment / 2) * increment) / increment);
+						}
+
+						x = (float)Math.Max(-0.850d, x);
+						x = (float)Math.Min(2.850d, x);
+						y = (float)Math.Max(-0.850d, y);
+						y = (float)Math.Min(2.850d, y);
+						_lastPos = new PointF(x, y);
+						var note = new Note(x, y, (int)MusicPlayer.CurrentTime.TotalMilliseconds);
+						Notes.Add(note);
+						UndoRedo.AddUndoRedo("ADD NOTE", () =>
+						{
+							Notes.Remove(note);
+						}, () =>
+						{
+							Notes.Add(note);
+						});
+						if (editor.AutoAdvance.Toggle)
+						{
+							var bpm = GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm;
+							if (bpm >= 1)
+							{
+								var beatDivisor = GuiTrack.BeatDivisor;
+								var lineSpace = 60 / bpm;
+								var stepSmall = lineSpace / beatDivisor * 1000;
+								long closestBeat = GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+								try
+								{
+									MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
+								}
+								catch { }
+							}
+						}
 					}
 					else if (editor.Track.MouseOverPoint is BPM pn)
                     {
