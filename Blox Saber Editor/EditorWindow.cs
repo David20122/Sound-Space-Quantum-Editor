@@ -504,14 +504,24 @@ namespace Sound_Space_Editor
 							if (bpm >= 1)
 							{
 								var beatDivisor = GuiTrack.BeatDivisor;
+
 								var lineSpace = 60 / bpm;
 								var stepSmall = lineSpace / beatDivisor * 1000;
-								long closestBeat = GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+
+								long closestBeat =
+									GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+
+								if (GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm == 0 && GetCurrentBpm(closestBeat, false).bpm != 0)
+									closestBeat = GetCurrentBpm(closestBeat, false).Ms;
+
 								try
 								{
 									MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
 								}
-								catch { }
+								catch
+								{
+
+								}
 							}
 						}
 					} else
@@ -813,14 +823,24 @@ namespace Sound_Space_Editor
 							if (bpm >= 1)
 							{
 								var beatDivisor = GuiTrack.BeatDivisor;
+
 								var lineSpace = 60 / bpm;
 								var stepSmall = lineSpace / beatDivisor * 1000;
-								long closestBeat = GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+
+								long closestBeat =
+									GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+
+								if (GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm == 0 && GetCurrentBpm(closestBeat, false).bpm != 0)
+									closestBeat = GetCurrentBpm(closestBeat, false).Ms;
+
 								try
 								{
 									MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
 								}
-								catch { }
+								catch
+								{
+
+								}
 							}
 						}
 					}
@@ -1360,21 +1380,20 @@ namespace Sound_Space_Editor
 						var lineSpace = 60 / bpm;
 						var stepSmall = lineSpace / beatDivisor * 1000;
 
-						if (e.Key == Key.Left)
-							stepSmall = -stepSmall;
-
 						long closestBeat =
-							GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, stepSmall < 0);
+							GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
 
-						closestBeat = Math.Max(0, closestBeat);
+						if (GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm == 0 && GetCurrentBpm(closestBeat, false).bpm != 0)
+							closestBeat = GetCurrentBpm(closestBeat, false).Ms;
 
-                        try
-                        {
+						try
+						{
 							MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
-						} catch
-                        {
+						}
+						catch
+						{
 
-                        }
+						}
 					}
 				}
 
@@ -1461,6 +1480,10 @@ namespace Sound_Space_Editor
 
 									long closestBeat =
 										GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+
+									if (GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm == 0 && GetCurrentBpm(closestBeat, false).bpm != 0)
+										closestBeat = GetCurrentBpm(closestBeat, false).Ms;
+
                                     try
                                     {
 										MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(closestBeat);
@@ -1524,6 +1547,9 @@ namespace Sound_Space_Editor
 					{
 						time += (long)(e.DeltaPrecise / 10 * 1000 / Zoom * 0.5f);
 					}
+
+					if (GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm == 0 && GetCurrentBpm(time, false).bpm != 0)
+						time = GetCurrentBpm(time, false).Ms;
 
 					time = Math.Min(maxTime, Math.Max(0, time));
 
@@ -1600,6 +1626,7 @@ namespace Sound_Space_Editor
 
 		private long GetClosestBeatScroll(long ms, bool next, bool negative)
         {
+			/*
 			if (GuiTrack.BPMs.Count == 0 || GuiTrack.BPMs[0].Ms - 5 > ms)
 				return -1;
 
@@ -1664,6 +1691,35 @@ namespace Sound_Space_Editor
 						closestms = bpmints[index + 1];
 				}
 			}
+			*/
+			
+			long closestms = GetClosestBeat(ms, false);
+			
+			if (next)
+            {
+				var curbpm = GetCurrentBpm(ms, negative);
+				var interval = Math.Round(60000 / curbpm.bpm / GuiTrack.BeatDivisor);
+
+				if (negative)
+                {
+					closestms = GetClosestBeat(ms, true);
+
+					if (closestms >= ms)
+						closestms -= (long)interval;
+                }
+				else
+                {
+					closestms += (long)interval;
+
+					if (GetCurrentBpm(closestms, false) != curbpm)
+						closestms = GetCurrentBpm(closestms, false).Ms;
+				}
+			}
+
+			if (GetCurrentBpm(closestms, false).bpm == 0)
+				return -1;
+
+			closestms = (long)MathHelper.Clamp(closestms, 0, MusicPlayer.TotalTime.TotalMilliseconds - 1);
 
 			return closestms;
 		}
