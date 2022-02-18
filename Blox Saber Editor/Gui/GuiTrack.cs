@@ -337,8 +337,8 @@ namespace Sound_Space_Editor.Gui
 						{
 							GL.Color3(Color2);
 							GL.Begin(PrimitiveType.Lines);
-							GL.Vertex2((int)lineX + 0.5f, rect.Bottom);
-							GL.Vertex2((int)lineX + 0.5f, rect.Bottom - gapf);
+							GL.Vertex2(Math.Round(lineX) + 0.5f, rect.Bottom);
+							GL.Vertex2(Math.Round(lineX) + 0.5f, rect.Bottom - gapf);
 							GL.End();
 
 							for (int j = 1; j < BeatDivisor; j++)

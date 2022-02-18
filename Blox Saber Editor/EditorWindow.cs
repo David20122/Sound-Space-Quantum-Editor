@@ -1698,21 +1698,18 @@ namespace Sound_Space_Editor
 			if (next)
             {
 				var curbpm = GetCurrentBpm(ms, negative);
-				var interval = Math.Round(60000 / curbpm.bpm / GuiTrack.BeatDivisor);
+				var interval = 60000 / curbpm.bpm / GuiTrack.BeatDivisor;
 
 				if (negative)
                 {
 					closestms = GetClosestBeat(ms, true);
 
 					if (closestms >= ms)
-						closestms -= (long)interval;
+						closestms = GetClosestBeat(closestms - (long)interval, false);
                 }
 				else
                 {
-					closestms += (long)interval;
-
-					if (GetCurrentBpm(closestms, false) != curbpm)
-						closestms = GetCurrentBpm(closestms, false).Ms;
+					closestms = GetClosestBeat(closestms + (long)interval, false);
 				}
 			}
 
