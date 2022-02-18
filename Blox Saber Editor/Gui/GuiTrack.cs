@@ -335,15 +335,18 @@ namespace Sound_Space_Editor.Gui
 						//render BPM lines
 						while (lineSpace > 0 && lineX < rect.Width && lineX < endLineX && lineX < nextLineX)
 						{
+							var lineF = Math.Round((lineX - ScreenX + posX) / cubeStep * 1000f);
+							lineF = lineF / 1000f * cubeStep + ScreenX - posX;
+
 							GL.Color3(Color2);
 							GL.Begin(PrimitiveType.Lines);
-							GL.Vertex2(Math.Round(lineX) + 0.5f, rect.Bottom);
-							GL.Vertex2(Math.Round(lineX) + 0.5f, rect.Bottom - gapf);
+							GL.Vertex2(Math.Round(lineF) + 0.5f, rect.Bottom);
+							GL.Vertex2(Math.Round(lineF) + 0.5f, rect.Bottom - gapf);
 							GL.End();
 
 							for (int j = 1; j < BeatDivisor; j++)
 							{
-								var xo = Math.Round((lineX + j * stepSmall- ScreenX + posX) / cubeStep * 1000f);
+								var xo = Math.Round((lineX + j * stepSmall - ScreenX + posX) / cubeStep * 1000f);
 								xo = xo / 1000f * cubeStep + ScreenX - posX;
 
 								if (xo < endLineX && xo < nextLineX)
@@ -502,7 +505,7 @@ namespace Sound_Space_Editor.Gui
 
 			var rect = ClientRectangle;
 
-			float cellSize = rect.Height;
+			float cellSize = 64f;
 			float noteSize = cellSize * 0.65f;
 
 			float gap = cellSize - noteSize;
