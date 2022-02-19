@@ -85,9 +85,9 @@ namespace Sound_Space_Editor
 		private long _mouseDownMs;
 
 		private bool _rightDown;
-		private bool _controlDown;
-		private bool _altDown;
-		private bool _shiftDown;
+		public bool _controlDown;
+		public bool _altDown;
+		public bool _shiftDown;
 		private bool _draggingNoteTimeline;
 		private bool _draggingPointTimeline;
 		private bool _draggingNoteGrid;
@@ -1397,7 +1397,7 @@ namespace Sound_Space_Editor
 					}
 				}
 
-				if (e.Shift && e.Control && e.Key == Key.M)
+				if (e.Shift && e.Control && e.Key == Key.M && Notes.Count == 69)
 				{
 					inconspicuousvar = !inconspicuousvar;
 					editor.ShowToast("funny mode " + (inconspicuousvar ? "on" : "off"), Color1);
