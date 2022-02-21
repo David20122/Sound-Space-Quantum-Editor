@@ -157,6 +157,9 @@ namespace Sound_Space_Editor.Gui
                 "Travel through timeline: SCROLL/LEFT ARROW/RIGHT ARROW",
                 "Play/Pause: SPACE",
                 "Fullscreen: F11",
+                "Stored Patterns: 0-9",
+                ">Hold SHIFT to bind a pattern to the key",
+                ">Hold CTRL to clear a pattern from the key",
             };
 
             var lockedstring = string.Join("\n>", lockedlist);

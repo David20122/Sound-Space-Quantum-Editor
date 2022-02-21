@@ -509,7 +509,7 @@ namespace Sound_Space_Editor
 								var stepSmall = lineSpace / beatDivisor * 1000;
 
 								long closestBeat =
-									GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+									GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, false, 1);
 
 								if (GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm == 0 && GetCurrentBpm(closestBeat, false).bpm != 0)
 									closestBeat = GetCurrentBpm(closestBeat, false).Ms;
@@ -550,7 +550,7 @@ namespace Sound_Space_Editor
 					editor.Timeline.Progress = Math.Max(0, Math.Min(1, (e.X - editor.ClientRectangle.Height / 2f) /
 								   (editor.ClientRectangle.Width - editor.ClientRectangle.Height)));
 
-					MusicPlayer.Stop();
+					MusicPlayer.Pause();
 
 					var time = MathHelper.Clamp(MusicPlayer.TotalTime.TotalMilliseconds * editor.Timeline.Progress, 0, MusicPlayer.TotalTime.TotalMilliseconds - 1);
 					MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(time);
@@ -828,7 +828,7 @@ namespace Sound_Space_Editor
 								var stepSmall = lineSpace / beatDivisor * 1000;
 
 								long closestBeat =
-									GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+									GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, false, 1);
 
 								if (GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm == 0 && GetCurrentBpm(closestBeat, false).bpm != 0)
 									closestBeat = GetCurrentBpm(closestBeat, false).Ms;
@@ -1183,7 +1183,101 @@ namespace Sound_Space_Editor
 							return "Delete";
             }
 
+			if (key == Key.Number0)
+				return "Pattern0";
+			if (key == Key.Number1)
+				return "Pattern1";
+			if (key == Key.Number2)
+				return "Pattern2";
+			if (key == Key.Number3)
+				return "Pattern3";
+			if (key == Key.Number4)
+				return "Pattern4";
+			if (key == Key.Number5)
+				return "Pattern5";
+			if (key == Key.Number6)
+				return "Pattern6";
+			if (key == Key.Number7)
+				return "Pattern7";
+			if (key == Key.Number8)
+				return "Pattern8";
+			if (key == Key.Number9)
+				return "Pattern9";
+
 			return "";
+        }
+
+		private void CreatePattern(string pattern)
+        {
+			if (pattern == "")
+				return;
+
+			var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+			culture.NumberFormat.NumberDecimalSeparator = ".";
+
+			string[] patternsplit = pattern.Split(',');
+			var toAdd = new List<Note>();
+			
+			foreach (var note in patternsplit)
+            {
+				string[] notesplit = note.Split('|');
+				var x = float.Parse(notesplit[0], culture);
+				var y = float.Parse(notesplit[1], culture);
+				var time = int.Parse(notesplit[2], culture);
+
+				var ms = GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, false, time);
+
+				toAdd.Add(new Note(x, y, ms));
+            }
+
+			Notes.AddAll(toAdd);
+
+			UndoRedo.AddUndoRedo("ADD NOTE" + (toAdd.Count > 1 ? "S" : ""), () =>
+			{
+				Notes.RemoveAll(toAdd);
+			}, () =>
+			{
+				Notes.AddAll(toAdd);
+			});
+		}
+
+		private string BindPattern(int key)
+        {
+			var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+			culture.NumberFormat.NumberDecimalSeparator = ".";
+
+			string pattern = "";
+			long minDist = 0;
+
+			for (int i = 0; i + 1 < SelectedNotes.Count; i++)
+            {
+				var dist = Math.Abs(SelectedNotes[i].Ms - SelectedNotes[i + 1].Ms);
+
+				if (dist > 0)
+					if (minDist > 0)
+						minDist = Math.Min(minDist, dist);
+					else
+						minDist = dist;
+            }
+
+			foreach (var note in SelectedNotes)
+            {
+				var offset = SelectedNotes[0].Ms;
+
+				var x = note.X.ToString(culture);
+				var y = note.Y.ToString(culture);
+				var time = (minDist > 0 ? Math.Round((double)(note.Ms - offset) / minDist) : 0).ToString(culture);
+
+				pattern += $",{x}|{y}|{time}";
+            }
+
+			if (pattern.Length > 0)
+				pattern = pattern.Substring(1, pattern.Length - 1);
+
+			if (GuiScreen is GuiScreenEditor editor)
+				editor.ShowToast($"BOUND PATTERN TO KEY {key}", Color1);
+
+			return pattern;
         }
 
 		protected override void OnKeyUp(KeyboardKeyEventArgs e)
@@ -1364,6 +1458,116 @@ namespace Sound_Space_Editor
 							}
 						}
 						return;
+					case "Pattern0":
+						if (_shiftDown && SelectedNotes.Count > 0)
+							EditorSettings.Pattern0 = BindPattern(0);
+						else if (_controlDown)
+                        {
+							EditorSettings.Pattern0 = "";
+							editor.ShowToast($"UNBOUND PATTERN 0", Color1);
+						}
+						else
+							CreatePattern(EditorSettings.Pattern0);
+						return;
+					case "Pattern1":
+						if (_shiftDown && SelectedNotes.Count > 0)
+							EditorSettings.Pattern1 = BindPattern(1);
+						else if (_controlDown)
+						{
+							EditorSettings.Pattern1 = "";
+							editor.ShowToast($"UNBOUND PATTERN 1", Color1);
+						}
+						else
+							CreatePattern(EditorSettings.Pattern1);
+						return;
+					case "Pattern2":
+						if (_shiftDown && SelectedNotes.Count > 0)
+							EditorSettings.Pattern2 = BindPattern(2);
+						else if (_controlDown)
+						{
+							EditorSettings.Pattern2 = "";
+							editor.ShowToast($"UNBOUND PATTERN 2", Color1);
+						}
+						else
+							CreatePattern(EditorSettings.Pattern2);
+						return;
+					case "Pattern3":
+						if (_shiftDown && SelectedNotes.Count > 0)
+							EditorSettings.Pattern3 = BindPattern(3);
+						else if (_controlDown)
+						{
+							EditorSettings.Pattern3 = "";
+							editor.ShowToast($"UNBOUND PATTERN 3", Color1);
+						}
+						else
+							CreatePattern(EditorSettings.Pattern3);
+						return;
+					case "Pattern4":
+						if (_shiftDown && SelectedNotes.Count > 0)
+							EditorSettings.Pattern4 = BindPattern(4);
+						else if (_controlDown)
+						{
+							EditorSettings.Pattern4 = "";
+							editor.ShowToast($"UNBOUND PATTERN 4", Color1);
+						}
+						else
+							CreatePattern(EditorSettings.Pattern4);
+						return;
+					case "Pattern5":
+						if (_shiftDown && SelectedNotes.Count > 0)
+							EditorSettings.Pattern5 = BindPattern(5);
+						else if (_controlDown)
+						{
+							EditorSettings.Pattern5 = "";
+							editor.ShowToast($"UNBOUND PATTERN 5", Color1);
+						}
+						else
+							CreatePattern(EditorSettings.Pattern5);
+						return;
+					case "Pattern6":
+						if (_shiftDown && SelectedNotes.Count > 0)
+							EditorSettings.Pattern6 = BindPattern(6);
+						else if (_controlDown)
+						{
+							EditorSettings.Pattern6 = "";
+							editor.ShowToast($"UNBOUND PATTERN 6", Color1);
+						}
+						else
+							CreatePattern(EditorSettings.Pattern6);
+						return;
+					case "Pattern7":
+						if (_shiftDown && SelectedNotes.Count > 0)
+							EditorSettings.Pattern7 = BindPattern(7);
+						else if (_controlDown)
+						{
+							EditorSettings.Pattern7 = "";
+							editor.ShowToast($"UNBOUND PATTERN 7", Color1);
+						}
+						else
+							CreatePattern(EditorSettings.Pattern7);
+						return;
+					case "Pattern8":
+						if (_shiftDown && SelectedNotes.Count > 0)
+							EditorSettings.Pattern8 = BindPattern(8);
+						else if (_controlDown)
+						{
+							EditorSettings.Pattern8 = "";
+							editor.ShowToast($"UNBOUND PATTERN 8", Color1);
+						}
+						else
+							CreatePattern(EditorSettings.Pattern8);
+						return;
+					case "Pattern9":
+						if (_shiftDown && SelectedNotes.Count > 0)
+							EditorSettings.Pattern9 = BindPattern(9);
+						else if (_controlDown)
+						{
+							EditorSettings.Pattern9 = "";
+							editor.ShowToast($"UNBOUND PATTERN 9", Color1);
+						}
+						else
+							CreatePattern(EditorSettings.Pattern9);
+						return;
 				}
 
 				if ((e.Key == Key.Left || e.Key == Key.Right) && SelectedNotes.Count == 0)
@@ -1381,7 +1585,7 @@ namespace Sound_Space_Editor
 						var stepSmall = lineSpace / beatDivisor * 1000;
 
 						long closestBeat =
-							GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+							GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, false, 1);
 
 						if (GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm == 0 && GetCurrentBpm(closestBeat, false).bpm != 0)
 							closestBeat = GetCurrentBpm(closestBeat, false).Ms;
@@ -1397,7 +1601,7 @@ namespace Sound_Space_Editor
 					}
 				}
 
-				if (e.Shift && e.Control && e.Key == Key.M && Notes.Count == 69)
+				if (e.Shift && e.Control && e.Key == Key.M && (Notes.Count == 69 || inconspicuousvar))
 				{
 					inconspicuousvar = !inconspicuousvar;
 					editor.ShowToast("funny mode " + (inconspicuousvar ? "on" : "off"), Color1);
@@ -1479,7 +1683,7 @@ namespace Sound_Space_Editor
 									var stepSmall = lineSpace / beatDivisor * 1000;
 
 									long closestBeat =
-										GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, true, false);
+										GetClosestBeatScroll((long)MusicPlayer.CurrentTime.TotalMilliseconds, false, 1);
 
 									if (GetCurrentBpm(MusicPlayer.CurrentTime.TotalMilliseconds, false).bpm == 0 && GetCurrentBpm(closestBeat, false).bpm != 0)
 										closestBeat = GetCurrentBpm(closestBeat, false).Ms;
@@ -1529,7 +1733,7 @@ namespace Sound_Space_Editor
 					var time = (long)MusicPlayer.CurrentTime.TotalMilliseconds;
 					var maxTime = (long)MusicPlayer.TotalTime.TotalMilliseconds - 1;
 
-					var closest = GetClosestBeatScroll(time, true, e.DeltaPrecise < 0);
+					var closest = GetClosestBeatScroll(time, e.DeltaPrecise < 0, 1);
 					var bpm = GetCurrentBpm(0, false);
 
 					if (closest >= 0 || bpm.bpm > 33)
@@ -1624,7 +1828,7 @@ namespace Sound_Space_Editor
 			return true;
 		}
 
-		private long GetClosestBeatScroll(long ms, bool next, bool negative)
+		private long GetClosestBeatScroll(long ms, bool negative, int iterations)
         {
 			/*
 			if (GuiTrack.BPMs.Count == 0 || GuiTrack.BPMs[0].Ms - 5 > ms)
@@ -1695,22 +1899,23 @@ namespace Sound_Space_Editor
 			
 			long closestms = GetClosestBeat(ms, false);
 			
-			if (next)
+			for (int i = 0; i < iterations; i++)
             {
 				var curbpm = GetCurrentBpm(ms, negative);
 				var interval = 60000 / curbpm.bpm / GuiTrack.BeatDivisor;
 
 				if (negative)
-                {
+				{
 					closestms = GetClosestBeat(ms, true);
 
 					if (closestms >= ms)
 						closestms = GetClosestBeat(closestms - (long)interval, false);
-                }
+				}
 				else
-                {
+				{
 					closestms = GetClosestBeat(closestms + (long)interval, false);
 				}
+				ms = closestms;
 			}
 
 			if (GetCurrentBpm(closestms, false).bpm == 0)

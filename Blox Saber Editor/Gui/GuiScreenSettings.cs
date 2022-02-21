@@ -84,11 +84,11 @@ namespace Sound_Space_Editor.Gui
 				CanBeNegative = false
 			};
 
-			WaveformCheckbox = new GuiCheckBox(1, "Waveform", 0, 0, 72, 72, 32, EditorSettings.Waveform);
-			//BPMFormCheckbox = new GuiCheckBox(1, "Use Timings Form", 0, 0, 72, 72, 32, EditorSettings.BPMForm);
-			AutosaveCheckbox = new GuiCheckBox(1, "Enable Autosave", 0, 0, 72, 72, 32, EditorSettings.EnableAutosave);
+			WaveformCheckbox = new GuiCheckBox(9, "Waveform", 0, 0, 72, 72, 32, EditorSettings.Waveform);
+			//BPMFormCheckbox = new GuiCheckBox(9, "Use Timings Form", 0, 0, 72, 72, 32, EditorSettings.BPMForm);
+			AutosaveCheckbox = new GuiCheckBox(9, "Enable Autosave", 0, 0, 72, 72, 32, EditorSettings.EnableAutosave);
 
-			CorrectOnCopy = new GuiCheckBox(1, "Correct Errors on Copy", 0, 0, 72, 72, 32, EditorSettings.CorrectOnCopy);
+			CorrectOnCopy = new GuiCheckBox(9, "Correct Errors on Copy", 0, 0, 72, 72, 32, EditorSettings.CorrectOnCopy);
 
 			Buttons.Add(_openFolderButton);
 			Buttons.Add(_resetButton);
@@ -406,10 +406,10 @@ namespace Sound_Space_Editor.Gui
 			switch (id)
 			{
 				case 0:
-					int editorbgOpacity = int.TryParse(EditorBGOpacityTextBox.Text, out var val1) ? val1 : EditorSettings.EditorBGOpacity;
-					int gridOpacity = int.TryParse(GridOpacityTextBox.Text, out var val2) ? val2 : EditorSettings.GridOpacity;
-					int trackOpacity = int.TryParse(TrackOpacityTextBox.Text, out var val3) ? val3 : EditorSettings.TrackOpacity;
-					int autosaveInterval = int.TryParse(AutosaveInterval.Text, out var val4) && val4 > 0 ? val4 : EditorSettings.AutosaveInterval;
+					EditorSettings.EditorBGOpacity = int.TryParse(EditorBGOpacityTextBox.Text, out var val1) ? val1 : EditorSettings.EditorBGOpacity;
+					EditorSettings.GridOpacity = int.TryParse(GridOpacityTextBox.Text, out val1) ? val1 : EditorSettings.GridOpacity;
+					EditorSettings.TrackOpacity = int.TryParse(TrackOpacityTextBox.Text, out val1) ? val1 : EditorSettings.TrackOpacity;
+					EditorSettings.AutosaveInterval = int.TryParse(AutosaveInterval.Text, out val1) && val1 > 0 ? val1 : EditorSettings.AutosaveInterval;
 					EditorSettings.Color1 = color1;
 					EditorSettings.Color2 = color2;
 					EditorSettings.Color3 = color3;
@@ -418,10 +418,6 @@ namespace Sound_Space_Editor.Gui
 					EditorSettings.Waveform = WaveformCheckbox.Toggle;
 					//EditorSettings.BPMForm = BPMFormCheckbox.Toggle;
 					EditorSettings.EnableAutosave = AutosaveCheckbox.Toggle;
-					EditorSettings.EditorBGOpacity = editorbgOpacity;
-					EditorSettings.GridOpacity = gridOpacity;
-					EditorSettings.TrackOpacity = trackOpacity;
-					EditorSettings.AutosaveInterval = autosaveInterval;
 					EditorSettings.CorrectOnCopy = CorrectOnCopy.Toggle;
 					EditorSettings.SaveSettings();
 					EditorSettings.Load();
@@ -489,6 +485,22 @@ namespace Sound_Space_Editor.Gui
 					break;
 				case 8:
 					EditorWindow.Instance.OpenGuiScreen(new GuiScreenKeybinds());
+					break;
+				case 9:
+					EditorSettings.EditorBGOpacity = int.TryParse(EditorBGOpacityTextBox.Text, out var val2) ? val2 : EditorSettings.EditorBGOpacity;
+					EditorSettings.GridOpacity = int.TryParse(GridOpacityTextBox.Text, out val2) ? val2 : EditorSettings.GridOpacity;
+					EditorSettings.TrackOpacity = int.TryParse(TrackOpacityTextBox.Text, out val2) ? val2 : EditorSettings.TrackOpacity;
+					EditorSettings.AutosaveInterval = int.TryParse(AutosaveInterval.Text, out val2) && val2 > 0 ? val2 : EditorSettings.AutosaveInterval;
+					EditorSettings.Color1 = color1;
+					EditorSettings.Color2 = color2;
+					EditorSettings.Color3 = color3;
+					EditorSettings.NoteColor1 = notecolor1;
+					EditorSettings.NoteColor2 = notecolor2;
+					EditorSettings.Waveform = WaveformCheckbox.Toggle;
+					//EditorSettings.BPMForm = BPMFormCheckbox.Toggle;
+					EditorSettings.EnableAutosave = AutosaveCheckbox.Toggle;
+					EditorSettings.CorrectOnCopy = CorrectOnCopy.Toggle;
+					EditorWindow.Instance.UpdateColors();
 					break;
 			}
 			base.OnButtonClicked(id);

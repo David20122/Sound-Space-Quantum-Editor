@@ -42,6 +42,17 @@ namespace Sound_Space_Editor
 
 		public static GridKeySet GridKeys = new GridKeySet() { TL = Key.Q, TC = Key.W, TR = Key.E, ML = Key.A, MC = Key.S, MR = Key.D, BL = Key.Z, BC = Key.X, BR = Key.C };
 
+		public static string Pattern0 = "";
+		public static string Pattern1 = "";
+		public static string Pattern2 = "";
+		public static string Pattern3 = "";
+		public static string Pattern4 = "";
+		public static string Pattern5 = "";
+		public static string Pattern6 = "";
+		public static string Pattern7 = "";
+		public static string Pattern8 = "";
+		public static string Pattern9 = "";
+
 		public static void Load()
 		{
 			try
@@ -145,6 +156,19 @@ namespace Sound_Space_Editor
 						GridKeys.BC = ConvertToKey(value[7]);
 						GridKeys.BR = ConvertToKey(value[8]);
 					}
+					if (keybinds.TryGetValue("patterns", out value))
+                    {
+						Pattern0 = value[0];
+						Pattern1 = value[1];
+						Pattern2 = value[2];
+						Pattern3 = value[3];
+						Pattern4 = value[4];
+						Pattern5 = value[5];
+						Pattern6 = value[6];
+						Pattern7 = value[7];
+						Pattern8 = value[8];
+						Pattern9 = value[9];
+                    }
 				}
 
 
@@ -230,17 +254,17 @@ namespace Sound_Space_Editor
 				{"autosaveInterval",AutosaveInterval},
 				{"correctOnCopy",CorrectOnCopy},
 				{"keybinds", new JsonObject(Array.Empty<KeyValuePair<string, JsonValue>>()) {
-						{"selectAll", new JsonArray(SelectAll.Key.ToString(), SelectAll.CTRL, SelectAll.SHIFT, SelectAll.ALT)},
-						{"save", new JsonArray(Save.Key.ToString(), Save.CTRL, Save.SHIFT, Save.ALT)},
-						{"saveAs", new JsonArray(SaveAs.Key.ToString(), SaveAs.CTRL, SaveAs.SHIFT, SaveAs.ALT)},
-						{"undo", new JsonArray(Undo.Key.ToString(), Undo.CTRL, Undo.SHIFT, Undo.ALT)},
-						{"redo", new JsonArray(Redo.Key.ToString(), Redo.CTRL, Redo.SHIFT, Redo.ALT)},
-						{"copy", new JsonArray(Copy.Key.ToString(), Copy.CTRL, Copy.SHIFT, Copy.ALT)},
-						{"paste", new JsonArray(Paste.Key.ToString(), Paste.CTRL, Paste.SHIFT, Paste.ALT)},
-						{"delete", new JsonArray(Delete.Key.ToString(), Delete.CTRL, Delete.SHIFT, Delete.ALT)},
-						{"gridKeys", new JsonArray(GridKeys.TL.ToString(), GridKeys.TC.ToString(), GridKeys.TR.ToString(), GridKeys.ML.ToString(), GridKeys.MC.ToString(), GridKeys.MR.ToString(), GridKeys.BL.ToString(), GridKeys.BC.ToString(), GridKeys.BR.ToString())},
-					} 
-				}
+					{"selectAll", new JsonArray(SelectAll.Key.ToString(), SelectAll.CTRL, SelectAll.SHIFT, SelectAll.ALT)},
+					{"save", new JsonArray(Save.Key.ToString(), Save.CTRL, Save.SHIFT, Save.ALT)},
+					{"saveAs", new JsonArray(SaveAs.Key.ToString(), SaveAs.CTRL, SaveAs.SHIFT, SaveAs.ALT)},
+					{"undo", new JsonArray(Undo.Key.ToString(), Undo.CTRL, Undo.SHIFT, Undo.ALT)},
+					{"redo", new JsonArray(Redo.Key.ToString(), Redo.CTRL, Redo.SHIFT, Redo.ALT)},
+					{"copy", new JsonArray(Copy.Key.ToString(), Copy.CTRL, Copy.SHIFT, Copy.ALT)},
+					{"paste", new JsonArray(Paste.Key.ToString(), Paste.CTRL, Paste.SHIFT, Paste.ALT)},
+					{"delete", new JsonArray(Delete.Key.ToString(), Delete.CTRL, Delete.SHIFT, Delete.ALT)},
+					{"gridKeys", new JsonArray(GridKeys.TL.ToString(), GridKeys.TC.ToString(), GridKeys.TR.ToString(), GridKeys.ML.ToString(), GridKeys.MC.ToString(), GridKeys.MR.ToString(), GridKeys.BL.ToString(), GridKeys.BC.ToString(), GridKeys.BR.ToString())},
+					{"patterns", new JsonArray(Pattern0, Pattern1, Pattern2, Pattern3, Pattern4, Pattern5, Pattern6, Pattern7, Pattern8, Pattern9)},
+				}}
 			};
 			try
 			{
