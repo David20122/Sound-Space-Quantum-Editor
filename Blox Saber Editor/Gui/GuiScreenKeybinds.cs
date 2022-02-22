@@ -115,6 +115,7 @@ namespace Sound_Space_Editor.Gui
         public override void Render(float delta, float mouseX, float mouseY)
         {
             var size = EditorWindow.Instance.ClientSize;
+            var widthdiff = size.Width / 1920f;
 
             if (bgImg)
             {
@@ -132,34 +133,34 @@ namespace Sound_Space_Editor.Gui
             GL.Color4(Color.FromArgb(255, 255, 255, 255));
 
             fr.Render("Select All", (int)SelectAllBox.ClientRectangle.X, (int)SelectAllBox.ClientRectangle.Y - 26, 24);
-            fr.Render(CSAString(EditorSettings.SelectAll), (int)SelectAllReset.ClientRectangle.Right + 10, (int)SelectAllReset.ClientRectangle.Y + (int)(SelectAllReset.ClientRectangle.Height / 2) - 12, 24);
+            fr.Render(CSAString(EditorSettings.SelectAll), (int)SelectAllReset.ClientRectangle.Right + 10, (int)SelectAllReset.ClientRectangle.Y + (int)(SelectAllReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
             fr.Render("Save", (int)SaveBox.ClientRectangle.X, (int)SaveBox.ClientRectangle.Y - 26, 24);
-            fr.Render(CSAString(EditorSettings.Save), (int)SaveReset.ClientRectangle.Right + 10, (int)SaveReset.ClientRectangle.Y + (int)(SaveReset.ClientRectangle.Height / 2) - 12, 24);
+            fr.Render(CSAString(EditorSettings.Save), (int)SaveReset.ClientRectangle.Right + 10, (int)SaveReset.ClientRectangle.Y + (int)(SaveReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
             fr.Render("Save As", (int)SaveAsBox.ClientRectangle.X, (int)SaveAsBox.ClientRectangle.Y - 26, 24);
-            fr.Render(CSAString(EditorSettings.SaveAs), (int)SaveAsReset.ClientRectangle.Right + 10, (int)SaveAsReset.ClientRectangle.Y + (int)(SaveAsReset.ClientRectangle.Height / 2) - 12, 24);
+            fr.Render(CSAString(EditorSettings.SaveAs), (int)SaveAsReset.ClientRectangle.Right + 10, (int)SaveAsReset.ClientRectangle.Y + (int)(SaveAsReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
             fr.Render("Undo", (int)UndoBox.ClientRectangle.X, (int)UndoBox.ClientRectangle.Y - 26, 24);
-            fr.Render(CSAString(EditorSettings.Undo), (int)UndoReset.ClientRectangle.Right + 10, (int)UndoReset.ClientRectangle.Y + (int)(UndoReset.ClientRectangle.Height / 2) - 12, 24);
+            fr.Render(CSAString(EditorSettings.Undo), (int)UndoReset.ClientRectangle.Right + 10, (int)UndoReset.ClientRectangle.Y + (int)(UndoReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
             fr.Render("Redo", (int)RedoBox.ClientRectangle.X, (int)RedoBox.ClientRectangle.Y - 26, 24);
-            fr.Render(CSAString(EditorSettings.Redo), (int)RedoReset.ClientRectangle.Right + 10, (int)RedoReset.ClientRectangle.Y + (int)(RedoReset.ClientRectangle.Height / 2) - 12, 24);
+            fr.Render(CSAString(EditorSettings.Redo), (int)RedoReset.ClientRectangle.Right + 10, (int)RedoReset.ClientRectangle.Y + (int)(RedoReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
             fr.Render("Copy", (int)CopyBox.ClientRectangle.X, (int)CopyBox.ClientRectangle.Y - 26, 24);
-            fr.Render(CSAString(EditorSettings.Copy), (int)CopyReset.ClientRectangle.Right + 10, (int)CopyReset.ClientRectangle.Y + (int)(CopyReset.ClientRectangle.Height / 2) - 12, 24);
+            fr.Render(CSAString(EditorSettings.Copy), (int)CopyReset.ClientRectangle.Right + 10, (int)CopyReset.ClientRectangle.Y + (int)(CopyReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
             fr.Render("Paste", (int)PasteBox.ClientRectangle.X, (int)PasteBox.ClientRectangle.Y - 26, 24);
-            fr.Render(CSAString(EditorSettings.Paste), (int)PasteReset.ClientRectangle.Right + 10, (int)PasteReset.ClientRectangle.Y + (int)(PasteReset.ClientRectangle.Height / 2) - 12, 24);
+            fr.Render(CSAString(EditorSettings.Paste), (int)PasteReset.ClientRectangle.Right + 10, (int)PasteReset.ClientRectangle.Y + (int)(PasteReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
             fr.Render("Delete Note(s)", (int)DeleteBox.ClientRectangle.X, (int)DeleteBox.ClientRectangle.Y - 26, 24);
-            fr.Render(CSAString(EditorSettings.Delete), (int)DeleteReset.ClientRectangle.Right + 10, (int)DeleteReset.ClientRectangle.Y + (int)(DeleteReset.ClientRectangle.Height / 2) - 12, 24);
+            fr.Render(CSAString(EditorSettings.Delete), (int)DeleteReset.ClientRectangle.Right + 10, (int)DeleteReset.ClientRectangle.Y + (int)(DeleteReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
             fr.Render("Horizontal Flip", (int)HFlipBox.ClientRectangle.X, (int)HFlipBox.ClientRectangle.Y - 26, 24);
-            fr.Render(CSAString(EditorSettings.HFlip), (int)HFlipReset.ClientRectangle.Right + 10, (int)HFlipReset.ClientRectangle.Y + (int)(HFlipReset.ClientRectangle.Height / 2) - 12, 24);
+            fr.Render(CSAString(EditorSettings.HFlip), (int)HFlipReset.ClientRectangle.Right + 10, (int)HFlipReset.ClientRectangle.Y + (int)(HFlipReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
             fr.Render("Vertical Flip", (int)VFlipBox.ClientRectangle.X, (int)VFlipBox.ClientRectangle.Y - 26, 24);
-            fr.Render(CSAString(EditorSettings.VFlip), (int)VFlipReset.ClientRectangle.Right + 10, (int)VFlipReset.ClientRectangle.Y + (int)(VFlipReset.ClientRectangle.Height / 2) - 12, 24);
+            fr.Render(CSAString(EditorSettings.VFlip), (int)VFlipReset.ClientRectangle.Right + 10, (int)VFlipReset.ClientRectangle.Y + (int)(VFlipReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
             fr.Render("Grid", (int)TLBox.ClientRectangle.X, (int)TLBox.ClientRectangle.Y - 26, 24);
 
@@ -222,7 +223,7 @@ namespace Sound_Space_Editor.Gui
             var widthdiff = size.Width / 1920f;
             var heightdiff = size.Height / 1080f;
 
-            var csawidth = EditorWindow.Instance.FontRenderer.GetWidth("CTRL + SHIFT + ALT", 24);
+            var csawidth = EditorWindow.Instance.FontRenderer.GetWidth("CTRL + SHIFT + ALT", (int)(24 * widthdiff));
 
             SelectAllBox.ClientRectangle.Size = new SizeF(128 * widthdiff, 64 * heightdiff);
             SelectAllReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
