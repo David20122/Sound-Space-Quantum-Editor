@@ -1183,6 +1183,22 @@ namespace Sound_Space_Editor
 							return "Delete";
             }
 
+			if (key == EditorSettings.HFlip.Key)
+			{
+				if (EditorSettings.HFlip.CTRL == _controlDown)
+					if (EditorSettings.HFlip.SHIFT == _shiftDown)
+						if (EditorSettings.HFlip.ALT == _altDown)
+							return "HFlip";
+			}
+
+			if (key == EditorSettings.VFlip.Key)
+			{
+				if (EditorSettings.VFlip.CTRL == _controlDown)
+					if (EditorSettings.VFlip.SHIFT == _shiftDown)
+						if (EditorSettings.VFlip.ALT == _altDown)
+							return "VFlip";
+			}
+
 			if (key == Key.Number0)
 				return "Pattern0";
 			if (key == Key.Number1)
@@ -1457,6 +1473,58 @@ namespace Sound_Space_Editor
 								_draggingNoteTimeline = false;
 							}
 						}
+						return;
+					case "HFlip":
+						var selectedH = SelectedNotes.ToList();
+						foreach (var node in selectedH)
+						{
+							node.X = 2 - node.X;
+						}
+
+						if (selectedH.Count > 0)
+							editor.ShowToast("HORIZONTAL FLIP", Color1);
+
+						UndoRedo.AddUndoRedo("HORIZONTAL FLIP", () =>
+						{
+							foreach (var node in selectedH)
+							{
+								node.X = 2 - node.X;
+							}
+
+						}, () =>
+						{
+							foreach (var node in selectedH)
+							{
+								node.X = 2 - node.X;
+							}
+
+						});
+						return;
+					case "VFlip":
+						var selectedV = SelectedNotes.ToList();
+						foreach (var node in selectedV)
+						{
+							node.Y = 2 - node.Y;
+						}
+
+						if (selectedV.Count > 0)
+							editor.ShowToast("VERTICAL FLIP", Color1);
+
+						UndoRedo.AddUndoRedo("VERTICAL FLIP", () =>
+						{
+							foreach (var node in selectedV)
+							{
+								node.Y = 2 - node.Y;
+							}
+
+						}, () =>
+						{
+							foreach (var node in selectedV)
+							{
+								node.Y = 2 - node.Y;
+							}
+
+						});
 						return;
 					case "Pattern0":
 						if (_shiftDown && SelectedNotes.Count > 0)
