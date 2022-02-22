@@ -39,6 +39,8 @@ namespace Sound_Space_Editor
 		public static KeyType Copy = new KeyType() { Key = Key.C, CTRL = true, SHIFT = false, ALT = false };
 		public static KeyType Paste = new KeyType() { Key = Key.V, CTRL = true, SHIFT = false, ALT = false };
 		public static KeyType Delete = new KeyType() { Key = Key.Delete, CTRL = false, SHIFT = false, ALT = false };
+		public static KeyType HFlip = new KeyType() { Key = Key.H, CTRL = false, SHIFT = true, ALT = false };
+		public static KeyType VFlip = new KeyType() { Key = Key.V, CTRL = false, SHIFT = true, ALT = false };
 
 		public static GridKeySet GridKeys = new GridKeySet() { TL = Key.Q, TC = Key.W, TR = Key.E, ML = Key.A, MC = Key.S, MR = Key.D, BL = Key.Z, BC = Key.X, BR = Key.C };
 
@@ -144,6 +146,20 @@ namespace Sound_Space_Editor
 						Delete.SHIFT = value[2];
 						Delete.ALT = value[3];
                     }
+					if (keybinds.TryGetValue("horizontalFlip", out value))
+                    {
+						HFlip.Key = ConvertToKey(value[0]);
+						HFlip.CTRL = value[1];
+						HFlip.SHIFT = value[2];
+						HFlip.ALT = value[3];
+                    }
+					if (keybinds.TryGetValue("verticalFlip", out value))
+					{
+						VFlip.Key = ConvertToKey(value[0]);
+						VFlip.CTRL = value[1];
+						VFlip.SHIFT = value[2];
+						VFlip.ALT = value[3];
+					}
 					if (keybinds.TryGetValue("gridKeys", out value))
 					{
 						GridKeys.TL = ConvertToKey(value[0]);
@@ -262,6 +278,8 @@ namespace Sound_Space_Editor
 					{"copy", new JsonArray(Copy.Key.ToString(), Copy.CTRL, Copy.SHIFT, Copy.ALT)},
 					{"paste", new JsonArray(Paste.Key.ToString(), Paste.CTRL, Paste.SHIFT, Paste.ALT)},
 					{"delete", new JsonArray(Delete.Key.ToString(), Delete.CTRL, Delete.SHIFT, Delete.ALT)},
+					{"horizontalFlip", new JsonArray(HFlip.Key.ToString(), HFlip.CTRL, HFlip.SHIFT, HFlip.ALT)},
+					{"verticalFlip", new JsonArray(VFlip.Key.ToString(), VFlip.CTRL, VFlip.SHIFT, VFlip.ALT)},
 					{"gridKeys", new JsonArray(GridKeys.TL.ToString(), GridKeys.TC.ToString(), GridKeys.TR.ToString(), GridKeys.ML.ToString(), GridKeys.MC.ToString(), GridKeys.MR.ToString(), GridKeys.BL.ToString(), GridKeys.BC.ToString(), GridKeys.BR.ToString())},
 					{"patterns", new JsonArray(Pattern0, Pattern1, Pattern2, Pattern3, Pattern4, Pattern5, Pattern6, Pattern7, Pattern8, Pattern9)},
 				}}

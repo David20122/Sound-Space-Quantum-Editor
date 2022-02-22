@@ -39,6 +39,12 @@ namespace Sound_Space_Editor.Gui
         private readonly GuiTextBox DeleteBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.Delete.Key.ToString().ToUpper(), Centered = true };
         private readonly GuiButton DeleteReset = new GuiButton(8, 0, 0, 0, 0, "RESET", false);
 
+        private readonly GuiTextBox HFlipBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.HFlip.Key.ToString().ToUpper(), Centered = true };
+        private readonly GuiButton HFlipReset = new GuiButton(9, 0, 0, 0, 0, "RESET", false);
+
+        private readonly GuiTextBox VFlipBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.VFlip.Key.ToString().ToUpper(), Centered = true };
+        private readonly GuiButton VFlipReset = new GuiButton(10, 0, 0, 0, 0, "RESET", false);
+
         private readonly GuiTextBox TLBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.GridKeys.TL.ToString().ToUpper(), Centered = true };
         private readonly GuiButton TLReset = new GuiButton(90, 0, 0, 0, 0, "RESET", false);
 
@@ -79,6 +85,8 @@ namespace Sound_Space_Editor.Gui
             Buttons.Add(CopyReset);
             Buttons.Add(PasteReset);
             Buttons.Add(DeleteReset);
+            Buttons.Add(HFlipReset);
+            Buttons.Add(VFlipReset);
 
             Buttons.Add(TLReset);
             Buttons.Add(TCReset);
@@ -147,6 +155,12 @@ namespace Sound_Space_Editor.Gui
             fr.Render("Delete Note(s)", (int)DeleteBox.ClientRectangle.X, (int)DeleteBox.ClientRectangle.Y - 26, 24);
             fr.Render(CSAString(EditorSettings.Delete), (int)DeleteReset.ClientRectangle.Right + 10, (int)DeleteReset.ClientRectangle.Y + (int)(DeleteReset.ClientRectangle.Height / 2) - 12, 24);
 
+            fr.Render("Horizontal Flip", (int)HFlipBox.ClientRectangle.X, (int)HFlipBox.ClientRectangle.Y - 26, 24);
+            fr.Render(CSAString(EditorSettings.HFlip), (int)HFlipReset.ClientRectangle.Right + 10, (int)HFlipReset.ClientRectangle.Y + (int)(HFlipReset.ClientRectangle.Height / 2) - 12, 24);
+
+            fr.Render("Vertical Flip", (int)VFlipBox.ClientRectangle.X, (int)VFlipBox.ClientRectangle.Y - 26, 24);
+            fr.Render(CSAString(EditorSettings.VFlip), (int)VFlipReset.ClientRectangle.Right + 10, (int)VFlipReset.ClientRectangle.Y + (int)(VFlipReset.ClientRectangle.Height / 2) - 12, 24);
+
             fr.Render("Grid", (int)TLBox.ClientRectangle.X, (int)TLBox.ClientRectangle.Y - 26, 24);
 
             string[] lockedlist =
@@ -154,7 +168,7 @@ namespace Sound_Space_Editor.Gui
                 "Other [LOCKED]",
                 "Zoom: CTRL + SCROLL",
                 "Beat Divisor: SHIFT + SCROLL",
-                "Travel through timeline: SCROLL/LEFT ARROW/RIGHT ARROW",
+                "Travel through timeline: SCROLL/LEFT/RIGHT",
                 "Play/Pause: SPACE",
                 "Fullscreen: F11",
                 "Stored Patterns: 0-9",
@@ -164,7 +178,7 @@ namespace Sound_Space_Editor.Gui
 
             var lockedstring = string.Join("\n>", lockedlist);
 
-            fr.Render(lockedstring, (int)BLReset.ClientRectangle.X, (int)BLReset.ClientRectangle.Bottom + 10, 24);
+            fr.Render(lockedstring, (int)HFlipBox.ClientRectangle.X, (int)_backButton.ClientRectangle.Top - 26 * lockedlist.Count(), 24);
 
             SelectAllBox.Render(delta, mouseX, mouseY);
             SaveBox.Render(delta, mouseX, mouseY);
@@ -174,6 +188,8 @@ namespace Sound_Space_Editor.Gui
             CopyBox.Render(delta, mouseX, mouseY);
             PasteBox.Render(delta, mouseX, mouseY);
             DeleteBox.Render(delta, mouseX, mouseY);
+            HFlipBox.Render(delta, mouseX, mouseY);
+            VFlipBox.Render(delta, mouseX, mouseY);
 
             TLBox.Render(delta, mouseX, mouseY);
             TCBox.Render(delta, mouseX, mouseY);
@@ -232,6 +248,12 @@ namespace Sound_Space_Editor.Gui
             DeleteBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
             DeleteReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
 
+            HFlipBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+            HFlipReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+
+            VFlipBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+            VFlipReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+
             TLBox.ClientRectangle.Size = new SizeF(128 * widthdiff, 62 * heightdiff);
             TLReset.ClientRectangle.Size = TLBox.ClientRectangle.Size;
             TCBox.ClientRectangle.Size = TLBox.ClientRectangle.Size;
@@ -269,16 +291,22 @@ namespace Sound_Space_Editor.Gui
             RedoBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, UndoBox.ClientRectangle.Bottom + 40 * heightdiff);
             RedoReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, RedoBox.ClientRectangle.Y);
 
-            CopyBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, RedoBox.ClientRectangle.Bottom + 30 * heightdiff);
+            CopyBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, RedoBox.ClientRectangle.Bottom + 40 * heightdiff);
             CopyReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, CopyBox.ClientRectangle.Y);
 
-            PasteBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, CopyBox.ClientRectangle.Bottom + 30 * heightdiff);
+            PasteBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, CopyBox.ClientRectangle.Bottom + 40 * heightdiff);
             PasteReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, PasteBox.ClientRectangle.Y);
 
-            DeleteBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, PasteBox.ClientRectangle.Bottom + 30 * heightdiff);
+            DeleteBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, PasteBox.ClientRectangle.Bottom + 40 * heightdiff);
             DeleteReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, DeleteBox.ClientRectangle.Y);
 
-            TLBox.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.Right + csawidth + 100 * widthdiff, SelectAllBox.ClientRectangle.Y);
+            HFlipBox.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.Right + csawidth + 100 * widthdiff, SelectAllBox.ClientRectangle.Y);
+            HFlipReset.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.Right + 10 * widthdiff, HFlipBox.ClientRectangle.Y);
+
+            VFlipBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, HFlipBox.ClientRectangle.Bottom + 40 * heightdiff);
+            VFlipReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, VFlipBox.ClientRectangle.Y);
+
+            TLBox.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.Right + csawidth + 100 * widthdiff, HFlipBox.ClientRectangle.Y);
             TLReset.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.X, TLBox.ClientRectangle.Bottom + 4 * heightdiff);
             TCBox.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.Right + 10 * widthdiff, TLBox.ClientRectangle.Y);
             TCReset.ClientRectangle.Location = new PointF(TCBox.ClientRectangle.X, TLReset.ClientRectangle.Y);
@@ -321,6 +349,10 @@ namespace Sound_Space_Editor.Gui
                 return "Paste";
             if (DeleteBox.Focused)
                 return "Delete";
+            if (HFlipBox.Focused)
+                return "HFlip";
+            if (VFlipBox.Focused)
+                return "VFlip";
 
             if (TLBox.Focused)
                 return "TL";
@@ -412,6 +444,20 @@ namespace Sound_Space_Editor.Gui
                     EditorSettings.Delete.SHIFT = EditorWindow.Instance._shiftDown;
                     EditorSettings.Delete.ALT = EditorWindow.Instance._altDown;
                     break;
+                case "HFlip":
+                    HFlipBox.Text = key.ToString().ToUpper();
+                    EditorSettings.HFlip.Key = key;
+                    EditorSettings.HFlip.CTRL = EditorWindow.Instance._controlDown;
+                    EditorSettings.HFlip.SHIFT = EditorWindow.Instance._shiftDown;
+                    EditorSettings.HFlip.ALT = EditorWindow.Instance._altDown;
+                    break;
+                case "VFlip":
+                    VFlipBox.Text = key.ToString().ToUpper();
+                    EditorSettings.VFlip.Key = key;
+                    EditorSettings.VFlip.CTRL = EditorWindow.Instance._controlDown;
+                    EditorSettings.VFlip.SHIFT = EditorWindow.Instance._shiftDown;
+                    EditorSettings.VFlip.ALT = EditorWindow.Instance._altDown;
+                    break;
                 case "TL":
                     TLBox.Text = key.ToString().ToUpper();
                     EditorSettings.GridKeys.TL = key;
@@ -461,6 +507,8 @@ namespace Sound_Space_Editor.Gui
             CopyBox.OnMouseClick(x, y);
             PasteBox.OnMouseClick(x, y);
             DeleteBox.OnMouseClick(x, y);
+            HFlipBox.OnMouseClick(x, y);
+            VFlipBox.OnMouseClick(x, y);
 
             TLBox.OnMouseClick(x, y);
             TCBox.OnMouseClick(x, y);
@@ -537,6 +585,20 @@ namespace Sound_Space_Editor.Gui
                     EditorSettings.Delete.SHIFT = false;
                     EditorSettings.Delete.ALT = false;
                     DeleteBox.Text = "DELETE";
+                    break;
+                case 9:
+                    EditorSettings.HFlip.Key = Key.H;
+                    EditorSettings.HFlip.CTRL = false;
+                    EditorSettings.HFlip.SHIFT = true;
+                    EditorSettings.HFlip.ALT = false;
+                    HFlipBox.Text = "H";
+                    break;
+                case 10:
+                    EditorSettings.VFlip.Key = Key.V;
+                    EditorSettings.VFlip.CTRL = false;
+                    EditorSettings.VFlip.SHIFT = true;
+                    EditorSettings.VFlip.ALT = false;
+                    VFlipBox.Text = "V";
                     break;
                 case 90:
                     EditorSettings.GridKeys.TL = Key.Q;

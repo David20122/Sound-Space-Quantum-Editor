@@ -43,6 +43,12 @@
                "X",
                "C"
           ],
+          "horizontalFlip": [
+               "H",
+               false,
+               true,
+               false
+          ],
           "paste": [
                "V",
                true,
@@ -89,6 +95,12 @@
                "Z",
                true,
                false,
+               false
+          ],
+          "verticalFlip": [
+               "V",
+               false,
+               true,
                false
           ]
      },

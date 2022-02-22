@@ -168,11 +168,6 @@ namespace Sound_Space_Editor.Gui
 						(int)(noteRect.Y + noteRect.Height / 2 - h / 2f), 24);
 				}
 
-				if (!mouseOver)
-				{
-					MouseOverNote = null;
-				}
-
 				if (EditorWindow.Instance.SelectedNotes.Contains(note))
 				{
 					var outlineSize = noteSize + 8;
@@ -190,6 +185,11 @@ namespace Sound_Space_Editor.Gui
 					GL.Color3(0, 1, 0.25f);
 					Glu.RenderOutline(x - 4, y - 4, noteSize + 8, noteSize + 8);
 				}
+			}
+
+			if (!mouseOver)
+			{
+				MouseOverNote = null;
 			}
 
 			//RENDER AUTOPLAY
