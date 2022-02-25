@@ -41,6 +41,7 @@ namespace Sound_Space_Editor
 		public static KeyType Delete = new KeyType() { Key = Key.Delete, CTRL = false, SHIFT = false, ALT = false };
 		public static KeyType HFlip = new KeyType() { Key = Key.H, CTRL = false, SHIFT = true, ALT = false };
 		public static KeyType VFlip = new KeyType() { Key = Key.V, CTRL = false, SHIFT = true, ALT = false };
+		public static KeyType SwitchClickTool = new KeyType() { Key = Key.Tab, CTRL = false, SHIFT = false, ALT = false };
 
 		public static GridKeySet GridKeys = new GridKeySet() { TL = Key.Q, TC = Key.W, TR = Key.E, ML = Key.A, MC = Key.S, MR = Key.D, BL = Key.Z, BC = Key.X, BR = Key.C };
 
@@ -159,6 +160,13 @@ namespace Sound_Space_Editor
 						VFlip.CTRL = value[1];
 						VFlip.SHIFT = value[2];
 						VFlip.ALT = value[3];
+					}
+					if (keybinds.TryGetValue("switchClickTool", out value))
+                    {
+						SwitchClickTool.Key = ConvertToKey(value[0]);
+						SwitchClickTool.CTRL = value[1];
+						SwitchClickTool.SHIFT = value[2];
+						SwitchClickTool.ALT = value[3];
 					}
 					if (keybinds.TryGetValue("gridKeys", out value))
 					{
@@ -280,6 +288,7 @@ namespace Sound_Space_Editor
 					{"delete", new JsonArray(Delete.Key.ToString(), Delete.CTRL, Delete.SHIFT, Delete.ALT)},
 					{"horizontalFlip", new JsonArray(HFlip.Key.ToString(), HFlip.CTRL, HFlip.SHIFT, HFlip.ALT)},
 					{"verticalFlip", new JsonArray(VFlip.Key.ToString(), VFlip.CTRL, VFlip.SHIFT, VFlip.ALT)},
+					{"switchClickTool", new JsonArray(SwitchClickTool.Key.ToString(), SwitchClickTool.CTRL, SwitchClickTool.SHIFT, SwitchClickTool.ALT)},
 					{"gridKeys", new JsonArray(GridKeys.TL.ToString(), GridKeys.TC.ToString(), GridKeys.TR.ToString(), GridKeys.ML.ToString(), GridKeys.MC.ToString(), GridKeys.MR.ToString(), GridKeys.BL.ToString(), GridKeys.BC.ToString(), GridKeys.BR.ToString())},
 					{"patterns", new JsonArray(Pattern0, Pattern1, Pattern2, Pattern3, Pattern4, Pattern5, Pattern6, Pattern7, Pattern8, Pattern9)},
 				}}

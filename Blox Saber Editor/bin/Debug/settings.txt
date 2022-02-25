@@ -91,6 +91,12 @@
                false,
                false
           ],
+          "switchClickTool": [
+               "Tab",
+               false,
+               false,
+               false
+          ],
           "undo": [
                "Z",
                true,

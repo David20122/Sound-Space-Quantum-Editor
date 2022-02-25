@@ -177,7 +177,7 @@ namespace Sound_Space_Editor.Gui
 						outlineSize, outlineSize);
 				}
 
-				if (!mouseOver && noteRect.Contains(mouseX, mouseY))
+				if (!mouseOver && noteRect.Contains(mouseX, mouseY) && (!Settings.Default.SeparateClickTools || Settings.Default.SelectTool))
 				{
 					MouseOverNote = note;
 					mouseOver = true;

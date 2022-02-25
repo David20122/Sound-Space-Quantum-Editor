@@ -45,6 +45,9 @@ namespace Sound_Space_Editor.Gui
         private readonly GuiTextBox VFlipBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.VFlip.Key.ToString().ToUpper(), Centered = true };
         private readonly GuiButton VFlipReset = new GuiButton(10, 0, 0, 0, 0, "RESET", false);
 
+        private readonly GuiTextBox SwitchClickToolBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.SwitchClickTool.Key.ToString().ToUpper(), Centered = true };
+        private readonly GuiButton SwitchClickToolReset = new GuiButton(11, 0, 0, 0, 0, "RESET", false);
+
         private readonly GuiTextBox TLBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.GridKeys.TL.ToString().ToUpper(), Centered = true };
         private readonly GuiButton TLReset = new GuiButton(90, 0, 0, 0, 0, "RESET", false);
 
@@ -87,6 +90,7 @@ namespace Sound_Space_Editor.Gui
             Buttons.Add(DeleteReset);
             Buttons.Add(HFlipReset);
             Buttons.Add(VFlipReset);
+            Buttons.Add(SwitchClickToolReset);
 
             Buttons.Add(TLReset);
             Buttons.Add(TCReset);
@@ -162,6 +166,9 @@ namespace Sound_Space_Editor.Gui
             fr.Render("Vertical Flip", (int)VFlipBox.ClientRectangle.X, (int)VFlipBox.ClientRectangle.Y - 26, 24);
             fr.Render(CSAString(EditorSettings.VFlip), (int)VFlipReset.ClientRectangle.Right + 10, (int)VFlipReset.ClientRectangle.Y + (int)(VFlipReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
+            fr.Render("Vertical Flip", (int)SwitchClickToolBox.ClientRectangle.X, (int)SwitchClickToolBox.ClientRectangle.Y - 26, 24);
+            fr.Render(CSAString(EditorSettings.SwitchClickTool), (int)SwitchClickToolReset.ClientRectangle.Right + 10, (int)SwitchClickToolReset.ClientRectangle.Y + (int)(SwitchClickToolReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
+
             fr.Render("Grid", (int)TLBox.ClientRectangle.X, (int)TLBox.ClientRectangle.Y - 26, 24);
 
             string[] lockedlist =
@@ -191,6 +198,7 @@ namespace Sound_Space_Editor.Gui
             DeleteBox.Render(delta, mouseX, mouseY);
             HFlipBox.Render(delta, mouseX, mouseY);
             VFlipBox.Render(delta, mouseX, mouseY);
+            SwitchClickToolBox.Render(delta, mouseX, mouseY);
 
             TLBox.Render(delta, mouseX, mouseY);
             TCBox.Render(delta, mouseX, mouseY);
@@ -255,6 +263,9 @@ namespace Sound_Space_Editor.Gui
             VFlipBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
             VFlipReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
 
+            SwitchClickToolBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+            SwitchClickToolReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+
             TLBox.ClientRectangle.Size = new SizeF(128 * widthdiff, 62 * heightdiff);
             TLReset.ClientRectangle.Size = TLBox.ClientRectangle.Size;
             TCBox.ClientRectangle.Size = TLBox.ClientRectangle.Size;
@@ -307,6 +318,9 @@ namespace Sound_Space_Editor.Gui
             VFlipBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, HFlipBox.ClientRectangle.Bottom + 40 * heightdiff);
             VFlipReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, VFlipBox.ClientRectangle.Y);
 
+            SwitchClickToolBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, VFlipBox.ClientRectangle.Bottom + 40 * heightdiff);
+            SwitchClickToolReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, SwitchClickToolBox.ClientRectangle.Y);
+
             TLBox.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.Right + csawidth + 100 * widthdiff, HFlipBox.ClientRectangle.Y);
             TLReset.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.X, TLBox.ClientRectangle.Bottom + 4 * heightdiff);
             TCBox.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.Right + 10 * widthdiff, TLBox.ClientRectangle.Y);
@@ -354,6 +368,8 @@ namespace Sound_Space_Editor.Gui
                 return "HFlip";
             if (VFlipBox.Focused)
                 return "VFlip";
+            if (SwitchClickToolBox.Focused)
+                return "SwitchClickTool";
 
             if (TLBox.Focused)
                 return "TL";
@@ -459,6 +475,13 @@ namespace Sound_Space_Editor.Gui
                     EditorSettings.VFlip.SHIFT = EditorWindow.Instance._shiftDown;
                     EditorSettings.VFlip.ALT = EditorWindow.Instance._altDown;
                     break;
+                case "SwitchClickTool":
+                    SwitchClickToolBox.Text = key.ToString().ToUpper();
+                    EditorSettings.SwitchClickTool.Key = key;
+                    EditorSettings.SwitchClickTool.CTRL = EditorWindow.Instance._controlDown;
+                    EditorSettings.SwitchClickTool.SHIFT = EditorWindow.Instance._shiftDown;
+                    EditorSettings.SwitchClickTool.ALT = EditorWindow.Instance._altDown;
+                    break;
                 case "TL":
                     TLBox.Text = key.ToString().ToUpper();
                     EditorSettings.GridKeys.TL = key;
@@ -510,6 +533,7 @@ namespace Sound_Space_Editor.Gui
             DeleteBox.OnMouseClick(x, y);
             HFlipBox.OnMouseClick(x, y);
             VFlipBox.OnMouseClick(x, y);
+            SwitchClickToolBox.OnMouseClick(x, y);
 
             TLBox.OnMouseClick(x, y);
             TCBox.OnMouseClick(x, y);
@@ -600,6 +624,13 @@ namespace Sound_Space_Editor.Gui
                     EditorSettings.VFlip.SHIFT = true;
                     EditorSettings.VFlip.ALT = false;
                     VFlipBox.Text = "V";
+                    break;
+                case 11:
+                    EditorSettings.SwitchClickTool.Key = Key.Tab;
+                    EditorSettings.SwitchClickTool.CTRL = false;
+                    EditorSettings.SwitchClickTool.SHIFT = false;
+                    EditorSettings.SwitchClickTool.ALT = false;
+                    SwitchClickToolBox.Text = "TAB";
                     break;
                 case 90:
                     EditorSettings.GridKeys.TL = Key.Q;

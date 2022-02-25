@@ -50,7 +50,7 @@
     <Setting Name="LegacyBPM" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="DynamicBezier" Type="System.Boolean" Scope="User">
+    <Setting Name="SeparateClickTools" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="TrackHeight" Type="System.Int32" Scope="User">
@@ -69,6 +69,9 @@
       <Value Profile="(Default)">40</Value>
     </Setting>
     <Setting Name="ClickToPlace" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SelectTool" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

@@ -37,6 +37,7 @@ namespace Sound_Space_Editor
 		public bool IsPaused { get; private set; }
 
 		private bool Autosaving = false;
+		private bool SelectTool = false;
 
 		public GuiScreen GuiScreen { get; private set; }
 
@@ -162,6 +163,8 @@ namespace Sound_Space_Editor
 
 			EditorSettings.RefreshKeymapping();
 
+			SelectTool = Settings.Default.SelectTool;
+
 			if (discordEnabled)
 			{
 				discord = new Discord.Discord(751010237388947517L, (ulong)Discord.CreateFlags.NoRequireDiscord);
@@ -202,13 +205,14 @@ namespace Sound_Space_Editor
 						Settings.Default.QuantumGridSnap,
 						Settings.Default.Metronome,
 						Settings.Default.LegacyBPM,
-						Settings.Default.DynamicBezier,
+						Settings.Default.SeparateClickTools,
 						Settings.Default.AutosavedFile.Replace(',', '&'),
 						Settings.Default.TrackHeight,
 						Settings.Default.CurveBezier,
 						Settings.Default.LastFile.Replace(' ', '>').Replace(',', '<'),
 						Settings.Default.GridLetters,
 						Settings.Default.CursorPos,
+						Settings.Default.SelectTool,
 					};
 
 					try
@@ -350,7 +354,7 @@ namespace Sound_Space_Editor
 
 			if (GuiScreen is GuiScreenEditor editor)
 			{
-				if (_drawPreview)
+				if (_drawPreview && (!Settings.Default.SeparateClickTools || !SelectTool))
 				{
 					editor.Grid.RenderFakeNote(_previewNote.X, _previewNote.Y, null);
 				}
@@ -465,7 +469,7 @@ namespace Sound_Space_Editor
 
 			if (GuiScreen is GuiScreenEditor editor)
 			{
-				if (_placingNotes || (editor.ClickToPlace.Toggle && editor.Grid.ClientRectangle.Contains(e.Position)))
+				if (_placingNotes || ((!Settings.Default.SeparateClickTools || !SelectTool) && editor.Grid.ClientRectangle.Contains(e.Position)))
 				{
 					var pos = e.Position;
 					var rect = editor.Grid.ClientRectangle;
@@ -524,7 +528,7 @@ namespace Sound_Space_Editor
 								}
 							}
 						}
-					} else
+					} else if (!Settings.Default.SeparateClickTools || !SelectTool)
 					{
 						_drawPreview = true;
 						_previewNote = new PointF(x, y);
@@ -747,7 +751,7 @@ namespace Sound_Space_Editor
 
 						_dragNoteStartMs = tn.Ms;
 					}
-					else if (editor.Grid.MouseOverNote is Note gn)
+					else if (editor.Grid.MouseOverNote is Note gn && (!Settings.Default.SeparateClickTools || SelectTool))
 					{
 						MusicPlayer.Pause();
 
@@ -787,7 +791,7 @@ namespace Sound_Space_Editor
 
 						SelectedNotes = _draggedNotes;
 					}
-					else if (editor.ClickToPlace.Toggle && editor.Grid.ClientRectangle.Contains(e.Position))
+					else if (editor.Grid.ClientRectangle.Contains(e.Position) && (!Settings.Default.SeparateClickTools || !SelectTool))
 					{
 						_placingNotes = true;
 						var pos = e.Position;
@@ -1199,6 +1203,14 @@ namespace Sound_Space_Editor
 							return "VFlip";
 			}
 
+			if (key == EditorSettings.SwitchClickTool.Key)
+			{
+				if (EditorSettings.SwitchClickTool.CTRL == _controlDown)
+					if (EditorSettings.SwitchClickTool.SHIFT == _shiftDown)
+						if (EditorSettings.SwitchClickTool.ALT == _altDown)
+							return "SwitchClickTool";
+			}
+
 			if (key == Key.Number0)
 				return "Pattern0";
 			if (key == Key.Number1)
@@ -1525,6 +1537,11 @@ namespace Sound_Space_Editor
 							}
 
 						});
+						return;
+					case "SwitchClickTool":
+						SelectTool = !SelectTool;
+						Settings.Default.SelectTool = SelectTool;
+						Settings.Default.Save();
 						return;
 					case "Pattern0":
 						if (_shiftDown && SelectedNotes.Count > 0)
