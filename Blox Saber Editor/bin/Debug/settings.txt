@@ -67,6 +67,12 @@
                "",
                ""
           ],
+          "quantum": [
+               "Q",
+               true,
+               false,
+               false
+          ],
           "redo": [
                "Y",
                true,
