@@ -2435,6 +2435,7 @@ namespace Sound_Space_Editor
 				Settings.Default.LastFile = file;
 				Settings.Default.Save();
 
+				GuiSliderTimeline.Bookmarks.Clear();
 				GuiTrack.BPMs.Clear();
 				gse.Offset.Text = "0";
 				GuiTrack.NoteOffset = 0;
@@ -2461,7 +2462,19 @@ namespace Sound_Space_Editor
 								var property = splits[0].Trim().ToLower();
 								var value = splits[1].Trim().ToLower();
 
-								if (property == "bpm" /*&& decimal.TryParse(value, out var bpm)*/)
+								if (property == "bookmarks")
+								{
+									var bookmarks = value.Split(',');
+									foreach (var item in bookmarks)
+									{
+										var values = item.Split('|');
+										if (values.Count() == 2 && int.TryParse(values[1], out var ms) && ms > 0)
+										{
+											GuiSliderTimeline.Bookmarks.Add(new Bookmark(values[0], ms));
+										}
+									}
+								}
+								else if (property == "bpm" /*&& decimal.TryParse(value, out var bpm)*/)
 								{
 									var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
 									culture.NumberFormat.NumberDecimalSeparator = ".";
@@ -2711,7 +2724,17 @@ namespace Sound_Space_Editor
 
 			return true;
 		}
-
+		private string BookmarksToString()
+		{
+			string final = "";
+			foreach (var bookmark in GuiSliderTimeline.Bookmarks)
+			{
+				var nameEsc = bookmark.Name.Replace('|','-').Replace(',','-');
+				var msEsc = bookmark.MS.ToString();
+				final += $",{nameEsc}|{msEsc}";
+			}
+			return final.Substring(1, final.Length - 1);
+		}
 		private string BpmsToString()
         {
 			string final = "";
@@ -2756,7 +2779,7 @@ namespace Sound_Space_Editor
 			
 			var iniFile = Path.ChangeExtension(_file, ".ini");
 
-			File.WriteAllLines(iniFile, new[] { $@"BPM={BpmsToString()}", $@"Offset={GuiTrack.NoteOffset}", $@"LegacyBPM={GuiTrack.Bpm}", $@"LegacyOffset={GuiTrack.BpmOffset}", $@"Time={(long)MusicPlayer.CurrentTime.TotalMilliseconds}", $@"Divisor={GuiTrack.BeatDivisor}" }, Encoding.UTF8);
+			File.WriteAllLines(iniFile, new[] { $@"BPM={BpmsToString()}", $@"Bookmarks={BookmarksToString()}", $@"Offset={GuiTrack.NoteOffset}", $@"LegacyBPM={GuiTrack.Bpm}", $@"LegacyOffset={GuiTrack.BpmOffset}", $@"Time={(long)MusicPlayer.CurrentTime.TotalMilliseconds}", $@"Divisor={GuiTrack.BeatDivisor}" }, Encoding.UTF8);
 		}
 
 		private bool LoadSound(long id)

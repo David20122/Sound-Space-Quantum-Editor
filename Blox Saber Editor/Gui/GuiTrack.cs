@@ -269,7 +269,6 @@ namespace Sound_Space_Editor.Gui
 					editor.SoundPlayer.Play(id, gse.SfxVolume.Value / (float)gse.SfxVolume.MaxValue, editor.MusicPlayer.Tempo);
 				}
 			}
-			
 			if (!Settings.Default.LegacyBPM)
             {
 				for (var i = 0; i < BPMs.Count; i++)

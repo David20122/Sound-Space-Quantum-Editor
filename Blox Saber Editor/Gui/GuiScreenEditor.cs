@@ -27,7 +27,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiSlider MasterVolume;
 		public readonly GuiSlider SfxVolume;
 		public readonly GuiSlider BeatSnapDivisor;
-		public readonly GuiSlider Timeline;
+		public readonly GuiSliderTimeline Timeline;
 		public readonly GuiSlider NoteAlign;
 		public readonly GuiTextBox Offset;
 		public readonly GuiTextBox SfxOffset;
@@ -59,6 +59,7 @@ namespace Sound_Space_Editor.Gui
 		public readonly GuiButton BezierClearButton;
 
 		public readonly GuiButton OpenTimings;
+		public readonly GuiButton OpenBookmarks;
 		public readonly GuiButton UseCurrentMs;
 
 		public readonly GuiButton HFlip;
@@ -240,6 +241,7 @@ namespace Sound_Space_Editor.Gui
 			BezierClearButton = new GuiButton(14, 0, 0, 128, 32, "CLEAR NODES", false);
 
 			OpenTimings = new GuiButton(8, 0, 0, 200, 32, "OPEN BPM SETUP", false);
+			OpenBookmarks = new GuiButton(20, 0, 0, 200, 32, "EDIT BOOKMARKS", false);
 			UseCurrentMs = new GuiButton(9, 0, 0, 200, 32, "USE CURRENT MS", false);
 
 			HFlip = new GuiButton(11, 0, 0, 128, 32, "HORIZONTAL FLIP", false);
@@ -331,6 +333,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(JumpMSButton);
 			Buttons.Add(RotateButton);
 			Buttons.Add(OpenTimings);
+			Buttons.Add(OpenBookmarks);
 			Buttons.Add(UseCurrentMs);
 			Buttons.Add(BezierButton);
 			Buttons.Add(BezierClearButton);
@@ -722,7 +725,15 @@ namespace Sound_Space_Editor.Gui
 			MSBoundLower.OnMouseClick(x, y);
 			MSBoundHigher.OnMouseClick(x, y);
 
+			if (Timeline.SelectedBookmark != null)
+				EditorWindow.Instance.MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(Timeline.SelectedBookmark.MS);
+
 			base.OnMouseClick(x, y);
+		}
+		public override void OnMouseMove(float x, float y)
+		{
+			Timeline.OnMouseMove(x, y);
+			base.OnMouseMove(x, y);
 		}
 
 		private void HideShowElements()
@@ -753,6 +764,7 @@ namespace Sound_Space_Editor.Gui
 			SetOffset.Visible = false;
 			UseCurrentMs.Visible = false;
 			OpenTimings.Visible = false;
+			OpenBookmarks.Visible = false;
 
 			//patterns
 			RotateBox.Visible = false;
@@ -803,8 +815,9 @@ namespace Sound_Space_Editor.Gui
 				SetOffset.Visible = true;
 				UseCurrentMs.Visible = true;
 				OpenTimings.Visible = true;
+				OpenBookmarks.Visible = true;
 
-				PatternsNav.ClientRectangle.Y = OpenTimings.ClientRectangle.Bottom + 20 * heightdiff;
+				PatternsNav.ClientRectangle.Y = OpenBookmarks.ClientRectangle.Bottom + 20 * heightdiff;
 
 				TimingNav.Text = "TIMING <";
 			}
@@ -997,6 +1010,11 @@ namespace Sound_Space_Editor.Gui
 					if (TimingsWindow.inst != null)
 						TimingsWindow.inst.Close();
 					new TimingsWindow().Show();
+					break;
+				case 20:
+					if (BookmarkSetup.inst != null)
+						BookmarkSetup.inst.Close();
+					new BookmarkSetup().Show();
 					break;
 				case 9:
 					Offset.Text = ((long)EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds).ToString();
@@ -1246,6 +1264,7 @@ namespace Sound_Space_Editor.Gui
 			SetOffset.ClientRectangle.Size = Offset.ClientRectangle.Size;
 			UseCurrentMs.ClientRectangle.Size = new SizeF(Offset.ClientRectangle.Width + SetOffset.ClientRectangle.Width + 5 * widthdiff, Offset.ClientRectangle.Height);
 			OpenTimings.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
+			OpenBookmarks.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
 
 			//options
 			Autoplay.ClientRectangle.Size = new SizeF(40 * widthdiff, 40 * heightdiff);
@@ -1297,6 +1316,7 @@ namespace Sound_Space_Editor.Gui
 			SetOffset.ClientRectangle.Location = new PointF(Offset.ClientRectangle.Right + 5 * widthdiff, Offset.ClientRectangle.Y);
 			UseCurrentMs.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, Offset.ClientRectangle.Bottom + 10 * heightdiff);
 			OpenTimings.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, UseCurrentMs.ClientRectangle.Bottom + 10 * heightdiff);
+			OpenBookmarks.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, OpenTimings.ClientRectangle.Bottom + 10 * heightdiff);
 
 			//options
 			Autoplay.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, OptionsNav.ClientRectangle.Bottom + 20 * heightdiff);

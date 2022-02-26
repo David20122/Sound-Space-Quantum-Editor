@@ -121,6 +121,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BassManager.cs" />
+    <Compile Include="Bookmark.cs" />
+    <Compile Include="BookmarkSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BookmarkSetup.Designer.cs">
+      <DependentUpon>BookmarkSetup.cs</DependentUpon>
+    </Compile>
     <Compile Include="BPM.cs" />
     <Compile Include="BPMTapper.cs">
       <SubType>Form</SubType>
@@ -183,6 +190,9 @@
     <Compile Include="TextureManager.cs" />
     <Compile Include="UndoRedo.cs" />
     <Compile Include="UndoRedoAction.cs" />
+    <EmbeddedResource Include="BookmarkSetup.resx">
+      <DependentUpon>BookmarkSetup.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="BPMTapper.resx">
       <DependentUpon>BPMTapper.cs</DependentUpon>
     </EmbeddedResource>
