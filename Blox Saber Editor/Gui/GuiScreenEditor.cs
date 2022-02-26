@@ -1365,7 +1365,6 @@ namespace Sound_Space_Editor.Gui
 				if (!decimalPont && bpm > 0)
 					Bpm.Text = bpm.ToString();
 			}
-			*/
 			if (Offset.Focused)
 			{
 				long.TryParse(Offset.Text, out var offset);
@@ -1398,6 +1397,9 @@ namespace Sound_Space_Editor.Gui
 				if (long.TryParse(BezierBox.Text, out var ints))
 					BezierBox.Text = ints.ToString();
             }
+			*/
+			foreach (var box in Boxes)
+				box.Text = box.Text;
 		}
 
 		public void ShowToast(string text, Color color)

@@ -13,7 +13,6 @@ namespace Sound_Space_Editor.Gui
 	class GuiTextBox : Gui
 	{
 		public bool Numeric;
-		public bool Decimal;
 		public bool Centered;
 		public bool CanBeNegative;
 		public bool Timings;
@@ -76,31 +75,28 @@ namespace Sound_Space_Editor.Gui
 					Text = "0";
 					return;
 				}
-				if (Decimal)
+				if (hasDecimalPoint)
 				{
-					if (hasDecimalPoint)
+					var text = Text;
+
+					if (text.Length > 0 && text[text.Length - 1].ToString() == CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
 					{
-						var text = Text;
-
-						if (text.Length > 0 && text[text.Length - 1].ToString() == CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
-						{
-							text += 0;
-						}
-
-						if (decimal.TryParse(text, out var parsed))
-						{
-							var old = Text;
-
-							Text = parsed.ToString();
-						}
-
+						text += 0;
 					}
-					if (decimal.TryParse(_text, out var num) && num == (long)num)
+
+					if (decimal.TryParse(text, out var parsed))
 					{
 						var old = Text;
 
-						Text = ((long)num).ToString();
+						Text = parsed.ToString();
 					}
+
+				}
+				if (decimal.TryParse(_text, out var num) && num == (long)num)
+				{
+					var old = Text;
+
+					Text = ((long)num).ToString();
 				}
 			}
 		}
@@ -163,15 +159,16 @@ namespace Sound_Space_Editor.Gui
 					var alpha = (float)(Math.Sin(_timer * MathHelper.TwoPi) + 1) / 2;
 
 					GL.Color4(Color2);
-					Glu.RenderQuad(x + textToCursorSize, y - cursorHeight / 2, 1, cursorHeight);
 
-					_timer += delta * 1.25f;
+					if ((int)_timer % 2 == 0)
+						Glu.RenderQuad(x + textToCursorSize, y - cursorHeight / 2, 1, cursorHeight);
+
+					_timer += delta * 2f;
 				}
 				else
 				{
 					_timer = 0;
 				}
-
 				if (Centered)
 					GL.Translate(-offX, 0, 0);
 			}
@@ -198,6 +195,7 @@ namespace Sound_Space_Editor.Gui
 				_cursorPos = (int)posX;
 			}
 
+			_timer = 0;
 			Focused = true;
 		}
 
@@ -210,12 +208,15 @@ namespace Sound_Space_Editor.Gui
 
 			try
 			{
-				_text = _text.Insert(_cursorPos, keyChar);
+				if (Numeric)
+                {
+					if (int.TryParse(key.ToString(), out var num) || (key.ToString() == CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator && !Text.Contains(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)))
+						_text = _text.Insert(_cursorPos, keyChar);
+				}
+				else
+					_text = _text.Insert(_cursorPos, keyChar);
 			}
-			catch
-			{
-
-			}
+			catch { }
 
 			_cursorPos++;
 		}
@@ -224,6 +225,8 @@ namespace Sound_Space_Editor.Gui
 		{
 			if (!Focused)
 				return;
+
+			_timer = 0;
 
 			switch (key)
 			{
