@@ -48,6 +48,9 @@ namespace Sound_Space_Editor.Gui
         private readonly GuiTextBox SwitchClickToolBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.SwitchClickTool.Key.ToString().ToUpper(), Centered = true };
         private readonly GuiButton SwitchClickToolReset = new GuiButton(11, 0, 0, 0, 0, "RESET", false);
 
+        private readonly GuiTextBox QuantumBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.Quantum.Key.ToString().ToUpper(), Centered = true };
+        private readonly GuiButton QuantumReset = new GuiButton(12, 0, 0, 0, 0, "RESET", false);
+
         private readonly GuiTextBox TLBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.GridKeys.TL.ToString().ToUpper(), Centered = true };
         private readonly GuiButton TLReset = new GuiButton(90, 0, 0, 0, 0, "RESET", false);
 
@@ -91,6 +94,7 @@ namespace Sound_Space_Editor.Gui
             Buttons.Add(HFlipReset);
             Buttons.Add(VFlipReset);
             Buttons.Add(SwitchClickToolReset);
+            Buttons.Add(QuantumReset);
 
             Buttons.Add(TLReset);
             Buttons.Add(TCReset);
@@ -166,8 +170,11 @@ namespace Sound_Space_Editor.Gui
             fr.Render("Vertical Flip", (int)VFlipBox.ClientRectangle.X, (int)VFlipBox.ClientRectangle.Y - 26, 24);
             fr.Render(CSAString(EditorSettings.VFlip), (int)VFlipReset.ClientRectangle.Right + 10, (int)VFlipReset.ClientRectangle.Y + (int)(VFlipReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
-            fr.Render("Vertical Flip", (int)SwitchClickToolBox.ClientRectangle.X, (int)SwitchClickToolBox.ClientRectangle.Y - 26, 24);
+            fr.Render("Switch Click Function", (int)SwitchClickToolBox.ClientRectangle.X, (int)SwitchClickToolBox.ClientRectangle.Y - 26, 24);
             fr.Render(CSAString(EditorSettings.SwitchClickTool), (int)SwitchClickToolReset.ClientRectangle.Right + 10, (int)SwitchClickToolReset.ClientRectangle.Y + (int)(SwitchClickToolReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
+
+            fr.Render("Toggle Quantum", (int)QuantumBox.ClientRectangle.X, (int)QuantumBox.ClientRectangle.Y - 26, 24);
+            fr.Render(CSAString(EditorSettings.Quantum), (int)QuantumReset.ClientRectangle.Right + 10, (int)QuantumReset.ClientRectangle.Y + (int)(QuantumReset.ClientRectangle.Height / 2) - (int)(12 * widthdiff), (int)(24 * widthdiff));
 
             fr.Render("Grid", (int)TLBox.ClientRectangle.X, (int)TLBox.ClientRectangle.Y - 26, 24);
 
@@ -199,6 +206,7 @@ namespace Sound_Space_Editor.Gui
             HFlipBox.Render(delta, mouseX, mouseY);
             VFlipBox.Render(delta, mouseX, mouseY);
             SwitchClickToolBox.Render(delta, mouseX, mouseY);
+            QuantumBox.Render(delta, mouseX, mouseY);
 
             TLBox.Render(delta, mouseX, mouseY);
             TCBox.Render(delta, mouseX, mouseY);
@@ -266,6 +274,9 @@ namespace Sound_Space_Editor.Gui
             SwitchClickToolBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
             SwitchClickToolReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
 
+            QuantumBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+            QuantumReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+
             TLBox.ClientRectangle.Size = new SizeF(128 * widthdiff, 62 * heightdiff);
             TLReset.ClientRectangle.Size = TLBox.ClientRectangle.Size;
             TCBox.ClientRectangle.Size = TLBox.ClientRectangle.Size;
@@ -321,6 +332,9 @@ namespace Sound_Space_Editor.Gui
             SwitchClickToolBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, VFlipBox.ClientRectangle.Bottom + 40 * heightdiff);
             SwitchClickToolReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, SwitchClickToolBox.ClientRectangle.Y);
 
+            QuantumBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, SwitchClickToolBox.ClientRectangle.Bottom + 40 * heightdiff);
+            QuantumReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, QuantumBox.ClientRectangle.Y);
+
             TLBox.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.Right + csawidth + 100 * widthdiff, HFlipBox.ClientRectangle.Y);
             TLReset.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.X, TLBox.ClientRectangle.Bottom + 4 * heightdiff);
             TCBox.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.Right + 10 * widthdiff, TLBox.ClientRectangle.Y);
@@ -370,6 +384,8 @@ namespace Sound_Space_Editor.Gui
                 return "VFlip";
             if (SwitchClickToolBox.Focused)
                 return "SwitchClickTool";
+            if (QuantumBox.Focused)
+                return "Quantum";
 
             if (TLBox.Focused)
                 return "TL";
@@ -482,6 +498,13 @@ namespace Sound_Space_Editor.Gui
                     EditorSettings.SwitchClickTool.SHIFT = EditorWindow.Instance._shiftDown;
                     EditorSettings.SwitchClickTool.ALT = EditorWindow.Instance._altDown;
                     break;
+                case "Quantum":
+                    QuantumBox.Text = key.ToString().ToUpper();
+                    EditorSettings.Quantum.Key = key;
+                    EditorSettings.Quantum.CTRL = EditorWindow.Instance._controlDown;
+                    EditorSettings.Quantum.SHIFT = EditorWindow.Instance._shiftDown;
+                    EditorSettings.Quantum.ALT = EditorWindow.Instance._altDown;
+                    break;
                 case "TL":
                     TLBox.Text = key.ToString().ToUpper();
                     EditorSettings.GridKeys.TL = key;
@@ -534,6 +557,7 @@ namespace Sound_Space_Editor.Gui
             HFlipBox.OnMouseClick(x, y);
             VFlipBox.OnMouseClick(x, y);
             SwitchClickToolBox.OnMouseClick(x, y);
+            QuantumBox.OnMouseClick(x, y);
 
             TLBox.OnMouseClick(x, y);
             TCBox.OnMouseClick(x, y);
@@ -631,6 +655,13 @@ namespace Sound_Space_Editor.Gui
                     EditorSettings.SwitchClickTool.SHIFT = false;
                     EditorSettings.SwitchClickTool.ALT = false;
                     SwitchClickToolBox.Text = "TAB";
+                    break;
+                case 12:
+                    EditorSettings.Quantum.Key = Key.Q;
+                    EditorSettings.Quantum.CTRL = true;
+                    EditorSettings.Quantum.SHIFT = false;
+                    EditorSettings.Quantum.ALT = false;
+                    QuantumBox.Text = "Q";
                     break;
                 case 90:
                     EditorSettings.GridKeys.TL = Key.Q;

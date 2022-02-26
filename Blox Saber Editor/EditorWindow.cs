@@ -1211,6 +1211,14 @@ namespace Sound_Space_Editor
 							return "SwitchClickTool";
 			}
 
+			if (key == EditorSettings.Quantum.Key)
+			{
+				if (EditorSettings.Quantum.CTRL == _controlDown)
+					if (EditorSettings.Quantum.SHIFT == _shiftDown)
+						if (EditorSettings.Quantum.ALT == _altDown)
+							return "Quantum";
+			}
+
 			if (key == Key.Number0)
 				return "Pattern0";
 			if (key == Key.Number1)
@@ -1541,6 +1549,11 @@ namespace Sound_Space_Editor
 					case "SwitchClickTool":
 						SelectTool = !SelectTool;
 						Settings.Default.SelectTool = SelectTool;
+						Settings.Default.Save();
+						return;
+					case "Quantum":
+						editor.Quantum.Toggle = !editor.Quantum.Toggle;
+						Settings.Default.Quantum = editor.Quantum.Toggle;
 						Settings.Default.Save();
 						return;
 					case "Pattern0":
