@@ -213,6 +213,7 @@ namespace Sound_Space_Editor
 						Settings.Default.GridLetters,
 						Settings.Default.CursorPos,
 						Settings.Default.SelectTool,
+						Settings.Default.ApproachRate,
 					};
 
 					try
@@ -637,6 +638,17 @@ namespace Sound_Space_Editor
 					editor.TrackCursorPos.Value = tick;
 					GuiTrack.CursorPos = editor.TrackCursorPos.Value;
                 }
+				if (editor.ApproachRate.Dragging)
+				{
+					var rect = editor.ApproachRate.ClientRectangle;
+					var lineSize = rect.Height - rect.Width;
+					var step = lineSize / editor.ApproachRate.MaxValue;
+
+					var tick = MathHelper.Clamp(Math.Round((lineSize - (e.Y - rect.Y - rect.Width / 2)) / step), 0, editor.ApproachRate.MaxValue);
+
+					editor.ApproachRate.Value = (int)tick;
+					GuiGrid.ApproachRate = editor.ApproachRate.Value + 1;
+				}
 
 				if (_draggingNoteGrid)
 				{
@@ -906,6 +918,11 @@ namespace Sound_Space_Editor
 						editor.TrackCursorPos.Dragging = true;
 						OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
                     }
+					else if (editor.ApproachRate.ClientRectangle.Contains(e.Position) && editor.ApproachRate.Visible)
+                    {
+						editor.ApproachRate.Dragging = true;
+						OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
+                    }
 					else if (editor.CanClick(e.Position))
 					{
 						SelectedNotes.Clear();
@@ -1080,12 +1097,13 @@ namespace Sound_Space_Editor
 
 			if (GuiScreen is GuiScreenEditor editor)
 			{
-				if (editor.MasterVolume.Dragging || editor.SfxVolume.Dragging || editor.TrackHeight.Dragging || editor.TrackCursorPos.Dragging)
+				if (editor.MasterVolume.Dragging || editor.SfxVolume.Dragging || editor.TrackHeight.Dragging || editor.TrackCursorPos.Dragging || editor.ApproachRate.Dragging)
 				{
 					Settings.Default.MasterVolume = (decimal)editor.MasterVolume.Value / editor.MasterVolume.MaxValue;
 					Settings.Default.SFXVolume = (decimal)editor.SfxVolume.Value / editor.SfxVolume.MaxValue;
 					Settings.Default.TrackHeight = editor.TrackHeight.Value;
 					Settings.Default.CursorPos = editor.TrackCursorPos.Value;
+					Settings.Default.ApproachRate = editor.ApproachRate.Value;
 
 					Settings.Default.Save();
 				}
@@ -1098,6 +1116,7 @@ namespace Sound_Space_Editor
 				editor.NoteAlign.Dragging = false;
 				editor.TrackHeight.Dragging = false;
 				editor.TrackCursorPos.Dragging = false;
+				editor.ApproachRate.Dragging = false;
 			}
 
 			if (GuiScreen is GuiScreenMenu menu)

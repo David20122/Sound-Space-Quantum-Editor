@@ -46,6 +46,7 @@ namespace Sound_Space_Editor
 					Settings.Default.GridLetters = bool.Parse(args[20]);
 					Settings.Default.CursorPos = int.Parse(args[21]);
 					Settings.Default.SelectTool = bool.Parse(args[22]);
+					Settings.Default.ApproachRate = int.Parse(args[23]);
 				}
 			}
 			catch

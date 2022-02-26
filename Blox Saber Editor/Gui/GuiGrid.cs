@@ -15,6 +15,8 @@ namespace Sound_Space_Editor.Gui
 
 		private readonly Note _startNote = new Note(1, 1, 0);
 
+		public static int ApproachRate = Settings.Default.ApproachRate;
+
 		public GuiGrid(float sx, float sy) : base(EditorWindow.Instance.ClientSize.Width / 2f - sx / 2, EditorWindow.Instance.ClientSize.Height / 2f - sy / 2, sx, sy)
 		{
 
@@ -141,7 +143,7 @@ namespace Sound_Space_Editor.Gui
 				var x = rect.X + note.X * cellSize + gap / 2;
 				var y = rect.Y + note.Y * cellSize + gap / 2;
 
-				var progress = (float)Math.Pow(1 - Math.Min(1, (note.Ms - audioTime) / 750.0), 2);
+				var progress = (float)Math.Pow(1 - Math.Min(1, (note.Ms - audioTime) * ApproachRate / 10.0 / 750.0), 2);
 				var noteRect = new RectangleF(x, y, noteSize, noteSize);
 				OpenTK.Graphics.Color4 colora = new OpenTK.Graphics.Color4(note.Color.R, note.Color.G, note.Color.B, progress * 0.15f);
 				GL.Color4(colora);

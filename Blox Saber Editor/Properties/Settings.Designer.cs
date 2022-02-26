@@ -310,5 +310,17 @@ namespace Sound_Space_Editor.Properties {
                 this["SelectTool"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int ApproachRate {
+            get {
+                return ((int)(this["ApproachRate"]));
+            }
+            set {
+                this["ApproachRate"] = value;
+            }
+        }
     }
 }

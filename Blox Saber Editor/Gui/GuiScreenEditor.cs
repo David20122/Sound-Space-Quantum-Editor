@@ -73,6 +73,7 @@ namespace Sound_Space_Editor.Gui
 
 		public readonly GuiSlider TrackHeight;
 		public readonly GuiSlider TrackCursorPos;
+		public readonly GuiSlider ApproachRate;
 
 		public readonly GuiTextBox MSBoundLower;
 		public readonly GuiTextBox MSBoundHigher;
@@ -222,6 +223,12 @@ namespace Sound_Space_Editor.Gui
 				Value = 40,
 			};
 
+			ApproachRate = new GuiSlider(0, 0, 32, 128)
+			{
+				MaxValue = 29,
+				Value = 9,
+			};
+
 			SetOffset = new GuiButton(2, 0, 0, 64, 32, "SET", false);
 			BackButton = new GuiButton(3, 0, 0, Grid.ClientRectangle.Width + 1, 42, "BACK TO MENU", false);
 			CopyButton = new GuiButton(4, 0, 0, Grid.ClientRectangle.Width + 1, 42, "COPY MAP DATA", false);
@@ -336,6 +343,7 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(ScaleButton);
 			Buttons.Add(TrackHeight);
 			Buttons.Add(TrackCursorPos);
+			Buttons.Add(ApproachRate);
 			Buttons.Add(SelectBound);
 
 			Boxes.Add(Offset);
@@ -356,6 +364,7 @@ namespace Sound_Space_Editor.Gui
 			SfxVolume.Value = (int)(Settings.Default.SFXVolume * SfxVolume.MaxValue);
 			TrackHeight.Value = Settings.Default.TrackHeight;
 			TrackCursorPos.Value = Settings.Default.CursorPos;
+			ApproachRate.Value = Settings.Default.ApproachRate;
 			// NoteAlign.Value = (int)(Settings.Default.NoteAlign * NoteAlign.MaxValue);
 
 			OnResize(EditorWindow.Instance.ClientSize);
@@ -399,6 +408,8 @@ namespace Sound_Space_Editor.Gui
 			}
 
 			var size = EditorWindow.Instance.ClientSize;
+			var widthdiff = size.Width / 1920f;
+			var heightdiff = size.Height / 1080f;
 			var fr = EditorWindow.Instance.FontRenderer;
 			var h = fr.GetHeight(_toast.FontSize);
 
@@ -434,6 +445,7 @@ namespace Sound_Space_Editor.Gui
 			GL.Color3(Color1);
 
 			var th = 64 + (32 - TrackHeight.Value);
+			var ar = ApproachRate.Value + 1;
 
 			if (Settings.Default.SeparateClickTools)
             {
@@ -447,15 +459,19 @@ namespace Sound_Space_Editor.Gui
             {
 				if (rl)
                 {
-					var thw = fr.GetWidth($"Twack Height~ 00", 24);
-					fr.Render($"Twack Height~ {th}", (int)TrackHeight.ClientRectangle.Left - thw, (int)SeparateClickTools.ClientRectangle.Bottom + 10, 24);
-					fr.Render($"Cuwsow Pos~ {TrackCursorPos.Value}%", (int)TrackCursorPos.ClientRectangle.X, (int)SeparateClickTools.ClientRectangle.Bottom + 10, 24);
+					var thw = fr.GetWidth("Twack Height~ 00", (int)Math.Min(24 * widthdiff, 24 * heightdiff));
+					fr.Render($"Twack Height~ {th}", (int)TrackHeight.ClientRectangle.Left - thw, (int)(SeparateClickTools.ClientRectangle.Bottom + 10 * heightdiff), (int)Math.Min(24 * widthdiff, 24 * heightdiff));
+					fr.Render($"Cuwsow Pos~ {TrackCursorPos.Value}%", (int)TrackCursorPos.ClientRectangle.X, (int)(SeparateClickTools.ClientRectangle.Bottom + 10 * heightdiff), (int)Math.Min(24 * widthdiff, 24 * heightdiff));
+					var arw = fr.GetWidth($"Appwoach Wate~ 00", (int)Math.Min(24 * widthdiff, 24 * heightdiff));
+					fr.Render($"Appwoach Wate~ {ar}", (int)ApproachRate.ClientRectangle.Left - arw, (int)(Quantum.ClientRectangle.Y + 10 * heightdiff), (int)Math.Min(24 * widthdiff, 24 * heightdiff));
 				}
 				else
                 {
-					var thw = fr.GetWidth($"Track Height: 00", 24);
-					fr.Render($"Track Height: {th}", (int)TrackHeight.ClientRectangle.Left - thw, (int)SeparateClickTools.ClientRectangle.Bottom + 10, 24);
-					fr.Render($"Cursor Pos: {TrackCursorPos.Value}%", (int)TrackCursorPos.ClientRectangle.X, (int)SeparateClickTools.ClientRectangle.Bottom + 10, 24);
+					var thw = fr.GetWidth("Track Height: 00", (int)Math.Min(24 * widthdiff, 24 * heightdiff));
+					fr.Render($"Track Height: {th}", (int)TrackHeight.ClientRectangle.Left - thw, (int)(SeparateClickTools.ClientRectangle.Bottom + 10 * heightdiff), (int)Math.Min(24 * widthdiff, 24 * heightdiff));
+					fr.Render($"Cursor Pos: {TrackCursorPos.Value}%", (int)TrackCursorPos.ClientRectangle.X, (int)(SeparateClickTools.ClientRectangle.Bottom + 10 * heightdiff), (int)Math.Min(24 * widthdiff, 24 * heightdiff));
+					var arw = fr.GetWidth($"Approach Rate: 00", (int)Math.Min(24 * widthdiff, 24 * heightdiff));
+					fr.Render($"Approach Rate: {ar}", (int)ApproachRate.ClientRectangle.Left - arw, (int)(Quantum.ClientRectangle.Y + 10 * heightdiff), (int)Math.Min(24 * widthdiff, 24 * heightdiff));
 				}
 			}
 			if (rl)
@@ -728,6 +744,7 @@ namespace Sound_Space_Editor.Gui
 			Metronome.Visible = false;
 			TrackHeight.Visible = false;
 			TrackCursorPos.Visible = false;
+			ApproachRate.Visible = false;
 			//ClickToPlace.Visible = false;
 			SeparateClickTools.Visible = false;
 
@@ -770,6 +787,7 @@ namespace Sound_Space_Editor.Gui
 				Metronome.Visible = true;
 				TrackHeight.Visible = true;
 				TrackCursorPos.Visible = true;
+				ApproachRate.Visible = true;
 				//ClickToPlace.Visible = true;
 				SeparateClickTools.Visible = true;
 
@@ -1199,6 +1217,7 @@ namespace Sound_Space_Editor.Gui
 			NoteAlign.OnResize(size);
 			TrackHeight.OnResize(size);
 			TrackCursorPos.OnResize(size);
+			ApproachRate.OnResize(size);
 
 			MasterVolume.ClientRectangle.Location = new PointF(EditorWindow.Instance.ClientSize.Width - 64, EditorWindow.Instance.ClientSize.Height - MasterVolume.ClientRectangle.Height - 64);
 			SfxVolume.ClientRectangle.Location = new PointF(MasterVolume.ClientRectangle.X - 64, EditorWindow.Instance.ClientSize.Height - SfxVolume.ClientRectangle.Height - 64);
@@ -1242,6 +1261,7 @@ namespace Sound_Space_Editor.Gui
 			SeparateClickTools.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			TrackHeight.ClientRectangle.Size = new SizeF(32 * widthdiff, 256 * heightdiff);
 			TrackCursorPos.ClientRectangle.Size = new SizeF(OptionsNav.ClientRectangle.Width, 32 * heightdiff);
+			ApproachRate.ClientRectangle.Size = TrackHeight.ClientRectangle.Size;
 
 			//patterns
 			HFlip.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
@@ -1292,6 +1312,7 @@ namespace Sound_Space_Editor.Gui
 			SeparateClickTools.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, Metronome.ClientRectangle.Bottom + 10 * heightdiff);
 			TrackHeight.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.Right - TrackHeight.ClientRectangle.Width, SeparateClickTools.ClientRectangle.Bottom + 50 * heightdiff - TrackHeight.ClientRectangle.Height);
 			TrackCursorPos.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, SeparateClickTools.ClientRectangle.Bottom + 36 * heightdiff);
+			ApproachRate.ClientRectangle.Location = new PointF(TrackHeight.ClientRectangle.X, Quantum.ClientRectangle.Bottom + 10 * heightdiff - TrackHeight.ClientRectangle.Height);
 
 			//patterns
 			HFlip.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, PatternsNav.ClientRectangle.Bottom + 20 * heightdiff);
@@ -1333,6 +1354,7 @@ namespace Sound_Space_Editor.Gui
 			BeatSnapDivisor.Dragging = false;
 			TrackHeight.Dragging = false;
 			TrackCursorPos.Dragging = false;
+			ApproachRate.Dragging = false;
 		}
 
 		private void UpdateTrack()
