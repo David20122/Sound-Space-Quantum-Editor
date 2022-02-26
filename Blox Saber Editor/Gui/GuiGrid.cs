@@ -15,7 +15,7 @@ namespace Sound_Space_Editor.Gui
 
 		private readonly Note _startNote = new Note(1, 1, 0);
 
-		public static int ApproachRate = Settings.Default.ApproachRate;
+		public static int ApproachRate = Settings.Default.ApproachRate + 1;
 
 		public GuiGrid(float sx, float sy) : base(EditorWindow.Instance.ClientSize.Width / 2f - sx / 2, EditorWindow.Instance.ClientSize.Height / 2f - sy / 2, sx, sy)
 		{
