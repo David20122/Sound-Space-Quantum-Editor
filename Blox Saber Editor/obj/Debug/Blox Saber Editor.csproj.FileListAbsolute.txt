@@ -75,3 +75,4 @@ C:\Users\pc\Documents\SSQE\Blox Saber Editor\bin\Debug\OpenTK.xml
 C:\Users\pc\Documents\SSQE\Blox Saber Editor\bin\Debug\System.Json.xml
 C:\Users\pc\Documents\SSQE\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CopyComplete
 C:\Users\pc\Documents\SSQE\Blox Saber Editor\obj\Debug\Sound_Space_Editor.BookmarkSetup.resources
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound_Space_Editor.BookmarkSetup.resources

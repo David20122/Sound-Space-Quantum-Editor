@@ -2727,13 +2727,18 @@ namespace Sound_Space_Editor
 		private string BookmarksToString()
 		{
 			string final = "";
+
 			foreach (var bookmark in GuiSliderTimeline.Bookmarks)
 			{
 				var nameEsc = bookmark.Name.Replace('|','-').Replace(',','-');
 				var msEsc = bookmark.MS.ToString();
 				final += $",{nameEsc}|{msEsc}";
 			}
-			return final.Substring(1, final.Length - 1);
+
+			if (final.Length > 0)
+				final = final.Substring(1, final.Length - 1);
+
+			return final;
 		}
 		private string BpmsToString()
         {
