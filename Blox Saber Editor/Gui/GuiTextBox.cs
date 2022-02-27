@@ -210,7 +210,7 @@ namespace Sound_Space_Editor.Gui
 			{
 				if (Numeric)
                 {
-					if (int.TryParse(key.ToString(), out var num) || (key.ToString() == CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator && !Text.Contains(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)))
+					if (int.TryParse(key.ToString(), out var num) || (key.ToString() == CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator && !Text.Contains(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)) || (key == '-' && !Text.Contains("-") && _cursorPos == 0))
 						_text = _text.Insert(_cursorPos, keyChar);
 				}
 				else
