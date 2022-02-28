@@ -154,7 +154,7 @@ namespace Sound_Space_Editor.Gui
             {
                 long.TryParse(OffsetBox.Text, out var offset);
 
-                offset = (long)MathHelper.Clamp(offset, 0, EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds);
+                offset = (long)MathHelper.Clamp(offset, 0, EditorWindow.Instance.totalTime.TotalMilliseconds);
 
                 if (offset > 0)
                     OffsetBox.Text = offset.ToString();
@@ -238,7 +238,7 @@ namespace Sound_Space_Editor.Gui
                     }
                     break;
                 case 3:
-                    OffsetBox.Text = EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds.ToString();
+                    OffsetBox.Text = EditorWindow.Instance.currentTime.TotalMilliseconds.ToString();
                     break;
             }
         }

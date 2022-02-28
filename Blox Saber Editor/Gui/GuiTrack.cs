@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using OpenTK.Graphics.OpenGL;
 using Sound_Space_Editor.Properties;
+using OpenTK;
 
 namespace Sound_Space_Editor.Gui
 {
@@ -66,11 +67,14 @@ namespace Sound_Space_Editor.Gui
 
 			var gap = cellSize - noteSize;
 
-			double audioTime = editor.MusicPlayer.CurrentTime.TotalMilliseconds;
+			double audioTime = editor.currentTime.TotalMilliseconds;
+
+			if (editor.GuiScreen is GuiScreenEditor gsed && gsed.Timeline.Dragging)
+				audioTime = MathHelper.Clamp(editor.totalTime.TotalMilliseconds * gsed.Timeline.Progress, 0, editor.totalTime.TotalMilliseconds - 1);
 
 			float cubeStep = editor.CubeStep;
 			float posX = (float)audioTime / 1000 * cubeStep;
-			float maxX = (float)editor.MusicPlayer.TotalTime.TotalMilliseconds / 1000f * cubeStep;
+			float maxX = (float)editor.totalTime.TotalMilliseconds / 1000f * cubeStep;
 
 			var zoomLvl = editor.Zoom;
 			float lineSpace = cubeStep * zoomLvl;
@@ -166,7 +170,7 @@ namespace Sound_Space_Editor.Gui
 					var offset = 0L;
 					long.TryParse(gse.SfxOffset.Text, out offset);
 
-					if (note.Ms <= (long)(EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds - offset))
+					if (note.Ms <= (long)(EditorWindow.Instance.currentTime.TotalMilliseconds - offset))
 					{
 						closest = note;
 					}
@@ -285,7 +289,7 @@ namespace Sound_Space_Editor.Gui
 					}
 					else
 					{
-						nextoffset = editor.MusicPlayer.TotalTime.TotalMilliseconds * 2;
+						nextoffset = editor.totalTime.TotalMilliseconds * 2;
 					}
 
 					if (Bpm.bpm > 33)
@@ -467,8 +471,8 @@ namespace Sound_Space_Editor.Gui
 			{
 				double.TryParse(gse1.SfxOffset.Text, out var offset);
 
-				var ms = editor.MusicPlayer.CurrentTime.TotalMilliseconds - offset;
-				var bpm = editor.GetCurrentBpm(editor.MusicPlayer.CurrentTime.TotalMilliseconds, false);
+				var ms = editor.currentTime.TotalMilliseconds - offset;
+				var bpm = editor.GetCurrentBpm(editor.currentTime.TotalMilliseconds, false);
 				double interval = 60000 / bpm.bpm / BeatDivisor;
 				double remainder = (ms - bpm.Ms) % interval;
 				double closestMS = ms - remainder;
@@ -509,7 +513,7 @@ namespace Sound_Space_Editor.Gui
 
 			float gap = cellSize - noteSize;
 
-			float audioTime = (float)EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds;
+			float audioTime = (float)EditorWindow.Instance.currentTime.TotalMilliseconds;
 
 			float cubeStep = EditorWindow.Instance.CubeStep;
 			float posX = audioTime / 1000 * cubeStep;
@@ -524,7 +528,7 @@ namespace Sound_Space_Editor.Gui
 					var offset = 0L;
 					long.TryParse(gse.SfxOffset.Text, out offset);
 
-					if (note.Ms <= (long)(EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds - offset))
+					if (note.Ms <= (long)(EditorWindow.Instance.currentTime.TotalMilliseconds - offset))
 					{
 						closest = note;
 					}

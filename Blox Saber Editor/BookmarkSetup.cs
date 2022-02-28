@@ -46,7 +46,7 @@ namespace Sound_Space_Editor
 		{
       if (BookmarkList.SelectedCells.Count > 0)
 			{
-        BookmarkList.SelectedCells[0].OwningRow.Cells[1].Value = EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds.ToString();
+        BookmarkList.SelectedCells[0].OwningRow.Cells[1].Value = EditorWindow.Instance.currentTime.TotalMilliseconds.ToString();
 			}
 		}
 	}

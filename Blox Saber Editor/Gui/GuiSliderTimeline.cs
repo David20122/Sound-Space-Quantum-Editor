@@ -25,7 +25,7 @@ namespace Sound_Space_Editor.Gui
 			for (int i = 0; i < Bookmarks.Count; i++)
 			{
 				var bookmark = Bookmarks[i];
-				var progress = bookmark.MS / EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds;
+				var progress = bookmark.MS / EditorWindow.Instance.totalTime.TotalMilliseconds;
 
 				var rx = renderRect.X + progress * renderRect.Width;
 				var ry = renderRect.Y + renderRect.Height;
@@ -43,14 +43,14 @@ namespace Sound_Space_Editor.Gui
 
 			renderRect = rect;
 
-			if (EditorWindow.Instance.MusicPlayer.TotalTime == TimeSpan.Zero)
+			if (EditorWindow.Instance.totalTime == TimeSpan.Zero)
 				return;
 
 			for (int i = 0; i < EditorWindow.Instance.Notes.Count; i++)
 			{
 				var note = EditorWindow.Instance.Notes[i];
 
-				var progress = note.Ms / EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds;
+				var progress = note.Ms / EditorWindow.Instance.totalTime.TotalMilliseconds;
 
 				var x = rect.X + progress * rect.Width;
 				var y = rect.Y + rect.Height / 2f;
@@ -62,7 +62,7 @@ namespace Sound_Space_Editor.Gui
 			for (int i = 0; i < Bookmarks.Count; i++)
 			{
 				var bookmark = Bookmarks[i];
-				var progress = bookmark.MS / EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds;
+				var progress = bookmark.MS / EditorWindow.Instance.totalTime.TotalMilliseconds;
 
 				var x = rect.X + progress * rect.Width;
 				var y = rect.Y + rect.Height;
@@ -86,7 +86,7 @@ namespace Sound_Space_Editor.Gui
             {
 				var bpm = GuiTrack.BPMs[i];
 
-				var progress = bpm.Ms / EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds;
+				var progress = bpm.Ms / EditorWindow.Instance.totalTime.TotalMilliseconds;
 
 				var x = rect.X + progress * rect.Width - 1;
 				var y = rect.Y - rect.Height / 2f;

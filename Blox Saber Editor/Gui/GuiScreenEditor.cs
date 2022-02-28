@@ -542,9 +542,12 @@ namespace Sound_Space_Editor.Gui
 			var rect = Timeline.ClientRectangle;
 
 			var timelinePos = new System.Numerics.Vector2(rect.Height / 2f, rect.Height / 2f - 5);
-			var time = EditorWindow.Instance.MusicPlayer.TotalTime;
-			var currentTime = EditorWindow.Instance.MusicPlayer.CurrentTime;
-			
+			var time = EditorWindow.Instance.totalTime;
+			var currentTime = EditorWindow.Instance.currentTime;
+
+			if (Timeline.Dragging)
+				currentTime = TimeSpan.FromMilliseconds(MathHelper.Clamp(time.TotalMilliseconds * Timeline.Progress, 0, time.TotalMilliseconds - 1));
+
 			var timeString = $"{time.Minutes}:{time.Seconds:0#}";
 			var currentTimeString = $"{currentTime.Minutes}:{currentTime.Seconds:0#}";
 			var currentMsString = $"{(long) currentTime.TotalMilliseconds:##,###}ms";
@@ -726,7 +729,7 @@ namespace Sound_Space_Editor.Gui
 			MSBoundHigher.OnMouseClick(x, y);
 
 			if (Timeline.SelectedBookmark != null)
-				EditorWindow.Instance.MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(Timeline.SelectedBookmark.MS);
+				EditorWindow.Instance.currentTime = TimeSpan.FromMilliseconds(Timeline.SelectedBookmark.MS);
 
 			base.OnMouseClick(x, y);
 		}
@@ -850,8 +853,8 @@ namespace Sound_Space_Editor.Gui
 						EditorWindow.Instance.MusicPlayer.Pause();
 					else
                     {
-						if (EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds >= EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds - 1)
-							EditorWindow.Instance.MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(0);
+						if (EditorWindow.Instance.currentTime.TotalMilliseconds >= EditorWindow.Instance.totalTime.TotalMilliseconds - 1)
+							EditorWindow.Instance.currentTime = TimeSpan.FromMilliseconds(0);
 						EditorWindow.Instance.MusicPlayer.Play();
 					}
 					break;
@@ -949,8 +952,8 @@ namespace Sound_Space_Editor.Gui
 				case 6:
 					if (long.TryParse(JumpMSBox.Text, out var time))
                     {
-						if (time <= EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds)
-							EditorWindow.Instance.MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(time);
+						if (time <= EditorWindow.Instance.totalTime.TotalMilliseconds)
+							EditorWindow.Instance.currentTime = TimeSpan.FromMilliseconds(time);
 					}
 					break;
 				case 7:
@@ -1017,7 +1020,7 @@ namespace Sound_Space_Editor.Gui
 					new BookmarkSetup().Show();
 					break;
 				case 9:
-					Offset.Text = ((long)EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds).ToString();
+					Offset.Text = ((long)EditorWindow.Instance.currentTime.TotalMilliseconds).ToString();
 					break;
 				case 10:
 					if (int.TryParse(BezierBox.Text, out var divisor) && divisor > 0 && beziernodes != null && beziernodes.Count > 1)
@@ -1424,8 +1427,8 @@ namespace Sound_Space_Editor.Gui
 			if (JumpMSBox.Focused)
             {
 				if (long.TryParse(JumpMSBox.Text, out var jumpMS))
-					if (jumpMS > EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds)
-						jumpMS = (long)EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds;
+					if (jumpMS > EditorWindow.Instance.totalTime.TotalMilliseconds)
+						jumpMS = (long)EditorWindow.Instance.totalTime.TotalMilliseconds;
 				if (jumpMS.ToString() != "0")
 					JumpMSBox.Text = jumpMS.ToString();
 			}

@@ -53,7 +53,7 @@ namespace Sound_Space_Editor.Gui
 
 			var gap = cellSize - noteSize;
 
-			var audioTime = EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds;
+			var audioTime = EditorWindow.Instance.currentTime.TotalMilliseconds;
 
 			GL.Color3(0.2, 0.2, 0.2f);
 

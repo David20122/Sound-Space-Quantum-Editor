@@ -27,8 +27,8 @@ namespace Sound_Space_Editor
         {
             if (float.TryParse(BPMBox.Text, out float BPM) && BPM > 5000)
                 BPMBox.Text = "5000";
-            if (long.TryParse(OffsetBox.Text, out long Offset) && Offset > EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds)
-                OffsetBox.Text = EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds.ToString();
+            if (long.TryParse(OffsetBox.Text, out long Offset) && Offset > EditorWindow.Instance.totalTime.TotalMilliseconds)
+                OffsetBox.Text = EditorWindow.Instance.totalTime.TotalMilliseconds.ToString();
             if (float.TryParse(BPMBox.Text, out float bpm) && bpm > 33 && long.TryParse(OffsetBox.Text, out long offset))
             {
                 var exists = false;
@@ -61,8 +61,8 @@ namespace Sound_Space_Editor
         {
             if (float.TryParse(BPMBox.Text, out float BPM) && BPM > 5000)
                 BPMBox.Text = "5000";
-            if (long.TryParse(OffsetBox.Text, out long Offset) && Offset > EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds)
-                OffsetBox.Text = EditorWindow.Instance.MusicPlayer.TotalTime.TotalMilliseconds.ToString();
+            if (long.TryParse(OffsetBox.Text, out long Offset) && Offset > EditorWindow.Instance.totalTime.TotalMilliseconds)
+                OffsetBox.Text = EditorWindow.Instance.totalTime.TotalMilliseconds.ToString();
             if (PointList.SelectedRows.Count > 0)
             {
                 if (float.TryParse(BPMBox.Text, out float bpm) && bpm > 33 && long.TryParse(OffsetBox.Text, out long offset))
@@ -87,7 +87,7 @@ namespace Sound_Space_Editor
 
     private void CurrentButton_Click(object sender, EventArgs e)
     {
-        OffsetBox.Text = EditorWindow.Instance.MusicPlayer.CurrentTime.TotalMilliseconds.ToString();
+        OffsetBox.Text = EditorWindow.Instance.currentTime.TotalMilliseconds.ToString();
     }
 
     public void ResetList(int index)
