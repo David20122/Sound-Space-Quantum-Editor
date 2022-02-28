@@ -819,7 +819,10 @@ namespace Sound_Space_Editor
 						_placingNotes = true;
 						var pos = e.Position;
 						var rect = editor.Grid.ClientRectangle;
-						var increment = (float)(editor.NoteAlign.Value + 1f) / 3f;
+						var increment = 1f;
+
+						if (Settings.Default.Quantum)
+							increment = (float)(editor.NoteAlign.Value + 1f) / 3f;
 
 						var x = (float)((pos.X - (rect.X + (rect.Width / 2))) / rect.Width * 3) + 1;
 						var y = (float)((pos.Y - (rect.Y + (rect.Height / 2))) / rect.Height * 3) + 1;
