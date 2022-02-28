@@ -176,8 +176,6 @@ namespace Sound_Space_Editor.Gui
 					}
 				}
 
-				note.Color = _cs.Next();
-
 				var x = Math.Round(ScreenX - posX + note.Ms / 1000f * cubeStep);
 
 				if (x > rect.Width)

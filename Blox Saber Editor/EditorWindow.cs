@@ -2946,6 +2946,13 @@ namespace Sound_Space_Editor
 			lock (_notes)
 			{
 				_notes = new List<Note>(_notes.OrderBy(n => n.Ms));
+				for (int i = 0; i < _notes.Count; i++)
+                {
+					if (i % 2 == 0)
+						_notes[i].Color = EditorSettings.Color2;
+					else
+						_notes[i].Color = EditorSettings.Color1;
+                }
 			}
 		}
 

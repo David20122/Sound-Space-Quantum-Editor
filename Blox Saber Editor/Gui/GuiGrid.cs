@@ -119,7 +119,7 @@ namespace Sound_Space_Editor.Gui
 			{
 				var note = EditorWindow.Instance.Notes[index];
 				var passed = audioTime > note.Ms + 1;
-				var visible = !passed && note.Ms - audioTime <= 750;
+				var visible = !passed && note.Ms - audioTime <= 1000 / (ApproachRate / 10.0);
 
 				if (passed)
 				{
@@ -143,7 +143,7 @@ namespace Sound_Space_Editor.Gui
 				var x = rect.X + note.X * cellSize + gap / 2;
 				var y = rect.Y + note.Y * cellSize + gap / 2;
 
-				var progress = (float)Math.Pow(1 - Math.Min(1, (note.Ms - audioTime) * ApproachRate / 10.0 / 750.0), 2);
+				var progress = (float)Math.Pow(1 - Math.Min(1, (note.Ms - audioTime) * ApproachRate / 10.0 / 1000.0 / (0.2f + (editor.Tempo.Value > 15 ? (editor.Tempo.Value - 16) * 2 + 16 : editor.Tempo.Value) * 0.05f)), 2);
 				var noteRect = new RectangleF(x, y, noteSize, noteSize);
 				OpenTK.Graphics.Color4 colora = new OpenTK.Graphics.Color4(note.Color.R, note.Color.G, note.Color.B, progress * 0.15f);
 				GL.Color4(colora);
