@@ -1711,7 +1711,7 @@ namespace Sound_Space_Editor
 						var stepSmall = lineSpace / beatDivisor * 1000;
 
 						long closestBeat =
-							GetClosestBeatScroll((long)currentTime.TotalMilliseconds, false, 1);
+							GetClosestBeatScroll((long)currentTime.TotalMilliseconds, e.Key == Key.Left, 1);
 
 						if (GetCurrentBpm(currentTime.TotalMilliseconds, false).bpm == 0 && GetCurrentBpm(closestBeat, false).bpm != 0)
 							closestBeat = GetCurrentBpm(closestBeat, false).Ms;
