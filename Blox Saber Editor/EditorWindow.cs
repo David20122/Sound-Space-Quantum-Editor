@@ -2845,13 +2845,15 @@ namespace Sound_Space_Editor
         {
 			Autosaving = true;
 			if (EditorSettings.EnableAutosave && GuiScreen is GuiScreenEditor)
-            {
+			{
 				var delay = Task.Delay(EditorSettings.AutosaveInterval * 60000).ContinueWith(_ =>
 				{
 					Autosave();
 					RunAutosave();
 				});
-            }
+			}
+			else
+				Autosaving = false;
         }
 
 		public void OpenGuiScreen(GuiScreen s)
