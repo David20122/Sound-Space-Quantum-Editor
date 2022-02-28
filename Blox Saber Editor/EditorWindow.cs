@@ -2617,6 +2617,7 @@ namespace Sound_Space_Editor
 				GuiTrack.NoteOffset = 0;
 				GuiTrack.TextBpm = 0;
 
+				currentTime = TimeSpan.Zero;
 				currentData = data;
 			}
 			catch
