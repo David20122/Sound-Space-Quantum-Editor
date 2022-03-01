@@ -6,6 +6,7 @@ using OpenTK;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Diagnostics;
 
 namespace Sound_Space_Editor
 {
@@ -172,7 +173,10 @@ namespace Sound_Space_Editor
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to parse beatmap [OSU | {ex.GetType().Name}]", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                var st = new StackTrace(ex, true);
+                var frame = st.GetFrame(st.FrameCount - 1);
+                var line = frame.GetFileLineNumber();
+                MessageBox.Show($"Failed to parse beatmap [OSU | {ex.GetType().Name} | {line}]", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 ResetList(0);
             }
         }
@@ -245,13 +249,16 @@ namespace Sound_Space_Editor
                 foreach (var item in msList)
                 {
                     listIndex = msList.IndexOf(item);
-                    GuiTrack.BPMs.Add(new BPM(float.Parse(bpmList[listIndex]), long.Parse(item)));
+                    GuiTrack.BPMs.Add(new BPM(float.Parse(bpmList[listIndex]), (long)float.Parse(item)));
                 }
                 ResetList(0);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to parse beatmap [CH | {ex.GetType().Name}]", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                var st = new StackTrace(ex, true);
+                var frame = st.GetFrame(st.FrameCount - 1);
+                var line = frame.GetFileLineNumber();
+                MessageBox.Show($"Failed to parse beatmap [CH | {ex.GetType().Name} | {line}]", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 ResetList(0);
             }
         }
@@ -397,7 +404,10 @@ namespace Sound_Space_Editor
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to parse beatmap [ADOFAI | {ex.GetType().Name}]", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                var st = new StackTrace(ex, true);
+                var frame = st.GetFrame(st.FrameCount - 1);
+                var line = frame.GetFileLineNumber();
+                MessageBox.Show($"Failed to parse beatmap [ADOFAI | {ex.GetType().Name} | {line}]", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 ResetList(0);
             }
         }
