@@ -458,6 +458,26 @@ namespace Sound_Space_Editor
 		}
 		private PointF _previewNote;
 		private bool _drawPreview = false;
+
+		private bool GridContains(Point pos)
+        {
+			if (GuiScreen is GuiScreenEditor editor)
+            {
+				if (Settings.Default.Quantum)
+				{
+					var boundxmin = editor.Grid.ClientRectangle.X - editor.Grid.ClientRectangle.Width / 3;
+					var boundxmax = editor.Grid.ClientRectangle.Right + editor.Grid.ClientRectangle.Width / 3;
+					var boundymin = editor.Grid.ClientRectangle.Y - editor.Grid.ClientRectangle.Height / 3;
+					var boundymax = editor.Grid.ClientRectangle.Bottom + editor.Grid.ClientRectangle.Height / 3;
+
+					return pos.X <= boundxmax && pos.X >= boundxmin && pos.Y <= boundymax && pos.Y >= boundymin;
+				}
+				else
+					return editor.Grid.ClientRectangle.Contains(pos);
+			}
+			
+			return false;
+        }
 		protected override void OnMouseMove(MouseMoveEventArgs e)
 		{
 			_lastMouse = e.Position;
@@ -476,7 +496,7 @@ namespace Sound_Space_Editor
 
 			if (GuiScreen is GuiScreenEditor editor)
 			{
-				if (_placingNotes || ((!Settings.Default.SeparateClickTools || !SelectTool) && editor.Grid.ClientRectangle.Contains(e.Position)))
+				if (_placingNotes || ((!Settings.Default.SeparateClickTools || !SelectTool) && GridContains(e.Position)))
 				{
 					var pos = e.Position;
 					var rect = editor.Grid.ClientRectangle;
@@ -814,7 +834,7 @@ namespace Sound_Space_Editor
 
 						SelectedNotes = _draggedNotes;
 					}
-					else if (editor.Grid.ClientRectangle.Contains(e.Position) && (!Settings.Default.SeparateClickTools || !SelectTool))
+					else if (GridContains(e.Position) && (!Settings.Default.SeparateClickTools || !SelectTool))
 					{
 						_placingNotes = true;
 						var pos = e.Position;
