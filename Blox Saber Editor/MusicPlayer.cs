@@ -21,8 +21,11 @@ namespace Sound_Space_Editor
 
 		public ModelRaw WaveModel;
 
+		private SYNCPROC Sync;
+
 		public MusicPlayer()
 		{
+			Sync = new SYNCPROC(OnEnded);
 		}
 
 		/// <summary>
@@ -128,6 +131,7 @@ namespace Sound_Space_Editor
 			Tempo = tempo;
 			
 			Bass.BASS_ChannelGetAttribute(streamID, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, ref originval);
+			Bass.BASS_ChannelSetSync(streamID, BASSSync.BASS_SYNC_END, 0, Sync, IntPtr.Zero);
 
 			Reset();
 		}
@@ -158,6 +162,13 @@ namespace Sound_Space_Editor
 
 			return first + (next - first) * (float)alpha;
 		}*/
+
+		private void OnEnded(int handle, int channel, int data, IntPtr user)
+        {
+			Pause();
+			EditorWindow.Instance.currentTime = TimeSpan.FromMilliseconds(TotalTime.TotalMilliseconds - 1);
+			EditorWindow.Instance.AlignTimeline();
+        }
 
 		public void Play()
 		{

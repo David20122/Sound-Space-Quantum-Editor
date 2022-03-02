@@ -2575,7 +2575,7 @@ namespace Sound_Space_Editor
 			}
 		}
 
-		private void AlignTimeline()
+		public void AlignTimeline()
         {
 			if (GuiScreen is GuiScreenEditor gse)
 				gse.Timeline.Progress = (float)(currentTime.TotalMilliseconds / totalTime.TotalMilliseconds);
