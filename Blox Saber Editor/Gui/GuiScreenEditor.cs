@@ -1023,11 +1023,13 @@ namespace Sound_Space_Editor.Gui
 					Offset.Text = ((long)EditorWindow.Instance.currentTime.TotalMilliseconds).ToString();
 					break;
 				case 10:
-					if (int.TryParse(BezierBox.Text, out var divisor) && divisor > 0 && beziernodes != null && beziernodes.Count > 1)
+					if (int.TryParse(BezierBox.Text, out var divisor) && divisor > 0 && ((beziernodes != null && beziernodes.Count > 1) || EditorWindow.Instance.SelectedNotes.Count > 1))
 					{
 						try
                         {
 							var finalnodes = EditorWindow.Instance.SelectedNotes.ToList();
+							if (beziernodes != null && beziernodes.Count > 1)
+								finalnodes = beziernodes;
 							var finalnotes = new List<Note>();
 							var k = finalnodes.Count - 1;
 							float tdiff = finalnodes[k].Ms - finalnodes[0].Ms;
