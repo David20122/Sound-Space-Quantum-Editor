@@ -93,7 +93,8 @@ namespace Sound_Space_Editor.Gui
 
 		public override void OnMouseClick(float x, float y)
 		{
-			Toggle = !Toggle;
+			if (Id >= 0)
+				Toggle = !Toggle;
 		}
 	}
 }
