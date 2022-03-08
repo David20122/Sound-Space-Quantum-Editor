@@ -45,8 +45,15 @@ namespace Sound_Space_Editor
         private void CurrentButton_Click(object sender, EventArgs e)
         {
             if (BookmarkList.SelectedCells.Count > 0)
-            {
                 BookmarkList.SelectedCells[0].OwningRow.Cells[1].Value = EditorWindow.Instance.currentTime.TotalMilliseconds.ToString();
+        }
+
+        private void BookmarkList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.RowIndex < BookmarkList.RowCount - 1 && ((DataGridView)sender)[e.ColumnIndex, e.RowIndex] is DataGridViewButtonCell)
+            {
+                BookmarkList.Rows.RemoveAt(e.RowIndex);
+                GuiSliderTimeline.Bookmarks.RemoveAt(e.RowIndex);
             }
         }
     }
