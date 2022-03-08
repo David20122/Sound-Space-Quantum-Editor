@@ -2849,7 +2849,7 @@ namespace Sound_Space_Editor
         {
 			if (GuiScreen is GuiScreenEditor editor)
             {
-				if (_file == null)
+				if (_file == null && Notes.Count > 0)
                 {
 					Settings.Default.AutosavedFile = ParseData(false);
 
