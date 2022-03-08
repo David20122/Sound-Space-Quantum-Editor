@@ -135,26 +135,29 @@ namespace Sound_Space_Editor.Gui
 
 				var renderedText = _text;
 
+				var txwidthratio = fr.GetWidth(renderedText, 24) / (rect.Width - 4);
+				var txheight = (int)Math.Min(24, Math.Min(rect.Height, 24 / txwidthratio));
+
 				/*while (fr.GetWidth(renderedText, 24) != null && fr.GetWidth(renderedText, 24) > rect.Width - rect.Height / 2)
 				{
 					renderedText = renderedText.Substring(1, renderedText.Length - 1);
 				}*/
 
-				var offX = (int)(ClientRectangle.Width / 2 - fr.GetWidth(renderedText, 24) / 2f - rect.Height / 4);
+				var offX = (int)(ClientRectangle.Width / 2 - fr.GetWidth(renderedText, txheight) / 2f - rect.Height / 4);
 
 				if (Centered)
 					GL.Translate(offX, 0, 0);
 
 				GL.Color3(Color2);
-				fr.Render(renderedText, (int)x, (int)(y - fr.GetHeight(24) / 2f), 24);
+				fr.Render(renderedText, (int)x, (int)(y - fr.GetHeight(txheight) / 2f), txheight);
 
 				if (Focused)
 				{
 					var textToCursor = renderedText.Substring(0,
 						Math.Max(0, Math.Min(renderedText.Length, renderedText.Length - (_text.Length - _cursorPos))));
-					var textToCursorSize = fr.GetWidth(textToCursor, 24);
+					var textToCursorSize = fr.GetWidth(textToCursor, txheight);
 
-					var cursorHeight = fr.GetHeight(24) * 1.4f;
+					var cursorHeight = fr.GetHeight(txheight) * 1.4f;
 
 					var alpha = (float)(Math.Sin(_timer * MathHelper.TwoPi) + 1) / 2;
 
@@ -184,7 +187,10 @@ namespace Sound_Space_Editor.Gui
 
 			if (_text.Length > 0)
             {
-				var textwidth = EditorWindow.Instance.FontRenderer.GetWidth(_text, 24);
+				var txwidthratio = EditorWindow.Instance.FontRenderer.GetWidth(_text, 24) / (ClientRectangle.Width - 4);
+				var txheight = (int)Math.Min(24, Math.Min(ClientRectangle.Height, 24 / txwidthratio));
+
+				var textwidth = EditorWindow.Instance.FontRenderer.GetWidth(_text, txheight);
 				var posX = x - ClientRectangle.X - (ClientRectangle.Width - textwidth) / 2;
 				var letterwidth = textwidth / _text.Length;
 
