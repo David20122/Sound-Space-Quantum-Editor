@@ -79,6 +79,10 @@ namespace Sound_Space_Editor.Gui
         private readonly GuiButton BRReset = new GuiButton(98, 0, 0, 0, 0, "RESET", false);
 
 
+        private readonly GuiCheckBox CTRLIndicator = new GuiCheckBox(-1, "CTRL Held", 0, 0, 0, 0, EditorWindow.Instance._controlDown);
+        private readonly GuiCheckBox SHIFTIndicator = new GuiCheckBox(-1, "SHIFT Held", 0, 0, 0, 0, EditorWindow.Instance._shiftDown);
+        private readonly GuiCheckBox ALTIndicator = new GuiCheckBox(-1, "ALT Held", 0, 0, 0, 0, EditorWindow.Instance._altDown);
+
         private readonly GuiButton _backButton = new GuiButton(0, 0, 0, 600, 100, "RETURN TO SETTINGS", "square", 100);
 
         public GuiScreenKeybinds() : base(0, 0, EditorWindow.Instance.ClientSize.Width, EditorWindow.Instance.ClientSize.Height)
@@ -105,6 +109,10 @@ namespace Sound_Space_Editor.Gui
             Buttons.Add(BLReset);
             Buttons.Add(BCReset);
             Buttons.Add(BRReset);
+
+            Buttons.Add(CTRLIndicator);
+            Buttons.Add(SHIFTIndicator);
+            Buttons.Add(ALTIndicator);
 
             Buttons.Add(_backButton);
 
@@ -137,6 +145,13 @@ namespace Sound_Space_Editor.Gui
                 GL.Color4(Color.FromArgb(255, 30, 30, 30));
                 Glu.RenderQuad(0, 0, size.Width, size.Height);
             }
+
+            if (CTRLIndicator.Toggle != EditorWindow.Instance._controlDown)
+                CTRLIndicator.Toggle = EditorWindow.Instance._controlDown;
+            if (SHIFTIndicator.Toggle != EditorWindow.Instance._shiftDown)
+                SHIFTIndicator.Toggle = EditorWindow.Instance._shiftDown;
+            if (ALTIndicator.Toggle != EditorWindow.Instance._altDown)
+                ALTIndicator.Toggle = EditorWindow.Instance._altDown;
 
             var fr = EditorWindow.Instance.FontRenderer;
 
@@ -241,9 +256,11 @@ namespace Sound_Space_Editor.Gui
             var widthdiff = size.Width / 1920f;
             var heightdiff = size.Height / 1080f;
 
+            EditorWindow.Instance.FontRenderer.Render("", 0, 0, (int)(24 * Math.Min(widthdiff, heightdiff)));
+
             var csawidth = EditorWindow.Instance.FontRenderer.GetWidth("CTRL + SHIFT + ALT", (int)(24 * Math.Min(widthdiff, heightdiff)));
 
-            SelectAllBox.ClientRectangle.Size = new SizeF(96 * widthdiff, 48 * heightdiff);
+            SelectAllBox.ClientRectangle.Size = new SizeF(64 * widthdiff, 32 * heightdiff);
             SelectAllReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
 
             SaveBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
@@ -298,46 +315,53 @@ namespace Sound_Space_Editor.Gui
             BRBox.ClientRectangle.Size = TLBox.ClientRectangle.Size;
             BRReset.ClientRectangle.Size = TLBox.ClientRectangle.Size;
 
+            CTRLIndicator.ClientRectangle.Size = new SizeF(64 * widthdiff, 64 * heightdiff);
+            SHIFTIndicator.ClientRectangle.Size = CTRLIndicator.ClientRectangle.Size;
+            ALTIndicator.ClientRectangle.Size = CTRLIndicator.ClientRectangle.Size;
+
             _backButton.ClientRectangle.Size = new SizeF(600 * widthdiff, 100 * heightdiff);
 
 
-            SelectAllBox.ClientRectangle.Location = new PointF(200 * widthdiff, 100 * heightdiff);
-            SelectAllReset.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.Right + 10 * widthdiff, SelectAllBox.ClientRectangle.Y);
+            var widthspacelarge = csawidth + 80 * widthdiff;
+            var widthspacesmall = 10 * widthdiff;
+            var heightspace = 30 * heightdiff;
+            SelectAllBox.ClientRectangle.Location = new PointF(150 * widthdiff, 75 * heightdiff);
+            SelectAllReset.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.Right + widthspacesmall, SelectAllBox.ClientRectangle.Y);
 
-            SaveBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, SelectAllBox.ClientRectangle.Bottom + 40 * heightdiff);
+            SaveBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, SelectAllBox.ClientRectangle.Bottom + heightspace);
             SaveReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, SaveBox.ClientRectangle.Y);
 
-            SaveAsBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, SaveBox.ClientRectangle.Bottom + 40 * heightdiff);
+            SaveAsBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, SaveBox.ClientRectangle.Bottom + heightspace);
             SaveAsReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, SaveAsBox.ClientRectangle.Y);
 
-            UndoBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, SaveAsBox.ClientRectangle.Bottom + 40 * heightdiff);
+            UndoBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, SaveAsBox.ClientRectangle.Bottom + heightspace);
             UndoReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, UndoBox.ClientRectangle.Y);
 
-            RedoBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, UndoBox.ClientRectangle.Bottom + 40 * heightdiff);
+            RedoBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, UndoBox.ClientRectangle.Bottom + heightspace);
             RedoReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, RedoBox.ClientRectangle.Y);
 
-            CopyBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, RedoBox.ClientRectangle.Bottom + 40 * heightdiff);
+            CopyBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, RedoBox.ClientRectangle.Bottom + heightspace);
             CopyReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, CopyBox.ClientRectangle.Y);
 
-            PasteBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, CopyBox.ClientRectangle.Bottom + 40 * heightdiff);
+            PasteBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, CopyBox.ClientRectangle.Bottom + heightspace);
             PasteReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, PasteBox.ClientRectangle.Y);
 
-            DeleteBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, PasteBox.ClientRectangle.Bottom + 40 * heightdiff);
+            DeleteBox.ClientRectangle.Location = new PointF(SelectAllBox.ClientRectangle.X, PasteBox.ClientRectangle.Bottom + heightspace);
             DeleteReset.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.X, DeleteBox.ClientRectangle.Y);
 
-            HFlipBox.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.Right + csawidth + 100 * widthdiff, SelectAllBox.ClientRectangle.Y);
-            HFlipReset.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.Right + 10 * widthdiff, HFlipBox.ClientRectangle.Y);
+            HFlipBox.ClientRectangle.Location = new PointF(SelectAllReset.ClientRectangle.Right + widthspacelarge, SelectAllBox.ClientRectangle.Y);
+            HFlipReset.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.Right + widthspacesmall, HFlipBox.ClientRectangle.Y);
 
-            VFlipBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, HFlipBox.ClientRectangle.Bottom + 40 * heightdiff);
+            VFlipBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, HFlipBox.ClientRectangle.Bottom + heightspace);
             VFlipReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, VFlipBox.ClientRectangle.Y);
 
-            SwitchClickToolBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, VFlipBox.ClientRectangle.Bottom + 40 * heightdiff);
+            SwitchClickToolBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, VFlipBox.ClientRectangle.Bottom + heightspace);
             SwitchClickToolReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, SwitchClickToolBox.ClientRectangle.Y);
 
-            QuantumBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, SwitchClickToolBox.ClientRectangle.Bottom + 40 * heightdiff);
+            QuantumBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, SwitchClickToolBox.ClientRectangle.Bottom + heightspace);
             QuantumReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, QuantumBox.ClientRectangle.Y);
 
-            TLBox.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.Right + csawidth + 100 * widthdiff, HFlipBox.ClientRectangle.Y);
+            TLBox.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.Right + widthspacelarge, HFlipBox.ClientRectangle.Y);
             TLReset.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.X, TLBox.ClientRectangle.Bottom + 4 * heightdiff);
             TCBox.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.Right + 10 * widthdiff, TLBox.ClientRectangle.Y);
             TCReset.ClientRectangle.Location = new PointF(TCBox.ClientRectangle.X, TLReset.ClientRectangle.Y);
@@ -355,6 +379,10 @@ namespace Sound_Space_Editor.Gui
             BCReset.ClientRectangle.Location = new PointF(TCBox.ClientRectangle.X, BLReset.ClientRectangle.Y);
             BRBox.ClientRectangle.Location = new PointF(TRBox.ClientRectangle.X, BLBox.ClientRectangle.Y);
             BRReset.ClientRectangle.Location = new PointF(TRBox.ClientRectangle.X, BLReset.ClientRectangle.Y);
+
+            CTRLIndicator.ClientRectangle.Location = new PointF(64 * widthdiff, size.Height - 3 * CTRLIndicator.ClientRectangle.Height - 3 * 20 * heightdiff);
+            SHIFTIndicator.ClientRectangle.Location = new PointF(CTRLIndicator.ClientRectangle.X, CTRLIndicator.ClientRectangle.Bottom + 20 * heightdiff);
+            ALTIndicator.ClientRectangle.Location = new PointF(CTRLIndicator.ClientRectangle.X, SHIFTIndicator.ClientRectangle.Bottom + 20 * heightdiff);
 
             _backButton.ClientRectangle.Location = new PointF(655 * widthdiff, 930 * heightdiff);
 
