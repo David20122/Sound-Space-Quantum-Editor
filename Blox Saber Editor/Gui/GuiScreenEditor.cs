@@ -91,7 +91,7 @@ namespace Sound_Space_Editor.Gui
 		private readonly int _textureId;
 		private bool bgImg = false;
 
-		private List<Note> beziernodes;
+		public List<Note> beziernodes;
 
 		//private object TimingPanel;
 		//TimingPoints TimingPoints;

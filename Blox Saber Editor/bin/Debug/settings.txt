@@ -32,6 +32,12 @@
                false,
                false
           ],
+          "drawBezier": [
+               "D",
+               false,
+               true,
+               false
+          ],
           "gridKeys": [
                "Q",
                "W",
@@ -47,6 +53,18 @@
                "H",
                false,
                true,
+               false
+          ],
+          "openBookmarks": [
+               "B",
+               true,
+               false,
+               false
+          ],
+          "openTimings": [
+               "T",
+               true,
+               false,
                false
           ],
           "paste": [
@@ -95,6 +113,12 @@
                "A",
                true,
                false,
+               false
+          ],
+          "storeNodes": [
+               "S",
+               false,
+               true,
                false
           ],
           "switchClickTool": [

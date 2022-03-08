@@ -43,6 +43,10 @@ namespace Sound_Space_Editor
 		public static KeyType VFlip = new KeyType() { Key = Key.V, CTRL = false, SHIFT = true, ALT = false };
 		public static KeyType SwitchClickTool = new KeyType() { Key = Key.Tab, CTRL = false, SHIFT = false, ALT = false };
 		public static KeyType Quantum = new KeyType() { Key = Key.Q, CTRL = true, SHIFT = false, ALT = false };
+		public static KeyType OpenTimings = new KeyType() { Key = Key.T, CTRL = true, SHIFT = false, ALT = false };
+		public static KeyType OpenBookmarks = new KeyType() { Key = Key.B, CTRL = true, SHIFT = false, ALT = false };
+		public static KeyType StoreNodes = new KeyType() { Key = Key.S, CTRL = false, SHIFT = true, ALT = false };
+		public static KeyType DrawBezier = new KeyType() { Key = Key.D, CTRL = false, SHIFT = true, ALT = false };
 
 		public static GridKeySet GridKeys = new GridKeySet() { TL = Key.Q, TC = Key.W, TR = Key.E, ML = Key.A, MC = Key.S, MR = Key.D, BL = Key.Z, BC = Key.X, BR = Key.C };
 
@@ -93,89 +97,38 @@ namespace Sound_Space_Editor
                 {
 					JsonObject keybinds = (JsonObject)value;
 					if (keybinds.TryGetValue("selectAll", out value))
-                    {
-						SelectAll.Key = ConvertToKey(value[0]);
-						SelectAll.CTRL = value[1];
-						SelectAll.SHIFT = value[2];
-						SelectAll.ALT = value[3];
-					}
+						SelectAll = ConvertToKeybind(value);
 					if (keybinds.TryGetValue("save", out value))
-					{
-						Save.Key = ConvertToKey(value[0]);
-						Save.CTRL = value[1];
-						Save.SHIFT = value[2];
-						Save.ALT = value[3];
-					}
+						Save = ConvertToKeybind(value);
 					if (keybinds.TryGetValue("saveAs", out value))
-					{
-						SaveAs.Key = ConvertToKey(value[0]);
-						SaveAs.CTRL = value[1];
-						SaveAs.SHIFT = value[2];
-						SaveAs.ALT = value[3];
-					}
+						SaveAs = ConvertToKeybind(value);
 					if (keybinds.TryGetValue("undo", out value))
-					{
-						Undo.Key = ConvertToKey(value[0]);
-						Undo.CTRL = value[1];
-						Undo.SHIFT = value[2];
-						Undo.ALT = value[3];
-					}
+						Undo = ConvertToKeybind(value);
 					if (keybinds.TryGetValue("redo", out value))
-					{
-						Redo.Key = ConvertToKey(value[0]);
-						Redo.CTRL = value[1];
-						Redo.SHIFT = value[2];
-						Redo.ALT = value[3];
-					}
+						Redo = ConvertToKeybind(value);
 					if (keybinds.TryGetValue("copy", out value))
-					{
-						Copy.Key = ConvertToKey(value[0]);
-						Copy.CTRL = value[1];
-						Copy.SHIFT = value[2];
-						Copy.ALT = value[3];
-					}
+						Copy = ConvertToKeybind(value);
 					if (keybinds.TryGetValue("paste", out value))
-					{
-						Paste.Key = ConvertToKey(value[0]);
-						Paste.CTRL = value[1];
-						Paste.SHIFT = value[2];
-						Paste.ALT = value[3];
-					}
+						Paste = ConvertToKeybind(value);
 					if (keybinds.TryGetValue("delete", out value))
-                    {
-						Delete.Key = ConvertToKey(value[0]);
-						Delete.CTRL = value[1];
-						Delete.SHIFT = value[2];
-						Delete.ALT = value[3];
-                    }
+						Delete = ConvertToKeybind(value);
 					if (keybinds.TryGetValue("horizontalFlip", out value))
-                    {
-						HFlip.Key = ConvertToKey(value[0]);
-						HFlip.CTRL = value[1];
-						HFlip.SHIFT = value[2];
-						HFlip.ALT = value[3];
-                    }
+						HFlip = ConvertToKeybind(value);
 					if (keybinds.TryGetValue("verticalFlip", out value))
-					{
-						VFlip.Key = ConvertToKey(value[0]);
-						VFlip.CTRL = value[1];
-						VFlip.SHIFT = value[2];
-						VFlip.ALT = value[3];
-					}
+						VFlip = ConvertToKeybind(value);
 					if (keybinds.TryGetValue("switchClickTool", out value))
-                    {
-						SwitchClickTool.Key = ConvertToKey(value[0]);
-						SwitchClickTool.CTRL = value[1];
-						SwitchClickTool.SHIFT = value[2];
-						SwitchClickTool.ALT = value[3];
-					}
+						SwitchClickTool = ConvertToKeybind(value);
 					if (keybinds.TryGetValue("quantum", out value))
-                    {
-						Quantum.Key = ConvertToKey(value[0]);
-						Quantum.CTRL = value[1];
-						Quantum.SHIFT = value[2];
-						Quantum.ALT = value[3];
-                    }
+						Quantum = ConvertToKeybind(value);
+					if (keybinds.TryGetValue("openTimings", out value))
+						OpenTimings = ConvertToKeybind(value);
+					if (keybinds.TryGetValue("openBookmarks", out value))
+						OpenBookmarks = ConvertToKeybind(value);
+					if (keybinds.TryGetValue("storeNodes", out value))
+						StoreNodes = ConvertToKeybind(value);
+					if (keybinds.TryGetValue("drawBezier", out value))
+						DrawBezier = ConvertToKeybind(value);
+
 					if (keybinds.TryGetValue("gridKeys", out value))
 					{
 						GridKeys.TL = ConvertToKey(value[0]);
@@ -188,6 +141,7 @@ namespace Sound_Space_Editor
 						GridKeys.BC = ConvertToKey(value[7]);
 						GridKeys.BR = ConvertToKey(value[8]);
 					}
+
 					if (keybinds.TryGetValue("patterns", out value))
                     {
 						Pattern0 = value[0];
@@ -217,6 +171,16 @@ namespace Sound_Space_Editor
 		private static Key ConvertToKey(string key)
         {
 			return (Key)Enum.Parse(typeof(Key), key, true);
+        }
+
+		private static KeyType ConvertToKeybind(JsonValue value)
+        {
+			var key = new KeyType();
+			key.Key = ConvertToKey(value[0]);
+			key.CTRL = value[1];
+			key.SHIFT = value[2];
+			key.ALT = value[3];
+			return key;
         }
 
 		public static void Reset()
@@ -298,6 +262,10 @@ namespace Sound_Space_Editor
 					{"verticalFlip", new JsonArray(VFlip.Key.ToString(), VFlip.CTRL, VFlip.SHIFT, VFlip.ALT)},
 					{"switchClickTool", new JsonArray(SwitchClickTool.Key.ToString(), SwitchClickTool.CTRL, SwitchClickTool.SHIFT, SwitchClickTool.ALT)},
 					{"quantum", new JsonArray(Quantum.Key.ToString(), Quantum.CTRL, Quantum.SHIFT, Quantum.ALT)},
+					{"openTimings", new JsonArray(OpenTimings.Key.ToString(), OpenTimings.CTRL, OpenTimings.SHIFT, OpenTimings.ALT)},
+					{"openBookmarks", new JsonArray(OpenBookmarks.Key.ToString(), OpenBookmarks.CTRL, OpenBookmarks.SHIFT, OpenBookmarks.ALT)},
+					{"storeNodes", new JsonArray(StoreNodes.Key.ToString(), StoreNodes.CTRL, StoreNodes.SHIFT, StoreNodes.ALT)},
+					{"drawBezier", new JsonArray(DrawBezier.Key.ToString(), DrawBezier.CTRL, DrawBezier.SHIFT, DrawBezier.ALT)},
 					{"gridKeys", new JsonArray(GridKeys.TL.ToString(), GridKeys.TC.ToString(), GridKeys.TR.ToString(), GridKeys.ML.ToString(), GridKeys.MC.ToString(), GridKeys.MR.ToString(), GridKeys.BL.ToString(), GridKeys.BC.ToString(), GridKeys.BR.ToString())},
 					{"patterns", new JsonArray(Pattern0, Pattern1, Pattern2, Pattern3, Pattern4, Pattern5, Pattern6, Pattern7, Pattern8, Pattern9)},
 				}}

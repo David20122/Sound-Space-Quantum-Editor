@@ -51,6 +51,18 @@ namespace Sound_Space_Editor.Gui
         private readonly GuiTextBox QuantumBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.Quantum.Key.ToString().ToUpper(), Centered = true };
         private readonly GuiButton QuantumReset = new GuiButton(12, 0, 0, 0, 0, "RESET", false);
 
+        private readonly GuiTextBox OpenTimingsBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.OpenTimings.Key.ToString().ToUpper(), Centered = true };
+        private readonly GuiButton OpenTimingsReset = new GuiButton(13, 0, 0, 0, 0, "RESET", false);
+
+        private readonly GuiTextBox OpenBookmarksBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.OpenBookmarks.Key.ToString().ToUpper(), Centered = true };
+        private readonly GuiButton OpenBookmarksReset = new GuiButton(14, 0, 0, 0, 0, "RESET", false);
+
+        private readonly GuiTextBox StoreNodesBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.StoreNodes.Key.ToString().ToUpper(), Centered = true };
+        private readonly GuiButton StoreNodesReset = new GuiButton(15, 0, 0, 0, 0, "RESET", false);
+
+        private readonly GuiTextBox DrawBezierBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.DrawBezier.Key.ToString().ToUpper(), Centered = true };
+        private readonly GuiButton DrawBezierReset = new GuiButton(16, 0, 0, 0, 0, "RESET", false);
+
         private readonly GuiTextBox TLBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.GridKeys.TL.ToString().ToUpper(), Centered = true };
         private readonly GuiButton TLReset = new GuiButton(90, 0, 0, 0, 0, "RESET", false);
 
@@ -99,6 +111,10 @@ namespace Sound_Space_Editor.Gui
             Buttons.Add(VFlipReset);
             Buttons.Add(SwitchClickToolReset);
             Buttons.Add(QuantumReset);
+            Buttons.Add(OpenTimingsReset);
+            Buttons.Add(OpenBookmarksReset);
+            Buttons.Add(StoreNodesReset);
+            Buttons.Add(DrawBezierReset);
 
             Buttons.Add(TLReset);
             Buttons.Add(TCReset);
@@ -193,6 +209,18 @@ namespace Sound_Space_Editor.Gui
             fr.Render("Toggle Quantum", (int)QuantumBox.ClientRectangle.X, (int)QuantumBox.ClientRectangle.Y - labeloffset, labelsize);
             fr.Render(CSAString(EditorSettings.Quantum), (int)QuantumReset.ClientRectangle.Right + 10, (int)QuantumReset.ClientRectangle.Y + (int)(QuantumReset.ClientRectangle.Height / 2) - (int)(12 * scale), labelsize);
 
+            fr.Render("Open Timings", (int)OpenTimingsBox.ClientRectangle.X, (int)OpenTimingsBox.ClientRectangle.Y - labeloffset, labelsize);
+            fr.Render(CSAString(EditorSettings.OpenTimings), (int)OpenTimingsReset.ClientRectangle.Right + 10, (int)OpenTimingsReset.ClientRectangle.Y + (int)(OpenTimingsReset.ClientRectangle.Height / 2) - (int)(12 * scale), labelsize);
+
+            fr.Render("Open Bookmarks", (int)OpenBookmarksBox.ClientRectangle.X, (int)OpenBookmarksBox.ClientRectangle.Y - labeloffset, labelsize);
+            fr.Render(CSAString(EditorSettings.OpenBookmarks), (int)OpenBookmarksReset.ClientRectangle.Right + 10, (int)OpenBookmarksReset.ClientRectangle.Y + (int)(OpenBookmarksReset.ClientRectangle.Height / 2) - (int)(12 * scale), labelsize);
+
+            fr.Render("Store Bezier Nodes", (int)StoreNodesBox.ClientRectangle.X, (int)StoreNodesBox.ClientRectangle.Y - labeloffset, labelsize);
+            fr.Render(CSAString(EditorSettings.StoreNodes), (int)StoreNodesReset.ClientRectangle.Right + 10, (int)StoreNodesReset.ClientRectangle.Y + (int)(StoreNodesReset.ClientRectangle.Height / 2) - (int)(12 * scale), labelsize);
+
+            fr.Render("Draw Bezier Curve", (int)DrawBezierBox.ClientRectangle.X, (int)DrawBezierBox.ClientRectangle.Y - labeloffset, labelsize);
+            fr.Render(CSAString(EditorSettings.DrawBezier), (int)DrawBezierReset.ClientRectangle.Right + 10, (int)DrawBezierReset.ClientRectangle.Y + (int)(DrawBezierReset.ClientRectangle.Height / 2) - (int)(12 * scale), labelsize);
+
             fr.Render("Grid", (int)TLBox.ClientRectangle.X, (int)TLBox.ClientRectangle.Y - 26, 24);
 
             string[] lockedlist =
@@ -224,6 +252,10 @@ namespace Sound_Space_Editor.Gui
             VFlipBox.Render(delta, mouseX, mouseY);
             SwitchClickToolBox.Render(delta, mouseX, mouseY);
             QuantumBox.Render(delta, mouseX, mouseY);
+            OpenTimingsBox.Render(delta, mouseX, mouseY);
+            OpenBookmarksBox.Render(delta, mouseX, mouseY);
+            StoreNodesBox.Render(delta, mouseX, mouseY);
+            DrawBezierBox.Render(delta, mouseX, mouseY);
 
             TLBox.Render(delta, mouseX, mouseY);
             TCBox.Render(delta, mouseX, mouseY);
@@ -296,6 +328,18 @@ namespace Sound_Space_Editor.Gui
             QuantumBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
             QuantumReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
 
+            OpenTimingsBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+            OpenTimingsReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+
+            OpenBookmarksBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+            OpenBookmarksReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+
+            StoreNodesBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+            StoreNodesReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+
+            DrawBezierBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+            DrawBezierReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+
             TLBox.ClientRectangle.Size = new SizeF(128 * widthdiff, 62 * heightdiff);
             TLReset.ClientRectangle.Size = TLBox.ClientRectangle.Size;
             TCBox.ClientRectangle.Size = TLBox.ClientRectangle.Size;
@@ -361,6 +405,19 @@ namespace Sound_Space_Editor.Gui
             QuantumBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, SwitchClickToolBox.ClientRectangle.Bottom + heightspace);
             QuantumReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, QuantumBox.ClientRectangle.Y);
 
+            OpenTimingsBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, QuantumBox.ClientRectangle.Bottom + heightspace);
+            OpenTimingsReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, OpenTimingsBox.ClientRectangle.Y);
+
+            OpenBookmarksBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, OpenTimingsBox.ClientRectangle.Bottom + heightspace);
+            OpenBookmarksReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, OpenBookmarksBox.ClientRectangle.Y);
+
+            StoreNodesBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, OpenBookmarksBox.ClientRectangle.Bottom + heightspace);
+            StoreNodesReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, StoreNodesBox.ClientRectangle.Y);
+
+            DrawBezierBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, StoreNodesBox.ClientRectangle.Bottom + heightspace);
+            DrawBezierReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, DrawBezierBox.ClientRectangle.Y);
+
+
             TLBox.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.Right + widthspacelarge, HFlipBox.ClientRectangle.Y);
             TLReset.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.X, TLBox.ClientRectangle.Bottom + 4 * heightdiff);
             TCBox.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.Right + 10 * widthdiff, TLBox.ClientRectangle.Y);
@@ -416,6 +473,14 @@ namespace Sound_Space_Editor.Gui
                 return "SwitchClickTool";
             if (QuantumBox.Focused)
                 return "Quantum";
+            if (OpenTimingsBox.Focused)
+                return "OpenTimings";
+            if (OpenBookmarksBox.Focused)
+                return "OpenBookmarks";
+            if (StoreNodesBox.Focused)
+                return "StoreNodes";
+            if (DrawBezierBox.Focused)
+                return "DrawBezier";
 
             if (TLBox.Focused)
                 return "TL";
@@ -439,6 +504,26 @@ namespace Sound_Space_Editor.Gui
             return "";
         }
 
+        private EditorSettings.KeyType AssignKey(Key key)
+        {
+            var keyf = new EditorSettings.KeyType();
+            keyf.Key = key;
+            keyf.CTRL = EditorWindow.Instance._controlDown;
+            keyf.SHIFT = EditorWindow.Instance._shiftDown;
+            keyf.ALT = EditorWindow.Instance._altDown;
+            return keyf;
+        }
+
+        private EditorSettings.KeyType ResetKey(Key key, bool ctrl, bool shift, bool alt)
+        {
+            var keyf = new EditorSettings.KeyType();
+            keyf.Key = key;
+            keyf.CTRL = ctrl;
+            keyf.SHIFT = shift;
+            keyf.ALT = alt;
+            return keyf;
+        }
+
         public override void OnKeyDown(Key keyf, bool control)
         {
             var key = keyf;
@@ -453,87 +538,67 @@ namespace Sound_Space_Editor.Gui
             {
                 case "SelectAll":
                     SelectAllBox.Text = key.ToString().ToUpper();
-                    EditorSettings.SelectAll.Key = key;
-                    EditorSettings.SelectAll.CTRL = EditorWindow.Instance._controlDown;
-                    EditorSettings.SelectAll.SHIFT = EditorWindow.Instance._shiftDown;
-                    EditorSettings.SelectAll.ALT = EditorWindow.Instance._altDown;
+                    EditorSettings.SelectAll = AssignKey(key);
                     break;
                 case "Save":
                     SaveBox.Text = key.ToString().ToUpper();
-                    EditorSettings.Save.Key = key;
-                    EditorSettings.Save.CTRL = EditorWindow.Instance._controlDown;
-                    EditorSettings.Save.SHIFT = EditorWindow.Instance._shiftDown;
-                    EditorSettings.Save.ALT = EditorWindow.Instance._altDown;
+                    EditorSettings.Save = AssignKey(key);
                     break;
                 case "SaveAs":
                     SaveAsBox.Text = key.ToString().ToUpper();
-                    EditorSettings.SaveAs.Key = key;
-                    EditorSettings.SaveAs.CTRL = EditorWindow.Instance._controlDown;
-                    EditorSettings.SaveAs.SHIFT = EditorWindow.Instance._shiftDown;
-                    EditorSettings.SaveAs.ALT = EditorWindow.Instance._altDown;
+                    EditorSettings.SaveAs = AssignKey(key);
                     break;
                 case "Undo":
                     UndoBox.Text = key.ToString().ToUpper();
-                    EditorSettings.Undo.Key = key;
-                    EditorSettings.Undo.CTRL = EditorWindow.Instance._controlDown;
-                    EditorSettings.Undo.SHIFT = EditorWindow.Instance._shiftDown;
-                    EditorSettings.Undo.ALT = EditorWindow.Instance._altDown;
+                    EditorSettings.Undo = AssignKey(key);
                     break;
                 case "Redo":
                     RedoBox.Text = key.ToString().ToUpper();
-                    EditorSettings.Redo.Key = key;
-                    EditorSettings.Redo.CTRL = EditorWindow.Instance._controlDown;
-                    EditorSettings.Redo.SHIFT = EditorWindow.Instance._shiftDown;
-                    EditorSettings.Redo.ALT = EditorWindow.Instance._altDown;
+                    EditorSettings.Redo = AssignKey(key);
                     break;
                 case "Copy":
                     CopyBox.Text = key.ToString().ToUpper();
-                    EditorSettings.Copy.Key = key;
-                    EditorSettings.Copy.CTRL = EditorWindow.Instance._controlDown;
-                    EditorSettings.Copy.SHIFT = EditorWindow.Instance._shiftDown;
-                    EditorSettings.Copy.ALT = EditorWindow.Instance._altDown;
+                    EditorSettings.Copy = AssignKey(key);
                     break;
                 case "Paste":
                     PasteBox.Text = key.ToString().ToUpper();
-                    EditorSettings.Paste.Key = key;
-                    EditorSettings.Paste.CTRL = EditorWindow.Instance._controlDown;
-                    EditorSettings.Paste.SHIFT = EditorWindow.Instance._shiftDown;
-                    EditorSettings.Paste.ALT = EditorWindow.Instance._altDown;
+                    EditorSettings.Paste = AssignKey(key);
                     break;
                 case "Delete":
                     DeleteBox.Text = key.ToString().ToUpper();
-                    EditorSettings.Delete.Key = key;
-                    EditorSettings.Delete.CTRL = EditorWindow.Instance._controlDown;
-                    EditorSettings.Delete.SHIFT = EditorWindow.Instance._shiftDown;
-                    EditorSettings.Delete.ALT = EditorWindow.Instance._altDown;
+                    EditorSettings.Delete = AssignKey(key);
                     break;
                 case "HFlip":
                     HFlipBox.Text = key.ToString().ToUpper();
-                    EditorSettings.HFlip.Key = key;
-                    EditorSettings.HFlip.CTRL = EditorWindow.Instance._controlDown;
-                    EditorSettings.HFlip.SHIFT = EditorWindow.Instance._shiftDown;
-                    EditorSettings.HFlip.ALT = EditorWindow.Instance._altDown;
+                    EditorSettings.HFlip = AssignKey(key);
                     break;
                 case "VFlip":
                     VFlipBox.Text = key.ToString().ToUpper();
-                    EditorSettings.VFlip.Key = key;
-                    EditorSettings.VFlip.CTRL = EditorWindow.Instance._controlDown;
-                    EditorSettings.VFlip.SHIFT = EditorWindow.Instance._shiftDown;
-                    EditorSettings.VFlip.ALT = EditorWindow.Instance._altDown;
+                    EditorSettings.VFlip = AssignKey(key);
                     break;
                 case "SwitchClickTool":
                     SwitchClickToolBox.Text = key.ToString().ToUpper();
-                    EditorSettings.SwitchClickTool.Key = key;
-                    EditorSettings.SwitchClickTool.CTRL = EditorWindow.Instance._controlDown;
-                    EditorSettings.SwitchClickTool.SHIFT = EditorWindow.Instance._shiftDown;
-                    EditorSettings.SwitchClickTool.ALT = EditorWindow.Instance._altDown;
+                    EditorSettings.SwitchClickTool = AssignKey(key);
                     break;
                 case "Quantum":
                     QuantumBox.Text = key.ToString().ToUpper();
-                    EditorSettings.Quantum.Key = key;
-                    EditorSettings.Quantum.CTRL = EditorWindow.Instance._controlDown;
-                    EditorSettings.Quantum.SHIFT = EditorWindow.Instance._shiftDown;
-                    EditorSettings.Quantum.ALT = EditorWindow.Instance._altDown;
+                    EditorSettings.Quantum = AssignKey(key);
+                    break;
+                case "OpenTimings":
+                    OpenTimingsBox.Text = key.ToString().ToUpper();
+                    EditorSettings.OpenTimings = AssignKey(key);
+                    break;
+                case "OpenBookmarks":
+                    OpenBookmarksBox.Text = key.ToString().ToUpper();
+                    EditorSettings.OpenBookmarks = AssignKey(key);
+                    break;
+                case "StoreNodes":
+                    StoreNodesBox.Text = key.ToString().ToUpper();
+                    EditorSettings.StoreNodes = AssignKey(key);
+                    break;
+                case "DrawBezier":
+                    DrawBezierBox.Text = key.ToString().ToUpper();
+                    EditorSettings.DrawBezier = AssignKey(key);
                     break;
                 case "TL":
                     TLBox.Text = key.ToString().ToUpper();
@@ -588,6 +653,10 @@ namespace Sound_Space_Editor.Gui
             VFlipBox.OnMouseClick(x, y);
             SwitchClickToolBox.OnMouseClick(x, y);
             QuantumBox.OnMouseClick(x, y);
+            OpenTimingsBox.OnMouseClick(x, y);
+            OpenBookmarksBox.OnMouseClick(x, y);
+            StoreNodesBox.OnMouseClick(x, y);
+            DrawBezierBox.OnMouseClick(x, y);
 
             TLBox.OnMouseClick(x, y);
             TCBox.OnMouseClick(x, y);
@@ -610,88 +679,68 @@ namespace Sound_Space_Editor.Gui
                     EditorWindow.Instance.OpenGuiScreen(new GuiScreenSettings());
                     break;
                 case 1:
-                    EditorSettings.SelectAll.Key = Key.A;
-                    EditorSettings.SelectAll.CTRL = true;
-                    EditorSettings.SelectAll.SHIFT = false;
-                    EditorSettings.SelectAll.ALT = false;
+                    EditorSettings.SelectAll = ResetKey(Key.A, true, false, false);
                     SelectAllBox.Text = "A";
                     break;
                 case 2:
-                    EditorSettings.Save.Key = Key.S;
-                    EditorSettings.Save.CTRL = true;
-                    EditorSettings.Save.SHIFT = false;
-                    EditorSettings.Save.ALT = false;
+                    EditorSettings.Save = ResetKey(Key.S, true, false, false);
                     SaveBox.Text = "S";
                     break;
                 case 3:
-                    EditorSettings.SaveAs.Key = Key.S;
-                    EditorSettings.SaveAs.CTRL = true;
-                    EditorSettings.SaveAs.SHIFT = true;
-                    EditorSettings.SaveAs.ALT = false;
+                    EditorSettings.SaveAs = ResetKey(Key.S, true, true, false);
                     SaveAsBox.Text = "S";
                     break;
                 case 4:
-                    EditorSettings.Undo.Key = Key.Z;
-                    EditorSettings.Undo.CTRL = true;
-                    EditorSettings.Undo.SHIFT = false;
-                    EditorSettings.Undo.ALT = false;
+                    EditorSettings.Undo = ResetKey(Key.Z, true, false, false);
                     UndoBox.Text = "Z";
                     break;
                 case 5:
-                    EditorSettings.Redo.Key = Key.Y;
-                    EditorSettings.Redo.CTRL = true;
-                    EditorSettings.Redo.SHIFT = false;
-                    EditorSettings.Redo.ALT = false;
+                    EditorSettings.Redo = ResetKey(Key.Y, true, false, false);
                     RedoBox.Text = "Y";
                     break;
                 case 6:
-                    EditorSettings.Copy.Key = Key.C;
-                    EditorSettings.Copy.CTRL = true;
-                    EditorSettings.Copy.SHIFT = false;
-                    EditorSettings.Copy.ALT = false;
+                    EditorSettings.Copy = ResetKey(Key.C, true, false, false);
                     CopyBox.Text = "C";
                     break;
                 case 7:
-                    EditorSettings.Paste.Key = Key.V;
-                    EditorSettings.Paste.CTRL = true;
-                    EditorSettings.Paste.SHIFT = false;
-                    EditorSettings.Paste.ALT = false;
+                    EditorSettings.Paste = ResetKey(Key.V, true, false, false);
                     PasteBox.Text = "V";
                     break;
                 case 8:
-                    EditorSettings.Delete.Key = Key.Delete;
-                    EditorSettings.Delete.CTRL = false;
-                    EditorSettings.Delete.SHIFT = false;
-                    EditorSettings.Delete.ALT = false;
+                    EditorSettings.Delete = ResetKey(Key.Delete, false, false, false);
                     DeleteBox.Text = "DELETE";
                     break;
                 case 9:
-                    EditorSettings.HFlip.Key = Key.H;
-                    EditorSettings.HFlip.CTRL = false;
-                    EditorSettings.HFlip.SHIFT = true;
-                    EditorSettings.HFlip.ALT = false;
+                    EditorSettings.HFlip = ResetKey(Key.H, false, true, false);
                     HFlipBox.Text = "H";
                     break;
                 case 10:
-                    EditorSettings.VFlip.Key = Key.V;
-                    EditorSettings.VFlip.CTRL = false;
-                    EditorSettings.VFlip.SHIFT = true;
-                    EditorSettings.VFlip.ALT = false;
+                    EditorSettings.VFlip = ResetKey(Key.V, false, true, false);
                     VFlipBox.Text = "V";
                     break;
                 case 11:
-                    EditorSettings.SwitchClickTool.Key = Key.Tab;
-                    EditorSettings.SwitchClickTool.CTRL = false;
-                    EditorSettings.SwitchClickTool.SHIFT = false;
-                    EditorSettings.SwitchClickTool.ALT = false;
+                    EditorSettings.SwitchClickTool = ResetKey(Key.Tab, false, false, false);
                     SwitchClickToolBox.Text = "TAB";
                     break;
                 case 12:
-                    EditorSettings.Quantum.Key = Key.Q;
-                    EditorSettings.Quantum.CTRL = true;
-                    EditorSettings.Quantum.SHIFT = false;
-                    EditorSettings.Quantum.ALT = false;
+                    EditorSettings.Quantum = ResetKey(Key.Q, true, false, false);
                     QuantumBox.Text = "Q";
+                    break;
+                case 13:
+                    EditorSettings.OpenTimings = ResetKey(Key.T, true, false, false);
+                    OpenTimingsBox.Text = "T";
+                    break;
+                case 14:
+                    EditorSettings.OpenBookmarks = ResetKey(Key.B, true, false, false);
+                    OpenBookmarksBox.Text = "B";
+                    break;
+                case 15:
+                    EditorSettings.StoreNodes = ResetKey(Key.S, false, true, false);
+                    StoreNodesBox.Text = "S";
+                    break;
+                case 16:
+                    EditorSettings.DrawBezier = ResetKey(Key.D, false, true, false);
+                    DrawBezierBox.Text = "D";
                     break;
                 case 90:
                     EditorSettings.GridKeys.TL = Key.Q;

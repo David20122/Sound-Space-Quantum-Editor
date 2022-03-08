@@ -1171,107 +1171,49 @@ namespace Sound_Space_Editor
 			GuiScreen.OnKeyTyped(e.KeyChar);
 		}
 
+		private bool CompareKeybind(Key keyf, EditorSettings.KeyType key)
+        {
+			return key.Key == keyf && key.CTRL == _controlDown && key.SHIFT == _shiftDown && key.ALT == _altDown;
+        }
+
 		private string CompareKeys(KeyboardKeyEventArgs e)
 		{
 			var key = e.Key;
 			if (key == Key.BackSpace)
 				key = Key.Delete;
 
-			if (key == EditorSettings.SelectAll.Key)
-			{
-				if (EditorSettings.SelectAll.CTRL == _controlDown)
-					if (EditorSettings.SelectAll.SHIFT == _shiftDown)
-						if (EditorSettings.SelectAll.ALT == _altDown)
-							return "SelectAll";
-			}
-
-			if (key == EditorSettings.Save.Key)
-			{
-				if (EditorSettings.Save.CTRL == _controlDown)
-					if (EditorSettings.Save.SHIFT == _shiftDown)
-						if (EditorSettings.Save.ALT == _altDown)
-							return "Save";
-			}
-
-			if (key == EditorSettings.SaveAs.Key)
-			{
-				if (EditorSettings.SaveAs.CTRL == _controlDown)
-					if (EditorSettings.SaveAs.SHIFT == _shiftDown)
-						if (EditorSettings.SaveAs.ALT == _altDown)
-							return "SaveAs";
-			}
-
-			if (key == EditorSettings.Undo.Key)
-			{
-				if (EditorSettings.Undo.CTRL == _controlDown)
-					if (EditorSettings.Undo.SHIFT == _shiftDown)
-						if (EditorSettings.Undo.ALT == _altDown)
-							return "Undo";
-			}
-
-			if (key == EditorSettings.Redo.Key)
-			{
-				if (EditorSettings.Redo.CTRL == _controlDown)
-					if (EditorSettings.Redo.SHIFT == _shiftDown)
-						if (EditorSettings.Redo.ALT == _altDown)
-							return "Redo";
-			}
-
-			if (key == EditorSettings.Copy.Key)
-			{
-				if (EditorSettings.Copy.CTRL == _controlDown)
-					if (EditorSettings.Copy.SHIFT == _shiftDown)
-						if (EditorSettings.Copy.ALT == _altDown)
-							return "Copy";
-			}
-
-			if (key == EditorSettings.Paste.Key)
-			{
-				if (EditorSettings.Paste.CTRL == _controlDown)
-					if (EditorSettings.Paste.SHIFT == _shiftDown)
-						if (EditorSettings.Paste.ALT == _altDown)
-							return "Paste";
-			}
-
-			if (key == EditorSettings.Delete.Key)
-            {
-				if (EditorSettings.Delete.CTRL == _controlDown)
-					if (EditorSettings.Delete.SHIFT == _shiftDown)
-						if (EditorSettings.Delete.ALT == _altDown)
-							return "Delete";
-            }
-
-			if (key == EditorSettings.HFlip.Key)
-			{
-				if (EditorSettings.HFlip.CTRL == _controlDown)
-					if (EditorSettings.HFlip.SHIFT == _shiftDown)
-						if (EditorSettings.HFlip.ALT == _altDown)
-							return "HFlip";
-			}
-
-			if (key == EditorSettings.VFlip.Key)
-			{
-				if (EditorSettings.VFlip.CTRL == _controlDown)
-					if (EditorSettings.VFlip.SHIFT == _shiftDown)
-						if (EditorSettings.VFlip.ALT == _altDown)
-							return "VFlip";
-			}
-
-			if (key == EditorSettings.SwitchClickTool.Key)
-			{
-				if (EditorSettings.SwitchClickTool.CTRL == _controlDown)
-					if (EditorSettings.SwitchClickTool.SHIFT == _shiftDown)
-						if (EditorSettings.SwitchClickTool.ALT == _altDown)
-							return "SwitchClickTool";
-			}
-
-			if (key == EditorSettings.Quantum.Key)
-			{
-				if (EditorSettings.Quantum.CTRL == _controlDown)
-					if (EditorSettings.Quantum.SHIFT == _shiftDown)
-						if (EditorSettings.Quantum.ALT == _altDown)
-							return "Quantum";
-			}
+			if (CompareKeybind(key, EditorSettings.SelectAll))
+				return "SelectAll";
+			if (CompareKeybind(key, EditorSettings.Save))
+				return "Save";
+			if (CompareKeybind(key, EditorSettings.SaveAs))
+				return "SaveAs";
+			if (CompareKeybind(key, EditorSettings.Undo))
+				return "Undo";
+			if (CompareKeybind(key, EditorSettings.Redo))
+				return "Redo";
+			if (CompareKeybind(key, EditorSettings.Copy))
+				return "Copy";
+			if (CompareKeybind(key, EditorSettings.Paste))
+				return "Paste";
+			if (CompareKeybind(key, EditorSettings.Delete))
+				return "Delete";
+			if (CompareKeybind(key, EditorSettings.HFlip))
+				return "HFlip";
+			if (CompareKeybind(key, EditorSettings.VFlip))
+				return "VFlip";
+			if (CompareKeybind(key, EditorSettings.SwitchClickTool))
+				return "SwitchClickTool";
+			if (CompareKeybind(key, EditorSettings.Quantum))
+				return "Quantum";
+			if (CompareKeybind(key, EditorSettings.OpenTimings))
+				return "OpenTimings";
+			if (CompareKeybind(key, EditorSettings.OpenBookmarks))
+				return "OpenBookmarks";
+			if (CompareKeybind(key, EditorSettings.StoreNodes))
+				return "StoreNodes";
+			if (CompareKeybind(key, EditorSettings.DrawBezier))
+				return "DrawBezier";
 
 			if (key == Key.Number0)
 				return "Pattern0";
@@ -1609,6 +1551,101 @@ namespace Sound_Space_Editor
 						editor.Quantum.Toggle = !editor.Quantum.Toggle;
 						Settings.Default.Quantum = editor.Quantum.Toggle;
 						Settings.Default.Save();
+						return;
+					case "OpenTimings":
+						if (TimingsWindow.inst != null)
+							TimingsWindow.inst.Close();
+						new TimingsWindow().Show();
+						return;
+					case "OpenBookmarks":
+						if (BookmarkSetup.inst != null)
+							BookmarkSetup.inst.Close();
+						new BookmarkSetup().Show();
+						return;
+					case "StoreNodes":
+						if (SelectedNotes.Count > 1)
+							editor.beziernodes = SelectedNotes.ToList();
+						return;
+					case "DrawBezier":
+						if (int.TryParse(editor.BezierBox.Text, out var divisor) && divisor > 0 && ((editor.beziernodes != null && editor.beziernodes.Count > 1) || SelectedNotes.Count > 1))
+						{
+							try
+							{
+								var finalnodes = SelectedNotes.ToList();
+								if (editor.beziernodes != null && editor.beziernodes.Count > 1)
+									finalnodes = editor.beziernodes;
+								var finalnotes = new List<Note>();
+								var k = finalnodes.Count - 1;
+								float tdiff = finalnodes[k].Ms - finalnodes[0].Ms;
+								double d = 1f / (divisor * k);
+								if (!Settings.Default.CurveBezier)
+									d = 1f / divisor;
+								if (Settings.Default.CurveBezier)
+								{
+									for (double t = 0; t <= 1; t += d)
+									{
+										float xf = 0;
+										float yf = 0;
+										double tf = finalnodes[0].Ms + tdiff * t;
+										for (int v = 0; v <= k; v++)
+										{
+											var note = finalnodes[v];
+											var bez = (double)editor.BinomialCoefficient(k, v) * (Math.Pow(1 - t, k - v) * Math.Pow(t, v));
+
+											xf += (float)(bez * note.X);
+											yf += (float)(bez * note.Y);
+										}
+										finalnotes.Add(new Note(xf, yf, (long)tf));
+									}
+								}
+								else
+								{
+									for (int v = 0; v < k; v++)
+									{
+										var note = finalnodes[v];
+										var nextnote = finalnodes[v + 1];
+										var xdist = nextnote.X - note.X;
+										var ydist = nextnote.Y - note.Y;
+										var tdist = nextnote.Ms - note.Ms;
+
+										for (double t = 0; t < 1; t += d)
+										{
+											if (t > 0)
+											{
+												var xf = note.X + xdist * t;
+												var yf = note.Y + ydist * t;
+												var tf = note.Ms + tdist * t;
+
+												finalnotes.Add(new Note((float)xf, (float)yf, (long)tf));
+											}
+										}
+									}
+								}
+								SelectedNotes.Clear();
+								if (!Settings.Default.CurveBezier)
+									finalnodes = new List<Note>();
+								Notes.RemoveAll(finalnodes);
+								Notes.AddAll(finalnotes);
+								UndoRedo.AddUndoRedo("DRAW BEZIER", () =>
+								{
+									Notes.AddAll(finalnodes);
+									Notes.RemoveAll(finalnotes);
+								}, () =>
+								{
+									Notes.RemoveAll(finalnodes);
+									Notes.AddAll(finalnotes);
+								});
+							}
+							catch (OverflowException)
+							{
+								editor.ShowToast("TOO MANY NODES", Color.FromArgb(255, 200, 0));
+							}
+							catch
+							{
+								editor.ShowToast("FAILED TO DRAW CURVE", Color.FromArgb(255, 200, 0));
+							}
+						}
+						editor.beziernodes.Clear();
 						return;
 					case "Pattern0":
 						if (_shiftDown && SelectedNotes.Count > 0)
