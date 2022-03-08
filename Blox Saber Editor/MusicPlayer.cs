@@ -166,7 +166,8 @@ namespace Sound_Space_Editor
 		private void OnEnded(int handle, int channel, int data, IntPtr user)
         {
 			Pause();
-			EditorWindow.Instance.currentTime = TimeSpan.FromMilliseconds(TotalTime.TotalMilliseconds - 1);
+			CurrentTime = TimeSpan.FromMilliseconds(TotalTime.TotalMilliseconds - 1);
+			EditorWindow.Instance.currentTime = CurrentTime;
 			EditorWindow.Instance.AlignTimeline();
         }
 
@@ -188,6 +189,7 @@ namespace Sound_Space_Editor
 
 			Bass.BASS_ChannelPause(streamID);
 			Bass.BASS_ChannelSetPosition(streamID, pos, BASSMode.BASS_POS_BYTES);
+			EditorWindow.Instance.currentTime = CurrentTime;
 		}
 
 		public void Stop()
