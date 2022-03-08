@@ -237,8 +237,10 @@ namespace Sound_Space_Editor.Gui
             };
 
             var lockedstring = string.Join("\n>", lockedlist);
+            var lockedwidth = fr.GetWidth(lockedstring, labelsize);
+            var lockedoffset = (_backButton.ClientRectangle.Width - lockedwidth) / 2;
 
-            fr.Render(lockedstring, (int)HFlipBox.ClientRectangle.X, (int)_backButton.ClientRectangle.Top - 26 * lockedlist.Count(), 24);
+            fr.Render(lockedstring, (int)(_backButton.ClientRectangle.X + lockedoffset), (int)_backButton.ClientRectangle.Top - (labelsize + 2) * lockedlist.Count(), labelsize);
 
             SelectAllBox.Render(delta, mouseX, mouseY);
             SaveBox.Render(delta, mouseX, mouseY);
@@ -292,7 +294,7 @@ namespace Sound_Space_Editor.Gui
 
             var csawidth = EditorWindow.Instance.FontRenderer.GetWidth("CTRL + SHIFT + ALT", (int)(24 * Math.Min(widthdiff, heightdiff)));
 
-            SelectAllBox.ClientRectangle.Size = new SizeF(64 * widthdiff, 32 * heightdiff);
+            SelectAllBox.ClientRectangle.Size = new SizeF(128 * widthdiff, 40 * heightdiff);
             SelectAllReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
 
             SaveBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
@@ -418,7 +420,7 @@ namespace Sound_Space_Editor.Gui
             DrawBezierReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, DrawBezierBox.ClientRectangle.Y);
 
 
-            TLBox.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.Right + widthspacelarge, HFlipBox.ClientRectangle.Y);
+            TLBox.ClientRectangle.Location = new PointF(size.Width - TLBox.ClientRectangle.Width * 3 - 10 * 2 * widthdiff - 150 * widthdiff, HFlipBox.ClientRectangle.Y);
             TLReset.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.X, TLBox.ClientRectangle.Bottom + 4 * heightdiff);
             TCBox.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.Right + 10 * widthdiff, TLBox.ClientRectangle.Y);
             TCReset.ClientRectangle.Location = new PointF(TCBox.ClientRectangle.X, TLReset.ClientRectangle.Y);
