@@ -746,7 +746,8 @@ namespace Sound_Space_Editor
 
 					if (editor.Track.MouseOverNote is Note tn)
 					{
-						MusicPlayer.Pause();
+						if (MusicPlayer.IsPlaying)
+							MusicPlayer.Pause();
 
 						_draggingNoteTimeline = true;
 
@@ -897,7 +898,8 @@ namespace Sound_Space_Editor
 					}
 					else if (editor.Track.MouseOverPoint is BPM pn)
                     {
-						MusicPlayer.Pause();
+						if (MusicPlayer.IsPlaying)
+							MusicPlayer.Pause();
 
 						_draggingPointTimeline = true;
 
@@ -912,7 +914,8 @@ namespace Sound_Space_Editor
 					{
 						_wasPlaying = MusicPlayer.IsPlaying;
 
-						MusicPlayer.Pause();
+						if (_wasPlaying)
+							MusicPlayer.Pause();
 
 						_draggingTimeline = true;
 						_dragStartX = e.X;
@@ -988,7 +991,8 @@ namespace Sound_Space_Editor
 
 				if (editor.ClientRectangle.Contains(e.Position))
 				{
-					MusicPlayer.Pause();
+					if (MusicPlayer.IsPlaying)
+						MusicPlayer.Pause();
 					editor.Timeline.Dragging = true;
 
 					OnMouseMove(new MouseMoveEventArgs(e.X, e.Y, 0, 0));
@@ -1012,7 +1016,8 @@ namespace Sound_Space_Editor
 		{
 			if (_draggingNoteTimeline)
 			{
-				MusicPlayer.Pause();
+				if (MusicPlayer.IsPlaying)
+					MusicPlayer.Pause();
 
 				if (_draggedNotes.Count > 0)
 				{
@@ -1064,7 +1069,8 @@ namespace Sound_Space_Editor
 
 			if (_draggingPointTimeline)
             {
-				MusicPlayer.Pause();
+				if (MusicPlayer.IsPlaying)
+					MusicPlayer.Pause();
 
 				if (_draggedPoint != null && _draggedPoint is BPM point)
                 {
@@ -1090,7 +1096,8 @@ namespace Sound_Space_Editor
 
 			if (_draggingNoteGrid && _draggedNotes.FirstOrDefault() is Note note2)
 			{
-				MusicPlayer.Pause();
+				if (MusicPlayer.IsPlaying)
+					MusicPlayer.Pause();
 				//OnDraggingGridNote(_lastMouse);
 
 				var xdiff = note2.X - _dragStartIndexX;
@@ -1120,7 +1127,8 @@ namespace Sound_Space_Editor
 
 			if (_draggingTimeline)
 			{
-				MusicPlayer.Pause();
+				if (_wasPlaying)
+					MusicPlayer.Pause();
 				OnDraggingTimeline(e.X);
 
 				if (_wasPlaying)
@@ -1358,7 +1366,8 @@ namespace Sound_Space_Editor
 						{
 							var wasPlaying = MusicPlayer.IsPlaying;
 
-							MusicPlayer.Pause();
+							if (wasPlaying)
+								MusicPlayer.Pause();
 
 							if (PromptSave())
 							{
@@ -1381,7 +1390,8 @@ namespace Sound_Space_Editor
 					case "SaveAs":
 						var wasPlaying1 = MusicPlayer.IsPlaying;
 
-						MusicPlayer.Pause();
+						if (wasPlaying1)
+							MusicPlayer.Pause();
 
 						if (PromptSave())
 						{
@@ -1395,7 +1405,8 @@ namespace Sound_Space_Editor
 					case "Undo":
 						if (UndoRedo.CanUndo)
 						{
-							MusicPlayer.Pause();
+							if (MusicPlayer.IsPlaying)
+								MusicPlayer.Pause();
 
 							UndoRedo.Undo();
 						}
@@ -1403,7 +1414,8 @@ namespace Sound_Space_Editor
 					case "Redo":
 						if (UndoRedo.CanRedo)
 						{
-							MusicPlayer.Pause();
+							if (MusicPlayer.IsPlaying)
+								MusicPlayer.Pause();
 
 							UndoRedo.Redo();
 						}
@@ -1427,7 +1439,8 @@ namespace Sound_Space_Editor
 						{
 							if (Clipboard.ContainsData("notes"))
 							{
-								MusicPlayer.Pause();
+								if (MusicPlayer.IsPlaying)
+									MusicPlayer.Pause();
 
 								var copied = ((List<Note>)Clipboard.GetData("notes")).ToList();
 
@@ -1921,7 +1934,8 @@ namespace Sound_Space_Editor
 				}
 				else
 				{
-					MusicPlayer.Pause();
+					if (MusicPlayer.IsPlaying)
+						MusicPlayer.Pause();
 					var time = (long)currentTime.TotalMilliseconds;
 					var maxTime = (long)totalTime.TotalMilliseconds - 1;
 
@@ -1988,7 +2002,8 @@ namespace Sound_Space_Editor
 			{
 				var wasPlaying = MusicPlayer.IsPlaying;
 
-				MusicPlayer.Pause();
+				if (wasPlaying)
+					MusicPlayer.Pause();
 
 				var wasFullscreen = IsFullscreen;
 
