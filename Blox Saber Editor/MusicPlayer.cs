@@ -167,7 +167,7 @@ namespace Sound_Space_Editor
         {
 			Pause();
 			CurrentTime = TimeSpan.FromMilliseconds(TotalTime.TotalMilliseconds - 1);
-			EditorWindow.Instance.currentTime = CurrentTime;
+			EditorWindow.Instance.currentTime = TimeSpan.FromMilliseconds(CurrentTime.TotalMilliseconds + 0.0375 * (EditorWindow.Instance.tempo - 0.2f));
 			EditorWindow.Instance.AlignTimeline();
         }
 

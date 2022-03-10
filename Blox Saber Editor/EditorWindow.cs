@@ -369,9 +369,6 @@ namespace Sound_Space_Editor
 					AlignTimeline();
 				}
 
-				Console.WriteLine(MusicPlayer.CurrentTime.TotalMilliseconds);
-				Console.WriteLine();
-
 				if (_draggingNoteTimeline)
 				{
 					var rect = editor.Track.ClientRectangle;
