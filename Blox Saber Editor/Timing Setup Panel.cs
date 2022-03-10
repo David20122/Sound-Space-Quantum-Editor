@@ -34,6 +34,7 @@ namespace Sound_Space_Editor
                 {
                     var newpoint = new BPM(bpm, time);
                     GuiTrack.BPMs.Add(newpoint);
+                    point.Cells[2].Value = "X";
                 }
             }
             OrderList();
@@ -56,7 +57,7 @@ namespace Sound_Space_Editor
             OrderList();
             foreach (var point in GuiTrack.BPMs)
             {
-                PointList.Rows.Add(point.bpm, point.Ms);
+                PointList.Rows.Add(point.bpm, point.Ms, "X");
             }
         }
 
@@ -424,7 +425,7 @@ namespace Sound_Space_Editor
 
         private void PointList_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && e.RowIndex < PointList.RowCount - 1 && ((DataGridView)sender)[e.ColumnIndex, e.RowIndex] is DataGridViewButtonCell)
+            if (e.RowIndex >= 0 && e.RowIndex <= GuiTrack.BPMs.Count - 1 && ((DataGridView)sender)[e.ColumnIndex, e.RowIndex] is DataGridViewButtonCell)
             {
                 PointList.Rows.RemoveAt(e.RowIndex);
                 GuiTrack.BPMs.RemoveAt(e.RowIndex);

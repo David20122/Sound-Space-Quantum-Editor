@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.PointList = new System.Windows.Forms.DataGridView();
             this.CurrentButton = new System.Windows.Forms.Button();
             this.MoveLabel = new System.Windows.Forms.Label();
@@ -187,11 +188,17 @@
             // 
             // Remove
             // 
-            this.Remove.HeaderText = "X";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Red;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
+            this.Remove.DefaultCellStyle = dataGridViewCellStyle1;
+            this.Remove.HeaderText = "";
             this.Remove.Name = "Remove";
             this.Remove.ReadOnly = true;
             this.Remove.Text = "";
-            this.Remove.UseColumnTextForButtonValue = true;
             this.Remove.Width = 20;
             // 
             // TimingsWindow

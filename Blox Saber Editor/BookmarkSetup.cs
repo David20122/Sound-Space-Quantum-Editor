@@ -25,7 +25,7 @@ namespace Sound_Space_Editor
             BookmarkList.Rows.Clear();
             foreach (var point in GuiSliderTimeline.Bookmarks)
             {
-                BookmarkList.Rows.Add(point.Name, point.MS.ToString());
+                BookmarkList.Rows.Add(point.Name, point.MS.ToString(), "X");
             }
         }
         private void UpdateList(object sender, DataGridViewCellEventArgs e)
@@ -38,6 +38,7 @@ namespace Sound_Space_Editor
                 {
                     var bmrk = new Bookmark((string)bookmark.Cells[0].Value, time);
                     GuiSliderTimeline.Bookmarks.Add(bmrk);
+                    bookmark.Cells[2].Value = "X";
                 }
             }
         }
@@ -50,7 +51,7 @@ namespace Sound_Space_Editor
 
         private void BookmarkList_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && e.RowIndex < BookmarkList.RowCount - 1 && ((DataGridView)sender)[e.ColumnIndex, e.RowIndex] is DataGridViewButtonCell)
+            if (e.RowIndex >= 0 && e.RowIndex <= GuiSliderTimeline.Bookmarks.Count - 1 && ((DataGridView)sender)[e.ColumnIndex, e.RowIndex] is DataGridViewButtonCell)
             {
                 BookmarkList.Rows.RemoveAt(e.RowIndex);
                 GuiSliderTimeline.Bookmarks.RemoveAt(e.RowIndex);
