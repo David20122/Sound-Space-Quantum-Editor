@@ -99,6 +99,7 @@ namespace Sound_Space_Editor
 		private string _file;
 
 		private long _soundId = -1;
+		public float tempo = 1f;
 		public TimeSpan currentTime;
 		public TimeSpan totalTime;
 
@@ -367,6 +368,9 @@ namespace Sound_Space_Editor
 					currentTime = MusicPlayer.CurrentTime;
 					AlignTimeline();
 				}
+
+				Console.WriteLine(MusicPlayer.CurrentTime.TotalMilliseconds);
+				Console.WriteLine();
 
 				if (_draggingNoteTimeline)
 				{
@@ -637,6 +641,7 @@ namespace Sound_Space_Editor
 						tick = (tick - 16) * 2 + 16;
 
 					MusicPlayer.Tempo = MathHelper.Clamp(0.2f + tick * 0.05f, 0.2f, 2);
+					tempo = MathHelper.Clamp(0.2f + tick * 0.05f, 0.2f, 2);
 				}
 				if (editor.NoteAlign.Dragging)
 				{
@@ -797,7 +802,8 @@ namespace Sound_Space_Editor
 					}
 					else if (editor.Grid.MouseOverNote is Note gn && (!Settings.Default.SeparateClickTools || SelectTool))
 					{
-						MusicPlayer.Pause();
+						if (MusicPlayer.IsPlaying)
+							MusicPlayer.Pause();
 
 						_draggingNoteGrid = true;
 
