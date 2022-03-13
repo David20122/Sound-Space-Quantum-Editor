@@ -135,7 +135,7 @@ namespace Sound_Space_Editor.Gui
 
 				var renderedText = _text;
 
-				var txwidthratio = fr.GetWidth(renderedText, 24) / (rect.Width - 4);
+				var txwidthratio = Math.Max(0, fr.GetWidth(renderedText, 24) / (rect.Width - 4));
 				var txheight = (int)Math.Min(24, Math.Min(rect.Height, 24 / txwidthratio));
 
 				/*while (fr.GetWidth(renderedText, 24) != null && fr.GetWidth(renderedText, 24) > rect.Width - rect.Height / 2)
@@ -187,7 +187,7 @@ namespace Sound_Space_Editor.Gui
 
 			if (_text.Length > 0)
             {
-				var txwidthratio = EditorWindow.Instance.FontRenderer.GetWidth(_text, 24) / (ClientRectangle.Width - 4);
+				var txwidthratio = Math.Max(0, EditorWindow.Instance.FontRenderer.GetWidth(_text, 24) / (ClientRectangle.Width - 4));
 				var txheight = (int)Math.Min(24, Math.Min(ClientRectangle.Height, 24 / txwidthratio));
 
 				var textwidth = EditorWindow.Instance.FontRenderer.GetWidth(_text, txheight);
