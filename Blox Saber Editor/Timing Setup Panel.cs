@@ -23,27 +23,32 @@ namespace Sound_Space_Editor
         }
 
         private CultureInfo culture;
+        private bool FreezeUpdates = false;
 
         private void UpdateList(object sender, DataGridViewCellEventArgs e)
         {
-            GuiTrack.BPMs.Clear();
-            for (int i = 0; i < PointList.Rows.Count; i++)
+            if (!FreezeUpdates)
             {
-                var point = PointList.Rows[i];
-                if (point.Cells[0].Value != null && point.Cells[1].Value != null && float.TryParse(point.Cells[0].Value.ToString(), out var bpm) && long.TryParse(point.Cells[1].Value.ToString(), out var time))
+                GuiTrack.BPMs.Clear();
+                for (int i = 0; i < PointList.Rows.Count; i++)
                 {
-                    var newpoint = new BPM(bpm, time);
-                    GuiTrack.BPMs.Add(newpoint);
-                    point.Cells[2].Value = "X";
+                    var point = PointList.Rows[i];
+                    if (point.Cells[0].Value != null && point.Cells[1].Value != null && float.TryParse(point.Cells[0].Value.ToString(), out var bpm) && long.TryParse(point.Cells[1].Value.ToString(), out var time))
+                    {
+                        var newpoint = new BPM(bpm, time);
+                        GuiTrack.BPMs.Add(newpoint);
+                        point.Cells[2].Value = "X";
+                    }
                 }
+                OrderList();
             }
-            OrderList();
         }
 
         private void CurrentButton_Click(object sender, EventArgs e)
         {
             if (PointList.SelectedCells.Count > 0)
                 PointList.SelectedCells[0].OwningRow.Cells[1].Value = EditorWindow.Instance.currentTime.TotalMilliseconds.ToString();
+            UpdateList(sender, new DataGridViewCellEventArgs(0, 0));
         }
 
         private void OrderList()
@@ -53,20 +58,24 @@ namespace Sound_Space_Editor
 
         public void ResetList()
         {
+            FreezeUpdates = true;
+
             PointList.Rows.Clear();
             OrderList();
             foreach (var point in GuiTrack.BPMs)
             {
                 PointList.Rows.Add(point.bpm, point.Ms, "X");
             }
+
+            FreezeUpdates = false;
         }
 
         private void MoveButton_Click(object sender, EventArgs e)
         {
-            foreach (DataGridViewRow row in PointList.SelectedRows)
+            foreach (DataGridViewCell cell in PointList.SelectedCells)
             {
-                var point = GuiTrack.BPMs[row.Index];
-                point.Ms += (long)MoveBox.Value;
+                if (cell.OwningRow.Index < GuiTrack.BPMs.Count)
+                    GuiTrack.BPMs[cell.OwningRow.Index].Ms += (long)MoveBox.Value;
             }
             ResetList();
         }
