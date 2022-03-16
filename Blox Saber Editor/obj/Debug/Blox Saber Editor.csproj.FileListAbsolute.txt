@@ -36,7 +36,6 @@ F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\OpenTK.dll
 F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\Bass.Net.xml
 F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\OpenTK.pdb
 F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\OpenTK.xml
-F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Blox Saber Editor.csprojAssemblyReference.cache
 F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound_Space_Editor.Properties.Resources.resources
 F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound_Space_Editor.TimingsWindow.resources
 F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.GenerateResource.cache
@@ -76,3 +75,4 @@ C:\Users\pc\Documents\SSQE\Blox Saber Editor\bin\Debug\System.Json.xml
 C:\Users\pc\Documents\SSQE\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.CopyComplete
 C:\Users\pc\Documents\SSQE\Blox Saber Editor\obj\Debug\Sound_Space_Editor.BookmarkSetup.resources
 F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound_Space_Editor.BookmarkSetup.resources
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.AssemblyReference.cache

@@ -33,7 +33,9 @@ namespace Sound_Space_Editor
                 for (int i = 0; i < PointList.Rows.Count; i++)
                 {
                     var point = PointList.Rows[i];
-                    if (point.Cells[0].Value != null && point.Cells[1].Value != null && float.TryParse(point.Cells[0].Value.ToString(), out var bpm) && long.TryParse(point.Cells[1].Value.ToString(), out var time))
+                    if (point.Cells[1].Value == null)
+                        point.Cells[1].Value = 0;
+                    if (point.Cells[0].Value != null && float.TryParse(point.Cells[0].Value.ToString(), out var bpm) && long.TryParse(point.Cells[1].Value.ToString(), out var time))
                     {
                         var newpoint = new BPM(bpm, time);
                         GuiTrack.BPMs.Add(newpoint);

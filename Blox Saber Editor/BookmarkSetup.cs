@@ -34,7 +34,9 @@ namespace Sound_Space_Editor
             for (int i = 0; i < BookmarkList.Rows.Count; i++)
             {
                 var bookmark = BookmarkList.Rows[i];
-                if (bookmark.Cells[0].Value != null && bookmark.Cells[1].Value != null && int.TryParse((string)bookmark.Cells[1].Value, out var time))
+                if (bookmark.Cells[1].Value == null)
+                    bookmark.Cells[1].Value = 0;
+                if (bookmark.Cells[0].Value != null && int.TryParse((string)bookmark.Cells[1].Value, out var time))
                 {
                     var bmrk = new Bookmark((string)bookmark.Cells[0].Value, time);
                     GuiSliderTimeline.Bookmarks.Add(bmrk);
