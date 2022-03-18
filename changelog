@@ -1,21 +1,65 @@
 ----------------------------------
-     -- 1.7.2.3 - 3/1/2021 --
+  -- 1.8 Release - 18/3/2022 --
+  
+               ADDS:
+- Bezier Curves
+- Importing timing points (OSU, Clone Hero, ADOFAI)
+- Keybinds menu (shows all new keybind options for this update)
+- Horizontal/Vertical Flip buttons
+- Bookmarks
+- "AUTOSAVED MAP" button for non-file linked autosaved maps
+- Click to place
+- Third color option for new colors
+- Color pickers for easier color setting changing
+- Disable grid letters option
+- Pattern binding to 0-9
+- Select within range option
+- BPM Tapper in the timing window
+- Correct errors on copy option for fixing map errors when pressing Copy Map Data
+
+               CHANGES:
+- New Timing Points window
+- Changed naming of some UI elements
+- Zoom goes to 1%
+- Organized the new options and buttons into 3 dropdowns
+- settings.txt is now JSON (you may need to redo your settings so don't overwrite them until they're set)
+- Negative timing points
+- Timing point snapping to notes
+- Text cursor now blinks
+
+               FIXES:
+- Hitbox size for timing points on the track
+- Undoing moving multiple notes
+- Undoing/redoing flips
+- Opening multiple Timing Points windows
+- UI Scaling
+- Scrolling between timing points
+- Track BPM line inaccuracy
+- Lag while scrolling in newer audios
+- Save prompt appearing at the wrong times
+- Deselecting notes by clicking the editor window
+- Audio offset when changing tempo
+- Inserting decimals and hyphens into text boxes
+- Autosave issues
+
+----------------------------------
+     -- 1.7.2.3 - 3/1/2022 --
 
 - fixed having no BPM crashing the editor on load
 
 ----------------------------------
-     -- 1.7.2.2 - 3/1/2021 --
+     -- 1.7.2.2 - 3/1/2022 --
 
 - re-split the BPM and Note labels on the track
 - darkened the changelog's background colors when no image is present
 
 ----------------------------------
-     -- 1.7.2.1 - 2/1/2021 --
+     -- 1.7.2.1 - 2/1/2022 --
 
 - fixed saving .ini files on close
 
 ----------------------------------
-      -- 1.7.2 - 2/1/2021 --
+      -- 1.7.2 - 2/1/2022 --
 
             CHANGES:
 - New resizing method, also applies to the main editor window
