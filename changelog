@@ -1,0 +1,119 @@
+----------------------------------
+  -- 1.8 Release - 18/3/2022 --
+  
+               ADDS:
+- Bezier Curves
+- Importing timing points (OSU, Clone Hero, ADOFAI)
+- Keybinds menu (shows all new keybind options for this update)
+- Horizontal/Vertical Flip buttons
+- Bookmarks
+- "AUTOSAVED MAP" button for non-file linked autosaved maps
+- Click to place
+- Third color option for new colors
+- Color pickers for easier color setting changing
+- Disable grid letters option
+- Pattern binding to 0-9
+- Select within range option
+- BPM Tapper in the timing window
+- Correct errors on copy option for fixing map errors when pressing Copy Map Data
+
+               CHANGES:
+- New Timing Points window
+- Changed naming of some UI elements
+- Zoom goes to 1%
+- Organized the new options and buttons into 3 dropdowns
+- settings.txt is now JSON (you may need to redo your settings so don't overwrite them until they're set)
+- Negative timing points
+- Timing point snapping to notes
+- Text cursor now blinks
+
+               FIXES:
+- Hitbox size for timing points on the track
+- Undoing moving multiple notes
+- Undoing/redoing flips
+- Opening multiple Timing Points windows
+- UI Scaling
+- Scrolling between timing points
+- Track BPM line inaccuracy
+- Lag while scrolling in newer audios
+- Save prompt appearing at the wrong times
+- Deselecting notes by clicking the editor window
+- Audio offset when changing tempo
+- Inserting decimals and hyphens into text boxes
+- Autosave issues
+
+----------------------------------
+     -- 1.7.2.3 - 3/1/2022 --
+
+- fixed having no BPM crashing the editor on load
+
+----------------------------------
+     -- 1.7.2.2 - 3/1/2022 --
+
+- re-split the BPM and Note labels on the track
+- darkened the changelog's background colors when no image is present
+
+----------------------------------
+     -- 1.7.2.1 - 2/1/2022 --
+
+- fixed saving .ini files on close
+
+----------------------------------
+      -- 1.7.2 - 2/1/2022 --
+
+            CHANGES:
+- New resizing method, also applies to the main editor window
+- Note and BPM labels on the track are now more descriptive
+- Settings now transfer between updates
+- Timing points snap to the previous point's lines
+- Multiple notes can be selected via holding CTRL and SHIFT on both the grid and track
+
+            FIXES:
+- Timing point parsing with some decimal separators
+- Failure to update no longer crashes the editor
+
+----------------------------------
+    -- 1.7.1.1 - 31/12/2021 --
+                                                                                 
+- now works well with anything above 1280x720
+                                                                                 
+----------------------------------
+     -- 1.7.1 - 30/12/2021 --
+                                                                                 
+            CHANGES:
+- menu and settings works well with 1366x768, 1280x720
+- changelog now scrollable
+
+----------------------------------
+  -- 1.7 Release - 29/12/2021 --
+
+            ADDS:
+                                                                                             
+- Timing Points (they appear on the timeline and can be dragged on the track)
+- Metronome
+- Rotating notes
+- Snap to grid, jump to MS buttons
+- Quantum snapping line visibility option
+- Redesigned menu (you can put a background on it! -- [background_menu.png] in editor folder)
+- Settings menu (background same as the main menu)
+
+            CHANGES:
+                                                                                           
+- !!! background.png has been split - background_editor.png & background_menu.png
+
+- Beat divisor is now saved with the map
+- LOAD MAP now supports URLs
+- IMPORT MAP button works for clipboard and URLs
+- You can drag multiple notes at once on the grid
+- Tempo slider now goes by 5% intervals
+- Default beat divisor is now 4, caps at 32
+- Moved copy and return to menu buttons further from the grid
+- Raised Tempo slider limit to 200%, raised zoom to 1000%
+
+            FIXES:
+                                                                                            
+- Fixed note selection issues
+- Text box now functions correctly
+- Switching songs can no longer affect the tempo
+- Fixed note movement
+- Fixed zoom label
