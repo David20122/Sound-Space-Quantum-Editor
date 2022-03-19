@@ -1,1 +1,0 @@
-Add a curve timeline for BPM effects
