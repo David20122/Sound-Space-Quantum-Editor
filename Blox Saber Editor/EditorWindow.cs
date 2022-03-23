@@ -797,7 +797,7 @@ namespace Sound_Space_Editor
 
 						_dragNoteStartMs = tn.Ms;
 					}
-					else if (editor.Grid.MouseOverNote is Note gn && (!Settings.Default.SeparateClickTools || SelectTool))
+					else if (editor.CanClick(e.Position) && editor.Grid.MouseOverNote is Note gn && (!Settings.Default.SeparateClickTools || SelectTool))
 					{
 						if (MusicPlayer.IsPlaying)
 							MusicPlayer.Pause();
@@ -2910,8 +2910,21 @@ namespace Sound_Space_Editor
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show($"Failed to download asset with id '{id}':\n\n{e.Message}", "Error", MessageBoxButtons.OK,
-					MessageBoxIcon.Error);
+				var message = MessageBox.Show($"Failed to download asset with id '{id}':\n\n{e.Message}\n\nWould you like to import a file with this id instead?", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+				if (message == DialogResult.OK)
+                {
+					using (var dialog = new OpenFileDialog
+					{
+						Title = "Select Audio File",
+						Filter = "Audio Files (*.mp3;*.ogg;*.wav)|*.mp3;*.ogg;*.wav"
+					})
+					{
+						if (dialog.ShowDialog() == DialogResult.OK)
+							File.Copy(dialog.FileName, cacheFolder + id + ".asset");
+
+						return true;
+					}
+				}
 			}
 
 			return false;
