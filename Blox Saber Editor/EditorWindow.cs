@@ -797,7 +797,7 @@ namespace Sound_Space_Editor
 
 						_dragNoteStartMs = tn.Ms;
 					}
-					else if (editor.CanClick(e.Position) && editor.Grid.MouseOverNote is Note gn && (!Settings.Default.SeparateClickTools || SelectTool))
+					else if (editor.Grid.MouseOverNote is Note gn && (!Settings.Default.SeparateClickTools || SelectTool))
 					{
 						if (MusicPlayer.IsPlaying)
 							MusicPlayer.Pause();
@@ -838,7 +838,7 @@ namespace Sound_Space_Editor
 
 						SelectedNotes = _draggedNotes;
 					}
-					else if (GridContains(e.Position) && (!Settings.Default.SeparateClickTools || !SelectTool))
+					else if (editor.CanClick(e.Position) && GridContains(e.Position) && (!Settings.Default.SeparateClickTools || !SelectTool))
 					{
 						_placingNotes = true;
 						var pos = e.Position;
