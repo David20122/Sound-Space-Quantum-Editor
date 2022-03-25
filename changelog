@@ -1,4 +1,10 @@
 ----------------------------------
+     -- 1.8.1 - 23/3/2021 --
+
+- added option to import files if audio failed to download
+- fixed clicking copy and return buttons with click to place enabled
+
+----------------------------------
   -- 1.8 Release - 18/3/2022 --
   
                ADDS:
