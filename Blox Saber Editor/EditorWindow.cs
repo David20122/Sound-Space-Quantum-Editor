@@ -98,7 +98,7 @@ namespace Sound_Space_Editor
 
 		private string _file;
 
-		private long _soundId = -1;
+		private string _soundId = "-1";
 		public float tempo = 1f;
 		public TimeSpan currentTime;
 		public TimeSpan totalTime;
@@ -160,7 +160,7 @@ namespace Sound_Space_Editor
 			SoundPlayer.Cache("click", false);
 			SoundPlayer.Cache("metronome", false);
 
-			LoadSound(1091083826);
+			LoadSound("1091083826");
 
 			SoundPlayer.Cache("1091083826", true);
 
@@ -2001,7 +2001,7 @@ namespace Sound_Space_Editor
 
 		public bool WillClose()
 		{
-			if (_soundId != -1 && currentData != ParseData(false))
+			if (_soundId != "-1" && currentData != ParseData(false))
 			{
 				var wasPlaying = MusicPlayer.IsPlaying;
 
@@ -2676,7 +2676,8 @@ namespace Sound_Space_Editor
 
 					Notes.Add(new Note(x, y, ms));
 				}
-				if (long.TryParse(id.Value, out _soundId) && LoadSound(_soundId))
+				_soundId = id.Value;
+				if (LoadSound(_soundId))
 				{
 					MusicPlayer.Load(cacheFolder + _soundId + ".asset");
 					totalTime = MusicPlayer.TotalTime;
@@ -2686,7 +2687,7 @@ namespace Sound_Space_Editor
 					OpenGuiScreen(gui);
 				}
 				else
-					_soundId = -1;
+					_soundId = "-1";
 
 				GuiTrack.BPMs.Clear();
 				GuiTrack.NoteOffset = 0;
@@ -2701,7 +2702,7 @@ namespace Sound_Space_Editor
 				return false;
 			}
 
-			return _soundId != -1;
+			return _soundId != "-1";
 		}
 
 		public void CreateMap(long id)
@@ -2891,7 +2892,7 @@ namespace Sound_Space_Editor
 			File.WriteAllLines(iniFile, new[] { $@"BPM={BpmsToString()}", $@"Bookmarks={BookmarksToString()}", $@"Offset={GuiTrack.NoteOffset}", $@"LegacyBPM={GuiTrack.Bpm}", $@"LegacyOffset={GuiTrack.BpmOffset}", $@"Time={(long)currentTime.TotalMilliseconds}", $@"Divisor={GuiTrack.BeatDivisor}" }, Encoding.UTF8);
 		}
 
-		private bool LoadSound(long id)
+		private bool LoadSound(string id)
 		{
 			try
 			{
@@ -2920,9 +2921,10 @@ namespace Sound_Space_Editor
 					})
 					{
 						if (dialog.ShowDialog() == DialogResult.OK)
+                        {
 							File.Copy(dialog.FileName, cacheFolder + id + ".asset");
-
-						return true;
+							return true;
+						}
 					}
 				}
 			}
@@ -2962,7 +2964,7 @@ namespace Sound_Space_Editor
 				_draggingTimeline = false;
 
 				_wasPlaying = false;
-				_soundId = -1;
+				_soundId = "-1";
 
 				_file = null;
 			}
@@ -2983,8 +2985,11 @@ namespace Sound_Space_Editor
 		protected override WebRequest GetWebRequest(Uri address)
 		{
 			HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
-			request.UserAgent = "RobloxProxy";
-			request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+			if (request != null)
+            {
+				request.UserAgent = "RobloxProxy";
+				request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+			}
 			return request;
 		}
 	}

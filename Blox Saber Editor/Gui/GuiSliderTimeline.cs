@@ -15,7 +15,7 @@ namespace Sound_Space_Editor.Gui
 
 		}
 
-		Color Color1 = EditorWindow.Instance.Color1;
+		new Color Color1 = EditorWindow.Instance.Color1;
 		Color Color3 = EditorWindow.Instance.Color3;
 		public Bookmark SelectedBookmark;
 		private RectangleF renderRect;
