@@ -2864,24 +2864,6 @@ namespace Sound_Space_Editor
 			return final;
         }
 
-		private void Autosave()
-        {
-			if (GuiScreen is GuiScreenEditor editor)
-            {
-				if (_file == null && Notes.Count > 0)
-                {
-					Settings.Default.AutosavedFile = ParseData(false);
-
-					editor.ShowToast("AUTOSAVED", Color1);
-				}
-				else if (WriteFile(_file))
-				{
-					editor.ShowToast("AUTOSAVED", Color1);
-					currentData = ParseData(false);
-				}
-			}
-		}
-
 		private void WriteIniFile()
 		{
 			if (_file == null)
@@ -2930,6 +2912,24 @@ namespace Sound_Space_Editor
 			}
 
 			return false;
+		}
+
+		private void Autosave()
+		{
+			if (GuiScreen is GuiScreenEditor editor && Notes.Count > 0)
+			{
+				if (_file == null)
+				{
+					Settings.Default.AutosavedFile = ParseData(false);
+
+					editor.ShowToast("AUTOSAVED", Color1);
+				}
+				else if (WriteFile(_file))
+				{
+					editor.ShowToast("AUTOSAVED", Color1);
+					currentData = ParseData(false);
+				}
+			}
 		}
 
 		private void RunAutosave()
