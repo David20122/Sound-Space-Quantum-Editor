@@ -20,6 +20,12 @@
      "enableAutosave": true,
      "gridOpacity": 255,
      "keybinds": {
+          "anchorNode": [
+               "A",
+               false,
+               true,
+               false
+          ],
           "copy": [
                "C",
                true,

@@ -584,32 +584,91 @@ namespace Sound_Space_Editor.Gui
 			GL.LineWidth(2);
 			if (int.TryParse(BezierBox.Text, out var bezdivisor) && bezdivisor > 0 && (beziernodes != null && beziernodes.Count > 1))
 			{
-				try
-                {
-					var k = beziernodes.Count - 1;
-					double d = 1f / (bezdivisor * k);
-					float xprev = beziernodes[0].X * Grid.ClientRectangle.Width / 3 + Grid.ClientRectangle.X + Grid.ClientRectangle.Width / 6;
-					float yprev = beziernodes[0].Y * Grid.ClientRectangle.Width / 3 + Grid.ClientRectangle.Y + Grid.ClientRectangle.Width / 6;
-					if (!Settings.Default.CurveBezier)
-						d = 1f / bezdivisor;
-					if (Settings.Default.CurveBezier)
-                    {
+				var anchored = new List<int>() { 0 };
+
+				for (int i = 0; i < beziernodes.Count; i++)
+				{
+					if (beziernodes[i].Anchored && !anchored.Contains(i))
+						anchored.Add(i);
+				}
+				if (!anchored.Contains(beziernodes.Count - 1))
+					anchored.Add(beziernodes.Count - 1);
+
+				for (int i = 1; i < anchored.Count; i++)
+				{
+					var newnodes = new List<Note>();
+					for (int j = anchored[i - 1]; j <= anchored[i]; j++)
+					{
+						newnodes.Add(beziernodes[j]);
+					}
+					Bezier(newnodes, bezdivisor);
+				}
+			}
+		}
+
+		private void Bezier(List<Note> finalnodes, int bezdivisor)
+        {
+			try
+			{
+				var k = finalnodes.Count - 1;
+				double d = 1f / (bezdivisor * k);
+				float xprev = finalnodes[0].X * Grid.ClientRectangle.Width / 3 + Grid.ClientRectangle.X + Grid.ClientRectangle.Width / 6;
+				float yprev = finalnodes[0].Y * Grid.ClientRectangle.Width / 3 + Grid.ClientRectangle.Y + Grid.ClientRectangle.Width / 6;
+				if (!Settings.Default.CurveBezier)
+					d = 1f / bezdivisor;
+				if (Settings.Default.CurveBezier)
+				{
+					for (double t = 0; t <= 1; t += d)
+					{
+						float xg = 0;
+						float yg = 0;
+						float xf = 0;
+						float yf = 0;
+						for (int v = 0; v <= k; v++)
+						{
+							var note = finalnodes[v];
+							var bez = (double)BinomialCoefficient(k, v) * (Math.Pow(1 - t, k - v) * Math.Pow(t, v));
+
+							xf += (float)(bez * note.X);
+							yf += (float)(bez * note.Y);
+							xg = xf;
+							yg = yf;
+						}
+
+						xf *= Grid.ClientRectangle.Width / 3;
+						yf *= Grid.ClientRectangle.Width / 3;
+
+						xf += Grid.ClientRectangle.X + Grid.ClientRectangle.Width / 6;
+						yf += Grid.ClientRectangle.Y + Grid.ClientRectangle.Width / 6;
+
+						GL.Color3(Color.FromArgb(255, 255, 255));
+						GL.Begin(PrimitiveType.Lines);
+						GL.Vertex2(xprev, yprev);
+						GL.Vertex2(xf, yf);
+						GL.End();
+						//GL.Color3(Color1);
+						//Glu.RenderCircle(xf, yf, 4);
+						Grid.RenderFakeNote(xg, yg, EditorWindow.Instance.Color3);
+
+						xprev = xf;
+						yprev = yf;
+					}
+				}
+				else
+				{
+					for (int v = 0; v < k; v++)
+					{
+						var note = finalnodes[v];
+						var nextnote = finalnodes[v + 1];
+						var xdist = nextnote.X - note.X;
+						var ydist = nextnote.Y - note.Y;
+
 						for (double t = 0; t <= 1; t += d)
 						{
-							float xg = 0;
-							float yg = 0;
-							float xf = 0;
-							float yf = 0;
-							for (int v = 0; v <= k; v++)
-							{
-								var note = beziernodes[v];
-								var bez = (double)BinomialCoefficient(k, v) * (Math.Pow(1 - t, k - v) * Math.Pow(t, v));
-
-								xf += (float)(bez * note.X);
-								yf += (float)(bez * note.Y);
-								xg = xf;
-								yg = yf;
-							}
+							float xf = note.X + xdist * (float)t;
+							float yf = note.Y + ydist * (float)t;
+							float xg = xf;
+							float yg = yf;
 
 							xf *= Grid.ClientRectangle.Width / 3;
 							yf *= Grid.ClientRectangle.Width / 3;
@@ -624,58 +683,17 @@ namespace Sound_Space_Editor.Gui
 							GL.End();
 							//GL.Color3(Color1);
 							//Glu.RenderCircle(xf, yf, 4);
-							Grid.RenderFakeNote(xg, yg, Color3);
+							Grid.RenderFakeNote(xg, yg, EditorWindow.Instance.Color3);
 
 							xprev = xf;
 							yprev = yf;
 						}
 					}
-					else
-                    {
-						for (int v = 0; v < k; v++)
-                        {
-							var note = beziernodes[v];
-							var nextnote = beziernodes[v + 1];
-							var xdist = nextnote.X - note.X;
-							var ydist = nextnote.Y - note.Y;
-
-							float xg = 0;
-							float yg = 0;
-							float xf = 0;
-							float yf = 0;
-
-							for (double t = 0; t <= 1; t += d)
-                            {
-								xf = note.X + xdist * (float)t;
-								yf = note.Y + ydist * (float)t;
-								xg = xf;
-								yg = yf;
-
-								xf *= Grid.ClientRectangle.Width / 3;
-								yf *= Grid.ClientRectangle.Width / 3;
-
-								xf += Grid.ClientRectangle.X + Grid.ClientRectangle.Width / 6;
-								yf += Grid.ClientRectangle.Y + Grid.ClientRectangle.Width / 6;
-
-								GL.Color3(Color.FromArgb(255, 255, 255));
-								GL.Begin(PrimitiveType.Lines);
-								GL.Vertex2(xprev, yprev);
-								GL.Vertex2(xf, yf);
-								GL.End();
-								//GL.Color3(Color1);
-								//Glu.RenderCircle(xf, yf, 4);
-								Grid.RenderFakeNote(xg, yg, Color3);
-
-								xprev = xf;
-								yprev = yf;
-							}
-                        }
-                    }
 				}
-				catch
-                {
-					beziernodes.Clear();
-                }
+			}
+			catch
+			{
+				beziernodes.Clear();
 			}
 		}
 
@@ -1025,81 +1043,43 @@ namespace Sound_Space_Editor.Gui
 				case 10:
 					if (int.TryParse(BezierBox.Text, out var divisor) && divisor > 0 && ((beziernodes != null && beziernodes.Count > 1) || EditorWindow.Instance.SelectedNotes.Count > 1))
 					{
-						try
-                        {
-							var finalnodes = EditorWindow.Instance.SelectedNotes.ToList();
-							if (beziernodes != null && beziernodes.Count > 1)
-								finalnodes = beziernodes;
-							var finalnotes = new List<Note>();
-							var k = finalnodes.Count - 1;
-							float tdiff = finalnodes[k].Ms - finalnodes[0].Ms;
-							double d = 1f / (divisor * k);
-							if (!Settings.Default.CurveBezier)
-								d = 1f / divisor;
-							if (Settings.Default.CurveBezier)
-                            {
-								for (double t = 0; t <= 1; t += d)
-								{
-									float xf = 0;
-									float yf = 0;
-									double tf = finalnodes[0].Ms + tdiff * t;
-									for (int v = 0; v <= k; v++)
-									{
-										var note = finalnodes[v];
-										var bez = (double)BinomialCoefficient(k, v) * (Math.Pow(1 - t, k - v) * Math.Pow(t, v));
+						var success = true;
+						var finalnodes = EditorWindow.Instance.SelectedNotes.ToList();
+						if (beziernodes != null && beziernodes.Count > 1)
+							finalnodes = beziernodes;
+						var finalnotes = new List<Note>();
 
-										xf += (float)(bez * note.X);
-										yf += (float)(bez * note.Y);
-									}
-									finalnotes.Add(new Note(xf, yf, (long)tf));
-								}
-							}
-							else
-                            {
-								for (int v = 0; v < k; v++)
-                                {
-									var note = finalnodes[v];
-									var nextnote = finalnodes[v + 1];
-									var xdist = nextnote.X - note.X;
-									var ydist = nextnote.Y - note.Y;
-									var tdist = nextnote.Ms - note.Ms;
+						var anchored = new List<int>() { 0 };
 
-									for (double t = 0; t < 1; t += d)
-                                    {
-										if (t > 0)
-                                        {
-											var xf = note.X + xdist * t;
-											var yf = note.Y + ydist * t;
-											var tf = note.Ms + tdist * t;
-
-											finalnotes.Add(new Note((float)xf, (float)yf, (long)tf));
-										}
-                                    }
-                                }
-							}
-							EditorWindow.Instance.SelectedNotes.Clear();
-							if (!Settings.Default.CurveBezier)
-								finalnodes = new List<Note>();
-							EditorWindow.Instance.Notes.RemoveAll(finalnodes);
-							EditorWindow.Instance.Notes.AddAll(finalnotes);
-							EditorWindow.Instance.UndoRedo.AddUndoRedo("DRAW BEZIER", () =>
-							{
-								EditorWindow.Instance.Notes.AddAll(finalnodes);
-								EditorWindow.Instance.Notes.RemoveAll(finalnotes);
-							}, () =>
-							{
-								EditorWindow.Instance.Notes.RemoveAll(finalnodes);
-								EditorWindow.Instance.Notes.AddAll(finalnotes);
-							});
+						for (int i = 0; i < finalnodes.Count; i++)
+						{
+							if (finalnodes[i].Anchored && !anchored.Contains(i))
+								anchored.Add(i);
 						}
-						catch (OverflowException)
-                        {
-							ShowToast("TOO MANY NODES", Color.FromArgb(255, 200, 0));
+						if (!anchored.Contains(finalnodes.Count - 1))
+							anchored.Add(finalnodes.Count - 1);
+
+						for (int i = 1; i < anchored.Count; i++)
+						{
+							var newnodes = new List<Note>();
+							for (int j = anchored[i - 1]; j <= anchored[i]; j++)
+							{
+								newnodes.Add(finalnodes[j]);
+							}
+							var finalbez = EditorWindow.Instance.Bezier(newnodes, divisor);
+							success = finalbez != null;
+							if (success)
+								finalnotes = EditorWindow.Instance.CombineLists(finalnotes, EditorWindow.Instance.Bezier(newnodes, divisor));
 						}
-						catch
-                        {
-							ShowToast("FAILED TO DRAW CURVE", Color.FromArgb(255, 200, 0));
-                        }
+
+						EditorWindow.Instance.SelectedNotes.Clear();
+						if (!Settings.Default.CurveBezier)
+							finalnodes = new List<Note>();
+						else
+							finalnotes.Add(finalnodes[0]);
+
+						if (success)
+							EditorWindow.Instance.UndoRedoBezier(finalnotes, finalnodes);
 					}
 					break;
 				case 11:

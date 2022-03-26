@@ -47,6 +47,7 @@ namespace Sound_Space_Editor
 		public static KeyType OpenBookmarks = new KeyType() { Key = Key.B, CTRL = true, SHIFT = false, ALT = false };
 		public static KeyType StoreNodes = new KeyType() { Key = Key.S, CTRL = false, SHIFT = true, ALT = false };
 		public static KeyType DrawBezier = new KeyType() { Key = Key.D, CTRL = false, SHIFT = true, ALT = false };
+		public static KeyType AnchorNode = new KeyType() { Key = Key.A, CTRL = false, SHIFT = true, ALT = false };
 
 		public static GridKeySet GridKeys = new GridKeySet() { TL = Key.Q, TC = Key.W, TR = Key.E, ML = Key.A, MC = Key.S, MR = Key.D, BL = Key.Z, BC = Key.X, BR = Key.C };
 
@@ -128,6 +129,8 @@ namespace Sound_Space_Editor
 						StoreNodes = ConvertToKeybind(value);
 					if (keybinds.TryGetValue("drawBezier", out value))
 						DrawBezier = ConvertToKeybind(value);
+					if (keybinds.TryGetValue("anchorNode", out value))
+						AnchorNode = ConvertToKeybind(value);
 
 					if (keybinds.TryGetValue("gridKeys", out value))
 					{
@@ -266,6 +269,7 @@ namespace Sound_Space_Editor
 					{"openBookmarks", new JsonArray(OpenBookmarks.Key.ToString(), OpenBookmarks.CTRL, OpenBookmarks.SHIFT, OpenBookmarks.ALT)},
 					{"storeNodes", new JsonArray(StoreNodes.Key.ToString(), StoreNodes.CTRL, StoreNodes.SHIFT, StoreNodes.ALT)},
 					{"drawBezier", new JsonArray(DrawBezier.Key.ToString(), DrawBezier.CTRL, DrawBezier.SHIFT, DrawBezier.ALT)},
+					{"anchorNode", new JsonArray(AnchorNode.Key.ToString(), AnchorNode.CTRL, AnchorNode.SHIFT, AnchorNode.ALT)},
 					{"gridKeys", new JsonArray(GridKeys.TL.ToString(), GridKeys.TC.ToString(), GridKeys.TR.ToString(), GridKeys.ML.ToString(), GridKeys.MC.ToString(), GridKeys.MR.ToString(), GridKeys.BL.ToString(), GridKeys.BC.ToString(), GridKeys.BR.ToString())},
 					{"patterns", new JsonArray(Pattern0, Pattern1, Pattern2, Pattern3, Pattern4, Pattern5, Pattern6, Pattern7, Pattern8, Pattern9)},
 				}}

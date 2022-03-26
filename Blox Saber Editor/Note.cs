@@ -11,6 +11,7 @@ namespace Sound_Space_Editor
 		public float Y;
 		public long Ms;
 		public long DragStartMs;
+		public bool Anchored;
 
 		public Color4 Color;
 

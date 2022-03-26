@@ -63,6 +63,9 @@ namespace Sound_Space_Editor.Gui
         private readonly GuiTextBox DrawBezierBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.DrawBezier.Key.ToString().ToUpper(), Centered = true };
         private readonly GuiButton DrawBezierReset = new GuiButton(16, 0, 0, 0, 0, "RESET", false);
 
+        private readonly GuiTextBox AnchorNodeBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.AnchorNode.Key.ToString().ToUpper(), Centered = true };
+        private readonly GuiButton AnchorNodeReset = new GuiButton(17, 0, 0, 0, 0, "RESET", false);
+
         private readonly GuiTextBox TLBox = new GuiTextBox(0, 0, 0, 0) { Text = EditorSettings.GridKeys.TL.ToString().ToUpper(), Centered = true };
         private readonly GuiButton TLReset = new GuiButton(90, 0, 0, 0, 0, "RESET", false);
 
@@ -115,6 +118,7 @@ namespace Sound_Space_Editor.Gui
             Buttons.Add(OpenBookmarksReset);
             Buttons.Add(StoreNodesReset);
             Buttons.Add(DrawBezierReset);
+            Buttons.Add(AnchorNodeReset);
 
             Buttons.Add(TLReset);
             Buttons.Add(TCReset);
@@ -162,12 +166,9 @@ namespace Sound_Space_Editor.Gui
                 Glu.RenderQuad(0, 0, size.Width, size.Height);
             }
 
-            if (CTRLIndicator.Toggle != EditorWindow.Instance._controlDown)
-                CTRLIndicator.Toggle = EditorWindow.Instance._controlDown;
-            if (SHIFTIndicator.Toggle != EditorWindow.Instance._shiftDown)
-                SHIFTIndicator.Toggle = EditorWindow.Instance._shiftDown;
-            if (ALTIndicator.Toggle != EditorWindow.Instance._altDown)
-                ALTIndicator.Toggle = EditorWindow.Instance._altDown;
+            CTRLIndicator.Toggle = EditorWindow.Instance._controlDown;
+            SHIFTIndicator.Toggle = EditorWindow.Instance._shiftDown;
+            ALTIndicator.Toggle = EditorWindow.Instance._altDown;
 
             var fr = EditorWindow.Instance.FontRenderer;
 
@@ -221,6 +222,9 @@ namespace Sound_Space_Editor.Gui
             fr.Render("Draw Bezier Curve", (int)DrawBezierBox.ClientRectangle.X, (int)DrawBezierBox.ClientRectangle.Y - labeloffset, labelsize);
             fr.Render(CSAString(EditorSettings.DrawBezier), (int)DrawBezierReset.ClientRectangle.Right + 10, (int)DrawBezierReset.ClientRectangle.Y + (int)(DrawBezierReset.ClientRectangle.Height / 2) - (int)(12 * scale), labelsize);
 
+            fr.Render("Anchor Bezier Node", (int)AnchorNodeBox.ClientRectangle.X, (int)AnchorNodeBox.ClientRectangle.Y - labeloffset, labelsize);
+            fr.Render(CSAString(EditorSettings.AnchorNode), (int)AnchorNodeReset.ClientRectangle.Right + 10, (int)AnchorNodeReset.ClientRectangle.Y + (int)(AnchorNodeReset.ClientRectangle.Height / 2) - (int)(12 * scale), labelsize);
+
             fr.Render("Grid", (int)TLBox.ClientRectangle.X, (int)TLBox.ClientRectangle.Y - 26, 24);
 
             string[] lockedlist =
@@ -258,6 +262,7 @@ namespace Sound_Space_Editor.Gui
             OpenBookmarksBox.Render(delta, mouseX, mouseY);
             StoreNodesBox.Render(delta, mouseX, mouseY);
             DrawBezierBox.Render(delta, mouseX, mouseY);
+            AnchorNodeBox.Render(delta, mouseX, mouseY);
 
             TLBox.Render(delta, mouseX, mouseY);
             TCBox.Render(delta, mouseX, mouseY);
@@ -342,6 +347,9 @@ namespace Sound_Space_Editor.Gui
             DrawBezierBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
             DrawBezierReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
 
+            AnchorNodeBox.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+            AnchorNodeReset.ClientRectangle.Size = SelectAllBox.ClientRectangle.Size;
+
             TLBox.ClientRectangle.Size = new SizeF(128 * widthdiff, 62 * heightdiff);
             TLReset.ClientRectangle.Size = TLBox.ClientRectangle.Size;
             TCBox.ClientRectangle.Size = TLBox.ClientRectangle.Size;
@@ -419,6 +427,9 @@ namespace Sound_Space_Editor.Gui
             DrawBezierBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, StoreNodesBox.ClientRectangle.Bottom + heightspace);
             DrawBezierReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, DrawBezierBox.ClientRectangle.Y);
 
+            AnchorNodeBox.ClientRectangle.Location = new PointF(HFlipBox.ClientRectangle.X, DrawBezierBox.ClientRectangle.Bottom + heightspace);
+            AnchorNodeReset.ClientRectangle.Location = new PointF(HFlipReset.ClientRectangle.X, AnchorNodeBox.ClientRectangle.Y);
+
 
             TLBox.ClientRectangle.Location = new PointF(size.Width - TLBox.ClientRectangle.Width * 3 - 10 * 2 * widthdiff - 150 * widthdiff, HFlipBox.ClientRectangle.Y);
             TLReset.ClientRectangle.Location = new PointF(TLBox.ClientRectangle.X, TLBox.ClientRectangle.Bottom + 4 * heightdiff);
@@ -483,6 +494,8 @@ namespace Sound_Space_Editor.Gui
                 return "StoreNodes";
             if (DrawBezierBox.Focused)
                 return "DrawBezier";
+            if (AnchorNodeBox.Focused)
+                return "AnchorNode";
 
             if (TLBox.Focused)
                 return "TL";
@@ -602,6 +615,10 @@ namespace Sound_Space_Editor.Gui
                     DrawBezierBox.Text = key.ToString().ToUpper();
                     EditorSettings.DrawBezier = AssignKey(key);
                     break;
+                case "AnchorNode":
+                    AnchorNodeBox.Text = key.ToString().ToUpper();
+                    EditorSettings.AnchorNode = AssignKey(key);
+                    break;
                 case "TL":
                     TLBox.Text = key.ToString().ToUpper();
                     EditorSettings.GridKeys.TL = key;
@@ -659,6 +676,7 @@ namespace Sound_Space_Editor.Gui
             OpenBookmarksBox.OnMouseClick(x, y);
             StoreNodesBox.OnMouseClick(x, y);
             DrawBezierBox.OnMouseClick(x, y);
+            AnchorNodeBox.OnMouseClick(x, y);
 
             TLBox.OnMouseClick(x, y);
             TCBox.OnMouseClick(x, y);
@@ -743,6 +761,10 @@ namespace Sound_Space_Editor.Gui
                 case 16:
                     EditorSettings.DrawBezier = ResetKey(Key.D, false, true, false);
                     DrawBezierBox.Text = "D";
+                    break;
+                case 17:
+                    EditorSettings.AnchorNode = ResetKey(Key.A, false, true, false);
+                    AnchorNodeBox.Text = "A";
                     break;
                 case 90:
                     EditorSettings.GridKeys.TL = Key.Q;

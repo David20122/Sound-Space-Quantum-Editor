@@ -1225,6 +1225,8 @@ namespace Sound_Space_Editor
 				return "StoreNodes";
 			if (CompareKeybind(key, EditorSettings.DrawBezier))
 				return "DrawBezier";
+			if (CompareKeybind(key, EditorSettings.AnchorNode))
+				return "AnchorNode";
 
 			if (key == Key.Number0)
 				return "Pattern0";
@@ -1331,6 +1333,99 @@ namespace Sound_Space_Editor
 									   Keyboard.GetState().IsKeyDown(Key.LAlt);
 			_shiftDown = e.Shift || Keyboard.GetState().IsKeyDown(Key.ShiftLeft) ||
 									   Keyboard.GetState().IsKeyDown(Key.LShift);
+		}
+
+		public List<Note> Bezier(List<Note> finalnodes, int divisor)
+        {
+			var finalnotes = new List<Note>();
+
+			if (GuiScreen is GuiScreenEditor editor)
+            {
+				try
+				{
+					var k = finalnodes.Count - 1;
+					decimal tdiff = finalnodes[k].Ms - finalnodes[0].Ms;
+					decimal d = 1m / (divisor * k);
+					if (!Settings.Default.CurveBezier)
+						d = 1m / divisor;
+					if (Settings.Default.CurveBezier)
+					{
+						for (decimal t = d; t <= 1; t += d)
+						{
+							float xf = 0;
+							float yf = 0;
+							decimal tf = finalnodes[0].Ms + tdiff * t;
+							for (int v = 0; v <= k; v++)
+							{
+								var note = finalnodes[v];
+								var bez = (double)editor.BinomialCoefficient(k, v) * (Math.Pow(1 - (double)t, k - v) * Math.Pow((double)t, v));
+
+								xf += (float)(bez * note.X);
+								yf += (float)(bez * note.Y);
+							}
+							finalnotes.Add(new Note(xf, yf, (long)tf));
+						}
+					}
+					else
+					{
+						for (int v = 0; v < k; v++)
+						{
+							var note = finalnodes[v];
+							var nextnote = finalnodes[v + 1];
+							decimal xdist = (decimal)(nextnote.X - note.X);
+							decimal ydist = (decimal)(nextnote.Y - note.Y);
+							decimal tdist = nextnote.Ms - note.Ms;
+
+							for (decimal t = 0; t < 1; t += d)
+							{
+								if (t > 0)
+								{
+									var xf = (decimal)note.X + xdist * t;
+									var yf = (decimal)note.Y + ydist * t;
+									var tf = note.Ms + tdist * t;
+
+									finalnotes.Add(new Note((float)xf, (float)yf, (long)tf));
+								}
+							}
+						}
+					}
+				}
+				catch (OverflowException)
+				{
+					editor.ShowToast("TOO MANY NODES", Color.FromArgb(255, 200, 0));
+					return null;
+				}
+				catch
+				{
+					editor.ShowToast("FAILED TO DRAW CURVE", Color.FromArgb(255, 200, 0));
+					return null;
+				}
+			}
+
+			return finalnotes;
+        }
+
+		public List<Note> CombineLists(List<Note> listA, List<Note> listB)
+        {
+			foreach (var note in listB)
+				listA.Add(note);
+
+			return listA;
+        }
+
+		public void UndoRedoBezier(List<Note> notes, List<Note> nodes)
+        {
+			Notes.RemoveAll(nodes);
+			Notes.AddAll(notes);
+			UndoRedo.AddUndoRedo("DRAW BEZIER", () =>
+			{
+				Notes.AddAll(nodes);
+				Notes.RemoveAll(notes);
+			}, () =>
+			{
+				Notes.RemoveAll(nodes);
+				Notes.AddAll(notes);
+			});
 		}
 
 		protected override void OnKeyDown(KeyboardKeyEventArgs e)
@@ -1585,83 +1680,53 @@ namespace Sound_Space_Editor
 					case "DrawBezier":
 						if (int.TryParse(editor.BezierBox.Text, out var divisor) && divisor > 0 && ((editor.beziernodes != null && editor.beziernodes.Count > 1) || SelectedNotes.Count > 1))
 						{
-							try
-							{
-								var finalnodes = SelectedNotes.ToList();
-								if (editor.beziernodes != null && editor.beziernodes.Count > 1)
-									finalnodes = editor.beziernodes;
-								var finalnotes = new List<Note>();
-								var k = finalnodes.Count - 1;
-								float tdiff = finalnodes[k].Ms - finalnodes[0].Ms;
-								double d = 1f / (divisor * k);
-								if (!Settings.Default.CurveBezier)
-									d = 1f / divisor;
-								if (Settings.Default.CurveBezier)
-								{
-									for (double t = 0; t <= 1; t += d)
-									{
-										float xf = 0;
-										float yf = 0;
-										double tf = finalnodes[0].Ms + tdiff * t;
-										for (int v = 0; v <= k; v++)
-										{
-											var note = finalnodes[v];
-											var bez = (double)editor.BinomialCoefficient(k, v) * (Math.Pow(1 - t, k - v) * Math.Pow(t, v));
+							var success = true;
+							var finalnodes = SelectedNotes.ToList();
+							if (editor.beziernodes != null && editor.beziernodes.Count > 1)
+								finalnodes = editor.beziernodes;
+							var finalnotes = new List<Note>();
 
-											xf += (float)(bez * note.X);
-											yf += (float)(bez * note.Y);
-										}
-										finalnotes.Add(new Note(xf, yf, (long)tf));
-									}
+							var anchored = new List<int>() { 0 };
+
+							for (int i = 0; i < finalnodes.Count; i++)
+							{
+								if (finalnodes[i].Anchored && !anchored.Contains(i))
+									anchored.Add(i);
+							}
+							if (!anchored.Contains(finalnodes.Count - 1))
+								anchored.Add(finalnodes.Count - 1);
+
+							for (int i = 1; i < anchored.Count; i++)
+							{
+								var newnodes = new List<Note>();
+								for (int j = anchored[i - 1]; j <= anchored[i]; j++)
+								{
+									newnodes.Add(finalnodes[j]);
 								}
-								else
-								{
-									for (int v = 0; v < k; v++)
-									{
-										var note = finalnodes[v];
-										var nextnote = finalnodes[v + 1];
-										var xdist = nextnote.X - note.X;
-										var ydist = nextnote.Y - note.Y;
-										var tdist = nextnote.Ms - note.Ms;
+								var finalbez = Bezier(newnodes, divisor);
+								success = finalbez != null;
+								if (success)
+									finalnotes = CombineLists(finalnotes, finalbez);
+							}
 
-										for (double t = 0; t < 1; t += d)
-										{
-											if (t > 0)
-											{
-												var xf = note.X + xdist * t;
-												var yf = note.Y + ydist * t;
-												var tf = note.Ms + tdist * t;
+							SelectedNotes.Clear();
+							if (!Settings.Default.CurveBezier)
+								finalnodes = new List<Note>();
+							else
+								finalnotes.Add(finalnodes[0]);
 
-												finalnotes.Add(new Note((float)xf, (float)yf, (long)tf));
-											}
-										}
-									}
-								}
-								SelectedNotes.Clear();
-								if (!Settings.Default.CurveBezier)
-									finalnodes = new List<Note>();
-								Notes.RemoveAll(finalnodes);
-								Notes.AddAll(finalnotes);
-								UndoRedo.AddUndoRedo("DRAW BEZIER", () =>
-								{
-									Notes.AddAll(finalnodes);
-									Notes.RemoveAll(finalnotes);
-								}, () =>
-								{
-									Notes.RemoveAll(finalnodes);
-									Notes.AddAll(finalnotes);
-								});
-							}
-							catch (OverflowException)
-							{
-								editor.ShowToast("TOO MANY NODES", Color.FromArgb(255, 200, 0));
-							}
-							catch
-							{
-								editor.ShowToast("FAILED TO DRAW CURVE", Color.FromArgb(255, 200, 0));
-							}
+							if (success)
+								UndoRedoBezier(finalnotes, finalnodes);
 						}
+
+						for (int i = 0; i < Notes.Count; i++)
+							Notes[i].Anchored = false;
+
 						editor.beziernodes.Clear();
+						return;
+					case "AnchorNode":
+						foreach (var note in SelectedNotes)
+							note.Anchored = !note.Anchored;
 						return;
 					case "Pattern0":
 						if (_shiftDown && SelectedNotes.Count > 0)
