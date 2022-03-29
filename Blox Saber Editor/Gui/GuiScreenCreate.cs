@@ -86,16 +86,7 @@ namespace Sound_Space_Editor.Gui
 			{
 				case 0:
 					var text = _tb.Text.Trim();
-
-					if (long.TryParse(text, out var parsed))
-					{
-						EditorWindow.Instance.CreateMap(parsed);
-					}
-					else
-					{
-						MessageBox.Show("not a valid audio id", "Error", MessageBoxButtons.OK,
-							MessageBoxIcon.Error);
-					}
+					EditorWindow.Instance.CreateMap(text);
 
 					break;
 				case 1:

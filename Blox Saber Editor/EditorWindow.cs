@@ -2770,9 +2770,9 @@ namespace Sound_Space_Editor
 			return _soundId != "-1";
 		}
 
-		public void CreateMap(long id)
+		public void CreateMap(string id)
 		{
-			LoadMap(id.ToString(), false);
+			LoadMap(id, false);
 		}
 
 		public BPM GetCurrentBpm(double currentms, bool draggingbpm)
@@ -2964,7 +2964,7 @@ namespace Sound_Space_Editor
 					using (var dialog = new OpenFileDialog
 					{
 						Title = "Select Audio File",
-						Filter = "Audio Files (*.mp3;*.ogg;*.wav)|*.mp3;*.ogg;*.wav"
+						Filter = "Audio Files (*.mp3;*.ogg;*.wav;*.asset)|*.mp3;*.ogg;*.wav;*.asset"
 					})
 					{
 						if (dialog.ShowDialog() == DialogResult.OK)
