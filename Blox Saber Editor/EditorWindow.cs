@@ -3110,9 +3110,9 @@ namespace Sound_Space_Editor
 				for (int i = 0; i < _notes.Count; i++)
                 {
 					if (i % 2 == 0)
-						_notes[i].Color = EditorSettings.Color2;
+						_notes[i].Color = EditorSettings.NoteColor2;
 					else
-						_notes[i].Color = EditorSettings.Color1;
+						_notes[i].Color = EditorSettings.NoteColor1;
                 }
 			}
 		}
