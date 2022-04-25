@@ -14,6 +14,7 @@ namespace Sound_Space_Editor.Gui
 		private readonly GuiTextBox _tb;
 		private readonly GuiButton _btnCreate;
 		private readonly GuiButton _btnBack;
+		private readonly GuiButton _btnImport;
 		private readonly GuiLabel _lbl = new GuiLabel(0, 0, "Input Audio ID", false) { Centered = true };
 
 		public GuiScreenCreate() : base(0, 0, 0, 0)
@@ -21,6 +22,7 @@ namespace Sound_Space_Editor.Gui
 			_tb = new GuiTextBox(0, 0, 256, 64) { Centered = true, Focused = true };
 			_btnCreate = new GuiButton(0, 0, 0, 256, 64, "CREATE", false);
 			_btnBack = new GuiButton(1, 0, 0, 256, 64, "BACK", false);
+			_btnImport = new GuiButton(2, 0, 0, 256, 64, "IMPORT FILE", false);
 
 			_lbl.Color = Color.FromArgb(255, 255, 255);
 
@@ -28,6 +30,7 @@ namespace Sound_Space_Editor.Gui
 
 			Buttons.Add(_btnCreate);
 			Buttons.Add(_btnBack);
+			Buttons.Add(_btnImport);
 
 			if (File.Exists(Path.Combine(EditorWindow.Instance.LauncherDir, "background_menu.png")))
 			{
@@ -91,6 +94,23 @@ namespace Sound_Space_Editor.Gui
 					break;
 				case 1:
 					EditorWindow.Instance.OpenGuiScreen(new GuiScreenMenu());
+
+					break;
+				case 2:
+					using (var dialog = new OpenFileDialog
+					{
+						Title = "Select Audio File",
+						Filter = "Audio Files (*.mp3;*.ogg;*.wav;*.asset)|*.mp3;*.ogg;*.wav;*.asset"
+					})
+					{
+						if (dialog.ShowDialog() == DialogResult.OK)
+						{
+							string filename = Path.GetFileNameWithoutExtension(dialog.SafeFileName);
+							File.Copy(dialog.FileName, EditorWindow.Instance.cacheFolder + filename + ".asset");
+							EditorWindow.Instance.CreateMap(filename);
+						}
+					}
+
 					break;
 			}
 		}
@@ -103,7 +123,8 @@ namespace Sound_Space_Editor.Gui
 			_lbl.ClientRectangle.Location = new PointF(middle.X, middle.Y - rect.Height / 2 - 20);
 			_tb.ClientRectangle.Location = new PointF(middle.X - rect.Width / 2, middle.Y - rect.Height / 2);
 			_btnCreate.ClientRectangle.Location = new PointF(middle.X - _btnCreate.ClientRectangle.Width / 2, middle.Y + rect.Height / 2 + 20);
-			_btnBack.ClientRectangle.Location = new PointF(_btnCreate.ClientRectangle.X, _btnCreate.ClientRectangle.Bottom + 10);
+			_btnImport.ClientRectangle.Location = new PointF(_btnCreate.ClientRectangle.X, _btnCreate.ClientRectangle.Bottom + 10);
+			_btnBack.ClientRectangle.Location = new PointF(_btnImport.ClientRectangle.X, _btnImport.ClientRectangle.Bottom + 10);
 		}
 	}
 }
