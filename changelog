@@ -8,7 +8,7 @@
 - added a button to import audio files directly in the create map window
 - reverted some timing point window functions to pre 1.8
 - pressing the delete keybind while a timing point is selected on the track now deletes that point
-- movement/deletion of points on the track is now reflected in the timing window
+- movement/deletion of points on the track is now reflected in the timing window while it's open
 
 ----------------------------------
      -- 1.8.2 - 26/3/2022 --
