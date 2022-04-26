@@ -1,4 +1,16 @@
 ----------------------------------
+     -- 1.8.3 - 25/4/2022 --
+
+- actually fixed creating maps with differently named audios
+- added .asset to the file import filter
+- fixed the wrong colors being used for note colors
+- slightly adjusted the tempo offset curve
+- added a button to import audio files directly in the create map window
+- reverted some timing point window functions to pre 1.8
+- pressing the delete keybind while a timing point is selected on the track now deletes that point
+- moving/deleting points on the track is now reflected in the timing window
+
+----------------------------------
      -- 1.8.2 - 26/3/2022 --
 
 - audio ids no longer have to be numeric
