@@ -17,69 +17,49 @@ namespace Sound_Space_Editor
         {
             inst = this;
             InitializeComponent();
-            ResetList();
+            ResetList(0);
             culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
             culture.NumberFormat.NumberDecimalSeparator = ".";
         }
 
         private CultureInfo culture;
-        private bool FreezeUpdates = false;
-
-        private void UpdateList(object sender, DataGridViewCellEventArgs e)
-        {
-            if (!FreezeUpdates)
-            {
-                GuiTrack.BPMs.Clear();
-                for (int i = 0; i < PointList.Rows.Count; i++)
-                {
-                    var point = PointList.Rows[i];
-                    if (point.Cells[1].Value == null)
-                        point.Cells[1].Value = 0;
-                    if (point.Cells[0].Value != null && float.TryParse(point.Cells[0].Value.ToString(), out var bpm) && long.TryParse(point.Cells[1].Value.ToString(), out var time))
-                    {
-                        var newpoint = new BPM(bpm, time);
-                        GuiTrack.BPMs.Add(newpoint);
-                        point.Cells[2].Value = "X";
-                    }
-                }
-                OrderList();
-            }
-        }
-
-        private void CurrentButton_Click(object sender, EventArgs e)
-        {
-            if (PointList.SelectedCells.Count > 0)
-                PointList.SelectedCells[0].OwningRow.Cells[1].Value = EditorWindow.Instance.currentTime.TotalMilliseconds.ToString();
-            UpdateList(sender, new DataGridViewCellEventArgs(0, 0));
-        }
 
         private void OrderList()
         {
             GuiTrack.BPMs = GuiTrack.BPMs.OrderBy(o => o.Ms).ToList();
         }
 
-        public void ResetList()
+        public void ResetList(int index)
         {
-            FreezeUpdates = true;
-
             PointList.Rows.Clear();
-            OrderList();
             foreach (var point in GuiTrack.BPMs)
             {
                 PointList.Rows.Add(point.bpm, point.Ms, "X");
             }
-
-            FreezeUpdates = false;
+            if (GuiTrack.BPMs.Count > 0)
+            {
+                index = MathHelper.Clamp(index, 0, GuiTrack.BPMs.Count - 1);
+                PointList.CurrentCell = PointList[0, index];
+                var tpoint = GuiTrack.BPMs[index];
+                BpmBox.Value = (decimal)tpoint.bpm;
+                OffsetBox.Value = tpoint.Ms;
+            }
+            else
+            {
+                BpmBox.Value = 0;
+                OffsetBox.Value = 0;
+            }
         }
 
         private void MoveButton_Click(object sender, EventArgs e)
         {
-            foreach (DataGridViewCell cell in PointList.SelectedCells)
+            foreach (DataGridViewRow row in PointList.SelectedRows)
             {
-                if (cell.OwningRow.Index < GuiTrack.BPMs.Count)
-                    GuiTrack.BPMs[cell.OwningRow.Index].Ms += (long)MoveBox.Value;
+                var index = row.Index;
+                var point = GuiTrack.BPMs[index];
+                point.Ms += (long)MoveBox.Value;
             }
-            ResetList();
+            ResetList(0);
         }
 
         private void ParseOSU(string data)
@@ -116,7 +96,7 @@ namespace Sound_Space_Editor
                         }
                     }
                 }
-                ResetList();
+                ResetList(0);
             }
             catch (Exception ex)
             {
@@ -124,7 +104,7 @@ namespace Sound_Space_Editor
                 var frame = st.GetFrame(st.FrameCount - 1);
                 var line = frame.GetFileLineNumber();
                 MessageBox.Show($"Failed to parse beatmap [OSU | {ex.GetType().Name} | {line}]", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                ResetList();
+                ResetList(0);
             }
         }
 
@@ -198,7 +178,7 @@ namespace Sound_Space_Editor
                     listIndex = msList.IndexOf(item);
                     GuiTrack.BPMs.Add(new BPM(float.Parse(bpmList[listIndex]), (long)float.Parse(item)));
                 }
-                ResetList();
+                ResetList(0);
             }
             catch (Exception ex)
             {
@@ -206,7 +186,7 @@ namespace Sound_Space_Editor
                 var frame = st.GetFrame(st.FrameCount - 1);
                 var line = frame.GetFileLineNumber();
                 MessageBox.Show($"Failed to parse beatmap [CH | {ex.GetType().Name} | {line}]", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                ResetList();
+                ResetList(0);
             }
         }
 
@@ -347,7 +327,7 @@ namespace Sound_Space_Editor
                         prevbpmdindex = i;
                     }
                 }
-                ResetList();
+                ResetList(0);
             }
             catch (Exception ex)
             {
@@ -355,7 +335,7 @@ namespace Sound_Space_Editor
                 var frame = st.GetFrame(st.FrameCount - 1);
                 var line = frame.GetFileLineNumber();
                 MessageBox.Show($"Failed to parse beatmap [ADOFAI | {ex.GetType().Name} | {line}]", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                ResetList();
+                ResetList(0);
             }
         }
 
@@ -434,13 +414,77 @@ namespace Sound_Space_Editor
             new BPMTapper().Show();
         }
 
-        private void PointList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void PointList_SelectionChanged(object sender, EventArgs e)
         {
-            if (e.RowIndex >= 0 && e.RowIndex <= GuiTrack.BPMs.Count - 1 && ((DataGridView)sender)[e.ColumnIndex, e.RowIndex] is DataGridViewButtonCell)
+            foreach (DataGridViewRow row in PointList.SelectedRows)
             {
-                PointList.Rows.RemoveAt(e.RowIndex);
-                GuiTrack.BPMs.RemoveAt(e.RowIndex);
+                var index = row.Index;
+                var point = GuiTrack.BPMs[index];
+                BpmBox.Value = (decimal)point.bpm;
+                OffsetBox.Value = point.Ms;
             }
+        }
+
+        private void AddButton_Click(object sender, EventArgs e)
+        {
+            if ((double)OffsetBox.Value > EditorWindow.Instance.totalTime.TotalMilliseconds)
+                OffsetBox.Value = (decimal)EditorWindow.Instance.totalTime.TotalMilliseconds;
+            if (BpmBox.Value > 33)
+            {
+                var exists = false;
+                foreach (var point in GuiTrack.BPMs)
+                {
+                    if (point.Ms == OffsetBox.Value)
+                        exists = true;
+                }
+
+                if (!exists)
+                {
+                    var point = new BPM((float)BpmBox.Value, (long)OffsetBox.Value);
+                    GuiTrack.BPMs.Add(point);
+                    OrderList();
+
+                    ResetList(GuiTrack.BPMs.IndexOf(point));
+                }
+            }
+        }
+
+        private void DeleteButton_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in PointList.SelectedRows)
+            {
+                GuiTrack.BPMs.RemoveAt(row.Index);
+                OrderList();
+            }
+            ResetList(PointList.CurrentRow.Index - 1);
+        }
+
+        private void UpdateButton_Click(object sender, EventArgs e)
+        {
+            if ((double)OffsetBox.Value > EditorWindow.Instance.totalTime.TotalMilliseconds)
+                OffsetBox.Value = (decimal)EditorWindow.Instance.totalTime.TotalMilliseconds;
+            if (BpmBox.Value > 33 && PointList.SelectedRows.Count > 0)
+            {
+                var selectedpoint = GuiTrack.BPMs[PointList.CurrentRow.Index];
+                var exists = false;
+                foreach (var point in GuiTrack.BPMs)
+                {
+                    if (point.Ms == OffsetBox.Value && point != selectedpoint)
+                        exists = true;
+                }
+                if (!exists)
+                {
+                    selectedpoint.bpm = (float)BpmBox.Value;
+                    selectedpoint.Ms = (long)OffsetBox.Value;
+                    OrderList();
+                    ResetList(GuiTrack.BPMs.IndexOf(selectedpoint));
+                }
+            }
+        }
+
+        private void CurrentButton_Click(object sender, EventArgs e)
+        {
+            OffsetBox.Value = (decimal)EditorWindow.Instance.currentTime.TotalMilliseconds;
         }
     }
 }

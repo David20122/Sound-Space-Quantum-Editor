@@ -28,9 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.PointList = new System.Windows.Forms.DataGridView();
-            this.CurrentButton = new System.Windows.Forms.Button();
+            this.BPM = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Offset = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.UpdateButton = new System.Windows.Forms.Button();
             this.MoveLabel = new System.Windows.Forms.Label();
             this.MoveBox = new System.Windows.Forms.NumericUpDown();
             this.MoveButton = new System.Windows.Forms.Button();
@@ -39,15 +40,23 @@
             this.ImportADOFAI = new System.Windows.Forms.Button();
             this.OpenTapper = new System.Windows.Forms.Button();
             this.OpenBeatmap = new System.Windows.Forms.Button();
-            this.BPM = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Offset = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Remove = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.AddButton = new System.Windows.Forms.Button();
+            this.DeleteButton = new System.Windows.Forms.Button();
+            this.BpmBox = new System.Windows.Forms.NumericUpDown();
+            this.OffsetBox = new System.Windows.Forms.NumericUpDown();
+            this.CurrentButton = new System.Windows.Forms.Button();
+            this.BpmLabel = new System.Windows.Forms.Label();
+            this.OffsetLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.PointList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MoveBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BpmBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OffsetBox)).BeginInit();
             this.SuspendLayout();
             // 
             // PointList
             // 
+            this.PointList.AllowUserToAddRows = false;
+            this.PointList.AllowUserToDeleteRows = false;
             this.PointList.AllowUserToResizeColumns = false;
             this.PointList.AllowUserToResizeRows = false;
             this.PointList.BackgroundColor = System.Drawing.SystemColors.Control;
@@ -55,29 +64,47 @@
             this.PointList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.PointList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.BPM,
-            this.Offset,
-            this.Remove});
+            this.Offset});
             this.PointList.Location = new System.Drawing.Point(9, 9);
             this.PointList.Margin = new System.Windows.Forms.Padding(0);
             this.PointList.Name = "PointList";
+            this.PointList.ReadOnly = true;
             this.PointList.RowHeadersVisible = false;
             this.PointList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.PointList.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.PointList.Size = new System.Drawing.Size(326, 369);
+            this.PointList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.PointList.Size = new System.Drawing.Size(326, 342);
             this.PointList.TabIndex = 9;
-            this.PointList.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.PointList_CellContentClick);
-            this.PointList.CellValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.UpdateList);
+            this.PointList.SelectionChanged += new System.EventHandler(this.PointList_SelectionChanged);
             // 
-            // CurrentButton
+            // BPM
             // 
-            this.CurrentButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.CurrentButton.Location = new System.Drawing.Point(247, 381);
-            this.CurrentButton.Name = "CurrentButton";
-            this.CurrentButton.Size = new System.Drawing.Size(88, 22);
-            this.CurrentButton.TabIndex = 4;
-            this.CurrentButton.Text = "Current Pos";
-            this.CurrentButton.UseVisualStyleBackColor = true;
-            this.CurrentButton.Click += new System.EventHandler(this.CurrentButton_Click);
+            this.BPM.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.BPM.HeaderText = "BPM";
+            this.BPM.Name = "BPM";
+            this.BPM.ReadOnly = true;
+            this.BPM.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.BPM.ToolTipText = "The BPM of the point";
+            // 
+            // Offset
+            // 
+            this.Offset.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Offset.HeaderText = "Position (ms)";
+            this.Offset.Name = "Offset";
+            this.Offset.ReadOnly = true;
+            this.Offset.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Offset.ToolTipText = "The position of the point in milliseconds";
+            // 
+            // UpdateButton
+            // 
+            this.UpdateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.UpdateButton.Location = new System.Drawing.Point(158, 382);
+            this.UpdateButton.Name = "UpdateButton";
+            this.UpdateButton.Size = new System.Drawing.Size(88, 22);
+            this.UpdateButton.TabIndex = 4;
+            this.UpdateButton.Text = "Update Point";
+            this.UpdateButton.UseVisualStyleBackColor = true;
+            this.UpdateButton.Click += new System.EventHandler(this.UpdateButton_Click);
             // 
             // MoveLabel
             // 
@@ -170,42 +197,104 @@
             this.OpenBeatmap.UseVisualStyleBackColor = true;
             this.OpenBeatmap.Click += new System.EventHandler(this.OpenBeatmap_Click);
             // 
-            // BPM
+            // AddButton
             // 
-            this.BPM.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.BPM.HeaderText = "BPM";
-            this.BPM.Name = "BPM";
-            this.BPM.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.BPM.ToolTipText = "The BPM of the point";
+            this.AddButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.AddButton.Location = new System.Drawing.Point(158, 354);
+            this.AddButton.Name = "AddButton";
+            this.AddButton.Size = new System.Drawing.Size(88, 22);
+            this.AddButton.TabIndex = 18;
+            this.AddButton.Text = "Add Point";
+            this.AddButton.UseVisualStyleBackColor = true;
+            this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
             // 
-            // Offset
+            // DeleteButton
             // 
-            this.Offset.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Offset.HeaderText = "Position (ms)";
-            this.Offset.Name = "Offset";
-            this.Offset.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Offset.ToolTipText = "The position of the point in milliseconds";
+            this.DeleteButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.DeleteButton.Location = new System.Drawing.Point(247, 354);
+            this.DeleteButton.Name = "DeleteButton";
+            this.DeleteButton.Size = new System.Drawing.Size(88, 22);
+            this.DeleteButton.TabIndex = 19;
+            this.DeleteButton.Text = "Delete Point";
+            this.DeleteButton.UseVisualStyleBackColor = true;
+            this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
             // 
-            // Remove
+            // BpmBox
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Red;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Red;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
-            this.Remove.DefaultCellStyle = dataGridViewCellStyle1;
-            this.Remove.HeaderText = "";
-            this.Remove.Name = "Remove";
-            this.Remove.ReadOnly = true;
-            this.Remove.Text = "";
-            this.Remove.Width = 20;
+            this.BpmBox.DecimalPlaces = 3;
+            this.BpmBox.Location = new System.Drawing.Point(69, 356);
+            this.BpmBox.Maximum = new decimal(new int[] {
+            268435455,
+            1042612833,
+            542101086,
+            0});
+            this.BpmBox.Minimum = new decimal(new int[] {
+            268435455,
+            1042612833,
+            542101086,
+            -2147483648});
+            this.BpmBox.Name = "BpmBox";
+            this.BpmBox.Size = new System.Drawing.Size(88, 20);
+            this.BpmBox.TabIndex = 20;
+            // 
+            // OffsetBox
+            // 
+            this.OffsetBox.Location = new System.Drawing.Point(69, 382);
+            this.OffsetBox.Maximum = new decimal(new int[] {
+            268435455,
+            1042612833,
+            542101086,
+            0});
+            this.OffsetBox.Minimum = new decimal(new int[] {
+            268435455,
+            1042612833,
+            542101086,
+            -2147483648});
+            this.OffsetBox.Name = "OffsetBox";
+            this.OffsetBox.Size = new System.Drawing.Size(88, 20);
+            this.OffsetBox.TabIndex = 21;
+            // 
+            // CurrentButton
+            // 
+            this.CurrentButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.CurrentButton.Location = new System.Drawing.Point(247, 382);
+            this.CurrentButton.Name = "CurrentButton";
+            this.CurrentButton.Size = new System.Drawing.Size(88, 22);
+            this.CurrentButton.TabIndex = 22;
+            this.CurrentButton.Text = "Current Pos";
+            this.CurrentButton.UseVisualStyleBackColor = true;
+            this.CurrentButton.Click += new System.EventHandler(this.CurrentButton_Click);
+            // 
+            // BpmLabel
+            // 
+            this.BpmLabel.AutoSize = true;
+            this.BpmLabel.Location = new System.Drawing.Point(33, 358);
+            this.BpmLabel.Name = "BpmLabel";
+            this.BpmLabel.Size = new System.Drawing.Size(30, 13);
+            this.BpmLabel.TabIndex = 23;
+            this.BpmLabel.Text = "BPM";
+            // 
+            // OffsetLabel
+            // 
+            this.OffsetLabel.AutoSize = true;
+            this.OffsetLabel.Location = new System.Drawing.Point(28, 384);
+            this.OffsetLabel.Name = "OffsetLabel";
+            this.OffsetLabel.Size = new System.Drawing.Size(35, 13);
+            this.OffsetLabel.TabIndex = 24;
+            this.OffsetLabel.Text = "Offset";
             // 
             // TimingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(345, 546);
+            this.Controls.Add(this.OffsetLabel);
+            this.Controls.Add(this.BpmLabel);
+            this.Controls.Add(this.CurrentButton);
+            this.Controls.Add(this.OffsetBox);
+            this.Controls.Add(this.BpmBox);
+            this.Controls.Add(this.DeleteButton);
+            this.Controls.Add(this.AddButton);
             this.Controls.Add(this.OpenBeatmap);
             this.Controls.Add(this.OpenTapper);
             this.Controls.Add(this.ImportADOFAI);
@@ -214,23 +303,25 @@
             this.Controls.Add(this.MoveButton);
             this.Controls.Add(this.MoveBox);
             this.Controls.Add(this.MoveLabel);
-            this.Controls.Add(this.CurrentButton);
+            this.Controls.Add(this.UpdateButton);
             this.Controls.Add(this.PointList);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "TimingsWindow";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "`";
             ((System.ComponentModel.ISupportInitialize)(this.PointList)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MoveBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BpmBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OffsetBox)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.DataGridView PointList;
-		private System.Windows.Forms.Button CurrentButton;
+		private System.Windows.Forms.Button UpdateButton;
         private System.Windows.Forms.Label MoveLabel;
         private System.Windows.Forms.NumericUpDown MoveBox;
         private System.Windows.Forms.Button MoveButton;
@@ -239,8 +330,14 @@
         private System.Windows.Forms.Button ImportADOFAI;
         private System.Windows.Forms.Button OpenTapper;
         private System.Windows.Forms.Button OpenBeatmap;
+        private System.Windows.Forms.Button AddButton;
+        private System.Windows.Forms.Button DeleteButton;
+        private System.Windows.Forms.NumericUpDown BpmBox;
+        private System.Windows.Forms.NumericUpDown OffsetBox;
+        private System.Windows.Forms.Button CurrentButton;
         private System.Windows.Forms.DataGridViewTextBoxColumn BPM;
         private System.Windows.Forms.DataGridViewTextBoxColumn Offset;
-        private System.Windows.Forms.DataGridViewButtonColumn Remove;
+        private System.Windows.Forms.Label BpmLabel;
+        private System.Windows.Forms.Label OffsetLabel;
     }
 }
