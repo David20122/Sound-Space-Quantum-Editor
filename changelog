@@ -1,4 +1,9 @@
 ----------------------------------
+     -- 1.8.3.1 - 3/5/2022 --
+
+- fixed crashes caused by moving timing points on the track
+
+----------------------------------
      -- 1.8.3 - 25/4/2022 --
 
 - actually fixed creating maps with differently named audios
