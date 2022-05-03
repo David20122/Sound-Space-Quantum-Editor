@@ -32,10 +32,10 @@ namespace Sound_Space_Editor
         public void ResetList(int index)
         {
             PointList.Rows.Clear();
+
             foreach (var point in GuiTrack.BPMs)
-            {
-                PointList.Rows.Add(point.bpm, point.Ms, "X");
-            }
+                PointList.Rows.Add(point.bpm, point.Ms);
+            
             if (GuiTrack.BPMs.Count > 0)
             {
                 index = MathHelper.Clamp(index, 0, GuiTrack.BPMs.Count - 1);
