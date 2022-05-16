@@ -486,5 +486,10 @@ namespace Sound_Space_Editor
         {
             OffsetBox.Value = (decimal)EditorWindow.Instance.currentTime.TotalMilliseconds;
         }
+
+        private void OnClosing(object sender, EventArgs e)
+        {
+            inst = null;
+        }
     }
 }

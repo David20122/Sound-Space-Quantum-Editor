@@ -308,6 +308,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "TimingsWindow";
             this.ShowIcon = false;
+            this.Closing += new System.ComponentModel.CancelEventHandler(OnClosing);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             ((System.ComponentModel.ISupportInitialize)(this.PointList)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MoveBox)).EndInit();
