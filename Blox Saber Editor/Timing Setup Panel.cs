@@ -89,7 +89,7 @@ namespace Sound_Space_Editor
                         }
                         string[] items = line.Split(',');
                         var time = long.Parse(items[0], culture);
-                        var bpm = Math.Round(60000 / double.Parse(items[1], culture), 5);
+                        var bpm = Math.Abs(Math.Round(60000 / double.Parse(items[1], culture), 5));
                         if (bpm > 0)
                         {
                             GuiTrack.BPMs.Add(new BPM((float)bpm, time));
