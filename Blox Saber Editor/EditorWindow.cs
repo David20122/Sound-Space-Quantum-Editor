@@ -2721,6 +2721,9 @@ namespace Sound_Space_Editor
                                     }
 									GuiTrack.NoteOffset = offset;
 									gse.Offset.Text = offset.ToString();
+
+									foreach (var note in Notes.ToList())
+										note.Ms -= offset;
 								}
 								else if (property == "legacybpm" && float.TryParse(value, out var legacybpm))
                                 {
@@ -2890,7 +2893,7 @@ namespace Sound_Space_Editor
 				for (int i = 0; i < Notes.Count; i++)
 				{
 					Note note = Notes[i];
-					var ms = note.Ms;
+					var ms = note.Ms + GuiTrack.NoteOffset;
 					var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
 					culture.NumberFormat.NumberDecimalSeparator = ".";
 					var gridX = Math.Round(2 - note.X, 2);
@@ -3006,12 +3009,12 @@ namespace Sound_Space_Editor
 					using (var dialog = new OpenFileDialog
 					{
 						Title = "Select Audio File",
-						Filter = "Audio Files (*.mp3;*.ogg;*.wav;*.asset)|*.mp3;*.ogg;*.wav;*.asset"
+						Filter = "Audio Files (*.mp3;*.ogg;*.wav;*.flac;*.asset)|*.mp3;*.ogg;*.wav;*.flac;*.asset"
 					})
 					{
 						if (dialog.ShowDialog() == DialogResult.OK)
                         {
-							File.Copy(dialog.FileName, cacheFolder + id + ".asset");
+							File.Copy(dialog.FileName, cacheFolder + id + ".asset", true);
 							return true;
 						}
 					}

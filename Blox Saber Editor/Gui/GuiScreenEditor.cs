@@ -51,7 +51,6 @@ namespace Sound_Space_Editor.Gui
 		//public readonly GuiCheckBox LegacyBPM;
 		public readonly GuiButton BackButton;
 		public readonly GuiButton CopyButton;
-		public readonly GuiButton SetOffset;
 		public readonly GuiButton JumpMSButton;
 		public readonly GuiButton RotateButton;
 		public readonly GuiButton BezierButton;
@@ -230,7 +229,6 @@ namespace Sound_Space_Editor.Gui
 				Value = 9,
 			};
 
-			SetOffset = new GuiButton(2, 0, 0, 64, 32, "SET", false);
 			BackButton = new GuiButton(3, 0, 0, Grid.ClientRectangle.Width + 1, 42, "BACK TO MENU", false);
 			CopyButton = new GuiButton(4, 0, 0, Grid.ClientRectangle.Width + 1, 42, "COPY MAP DATA", false);
 
@@ -327,7 +325,6 @@ namespace Sound_Space_Editor.Gui
 			//Buttons.Add(ClickToPlace);
 			Buttons.Add(SeparateClickTools);
 			//Buttons.Add(LegacyBPM);
-			Buttons.Add(SetOffset);
 			Buttons.Add(BackButton);
 			Buttons.Add(CopyButton);
 			Buttons.Add(JumpMSButton);
@@ -410,6 +407,9 @@ namespace Sound_Space_Editor.Gui
 				toastOffY = (float)Math.Cos(Math.Min(0.25, _toastTime - 1.75) / 0.25 * MathHelper.PiOver2);
 			}
 
+			if (long.TryParse(Offset.Text, out var exportoffset) && exportoffset != GuiTrack.NoteOffset)
+				GuiTrack.NoteOffset = exportoffset;
+
 			var size = EditorWindow.Instance.ClientSize;
 			var widthdiff = size.Width / 1920f;
 			var heightdiff = size.Height / 1080f;
@@ -480,7 +480,7 @@ namespace Sound_Space_Editor.Gui
 			if (rl)
             {
 				if (TimingNavEnabled)
-					fr.Render("Offset[ms]~", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
+					fr.Render("Export Offset[ms]~", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
 				fr.Render("SFX Offset[ms]~", (int)SfxOffset.ClientRectangle.X, (int)SfxOffset.ClientRectangle.Y - 24, 24);
 				fr.Render("Jump to MS~", (int)JumpMSBox.ClientRectangle.X, (int)JumpMSBox.ClientRectangle.Y - 24, 24);
 				fr.Render("Sewect between MS~", (int)MSBoundLower.ClientRectangle.X, (int)MSBoundLower.ClientRectangle.Y - 24, 24);
@@ -488,7 +488,7 @@ namespace Sound_Space_Editor.Gui
 			else
             {
 				if (TimingNavEnabled)
-					fr.Render("Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
+					fr.Render("Export Offset[ms]:", (int)Offset.ClientRectangle.X, (int)Offset.ClientRectangle.Y - 24, 24);
 				fr.Render("SFX Offset[ms]:", (int)SfxOffset.ClientRectangle.X, (int)SfxOffset.ClientRectangle.Y - 24, 24);
 				fr.Render("Jump to MS:", (int)JumpMSBox.ClientRectangle.X, (int)JumpMSBox.ClientRectangle.Y - 24, 24);
 				fr.Render("Select between MS:", (int)MSBoundLower.ClientRectangle.X, (int)MSBoundLower.ClientRectangle.Y - 24, 24);
@@ -782,7 +782,6 @@ namespace Sound_Space_Editor.Gui
 
 			//timing
 			Offset.Visible = false;
-			SetOffset.Visible = false;
 			UseCurrentMs.Visible = false;
 			OpenTimings.Visible = false;
 			OpenBookmarks.Visible = false;
@@ -833,7 +832,6 @@ namespace Sound_Space_Editor.Gui
 			if (TimingNavEnabled)
             {
 				Offset.Visible = true;
-				SetOffset.Visible = true;
 				UseCurrentMs.Visible = true;
 				OpenTimings.Visible = true;
 				OpenBookmarks.Visible = true;
@@ -875,55 +873,6 @@ namespace Sound_Space_Editor.Gui
 							EditorWindow.Instance.currentTime = TimeSpan.FromMilliseconds(0);
 						EditorWindow.Instance.MusicPlayer.Play();
 					}
-					break;
-				case 2:
-					long oldOffset = GuiTrack.NoteOffset;
-
-					long.TryParse(Offset.Text, out var newOffset);
-
-					var change = newOffset - oldOffset;
-
-					void Redo()
-					{
-						Offset.Focused = false;
-						Offset.Text = newOffset.ToString();
-
-						var list = EditorWindow.Instance.Notes.ToList();
-
-						foreach (var note in list)
-						{
-							note.Ms += change;
-						}
-
-						foreach (var bpm in GuiTrack.BPMs)
-                        {
-							bpm.Ms += change;
-                        }
-
-						GuiTrack.NoteOffset = newOffset;
-					}
-
-					Redo();
-
-					EditorWindow.Instance.UndoRedo.AddUndoRedo("CHANGE OFFSET", () =>
-					{
-						Offset.Focused = false;
-						Offset.Text = oldOffset.ToString();
-
-						var list = EditorWindow.Instance.Notes.ToList();
-
-						foreach (var note in list)
-						{
-							note.Ms -= change;
-						}
-
-						foreach (var bpm in GuiTrack.BPMs)
-						{
-							bpm.Ms -= change;
-						}
-
-						GuiTrack.NoteOffset = oldOffset;
-					}, Redo);
 					break;
 				case 3:
 					if (EditorWindow.Instance.WillClose())
@@ -1246,8 +1195,7 @@ namespace Sound_Space_Editor.Gui
 
 			//timing
 			Offset.ClientRectangle.Size = new SizeF(128 * widthdiff, 40 * heightdiff);
-			SetOffset.ClientRectangle.Size = Offset.ClientRectangle.Size;
-			UseCurrentMs.ClientRectangle.Size = new SizeF(Offset.ClientRectangle.Width + SetOffset.ClientRectangle.Width + 5 * widthdiff, Offset.ClientRectangle.Height);
+			UseCurrentMs.ClientRectangle.Size = new SizeF(Offset.ClientRectangle.Width * 2f + 5 * widthdiff, Offset.ClientRectangle.Height);
 			OpenTimings.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
 			OpenBookmarks.ClientRectangle.Size = UseCurrentMs.ClientRectangle.Size;
 
@@ -1275,11 +1223,11 @@ namespace Sound_Space_Editor.Gui
 			//DynamicBezier.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			CurveBezier.ClientRectangle.Size = Autoplay.ClientRectangle.Size;
 			BezierBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
-			BezierButton.ClientRectangle.Size = SetOffset.ClientRectangle.Size;
+			BezierButton.ClientRectangle.Size = Offset.ClientRectangle.Size;
 			RotateBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
-			RotateButton.ClientRectangle.Size = SetOffset.ClientRectangle.Size;
+			RotateButton.ClientRectangle.Size = Offset.ClientRectangle.Size;
 			ScaleBox.ClientRectangle.Size = Offset.ClientRectangle.Size;
-			ScaleButton.ClientRectangle.Size = SetOffset.ClientRectangle.Size;
+			ScaleButton.ClientRectangle.Size = Offset.ClientRectangle.Size;
 
 			//etc
 			JumpMSButton.ClientRectangle.Size = new SizeF(192 * widthdiff, 40 * heightdiff);
@@ -1298,7 +1246,6 @@ namespace Sound_Space_Editor.Gui
 
 			//timing
 			Offset.ClientRectangle.Location = new PointF(OptionsNav.ClientRectangle.X, TimingNav.ClientRectangle.Bottom + 40 * heightdiff);
-			SetOffset.ClientRectangle.Location = new PointF(Offset.ClientRectangle.Right + 5 * widthdiff, Offset.ClientRectangle.Y);
 			UseCurrentMs.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, Offset.ClientRectangle.Bottom + 10 * heightdiff);
 			OpenTimings.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, UseCurrentMs.ClientRectangle.Bottom + 10 * heightdiff);
 			OpenBookmarks.ClientRectangle.Location = new PointF(Offset.ClientRectangle.X, OpenTimings.ClientRectangle.Bottom + 10 * heightdiff);

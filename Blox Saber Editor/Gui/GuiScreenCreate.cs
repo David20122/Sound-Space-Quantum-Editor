@@ -100,13 +100,13 @@ namespace Sound_Space_Editor.Gui
 					using (var dialog = new OpenFileDialog
 					{
 						Title = "Select Audio File",
-						Filter = "Audio Files (*.mp3;*.ogg;*.wav;*.asset)|*.mp3;*.ogg;*.wav;*.asset"
+						Filter = "Audio Files (*.mp3;*.ogg;*.wav;*.flac;*.asset)|*.mp3;*.ogg;*.wav;*.flac;*.asset"
 					})
 					{
 						if (dialog.ShowDialog() == DialogResult.OK)
 						{
 							string filename = Path.GetFileNameWithoutExtension(dialog.SafeFileName);
-							File.Copy(dialog.FileName, EditorWindow.Instance.cacheFolder + filename + ".asset");
+							File.Copy(dialog.FileName, EditorWindow.Instance.cacheFolder + filename + ".asset", true);
 							EditorWindow.Instance.CreateMap(filename);
 						}
 					}
