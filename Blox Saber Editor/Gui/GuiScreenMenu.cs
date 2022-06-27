@@ -298,7 +298,7 @@ namespace Sound_Space_Editor.Gui
 						EditorWindow.Instance.LoadMap(Settings.Default.AutosavedFile, false);
 					break;
 				case 5:
-					if (Settings.Default.LastFile != "")
+					if (Settings.Default.LastFile != "" && File.Exists(Settings.Default.LastFile))
 						EditorWindow.Instance.LoadFile(Settings.Default.LastFile);
 					break;
 			}
