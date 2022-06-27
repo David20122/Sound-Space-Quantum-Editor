@@ -1,4 +1,13 @@
 ----------------------------------
+     -- 1.8.4 - 27/6/2022 --
+
+- repurposed the offset text box to export with the offset given rather than move every timing point and note
+- fixed crashing when pressing edit last map if the file no longer exists
+- added .flac to the audio import filter
+- fixed parsing negative and decimal timing points from OSU beatmaps
+- fixed crashes when trying to overwrite asset files
+
+----------------------------------
     -- 1.8.3.1/2 - 3/5/2022 --
 
 - fixed crashes caused by moving timing points on the track
