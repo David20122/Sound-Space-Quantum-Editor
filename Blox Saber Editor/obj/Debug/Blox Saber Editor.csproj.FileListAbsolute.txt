@@ -76,3 +76,4 @@ C:\Users\pc\Documents\SSQE\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.
 C:\Users\pc\Documents\SSQE\Blox Saber Editor\obj\Debug\Sound_Space_Editor.BookmarkSetup.resources
 F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Sound_Space_Editor.BookmarkSetup.resources
 F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\obj\Debug\Blox Saber Editor.csproj.AssemblyReference.cache
+F:\GitHub\Sound-Space-Quantum-Editor\Blox Saber Editor\bin\Debug\NCalc.dll
