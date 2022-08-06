@@ -161,6 +161,9 @@ namespace Sound_Space_Editor.Gui
 			var y = rect.Y + gap / 2;
 
 			_cs.Reset();
+
+			var rendered = new List<int>();
+
 			for (int i = 0; i < editor.Notes.Count; i++)
 			{
 				Note note = EditorWindow.Instance.Notes[i];
@@ -181,8 +184,10 @@ namespace Sound_Space_Editor.Gui
 				if (x > rect.Width)
 					break;
 
-				if (x < rect.X - noteSize)
+				if (x < rect.X - noteSize || rendered.Contains((int)x) || rendered.Contains((int)x + 1) || rendered.Contains((int)x - 1))
 					continue;
+
+				rendered.Add((int)x);
 
 				var alphaMult = 1f;
 
