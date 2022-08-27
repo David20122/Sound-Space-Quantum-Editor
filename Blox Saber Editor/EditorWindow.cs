@@ -3147,6 +3147,22 @@ namespace Sound_Space_Editor
 			}
 		}
 
+		private Color MergeColors(Color c1, Color c2)
+        {
+			var r = (c1.R + c2.R) / 2;
+			var g = (c1.G + c2.G) / 2;
+			var b = (c1.B + c2.B) / 2;
+
+			return Color.FromArgb(1, r, g, b);
+        }
+
+		private bool IsMegaNote(int i)
+        {
+			var ms = _notes[i].Ms;
+
+			return (i - 1 >= 0 && _notes[i - 1].Ms == ms) || (i + 1 < _notes.Count() && _notes[i + 1].Ms == ms);
+        }
+
 		public void Sort()
 		{
 			lock (_notes)
@@ -3154,10 +3170,15 @@ namespace Sound_Space_Editor
 				_notes = new List<Note>(_notes.OrderBy(n => n.Ms));
 				for (int i = 0; i < _notes.Count; i++)
                 {
-					if (i % 2 == 0)
-						_notes[i].Color = EditorSettings.NoteColor2;
+					if (IsMegaNote(i))
+						_notes[i].Color = MergeColors(EditorSettings.NoteColor1, EditorSettings.NoteColor2);
 					else
-						_notes[i].Color = EditorSettings.NoteColor1;
+                    {
+						if (i % 2 == 0)
+							_notes[i].Color = EditorSettings.NoteColor2;
+						else
+							_notes[i].Color = EditorSettings.NoteColor1;
+					}
                 }
 			}
 		}
