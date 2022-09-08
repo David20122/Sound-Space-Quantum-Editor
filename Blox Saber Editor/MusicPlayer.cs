@@ -287,13 +287,13 @@ namespace Sound_Space_Editor
 
 				var pos = Bass.BASS_ChannelGetPosition(streamID, BASSMode.BASS_POS_BYTES);
 
-				return TimeSpan.FromSeconds(Bass.BASS_ChannelBytes2Seconds(streamID, pos) + 0.03 * EditorWindow.Instance.tempo);
+				return TimeSpan.FromSeconds(Bass.BASS_ChannelBytes2Seconds(streamID, pos) + 0.0375 * (EditorWindow.Instance.tempo - 0.2f));
 			}
 			set
 			{
 				CheckDevice();
 
-				var pos = Bass.BASS_ChannelSeconds2Bytes(streamID, value.TotalSeconds - 0.03 * EditorWindow.Instance.tempo);
+				var pos = Bass.BASS_ChannelSeconds2Bytes(streamID, value.TotalSeconds + 0.0375 * (EditorWindow.Instance.tempo - 0.2f));
 
 				Bass.BASS_ChannelSetPosition(streamID, pos, BASSMode.BASS_POS_BYTES);
 			}
