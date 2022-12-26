@@ -1,4 +1,23 @@
 ----------------------------------
+     -- 1.8.5 : LAST C# BUILD - 26/12/2022 --
+
+The editor will be getting a rewrite from zero, meaning THIS editor won't be updated anymore, unless it's urgent:
+          - will be cross-platform
+          - better stability/performance
+          - better functionality
+          
+Additions/Changes:
+
+- Map Player, made by pyrule#0001 (test your map anytime)
+     - will not work for roblox audios (.asset)
+     - settings for it are located in the settings file (settings.txt)
+          - approachDistance
+          - approachTime
+          - parallax
+          - sensitivity
+ - imported audios will keep their extension (won't be renamed to .asset), still saved in cached folder
+
+----------------------------------
      -- 1.8.4 - 27/6/2022 --
 
 - repurposed the offset text box to export with the offset given rather than move every timing point and note
