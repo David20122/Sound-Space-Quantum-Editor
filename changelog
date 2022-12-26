@@ -1,4 +1,9 @@
 ----------------------------------
+     -- 1.8.5.1 : hotfix - 26/12/2022 --
+
+- added a warning if folder names (or the audio file itself) contain dots or spaces when clicked play map
+ 
+----------------------------------
      -- 1.8.5 : LAST C# BUILD - 26/12/2022 --
 
 The editor will be getting a rewrite from zero, meaning THIS editor won't be updated anymore, unless it's urgent:
