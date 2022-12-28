@@ -1,4 +1,11 @@
 ----------------------------------
+     -- 1.8.5.2 : hotfix #2 - 28/12/2022 --
+
+- fixed creating new maps
+- map player's notes aren't mirrored anymore, player volume controlled by editor's "Music" volume
+might've forgot about something
+ 
+----------------------------------
      -- 1.8.5.1 : hotfix - 26/12/2022 --
 
 - added a warning if folder names (or the audio file itself) contain dots or spaces when clicked play map
