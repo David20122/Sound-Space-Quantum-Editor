@@ -31,15 +31,18 @@ namespace Sound_Space_Editor.Gui
 
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
-			if (EditorWindow.Instance.GuiScreen is GuiScreenMenu menu)
+			if (EditorWindow.Instance.GuiScreen is GuiScreenMenu)
 			{
 				Color1 = Color.FromArgb(255, 255, 255);
 				Color2 = Color.FromArgb(50, 50, 50);
-
 			}
+			else if (EditorWindow.Instance.GuiScreen is GuiScreenCreate)
+            {
+                Color1 = Color.FromArgb(255, 255, 255);
+                Color2 = Color.FromArgb(50, 50, 50);
+            }
 			else
 			{
-
 				Color1 = EditorWindow.Instance.Color1;
 				Color2 = EditorWindow.Instance.Color2;
 			}
@@ -71,7 +74,7 @@ namespace Sound_Space_Editor.Gui
 				{
 					GL.PolygonMode(MaterialFace.Front, PolygonMode.Line);
 					GL.Color4(Color1);
-					Glu.RenderCircle(0, 0, 12 * _alpha);
+					Glu.RenderCircleOutline(0, 0, 12 * _alpha);
 				}
 
 				GL.Rotate(-_alpha * 90, 0, 0, 1);

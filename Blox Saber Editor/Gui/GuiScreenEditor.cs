@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Numerics;
+using Sound_Space_Editor;
 
 namespace Sound_Space_Editor.Gui
 {
@@ -49,9 +50,15 @@ namespace Sound_Space_Editor.Gui
 		//public readonly GuiCheckBox ClickToPlace;
 		public readonly GuiCheckBox SeparateClickTools;
 		//public readonly GuiCheckBox LegacyBPM;
+
 		public readonly GuiButton BackButton;
 		public readonly GuiButton CopyButton;
-		public readonly GuiButton JumpMSButton;
+        public readonly GuiButton PlayButton;
+
+        public static GuiLabel playLabel = new GuiLabel(0, 0, "If you hold SHIFT, the map will be played from the current time", "main", 15);
+        public static GuiLabel noplayLabel = new GuiLabel(0, 0, "Not available, beacuse the map is using an ROBLOX audio.", "main", 15);
+
+        public readonly GuiButton JumpMSButton;
 		public readonly GuiButton RotateButton;
 		public readonly GuiButton BezierButton;
 		public readonly GuiButton BezierStoreButton;
@@ -231,8 +238,9 @@ namespace Sound_Space_Editor.Gui
 
 			BackButton = new GuiButton(3, 0, 0, Grid.ClientRectangle.Width + 1, 42, "BACK TO MENU", false);
 			CopyButton = new GuiButton(4, 0, 0, Grid.ClientRectangle.Width + 1, 42, "COPY MAP DATA", false);
+            PlayButton = new GuiButton(21, 0, 0, Grid.ClientRectangle.Width + 1, 42, "PLAY MAP", false);
 
-			JumpMSButton = new GuiButton(6, 0, 0, 64, 32, "JUMP", false);
+            JumpMSButton = new GuiButton(6, 0, 0, 64, 32, "JUMP", false);
 			RotateButton = new GuiButton(7, 0, 0, 64, 32, "ROTATE", false);
 			BezierButton = new GuiButton(10, 0, 0, 64, 32, "DRAW", false);
 			BezierStoreButton = new GuiButton(13, 0, 0, 128, 32, "STORE NODES", false);
@@ -327,7 +335,8 @@ namespace Sound_Space_Editor.Gui
 			//Buttons.Add(LegacyBPM);
 			Buttons.Add(BackButton);
 			Buttons.Add(CopyButton);
-			Buttons.Add(JumpMSButton);
+            Buttons.Add(PlayButton);
+            Buttons.Add(JumpMSButton);
 			Buttons.Add(RotateButton);
 			Buttons.Add(OpenTimings);
 			Buttons.Add(OpenBookmarks);
@@ -346,7 +355,10 @@ namespace Sound_Space_Editor.Gui
 			Buttons.Add(ApproachRate);
 			Buttons.Add(SelectBound);
 
-			Boxes.Add(Offset);
+			playLabel.Color = Color.FromArgb(255, 255, 255);
+            noplayLabel.Color = Color.FromArgb(255, 255, 255);
+
+            Boxes.Add(Offset);
 			Boxes.Add(SfxOffset);
 			Boxes.Add(JumpMSBox);
 			Boxes.Add(RotateBox);
@@ -896,7 +908,50 @@ namespace Sound_Space_Editor.Gui
 						ShowToast("FAILED TO COPY", Color.FromArgb(255, 200, 0));
                     }
 					break;
-				case 5:
+                case 21:
+					// play button
+					if (EditorWindow.Instance.ActualAudio.Length == 0) return;
+                    EditorWindow.Instance.ToggleGrid(false);
+                    try
+					{
+                        string path = EditorWindow.Instance.ActualAudioPath.Replace(".", "{DOT}").Replace(" ", "{SPC}");
+
+                        File.WriteAllText("temp.txt", EditorWindow.Instance.ParseData(false));
+                        string color1 = string.Format("{0:X2}{1:X2}{2:X2}", EditorSettings.Color1.R, EditorSettings.Color1.G, EditorSettings.Color1.B);
+                        string color2 = string.Format("{0:X2}{1:X2}{2:X2}", EditorSettings.Color2.R, EditorSettings.Color2.G, EditorSettings.Color2.B);
+
+                        string at = EditorSettings.ApproachTime.ToString().Replace(",", ".");
+                        string vol = EditorWindow.Instance.MusicPlayer.Volume.ToString().Replace(',', '.');
+
+
+                        if (EditorWindow.Instance._shiftDown)
+                        {
+                            System.Diagnostics.Process p = new System.Diagnostics.Process();
+                            p.StartInfo.FileName = "MapPlayer.exe";
+                            p.StartInfo.Arguments = string.Format(">>md={0} >>aud={1} >>at={2} >>ad={3} >>sf={4} >>sm={5} >>chroma={6},{7} >>sens={8} >>motion={9} >>vol={10} >>thirds", "temp.txt", path, at, EditorSettings.ApproachDistance, EditorWindow.Instance.currentTime.TotalSeconds, EditorWindow.Instance.tempo, color1, color2, EditorSettings.Sensitivity, EditorSettings.Parallax, vol);
+                            Console.WriteLine(p.StartInfo.Arguments);
+                            p.Start();
+                            p.WaitForExit();
+                            File.Delete("temp.txt");
+                            EditorWindow.Instance._shiftDown = false;
+                        }
+                        else
+                        {
+                            System.Diagnostics.Process p = new System.Diagnostics.Process();
+                            p.StartInfo.FileName = "MapPlayer.exe";
+                            p.StartInfo.Arguments = string.Format(">>md={0} >>aud={1} >>at={2} >>ad={3} >>sf={4} >>sm={5} >>chroma={6},{7} >>sens={8} >>motion={9} >>vol={10} >>thirds", "temp.txt", path, at, EditorSettings.ApproachDistance, 0, EditorWindow.Instance.tempo, color1, color2, EditorSettings.Sensitivity, EditorSettings.Parallax, vol);
+                            Console.WriteLine(p.StartInfo.Arguments);
+                            p.Start();
+                            p.WaitForExit();
+                            File.Delete("temp.txt");
+                        }
+                    } catch
+					{
+                        EditorWindow.Instance.ToggleGrid(true);
+                    }
+                    EditorWindow.Instance.ToggleGrid(true);
+                    break;
+                case 5:
 					Settings.Default.Autoplay = Autoplay.Toggle;
 					Settings.Default.ApproachSquares = ApproachSquares.Toggle;
 					Settings.Default.GridNumbers = GridNumbers.Toggle;
@@ -1283,8 +1338,11 @@ namespace Sound_Space_Editor.Gui
 			//etc
 			BackButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Bottom + 84 * heightdiff);
 			CopyButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 75 * heightdiff);
+            PlayButton.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 25 * heightdiff);
+            playLabel.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X + 315 * widthdiff, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 10 * heightdiff);
+            noplayLabel.ClientRectangle.Location = new PointF(Grid.ClientRectangle.X + 315 * widthdiff, Grid.ClientRectangle.Y - CopyButton.ClientRectangle.Height - 10 * heightdiff);
 
-			SfxOffset.ClientRectangle.Location = new PointF(SfxVolume.ClientRectangle.Left - SfxOffset.ClientRectangle.Width - 10 * widthdiff, Tempo.ClientRectangle.Top - SfxOffset.ClientRectangle.Height - 15 * heightdiff);
+            SfxOffset.ClientRectangle.Location = new PointF(SfxVolume.ClientRectangle.Left - SfxOffset.ClientRectangle.Width - 10 * widthdiff, Tempo.ClientRectangle.Top - SfxOffset.ClientRectangle.Height - 15 * heightdiff);
 			JumpMSButton.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, SfxOffset.ClientRectangle.Top - JumpMSButton.ClientRectangle.Height - 30);
 			JumpMSBox.ClientRectangle.Location = new PointF(SfxOffset.ClientRectangle.X, JumpMSButton.ClientRectangle.Top - JumpMSBox.ClientRectangle.Height - 10 * heightdiff);
 			AutoAdvance.ClientRectangle.Location = new PointF(BeatSnapDivisor.ClientRectangle.X + 20 * widthdiff, CopyButton.ClientRectangle.Y + 35 * heightdiff);

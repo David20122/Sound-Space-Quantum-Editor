@@ -63,7 +63,7 @@ namespace Sound_Space_Editor
 
 			GL.Translate(x, y, 0);
 			GL.Scale(sx, sy, 1);
-			GL.Begin(PrimitiveType.Polygon);
+			GL.Begin(PrimitiveType.Quads);
 			GL.Vertex2(0, 0);
 			GL.Vertex2(0, 1);
 			GL.Vertex2(1, 1);
@@ -81,6 +81,23 @@ namespace Sound_Space_Editor
 		}
 
 		public static void RenderCircle(float x, float y, float r, int pts = 6)
+		{
+			GL.Begin(PrimitiveType.Polygon);
+
+			for (int i = 0; i < pts; i++)
+			{
+				var a = i / (float)pts * MathHelper.TwoPi;
+
+				var cx = Math.Cos(a) * r;
+				var cy = -Math.Sin(a) * r;
+
+				GL.Vertex2(x + cx, y + cy);
+			}
+
+			GL.End();
+		}
+
+		public static void RenderCircleOutline(float x, float y, float r, int pts = 7)
 		{
 			GL.Begin(PrimitiveType.Polygon);
 

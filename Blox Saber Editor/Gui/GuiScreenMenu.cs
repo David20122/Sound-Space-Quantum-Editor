@@ -21,7 +21,6 @@ namespace Sound_Space_Editor.Gui
 
 		private readonly GuiLabel ssLabel = new GuiLabel(0, 0, "SOUND SPACE", "square", 150);
 		private readonly GuiLabel ssLabelOutline = new GuiLabel(0, 0, "SOUND SPACE", "squareo", 151);
-
 		private readonly GuiLabel qeLabel = new GuiLabel(0, 0, "QUANTUM EDITOR", "square", 36);
 		private readonly GuiLabel qeLabelOutline = new GuiLabel(0, 0, "QUANTUM EDITOR", "squareo", 36);
 
@@ -120,6 +119,8 @@ namespace Sound_Space_Editor.Gui
 			qeLabel.Render(delta, mouseX, mouseY);
 
 			Changelog.Render(delta, mouseX, mouseY);
+
+			ScrollBar.Render(delta, mouseX, mouseY);
 
 			base.Render(delta, mouseX, mouseY);
 		}
@@ -269,7 +270,7 @@ namespace Sound_Space_Editor.Gui
 							}
 							catch
 							{
-								MessageBox.Show("Error while loading map data from link.\nIs it valid?");
+								//MessageBox.Show("Error while loading map data from link.\nIs it valid?");
 							}
 						}
 						else
@@ -280,7 +281,8 @@ namespace Sound_Space_Editor.Gui
 							}
 							catch
 							{
-								MessageBox.Show("Error while loading map data.\nIs it valid?");
+								//loadmap will show the exception
+								//MessageBox.Show("Error while loading map data.\nIs it valid?");
 							}
 						}
 					}

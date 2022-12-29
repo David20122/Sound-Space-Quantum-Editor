@@ -174,8 +174,8 @@ namespace Sound_Space_Editor
 		public void Play()
 		{
 			CurrentTime = EditorWindow.Instance.currentTime;
-			if (CurrentTime != EditorWindow.Instance.currentTime)
-				Reset();
+			//if (CurrentTime != EditorWindow.Instance.currentTime)
+			//	Reset();
 			CheckDevice();
 
 			Bass.BASS_ChannelPlay(streamID, false);

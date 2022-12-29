@@ -1,4 +1,6 @@
 {
+     "approachDistance": 4,
+     "approachTime": 0.5,
      "autosaveInterval": 5,
      "color1": [
           0,
@@ -18,7 +20,7 @@
      "correctOnCopy": true,
      "editorBGOpacity": 255,
      "enableAutosave": true,
-     "gridOpacity": 255,
+     "gridOpacity": 0,
      "keybinds": {
           "anchorNode": [
                "A",
@@ -156,6 +158,8 @@
           255,
           200
      ],
+     "parallax": 0,
+     "sensitivity": 1,
      "trackOpacity": 255,
      "waveform": true
 }

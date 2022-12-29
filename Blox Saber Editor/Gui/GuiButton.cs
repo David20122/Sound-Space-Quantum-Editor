@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sound_Space_Editor;
 
 namespace Sound_Space_Editor.Gui
 {
@@ -104,16 +106,16 @@ namespace Sound_Space_Editor.Gui
 
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
-			var IsMouseOverr = ClientRectangle.Contains(mouseX, mouseY);
-			if (IsMouseOver && !IsMouseOverr)
+			var windowContains = ClientRectangle.Contains(mouseX, mouseY);
+			if (IsMouseOver && !windowContains)
 			{
 				OnMouseLeave(mouseX, mouseY);
-			}
-			else if (!IsMouseOver && IsMouseOverr)
+            }
+			else if (!IsMouseOver && windowContains)
 			{
 				OnMouseEnter(mouseX, mouseY);
-			}
-			IsMouseOver = IsMouseOverr;
+            }
+			IsMouseOver = windowContains;
 
 			_alpha = MathHelper.Clamp(_alpha + (IsMouseOver ? 10 : -10) * delta, 0, 1);
 			
@@ -132,7 +134,7 @@ namespace Sound_Space_Editor.Gui
                 {
 					if (IsMouseOver)
 						GL.Color4(Color.FromArgb(130, 0, 0, 0));
-					else
+                    else
 						GL.Color4(Color.FromArgb(Alpha, 0, 0, 0));
 
 					Glu.RenderQuad(ClientRectangle);
@@ -141,7 +143,6 @@ namespace Sound_Space_Editor.Gui
 					Glu.RenderOutline(ClientRectangle);
 
 				} else {
-
 					var d = 0.075f * _alpha;
 
 					GL.Color3(0.1f + d, 0.1f + d, 0.1f + d);
@@ -149,6 +150,18 @@ namespace Sound_Space_Editor.Gui
 
 					GL.Color3(0.2f + d, 0.2f + d, 0.2f + d);
 					Glu.RenderOutline(ClientRectangle);
+					
+					if (IsMouseOver)
+					{
+						if (EditorWindow.Instance.ActualAudio.Length > 0 && Text == "PLAY MAP")
+						{
+							GuiScreenEditor.playLabel.Render(delta, mouseX, mouseY);
+						}
+						else if (EditorWindow.Instance.ActualAudio.Length == 0 && Text == "PLAY MAP")
+						{
+                            GuiScreenEditor.noplayLabel.Render(delta, mouseX, mouseY);
+                        }
+                    }
 				}
 			}
 

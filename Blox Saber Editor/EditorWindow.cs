@@ -88,7 +88,7 @@ namespace Sound_Space_Editor
 		private bool _rightDown;
 		public bool _controlDown;
 		public bool _altDown;
-		public bool _shiftDown;
+		public  bool _shiftDown;
 		private bool _draggingNoteTimeline;
 		private bool _draggingPointTimeline;
 		private bool _draggingNoteGrid;
@@ -97,8 +97,11 @@ namespace Sound_Space_Editor
 		private bool _wasPlaying;
 
 		private string _file;
+		public string ActualAudio = "";
+        public string ActualAudioPath = "";
+        public string ActualAudioSafe = "";
 
-		private string _soundId = "-1";
+        private string _soundId = "-1";
 		public float tempo = 1f;
 		public TimeSpan currentTime;
 		public TimeSpan totalTime;
@@ -132,7 +135,7 @@ namespace Sound_Space_Editor
 		public EditorWindow(long offset, string launcherDir) : base(1280, 720, new GraphicsMode(32, 8, 0, 8), "Sound Space Quantum Editor " + Application.ProductVersion)
 		{
 			LauncherDir = launcherDir;
-			cacheFolder = Path.Combine(launcherDir, "cached/");
+			cacheFolder = Path.Combine(launcherDir, "cached\\");
 			Instance = this;
 			this.WindowState = OpenTK.WindowState.Maximized;
 			Icon = Resources.icon;
@@ -141,7 +144,7 @@ namespace Sound_Space_Editor
 
 			CheckForUpdates();
 
-			//TargetRenderFrequency = 60;
+			TargetRenderFrequency = 0.0;
 
 			MusicPlayer = new MusicPlayer { Volume = 0.25f };
 			SoundPlayer = new SoundPlayer();
@@ -160,7 +163,7 @@ namespace Sound_Space_Editor
 			SoundPlayer.Cache("click", false);
 			SoundPlayer.Cache("metronome", false);
 
-			LoadSound("1091083826");
+			LoadSound("1091083826", false);
 
 			SoundPlayer.Cache("1091083826", true);
 
@@ -311,6 +314,17 @@ namespace Sound_Space_Editor
 			}
 			catch { }
 			return result;
+		}
+
+		public void ToggleGrid(bool b)
+		{
+			if (!b)
+			{
+				GuiGrid.renderGrid = false;
+			} else
+			{
+                GuiGrid.renderGrid = true;
+            }
 		}
 
 		public void ToggleFullscreen()
@@ -2733,7 +2747,7 @@ namespace Sound_Space_Editor
                                 {
 									GuiTrack.BpmOffset = legacyoffset;
                                 }
-							}
+                            }
 						}
 					}
 				}
@@ -2769,7 +2783,7 @@ namespace Sound_Space_Editor
 
 			try
 			{
-				var id = splits[0];
+				var audio = splits[0];
 
 				for (int i = 1; i < splits.Count; i++)
 				{
@@ -2786,10 +2800,20 @@ namespace Sound_Space_Editor
 
 					Notes.Add(new Note(x, y, ms));
 				}
-				_soundId = id.Value;
-				if (LoadSound(_soundId))
+				_soundId = Path.GetFileNameWithoutExtension(audio.Value);
+				if (LoadSound(_soundId, false))
 				{
-					MusicPlayer.Load(cacheFolder + _soundId + ".asset");
+					foreach (string file in Directory.EnumerateFiles(cacheFolder))
+					{
+						FileInfo fi = new FileInfo(file);
+						if (Path.GetFileNameWithoutExtension(fi.Name) == _soundId)
+						{
+                            ActualAudio = fi.Name;
+							ActualAudioSafe = Path.GetFileNameWithoutExtension(fi.Name);
+							ActualAudioPath = cacheFolder + fi.Name;
+                        }
+					}
+                    MusicPlayer.Load(cacheFolder + ActualAudio);
 					totalTime = MusicPlayer.TotalTime;
 
 					var gui = new GuiScreenEditor();
@@ -2808,7 +2832,7 @@ namespace Sound_Space_Editor
 			}
 			catch
 			{
-				MessageBox.Show("An error has occured while loading map data.");
+				MessageBox.Show("An error has occured while loading map data.\n");
 				return false;
 			}
 
@@ -2817,8 +2841,32 @@ namespace Sound_Space_Editor
 
 		public void CreateMap(string id)
 		{
-			LoadMap(id, false);
-		}
+			//LoadMap(id, false);
+			Console.WriteLine(id);
+            _file = null;
+
+            Notes.Clear();
+
+            SelectedNotes.Clear();
+            _draggedNotes.Clear();
+
+            _draggingNoteGrid = false;
+            _draggingNoteTimeline = false;
+
+            _draggedNote = null;
+
+            _soundId = id;
+
+            if (LoadSound(id, true))
+            {
+                MusicPlayer.Load(ActualAudioPath);
+                totalTime = MusicPlayer.TotalTime;
+
+                var gui = new GuiScreenEditor();
+
+                OpenGuiScreen(gui);
+            }
+        }
 
 		public BPM GetCurrentBpm(double currentms, bool draggingbpm)
         {
@@ -2887,8 +2935,8 @@ namespace Sound_Space_Editor
 			try
 			{
 				var sb = new StringBuilder();
-
-				sb.Append(_soundId.ToString());
+				string sound = Path.GetFileNameWithoutExtension(_soundId.ToString());
+                sb.Append(sound);
 
 				for (int i = 0; i < Notes.Count; i++)
 				{
@@ -2907,7 +2955,7 @@ namespace Sound_Space_Editor
 					string xp = gridX.ToString(culture);
 					string yp = gridY.ToString(culture);
 
-					sb.Append($",{xp}|{yp}|{ms}");
+                    sb.Append($",{xp}|{yp}|{ms}");
 				}
 				return sb.ToString();
 			}
@@ -2981,50 +3029,60 @@ namespace Sound_Space_Editor
 			
 			var iniFile = Path.ChangeExtension(_file, ".ini");
 
-			File.WriteAllLines(iniFile, new[] { $@"BPM={BpmsToString()}", $@"Bookmarks={BookmarksToString()}", $@"Offset={GuiTrack.NoteOffset}", $@"LegacyBPM={GuiTrack.Bpm}", $@"LegacyOffset={GuiTrack.BpmOffset}", $@"Time={(long)currentTime.TotalMilliseconds}", $@"Divisor={GuiTrack.BeatDivisor}" }, Encoding.UTF8);
+			File.WriteAllLines(iniFile, new[] { $@"BPM={BpmsToString()}", $@"Bookmarks={BookmarksToString()}", $@"Offset={GuiTrack.NoteOffset}", $@"LegacyBPM={GuiTrack.Bpm}", $@"LegacyOffset={GuiTrack.BpmOffset}", $@"Time={(long)currentTime.TotalMilliseconds}", $@"Divisor={GuiTrack.BeatDivisor}"}, Encoding.UTF8);
 		}
 
-		private bool LoadSound(string id)
+		private bool LoadSound(string id, bool imported)
 		{
-			try
-			{
-				if (!Directory.Exists(cacheFolder))
-					Directory.CreateDirectory(cacheFolder);
+            foreach (string file in Directory.EnumerateFiles(cacheFolder))
+            {
+                FileInfo fi = new FileInfo(file);
+				if (Path.GetFileNameWithoutExtension(fi.Name) == Path.GetFileNameWithoutExtension(id))
+					return true;
+            }
 
-				if (!File.Exists(cacheFolder + id + ".asset"))
-				{
-					using (var wc = new SecureWebClient())
-					{
-						wc.DownloadFile("https://assetdelivery.roblox.com/v1/asset/?id=" + id, cacheFolder + id + ".asset");
-					}
-				}
+            try
+            {
+                if (!Directory.Exists(cacheFolder))
+                    Directory.CreateDirectory(cacheFolder);
 
-				return true;
-			}
-			catch (Exception e)
-			{
-				var message = MessageBox.Show($"Failed to download asset with id '{id}':\n\n{e.Message}\n\nWould you like to import a file with this id instead?", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
-				if (message == DialogResult.OK)
+                if (!File.Exists(cacheFolder + id + ".asset"))
                 {
-					using (var dialog = new OpenFileDialog
-					{
-						Title = "Select Audio File",
-						Filter = "Audio Files (*.mp3;*.ogg;*.wav;*.flac;*.asset)|*.mp3;*.ogg;*.wav;*.flac;*.asset"
-					})
-					{
-						if (dialog.ShowDialog() == DialogResult.OK)
-                        {
-							File.Copy(dialog.FileName, cacheFolder + id + ".asset", true);
-							return true;
-						}
-					}
-				}
-			}
+                    using (var wc = new SecureWebClient())
+                    {
+                        wc.DownloadFile("https://assetdelivery.roblox.com/v1/asset/?id=" + id, cacheFolder + id + ".asset");
+                    }
+                }
 
-			return false;
+                return true;
+            }
+            catch (Exception e)
+            {
+                var message = MessageBox.Show($"Failed to download asset with id '{id}':\n\n{e.Message}\n\nWould you like to import a file with this id instead?", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+                if (message == DialogResult.OK)
+                {
+                    using (var dialog = new OpenFileDialog
+                    {
+                        Title = "Select Audio File",
+                        Filter = "Audio Files (*.mp3;*.ogg;*.wav)|*.mp3;*.ogg;*.wav"
+                    })
+                    {
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                        {
+                            ActualAudio = dialog.FileName;
+                            FileInfo fi = new FileInfo(ActualAudio);
+                            ActualAudioSafe = Path.GetFileNameWithoutExtension(fi.Name);
+                            File.Copy(ActualAudio, cacheFolder + id + fi.Extension, true);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
 		}
 
-		private void Autosave()
+        private void Autosave()
 		{
 			if (GuiScreen is GuiScreenEditor editor && Notes.Count > 0)
 			{

@@ -62,7 +62,13 @@ namespace Sound_Space_Editor
 		public static string Pattern8 = "";
 		public static string Pattern9 = "";
 
-		public static void Load()
+        public static float ApproachTime = 0.5f;
+        public static float ApproachDistance = 4;
+        public static float Sensitivity = 1;
+        public static float Parallax = 0;
+
+
+        public static void Load()
 		{
 			try
 			{
@@ -93,8 +99,16 @@ namespace Sound_Space_Editor
 					AutosaveInterval = value;
 				if (result.TryGetValue("correctOnCopy", out value))
 					CorrectOnCopy = value;
+                if (result.TryGetValue("approachTime", out value))
+                    ApproachTime = value;
+                if (result.TryGetValue("approachDistance", out value))
+                    ApproachDistance = value;
+                if (result.TryGetValue("sensitivity", out value))
+                    Sensitivity = value;
+                if (result.TryGetValue("parallax", out value))
+                    Parallax = value;
 
-				if (result.TryGetValue("keybinds", out value))
+                if (result.TryGetValue("keybinds", out value))
                 {
 					JsonObject keybinds = (JsonObject)value;
 					if (keybinds.TryGetValue("selectAll", out value))
@@ -200,7 +214,11 @@ namespace Sound_Space_Editor
 			EnableAutosave = true;
 			AutosaveInterval = 5;
 			CorrectOnCopy = true;
-		}
+			ApproachTime = 0.5f;
+			ApproachDistance = 4;
+			Sensitivity = 1;
+			Parallax = 0;
+		}	
 
 		public static void RefreshKeymapping()
         {
@@ -252,7 +270,11 @@ namespace Sound_Space_Editor
 				{"enableAutosave", EnableAutosave},
 				{"autosaveInterval",AutosaveInterval},
 				{"correctOnCopy",CorrectOnCopy},
-				{"keybinds", new JsonObject(Array.Empty<KeyValuePair<string, JsonValue>>()) {
+                {"approachTime", ApproachTime},
+                {"approachDistance",ApproachDistance},
+                {"sensitivity",Sensitivity},
+                {"parallax",Parallax},
+                {"keybinds", new JsonObject(Array.Empty<KeyValuePair<string, JsonValue>>()) {
 					{"selectAll", new JsonArray(SelectAll.Key.ToString(), SelectAll.CTRL, SelectAll.SHIFT, SelectAll.ALT)},
 					{"save", new JsonArray(Save.Key.ToString(), Save.CTRL, Save.SHIFT, Save.ALT)},
 					{"saveAs", new JsonArray(SaveAs.Key.ToString(), SaveAs.CTRL, SaveAs.SHIFT, SaveAs.ALT)},

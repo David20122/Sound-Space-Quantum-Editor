@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -16,6 +19,8 @@ namespace Sound_Space_Editor.Gui
 		private readonly Note _startNote = new Note(1, 1, 0);
 
 		public static int ApproachRate = Settings.Default.ApproachRate + 1;
+
+		public static bool renderGrid = true;
 
 		public GuiGrid(float sx, float sy) : base(EditorWindow.Instance.ClientSize.Width / 2f - sx / 2, EditorWindow.Instance.ClientSize.Height / 2f - sy / 2, sx, sy)
 		{
@@ -38,168 +43,174 @@ namespace Sound_Space_Editor.Gui
 		}
 		public override void Render(float delta, float mouseX, float mouseY)
 		{
-			var editor = (GuiScreenEditor)EditorWindow.Instance.GuiScreen;
-
-			var rect = ClientRectangle;
-			var mouseOver = false;
-			// grid transparency
-			int griddim = EditorSettings.GridOpacity;
-
-			GL.Color4(Color.FromArgb(griddim, 36, 35, 33));
-			Glu.RenderQuad(rect.X, rect.Y, rect.Width, rect.Height);
-
-			var cellSize = rect.Width / 3f;
-			var noteSize = cellSize * 0.75f;
-
-			var gap = cellSize - noteSize;
-
-			var audioTime = EditorWindow.Instance.currentTime.TotalMilliseconds;
-
-			GL.Color3(0.2, 0.2, 0.2f);
-
-			for (float y = 0; y <= 3; y++)
+			if (renderGrid)
 			{
-				var ly = y * cellSize;
+                var editor = (GuiScreenEditor)EditorWindow.Instance.GuiScreen;
 
-				Glu.RenderQuad((int)(rect.X), (int)(rect.Y + ly), rect.Width + 1, 1);
-			}
+                var rect = ClientRectangle;
+                var mouseOver = false;
+                int griddim = EditorSettings.GridOpacity;
 
-			for (float x = 0; x <= 3; x++)
-			{
-				var lx = x * cellSize;
+                GL.Color4(Color.FromArgb(griddim, 36, 35, 33));
+                Glu.RenderQuad(rect.X, rect.Y, rect.Width, rect.Height);
 
-				Glu.RenderQuad((int)(rect.X + lx), (int)(rect.Y), 1, rect.Height + 1);
-			}
+                //var cellSize = rect.Width / 1.5f;
+                var cellSize = rect.Width / 3f;
+                var noteSize = cellSize * 0.75f;
 
-			if (editor.NoteAlign.Value != 1 && Settings.Default.QuantumGridLines)
-			{
-				GL.Begin(PrimitiveType.Lines);
+                //var gap = 2 * (cellSize - noteSize);
+                var gap = cellSize - noteSize;
+                var audioTime = EditorWindow.Instance.currentTime.TotalMilliseconds;
 
-				var div = editor.NoteAlign.Value + 1;
+                GL.Color3(0.2, 0.2, 0.2f);
 
-				for (int i = 1; i < div; i++)
-				{
-					//GL.Vertex2(rect.X + rect.Width / div * i, rect.Y);
-					//GL.Vertex2(rect.X + rect.Width / div * i, rect.Y + rect.Height / div * i);
+                for (float y = 0; y <= 3; y++)
+                {
+                    var ly = y * cellSize;
 
-					GL.Vertex2(rect.X + rect.Width / div * i, rect.Y);
-					GL.Vertex2(rect.X + rect.Width / div * i, rect.Y + rect.Height);
+                    Glu.RenderQuad((int)(rect.X), (int)(rect.Y + ly), rect.Width + 1, 1);
+                }
 
-					GL.Vertex2(rect.X, rect.Y + rect.Height / div * i);
-					GL.Vertex2(rect.X + rect.Width, rect.Y + rect.Height / div * i);
-				}
-				GL.End();
-			}
+                for (float x = 0; x <= 3; x++)
+                {
+                    var lx = x * cellSize;
 
-			var fr = EditorWindow.Instance.FontRenderer;
+                    Glu.RenderQuad((int)(rect.X + lx), (int)(rect.Y), 1, rect.Height + 1);
+                }
 
-			GL.Color3(0.2f, 0.2f, 0.2f);
-			if (Settings.Default.GridLetters)
-            {
-				foreach (var pair in EditorWindow.Instance.KeyMapping)
-				{
-					var letter = pair.Key.ToString().Replace("Keypad", "");
+                if (editor.NoteAlign.Value != 1 && Settings.Default.QuantumGridLines)
+                {
+                    GL.Begin(PrimitiveType.Lines);
 
-					var tuple = pair.Value;
+                    var div = editor.NoteAlign.Value + 1;
 
-					var x = rect.X + tuple.Item1 * cellSize + cellSize / 2;
-					var y = rect.Y + tuple.Item2 * cellSize + cellSize / 2;
+                    for (int i = 1; i < div; i++)
+                    {
+                        //GL.Vertex2(rect.X + rect.Width / div * i, rect.Y);
+                        //GL.Vertex2(rect.X + rect.Width / div * i, rect.Y + rect.Height / div * i);
 
-					var width = fr.GetWidth(letter, 38);
-					var height = fr.GetHeight(38);
+                        GL.Vertex2(rect.X + rect.Width / div * i, rect.Y);
+                        GL.Vertex2(rect.X + rect.Width / div * i, rect.Y + rect.Height);
 
-					fr.Render(letter, (int)(x - width / 2f), (int)(y - height / 2), 38);
-				}
-			}
+                        GL.Vertex2(rect.X, rect.Y + rect.Height / div * i);
+                        GL.Vertex2(rect.X + rect.Width, rect.Y + rect.Height / div * i);
+                    }
+                    GL.End();
+                }
 
-			Note last = null;
-			Note next = null;
+                var fr = EditorWindow.Instance.FontRenderer;
 
-			for (var index = 0; index < EditorWindow.Instance.Notes.Count; index++)
-			{
-				var note = EditorWindow.Instance.Notes[index];
-				var passed = audioTime > note.Ms + 1;
-				var visible = !passed && note.Ms - audioTime <= 1000 / (ApproachRate / 10.0);
+                GL.Color3(0.2f, 0.2f, 0.2f);
+                if (Settings.Default.GridLetters)
+                {
+                    foreach (var pair in EditorWindow.Instance.KeyMapping)
+                    {
+                        var letter = pair.Key.ToString().Replace("Keypad", "");
 
-				if (passed)
-				{
-					last = note;
-				}
-				else if (next == null)
-				{
-					next = note;
-				}
+                        var tuple = pair.Value;
 
-				if (!visible)
-				{
-					if (passed && next != null)
-					{
-						break;
-					}
+                        var x = rect.X + tuple.Item1 * cellSize + cellSize / 2;
+                        var y = rect.Y + tuple.Item2 * cellSize + cellSize / 2;
 
-					continue;
-				}
+                        var width = fr.GetWidth(letter, 38);
+                        var height = fr.GetHeight(38);
 
-				var x = rect.X + note.X * cellSize + gap / 2;
-				var y = rect.Y + note.Y * cellSize + gap / 2;
+                        fr.Render(letter, (int)(x - width / 2f), (int)(y - height / 2), 38);
+                    }
+                }
 
-				var progress = (float)Math.Pow(1 - Math.Min(1, (note.Ms - audioTime) * ApproachRate / 10.0 / 750.0), 2);
-				var noteRect = new RectangleF(x, y, noteSize, noteSize);
-				OpenTK.Graphics.Color4 colora = new OpenTK.Graphics.Color4(note.Color.R, note.Color.G, note.Color.B, progress * 0.15f);
-				GL.Color4(colora);
-				Glu.RenderQuad(noteRect);
-				OpenTK.Graphics.Color4 color = new OpenTK.Graphics.Color4(note.Color.R, note.Color.G, note.Color.B, progress);
-				GL.Color4(color);
-				Glu.RenderOutline(noteRect);
-				if (Settings.Default.ApproachSquares)
-				{
-					var outlineSize = 4 + noteSize + noteSize * (1 - progress) * 2;
-					Glu.RenderOutline(x - outlineSize / 2 + noteSize / 2, y - outlineSize / 2 + noteSize / 2,
-						outlineSize,
-						outlineSize);
-				}
+                Note last = null;
+                Note next = null;
 
-				if (Settings.Default.GridNumbers)
-				{
-					GL.Color4(1, 1, 1, progress);
-					var s = $"{(index + 1):#,##}";
-					var w = fr.GetWidth(s, 24);
-					var h = fr.GetHeight(24);
+                for (var index = 0; index < EditorWindow.Instance.Notes.Count; index++)
+                {
+                    var note = EditorWindow.Instance.Notes[index];
+                    var passed = audioTime > note.Ms + 1;
+                    var visible = !passed && note.Ms - audioTime <= 1000 / (ApproachRate / 10.0);
 
-					fr.Render(s, (int)(noteRect.X + noteRect.Width / 2 - w / 2f),
-						(int)(noteRect.Y + noteRect.Height / 2 - h / 2f), 24);
-				}
+                    if (passed)
+                    {
+                        last = note;
+                    }
+                    else if (next == null)
+                    {
+                        next = note;
+                    }
 
-				if (EditorWindow.Instance.SelectedNotes.Contains(note))
-				{
-					var outlineSize = noteSize + 8;
+                    if (!visible)
+                    {
+                        if (passed && next != null)
+                        {
+                            break;
+                        }
 
-					GL.Color4(0, 0.5f, 1f, progress);
-					Glu.RenderOutline(x - outlineSize / 2 + noteSize / 2, y - outlineSize / 2 + noteSize / 2,
-						outlineSize, outlineSize);
-				}
+                        continue;
+                    }
 
-				if (!mouseOver && noteRect.Contains(mouseX, mouseY) && (!Settings.Default.SeparateClickTools || Settings.Default.SelectTool))
-				{
-					MouseOverNote = note;
-					mouseOver = true;
+                    var x = rect.X + note.X * cellSize + gap / 2;
+                    var y = rect.Y + note.Y * cellSize + gap / 2;
 
-					GL.Color3(0, 1, 0.25f);
-					Glu.RenderOutline(x - 4, y - 4, noteSize + 8, noteSize + 8);
-				}
-			}
+                    var progress = (float)Math.Pow(1 - Math.Min(1, (note.Ms - audioTime) * ApproachRate / 10.0 / 750.0), 2);
 
-			if (!mouseOver)
-			{
-				MouseOverNote = null;
-			}
+                    var noteRect = new RectangleF(x, y, noteSize, noteSize);
+                    OpenTK.Graphics.Color4 colora = new OpenTK.Graphics.Color4(note.Color.R, note.Color.G, note.Color.B, progress * 0.15f);
+                    GL.Color4(colora);
+                    Glu.RenderQuad(noteRect);
+                    OpenTK.Graphics.Color4 color = new OpenTK.Graphics.Color4(note.Color.R, note.Color.G, note.Color.B, progress);
+                    GL.Color4(color);
+                    Glu.RenderOutline(noteRect);
 
-			//RENDER AUTOPLAY
-			if (Settings.Default.Autoplay)
-			{
-				RenderAutoPlay(last, next, cellSize, rect, audioTime);
-			}
-		}
+                    if (Settings.Default.ApproachSquares)
+                    {
+                        var outlineSize = 4 + noteSize + noteSize * (1 - progress) * 2;
+                        Glu.RenderOutline(x - outlineSize / 2 + noteSize / 2, y - outlineSize / 2 + noteSize / 2,
+                            outlineSize,
+                            outlineSize);
+                    }
+
+                    if (Settings.Default.GridNumbers)
+                    {
+                        GL.Color4(1, 1, 1, progress);
+                        var s = $"{(index + 1):#,##}";
+                        var w = fr.GetWidth(s, 24);
+                        var h = fr.GetHeight(24);
+
+                        fr.Render(s, (int)(noteRect.X + noteRect.Width / 2 - w / 2f),
+                            (int)(noteRect.Y + noteRect.Height / 2 - h / 2f), 24);
+                    }
+
+
+                    if (EditorWindow.Instance.SelectedNotes.Contains(note))
+                    {
+                        var outlineSize = noteSize + 8;
+
+                        GL.Color4(0, 0.5f, 1f, progress);
+                        Glu.RenderOutline(x - outlineSize / 2 + noteSize / 2, y - outlineSize / 2 + noteSize / 2,
+                            outlineSize, outlineSize);
+                    }
+
+                    if (!mouseOver && noteRect.Contains(mouseX, mouseY) && (!Settings.Default.SeparateClickTools || Settings.Default.SelectTool))
+                    {
+                        MouseOverNote = note;
+                        mouseOver = true;
+
+                        GL.Color3(0, 1, 0.25f);
+                        Glu.RenderOutline(x - 4, y - 4, noteSize + 8, noteSize + 8);
+                    }
+                }
+
+                if (!mouseOver)
+                {
+                    MouseOverNote = null;
+                }
+
+                //RENDER AUTOPLAY
+                if (Settings.Default.Autoplay)
+                {
+                    RenderAutoPlay(last, next, cellSize, rect, audioTime);
+                }
+            }
+        }
 
 		private void RenderAutoPlay(Note last, Note next, float cellSize, RectangleF rect, double audioTime)
 		{
