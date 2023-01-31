@@ -1,0 +1,8 @@
+.vs/
+.vscode/
+*.exe
+*.asset
+*.pdb
+*.ini
+*.zip
+Blox Saber Editor/bin/Debug/

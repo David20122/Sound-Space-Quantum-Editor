@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "oObfvaxPXQFR1s0BFv823M3ffJdhWbghfhJ+ArHrseloy3YTe65DKwlxVQ5JJoI3tPtWh3OxQJEZShZXcnYRKQ==",
+  "success": true,
+  "projectFilePath": "F:\\GitHub\\Sound-Space-Quantum-Editor\\SSMP\\SSMP.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Owner\\.nuget\\packages\\opentk\\3.3.3\\opentk.3.3.3.nupkg.sha512",
+    "C:\\Users\\Owner\\.nuget\\packages\\system.json\\4.7.1\\system.json.4.7.1.nupkg.sha512"
+  ],
+  "logs": []
+}
