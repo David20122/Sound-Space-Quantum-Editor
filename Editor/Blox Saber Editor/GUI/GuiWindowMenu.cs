@@ -40,7 +40,7 @@ namespace Sound_Space_Editor.GUI
             try
             {
                 var wc = new WebClient();
-                changelogText = wc.DownloadString("https://raw.githubusercontent.com/Avibah/Sound-Space-Quantum-Editor/master/changelog");
+                changelogText = wc.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/1.9%2B_rewrite/changelog");
             }
             catch { changelogText = "Failed to load changelog"; }
 

@@ -1563,7 +1563,7 @@ namespace Sound_Space_Editor
             try
             {
                 var wc = new WebClient();
-                var playerVersion = wc.DownloadString("https://raw.githubusercontent.com/Avibah/Sound-Space-Quantum-Editor/map_player/PlayerVersion").Replace("\n", "");
+                var playerVersion = wc.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/1.9%2B_rewrite/player_version").Replace("\n", "");
 
                 // player exists check
                 if (!File.Exists("SSQE Player.exe"))
@@ -1571,7 +1571,7 @@ namespace Sound_Space_Editor
                     var diag = ShowMessageBox("Map player is not present in this directory. Would you like to download it?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                     if (diag == DialogResult.Yes)
-                        wc.DownloadFile("https://github.com/Avibah/Sound-Space-Quantum-Editor/raw/map_player/SSQE%20Player.exe", "SSQE Player.exe");
+                        wc.DownloadFile("https://github.com/David20122/Sound-Space-Quantum-Editor/raw/map_player/SSQE%20Player.exe", "SSQE Player.exe");
                 }
 
                 // player version check
@@ -1584,11 +1584,11 @@ namespace Sound_Space_Editor
                         var diag = ShowMessageBox($"New Player version is available ({playerVersion}). Would you like to download the new version?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                         if (diag == DialogResult.Yes)
-                            wc.DownloadFile("https://github.com/Avibah/Sound-Space-Quantum-Editor/raw/map_player/SSQE%20Player.exe", "SSQE Player.exe");
+                            wc.DownloadFile("https://github.com/David20122/Sound-Space-Quantum-Editor/raw/1.9%2B_rewrite/SSQE%20Player.exe", "SSQE Player.exe");
                     }
                 }
 
-                var request = (HttpWebRequest)WebRequest.Create("https://github.com/Avibah/Sound-Space-Quantum-Editor/releases/latest");
+                var request = (HttpWebRequest)WebRequest.Create("https://github.com/David20122/Sound-Space-Quantum-Editor/releases/latest");
                 request.AllowAutoRedirect = false;
 
                 var response = (HttpWebResponse)request.GetResponse();
@@ -1599,7 +1599,7 @@ namespace Sound_Space_Editor
                     var rep = location.LastIndexOf("/") + 1;
                     var version = location.Substring(rep, location.Length - rep);
 
-                    var updaterVersion = wc.DownloadString("https://raw.githubusercontent.com/Avibah/Sound-Space-Quantum-Editor/updater/UpdaterVersion").Replace("\n", "");
+                    var updaterVersion = wc.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/1.9%2B_rewrite/updater_version").Replace("\n", "");
 
                     // updater exists check
                     if (!File.Exists("SSQE Updater.exe"))
@@ -1607,7 +1607,7 @@ namespace Sound_Space_Editor
                         var diag = ShowMessageBox("Auto updater is not present in this directory. Would you like to download it?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                         if (diag == DialogResult.Yes)
-                            wc.DownloadFile("https://github.com/Avibah/Sound-Space-Quantum-Editor/raw/updater/SSQE%20Updater.exe", "SSQE Updater.exe");
+                            wc.DownloadFile("https://github.com/David20122/Sound-Space-Quantum-Editor/raw/1.9%2B_rewrite/SSQE%20Updater.exe", "SSQE Updater.exe");
                     }
 
                     // run updater
@@ -1621,7 +1621,7 @@ namespace Sound_Space_Editor
                             var diag = ShowMessageBox($"New Updater version is available ({updaterVersion}). Would you like to download the new version?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                             if (diag == DialogResult.Yes)
-                                wc.DownloadFile("https://github.com/Avibah/Sound-Space-Quantum-Editor/raw/updater/SSQE%20Updater.exe", "SSQE Updater.exe");
+                                wc.DownloadFile("https://github.com/David20122/Sound-Space-Quantum-Editor/raw/1.9%2B_rewrite/SSQE%20Updater.exe", "SSQE Updater.exe");
                         }
 
                         // editor version check

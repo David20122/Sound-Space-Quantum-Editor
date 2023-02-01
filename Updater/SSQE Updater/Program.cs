@@ -25,7 +25,7 @@ namespace SSQE_Updater
 
             if (newVersion != "")
             {
-                var uri = new Uri($"https://github.com/Avibah/Sound-Space-Quantum-Editor/releases/download/{newVersion}/SSQE{newVersion}.zip");
+                var uri = new Uri($"https://github.com/David20122/Sound-Space-Quantum-Editor/releases/download/{newVersion}/SSQE{newVersion}.zip");
 
                 Console.Write("Starting download...\n");
 
@@ -42,7 +42,7 @@ namespace SSQE_Updater
             {
                 try
                 {
-                    var overwriteList = wc.DownloadString("https://raw.githubusercontent.com/Avibah/Sound-Space-Quantum-Editor/updater/OverwriteList");
+                    var overwriteList = wc.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/1.9%2B_rewrite/updater_overwrite");
 
                     return overwriteList.Split('\n');
                 }
@@ -60,7 +60,7 @@ namespace SSQE_Updater
             {
                 try
                 {
-                    var request = (HttpWebRequest)WebRequest.Create("https://github.com/Avibah/Sound-Space-Quantum-Editor/releases/latest");
+                    var request = (HttpWebRequest)WebRequest.Create("https://github.com/David20122/Sound-Space-Quantum-Editor/releases/latest");
                     request.AllowAutoRedirect = false;
 
                     var response = (HttpWebResponse)request.GetResponse();
