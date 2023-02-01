@@ -1,41 +1,184 @@
 ----------------------------------
-     -- 1.8.5.3 : how much more? - 30/12/2022 --
+    -- 1.9.1.5 - 1/29/2023 --
 
-- made it so audio extension won't get in the way anymore (saving and loading correction)
- 
-----------------------------------
-     -- 1.8.5.2 : hotfix #2 - 28/12/2022 --
-
-- fixed creating new maps
-- map player's notes aren't mirrored anymore, player volume controlled by editor's "Music" volume
-might've forgot about something
- 
-----------------------------------
-     -- 1.8.5.1 : hotfix - 26/12/2022 --
-
-- added a warning if folder names (or the audio file itself) contain dots or spaces when clicked play map
- 
-----------------------------------
-     -- 1.8.5 : LAST C# BUILD - 26/12/2022 --
-
-The editor will be getting a rewrite from zero, meaning THIS editor won't be updated anymore, unless it's urgent:
-          - will be cross-platform
-          - better stability/performance
-          - better functionality
-          
-Additions/Changes:
-
-- Map Player, made by pyrule#0001 (test your map anytime)
-     - will not work for roblox audios (.asset)
-     - settings for it are located in the settings file (settings.txt)
-          - approachDistance
-          - approachTime
-          - parallax
-          - sensitivity
- - imported audios will keep their extension (won't be renamed to .asset), still saved in cached folder
+- fixed random crash
 
 ----------------------------------
-     -- 1.8.4 - 27/6/2022 --
+   -- P-1.1.1.0 - 1/29/2023 --
+
+- pressing tab now resets the player back to the start for quick replaying
+
+----------------------------------
+    -- 1.9.1.4 - 1/28/2023 --
+
+- fixed crashing if the discord rich presence feature fails to initialize
+
+----------------------------------
+   -- 1.9.1.2/3 - 1/27/2023 --
+
+- improved note color ui
+- readded support for discord rich presence
+- added approach distance setting for map player
+
+- fixed an odd rare crash during rendering
+
+   -- P-1.1.0.0 - 1/27/2023 --
+
+- added an orange line on the progress bar indicating the start position
+- added a combo count between accuracy and misses
+- added support for a variable approach distance
+- split the note and cursor meshes for more customizability
+- adjusted approach method to not depend on framerate
+
+----------------------------------
+    -- 1.9.1.1 - 1/24/2023 --
+
+- improved fps while notes are selected
+
+   -- P-1.0.1.0 - 1/24/2023 --
+
+- player is now fullscreen by default
+- fixed hit window
+
+----------------------------------
+     -- 1.9.1 - 1/24/2023 --
+
+- added map player
+- readded alt f4 support
+
+----------------------------------
+    -- 1.9.0.2 - 1/22/2023 --
+
+- fixed correct on copy causing copied data to be flipped
+
+----------------------------------
+    -- 1.9.0.1 - 1/21/2023 --
+
+- fixed releasing of ctrl/alt/shift not being detected in some situations
+
+----------------------------------
+      -- 1.9 - 1/21/2023 --
+
+- the editor has been nearly completely rewritten, trying to keep to the old layout with hopefully more room for improvements later on
+NOTE: bugs may be present as something may have been overlooked during testing, you may revert to a previous version via the Github releases page if desired until these are ironed out - updates are not forced
+
+ADDITIONS:
+
+- added customizable 'open directory' keybind as CTRL + SHIFT + D by default
+- added 'import ini' button to timing dropdown to make importing downloaded map settings easier
+- added 'cut' keybind for textboxes and notes as CTRL + X
+- added a keybind to export the current map to .sspm for use in ss+ as CTRL + ALT + E
+NOTE: ss+ is developed & maintained by other members of the community not related to or endorsed by this editor, if you wish to install it some caution is advised
+- added a checkbox in settings to skip attempting to download audio from roblox before allowing a file to be imported
+- added a line over the timeline that shows the current visible space on the track relative to it, using color 3 from settings
+- added an error message for if the editor fails to load without otherwise providing a reason
+
+CHANGES:
+
+- pasting in text boxes now places copied text at the cursor position
+- added .egg to the audio import file type list
+- individual setting errors no longer reset all settings to their defaults
+- changelog text no longer replaces underscores with spaces
+- opening the timing/bookmark windows now forces the editor out of fullscreen to ensure theyre visible
+- bookmark text no longer removes the characters '|' and ',' on save
+- pressing escape now deselects all notes
+- tempo now goes down to 10%
+- pressing the left/right arrow keys no longer stops advancing the song with notes selected
+- moved sfx offset to timing dropdown
+- removed 'select between ms' and 'jump to ms' boxes
+- greatly improved loading times for larger maps
+- more fps/rendering optimizations
+- revamped the keybinds window, removing many generic keybinds from the list
+NOTE: they can still be edited if you would like by editing settings.txt
+- note colors in settings can now be right clicked to swap them with the previous color in the list
+- quantum snapping is now anchored on the center space for more consistency with non 3/3x snapping
+- lower quantum snap limit is now 3 instead of 1
+- autosaving without a loaded file ow saves properties alongside map data
+- anchoring bezier nodes can now be undone and redone
+- attempting to reset settings now asks you to confirm your decision before resetting
+
+FIXES:
+
+- fixed note color setting rendering
+- fixed note color remove hitbox
+- dragged notes now properly follow your cursor after scrolling or zooming
+- fixed shift select functionality so the first selected note is always the pivot
+- fixed creating bookmarks
+- fixed importing timing points directly from files
+- bookmarks window now closes when exiting a map
+- timing points below 34 bpm are now rendered on the track
+- failing to import audio while fullscreen no longer locks the editor window
+- copying now requires at least one note to be selected
+- fixed drawing beziers not clearing nodes allowing draw to be pressed multiple times causing unwanted layering
+
+..and possibly more (i may have missed something)!
+
+----------------------------------
+    -- U-1.0.3.0 - 1/5/2023 --
+
+- added support for overwriting defined files for future updates
+----------------------------------
+    -- 1.8.6.2 - 12/20/2022 --
+
+- fixed loading the Edit Last Map, Autosaved Map, and SFX Offset settings
+
+   -- U-1.0.2.0 - 12/20/2022 --
+
+- actual fix to the previous updater issue
+
+----------------------------------
+    -- 1.8.6.1 - 12/18/2022 --
+
+- added ctrl delete/left/right support for text boxes
+- slightly raised the "CHANGELOG" label on the menu
+
+   -- U-1.0.1.0 - 12/18/2022 --
+
+- fixed old editor not closing causing update to fail
+
+----------------------------------
+     -- 1.8.6 - 12/17/2022 --
+
+- fixed changelog check location
+- fixed changelog scroll bar on menu
+- note previews on the track now support quantum
+- supports half-bpm divisors (hold shift while dragging divisor line to go by 0.5 or ctrl while shift + scrolling)
+- another fps optimization
+- saving on close no longer asks to save as new file if one is open
+- ctrl c while focused in a text box now copies its text
+- fixed functionality of ctrl backspace in text boxes
+
+----------------------------------
+     -- 1.8.5 - 11/23/2022 --
+
+- readded auto update
+- slightly optimized fps
+- switched to pure JSON settings format
+
+----------------------------------
+    -- 1.8.4.3 - 11/19/2022 --
+
+- added support for more than 2 note colors
+
+----------------------------------
+    -- 1.8.4.2 - 9/15/2022 --
+
+- readded update check for new versions
+
+----------------------------------
+    -- 1.8.4.1 - 9/15/2022 --
+
+- fixed meganote colors merging on grid
+
+----------------------------------
+  -- Forked 1.8.4 - 9/8/2022 --
+
+- disabled auto update
+- optimized fps
+- merged meganote colors
+
+----------------------------------
+     -- 1.8.4 - 6/27/2022 --
 
 - repurposed the offset text box to export with the offset given rather than move every timing point and note
 - fixed crashing when pressing edit last map if the file no longer exists
@@ -44,12 +187,12 @@ Additions/Changes:
 - fixed crashes when trying to overwrite asset files
 
 ----------------------------------
-    -- 1.8.3.1/2 - 3/5/2022 --
+    -- 1.8.3.1/2 - 5/3/2022 --
 
 - fixed crashes caused by moving timing points on the track
 
 ----------------------------------
-     -- 1.8.3 - 25/4/2022 --
+     -- 1.8.3 - 4/25/2022 --
 
 - actually fixed creating maps with differently named audios
 - added .asset to the file import filter
@@ -61,7 +204,7 @@ Additions/Changes:
 - movement/deletion of points on the track is now reflected in the timing window while it's open
 
 ----------------------------------
-     -- 1.8.2 - 26/3/2022 --
+     -- 1.8.2 - 3/26/2022 --
 
 - audio ids no longer have to be numeric
 - editor no longer tries to load when cancelling a select audio prompt
@@ -69,13 +212,13 @@ Additions/Changes:
 - added anchoring bezier nodes (shift + a by default)
 
 ----------------------------------
-     -- 1.8.1 - 23/3/2022 --
+     -- 1.8.1 - 3/23/2022 --
 
 - added option to import files if audio failed to download
 - fixed clicking copy and return buttons with click to place enabled
 
 ----------------------------------
-  -- 1.8 Release - 18/3/2022 --
+  -- 1.8 Release - 3/18/2022 --
   
                ADDS:
 - Bezier Curves
@@ -119,23 +262,23 @@ Additions/Changes:
 - Autosave issues
 
 ----------------------------------
-     -- 1.7.2.3 - 3/1/2022 --
+     -- 1.7.2.3 - 1/3/2022 --
 
 - fixed having no BPM crashing the editor on load
 
 ----------------------------------
-     -- 1.7.2.2 - 3/1/2022 --
+     -- 1.7.2.2 - 1/3/2022 --
 
 - re-split the BPM and Note labels on the track
 - darkened the changelog's background colors when no image is present
 
 ----------------------------------
-     -- 1.7.2.1 - 2/1/2022 --
+     -- 1.7.2.1 - 1/2/2022 --
 
 - fixed saving .ini files on close
 
 ----------------------------------
-      -- 1.7.2 - 2/1/2022 --
+      -- 1.7.2 - 1/2/2022 --
 
             CHANGES:
 - New resizing method, also applies to the main editor window
@@ -149,19 +292,19 @@ Additions/Changes:
 - Failure to update no longer crashes the editor
 
 ----------------------------------
-    -- 1.7.1.1 - 31/12/2021 --
+    -- 1.7.1.1 - 12/31/2021 --
                                                                                  
 - now works well with anything above 1280x720
                                                                                  
 ----------------------------------
-     -- 1.7.1 - 30/12/2021 --
+     -- 1.7.1 - 12/30/2021 --
                                                                                  
             CHANGES:
 - menu and settings works well with 1366x768, 1280x720
 - changelog now scrollable
 
 ----------------------------------
-  -- 1.7 Release - 29/12/2021 --
+  -- 1.7 Release - 12/29/2021 --
 
             ADDS:
                                                                                              
