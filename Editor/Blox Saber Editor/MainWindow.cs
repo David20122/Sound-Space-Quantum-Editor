@@ -109,7 +109,6 @@ namespace Sound_Space_Editor
 
         protected override void OnLoad(EventArgs e)
         {
-            GL.Viewport(0, 0, Width, Height);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
@@ -123,7 +122,6 @@ namespace Sound_Space_Editor
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
-            GL.PushMatrix();
 
             if (MusicPlayer.IsPlaying && CurrentWindow is GuiWindowEditor)
                 Settings.settings["currentTime"].Value = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
@@ -135,9 +133,7 @@ namespace Sound_Space_Editor
             }
 
             CurrentWindow?.Render(mouse.X, mouse.Y, (float)e.Time);
-
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-            GL.PopMatrix();
+            
             SwapBuffers();
         }
 
@@ -469,12 +465,12 @@ namespace Sound_Space_Editor
                             break;
 
                         case "switchClickTool":
-                            Settings.settings["selectTool"] = !Settings.settings["selectTool"];
+                            Settings.settings["selectTool"] ^= true;
 
                             break;
 
                         case "quantum":
-                            Settings.settings["enableQuantum"] = !Settings.settings["enableQuantum"];
+                            Settings.settings["enableQuantum"] ^= true;
 
                             break;
 
@@ -515,11 +511,11 @@ namespace Sound_Space_Editor
                             UndoRedoManager.Add($"ANCHOR NODE{(selectedA.Count > 1 ? "S" : "")}", () =>
                             {
                                 foreach (var note in selectedA)
-                                    note.Anchored = !note.Anchored;
+                                    note.Anchored ^= true;
                             }, () =>
                             {
                                 foreach (var note in selectedA)
-                                    note.Anchored = !note.Anchored;
+                                    note.Anchored ^= true;
                             });
 
                             break;
@@ -543,11 +539,12 @@ namespace Sound_Space_Editor
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
             var keyboard = Keyboard.GetState();
+            Console.WriteLine(keyboard);
 
             ctrlHeld = keyboard.IsKeyDown(Key.LControl) || keyboard.IsKeyDown(Key.RControl);
             altHeld = keyboard.IsKeyDown(Key.LAlt) || keyboard.IsKeyDown(Key.RAlt);
             shiftHeld = keyboard.IsKeyDown(Key.LShift) || keyboard.IsKeyDown(Key.RShift);
-
+            
             if (CurrentWindow is GuiWindowEditor)
             {
                 if (shiftHeld)
@@ -1552,7 +1549,7 @@ namespace Sound_Space_Editor
                 Size = Screen.GetBounds(Location).Size;
             }
 
-            IsFullscreen = !IsFullscreen;
+            IsFullscreen ^= true;
         }
 
         public void CheckForUpdates()
