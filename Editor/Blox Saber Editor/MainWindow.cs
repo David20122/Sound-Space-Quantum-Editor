@@ -98,6 +98,9 @@ namespace Sound_Space_Editor
 
             Settings.Load();
 
+            // needed a 'kick' for making sure the keyboard is actually visible while scrolling right after load
+            OnMouseWheel(new MouseWheelEventArgs());
+            
             SwitchWindow(new GuiWindowMenu());
         }
 
@@ -539,7 +542,6 @@ namespace Sound_Space_Editor
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
             var keyboard = Keyboard.GetState();
-            Console.WriteLine(keyboard);
 
             ctrlHeld = keyboard.IsKeyDown(Key.LControl) || keyboard.IsKeyDown(Key.RControl);
             altHeld = keyboard.IsKeyDown(Key.LAlt) || keyboard.IsKeyDown(Key.RAlt);
