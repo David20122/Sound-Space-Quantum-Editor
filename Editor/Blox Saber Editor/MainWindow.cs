@@ -1570,7 +1570,7 @@ namespace Sound_Space_Editor
                     var diag = ShowMessageBox("Map player is not present in this directory. Would you like to download it?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                     if (diag == DialogResult.Yes)
-                        wc.DownloadFile("https://github.com/David20122/Sound-Space-Quantum-Editor/raw/map_player/SSQE%20Player.exe", "SSQE Player.exe");
+                        wc.DownloadFile("https://github.com/David20122/Sound-Space-Quantum-Editor/raw/1.9%2B_rewrite/SSQE%20Player.exe", "SSQE Player.exe");
                 }
 
                 // player version check
