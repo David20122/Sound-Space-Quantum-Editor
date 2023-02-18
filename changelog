@@ -1,4 +1,10 @@
 ----------------------------------
+     -- 1.8.5.4 : hey there - 18/02/2022 --
+
+- option to use Sound Space Plus for playing map
+- SSPM export (press CTRL+SHIFT+E)
+
+----------------------------------
      -- 1.8.5.3 : how much more? - 30/12/2022 --
 
 - made it so audio extension won't get in the way anymore (saving and loading correction)
