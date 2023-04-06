@@ -166,11 +166,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\GitHub\\Sound-Space-Quantum-Editor\\SSMP\\SSMP.csproj",
+      "projectUniqueName": "F:\\GitHub\\SSQE\\Map Player\\SSMP\\SSMP.csproj",
       "projectName": "SSMP",
-      "projectPath": "F:\\GitHub\\Sound-Space-Quantum-Editor\\SSMP\\SSMP.csproj",
+      "projectPath": "F:\\GitHub\\SSQE\\Map Player\\SSMP\\SSMP.csproj",
       "packagesPath": "C:\\Users\\Owner\\.nuget\\packages\\",
-      "outputPath": "F:\\GitHub\\Sound-Space-Quantum-Editor\\SSMP\\obj\\",
+      "outputPath": "F:\\GitHub\\SSQE\\Map Player\\SSMP\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "fallbackFolders": [

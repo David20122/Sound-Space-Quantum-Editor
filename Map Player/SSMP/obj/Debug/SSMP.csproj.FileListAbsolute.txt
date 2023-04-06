@@ -24,3 +24,16 @@ F:\GitHub\Sound-Space-Quantum-Editor\SSMP\bin\Debug\SSQE Player.exe
 F:\GitHub\Sound-Space-Quantum-Editor\SSMP\bin\Debug\SSQE Player.pdb
 F:\GitHub\Sound-Space-Quantum-Editor\SSMP\obj\Debug\SSQE Player.exe
 F:\GitHub\Sound-Space-Quantum-Editor\SSMP\obj\Debug\SSQE Player.pdb
+F:\GitHub\SSQE\Map Player\SSMP\bin\Debug\SSQE Player.exe.config
+F:\GitHub\SSQE\Map Player\SSMP\bin\Debug\SSQE Player.exe
+F:\GitHub\SSQE\Map Player\SSMP\bin\Debug\SSQE Player.pdb
+F:\GitHub\SSQE\Map Player\SSMP\bin\Debug\OpenTK.dll
+F:\GitHub\SSQE\Map Player\SSMP\bin\Debug\OpenTK.pdb
+F:\GitHub\SSQE\Map Player\SSMP\bin\Debug\System.Json.dll
+F:\GitHub\SSQE\Map Player\SSMP\obj\Debug\SSMP.csproj.AssemblyReference.cache
+F:\GitHub\SSQE\Map Player\SSMP\obj\Debug\SSQE_Player.Properties.Resources.resources
+F:\GitHub\SSQE\Map Player\SSMP\obj\Debug\SSMP.csproj.GenerateResource.cache
+F:\GitHub\SSQE\Map Player\SSMP\obj\Debug\SSMP.csproj.CoreCompileInputs.cache
+F:\GitHub\SSQE\Map Player\SSMP\obj\Debug\SSMP.csproj.CopyComplete
+F:\GitHub\SSQE\Map Player\SSMP\obj\Debug\SSQE Player.exe
+F:\GitHub\SSQE\Map Player\SSMP\obj\Debug\SSQE Player.pdb

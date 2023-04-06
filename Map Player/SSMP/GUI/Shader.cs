@@ -2,6 +2,7 @@
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System.IO;
+using System;
 
 namespace SSQE_Player.GUI
 {
@@ -16,6 +17,68 @@ namespace SSQE_Player.GUI
         public readonly string ShaderName;
 
         private readonly Dictionary<string, int> Uniforms = new Dictionary<string, int>();
+
+        private static readonly string cursorVertShader = @"#version 330
+
+                                                            in vec3 position;
+
+                                                            out vec4 pass_color;
+
+                                                            uniform mat4 transformationMatrix;
+                                                            uniform mat4 projectionMatrix;
+                                                            uniform mat4 viewMatrix;
+                                                            uniform vec4 colorIn;
+
+                                                            void main(void) {
+	                                                            vec4 worldPos = transformationMatrix * vec4(position, 1.0);
+	                                                            gl_Position = projectionMatrix * viewMatrix * worldPos;
+
+	                                                            pass_color = colorIn;
+                                                            }";
+
+        private static readonly string cursorFragShader = @"#version 330
+
+                                                            in vec4 pass_color;
+
+                                                            out vec4 out_Color;
+
+                                                            void main(void){
+	                                                            out_Color = pass_color;
+                                                            }";
+
+        private static readonly string noteVertShader = @"#version 330
+
+                                                          in vec3 position;
+
+                                                          out vec4 pass_color;
+
+                                                          uniform mat4 transformationMatrix;
+                                                          uniform mat4 projectionMatrix;
+                                                          uniform mat4 viewMatrix;
+                                                          uniform vec4 colorIn;
+
+                                                          void main(void) {
+	                                                          vec4 worldPos = transformationMatrix * vec4(position, 1.0);
+	                                                          gl_Position = projectionMatrix * viewMatrix * worldPos;
+
+	                                                          pass_color = colorIn;
+                                                          }";
+
+        private static readonly string noteFragShader = @"#version 330
+
+                                                          in vec4 pass_color;
+
+                                                          out vec4 out_Color;
+
+                                                          void main(void){
+	                                                          out_Color = pass_color;
+                                                          }";
+
+        private static readonly Dictionary<string, Tuple<string, string>> SourceLookup = new Dictionary<string, Tuple<string, string>>
+        {
+            {"cursor", new Tuple<string, string>(cursorVertShader, cursorFragShader) },
+            {"note", new Tuple<string, string>(noteVertShader, noteFragShader) }
+        };
 
         public Shader(string shaderName, params string[] uniforms)
         {
@@ -116,8 +179,8 @@ namespace SSQE_Player.GUI
 
         private void LoadShader(string shaderName)
         {
-            string vshCode = File.ReadAllText($"assets/shaders/{shaderName}.vsh");
-            string fshCode = File.ReadAllText($"assets/shaders/{shaderName}.fsh");
+            string vshCode = SourceLookup[shaderName].Item1;
+            string fshCode = SourceLookup[shaderName].Item2;
 
             vsh = GL.CreateShader(ShaderType.VertexShader);
             fsh = GL.CreateShader(ShaderType.FragmentShader);
