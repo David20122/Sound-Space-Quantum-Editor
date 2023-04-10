@@ -239,7 +239,7 @@ namespace New_SSQE.GUI
 
             string vsLog = GL.GetShaderInfoLog(vs);
             if (!string.IsNullOrWhiteSpace(vsLog))
-                ActionLogging.Register($"Failed to compile vertex shader with tag '{tag}' - {vsLog}", "WARN");
+                ActionLogging.Register($"Failed to compile vertex shader with tag '{tag}' - {vsLog}", "ERROR");
 
             int fs = GL.CreateShader(ShaderType.FragmentShader);
             GL.ShaderSource(fs, fragShader);
@@ -247,7 +247,7 @@ namespace New_SSQE.GUI
 
             string fsLog = GL.GetShaderInfoLog(fs);
             if (!string.IsNullOrWhiteSpace(fsLog))
-                ActionLogging.Register($"Failed to compile fragment shader with tag '{tag}' - {fsLog}", "WARN");
+                ActionLogging.Register($"Failed to compile fragment shader with tag '{tag}' - {fsLog}", "ERROR");
 
             int program = GL.CreateProgram();
             GL.AttachShader(program, vs);
