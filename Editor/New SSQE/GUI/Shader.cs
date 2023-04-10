@@ -223,15 +223,15 @@ namespace New_SSQE.GUI
 
         public static void Init()
         {
-            Program = CompileShader(vertexShader, fragmentShader);
-            TexProgram = CompileShader(texVertShader, texFragShader);
-            FontTexProgram = CompileShader(fontTexVertShader, fontTexFragShader);
-            InstancedProgram = CompileShader(instancedVertShader, instancedFragShader);
-            GridInstancedProgram = CompileShader(gridInstancedVertShader, gridInstancedFragShader);
-            WaveformProgram = CompileShader(waveformVertShader, waveformFragShader);
+            Program = CompileShader(vertexShader, fragmentShader, "Main");
+            TexProgram = CompileShader(texVertShader, texFragShader, "Texture");
+            FontTexProgram = CompileShader(fontTexVertShader, fontTexFragShader, "Font");
+            InstancedProgram = CompileShader(instancedVertShader, instancedFragShader, "Instancing");
+            GridInstancedProgram = CompileShader(gridInstancedVertShader, gridInstancedFragShader, "Grid Instancing");
+            WaveformProgram = CompileShader(waveformVertShader, waveformFragShader, "Waveform");
         }
 
-        private static int CompileShader(string vertShader, string fragShader)
+        private static int CompileShader(string vertShader, string fragShader, string tag)
         {
             int vs = GL.CreateShader(ShaderType.VertexShader);
             GL.ShaderSource(vs, vertShader);
@@ -239,7 +239,7 @@ namespace New_SSQE.GUI
 
             string vsLog = GL.GetShaderInfoLog(vs);
             if (!string.IsNullOrWhiteSpace(vsLog))
-                Console.WriteLine(vsLog);
+                ActionLogging.Register($"Failed to compile vertex shader with tag '{tag}' - {vsLog}", "WARN");
 
             int fs = GL.CreateShader(ShaderType.FragmentShader);
             GL.ShaderSource(fs, fragShader);
@@ -247,7 +247,7 @@ namespace New_SSQE.GUI
 
             string fsLog = GL.GetShaderInfoLog(fs);
             if (!string.IsNullOrWhiteSpace(fsLog))
-                Console.WriteLine(fsLog);
+                ActionLogging.Register($"Failed to compile fragment shader with tag '{tag}' - {fsLog}", "WARN");
 
             int program = GL.CreateProgram();
             GL.AttachShader(program, vs);
