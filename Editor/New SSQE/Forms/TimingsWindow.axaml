@@ -1,0 +1,224 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="New_SSQE.TimingsWindow"
+        Width="390" Height="585" CanResize="False"
+        WindowStartupLocation="CenterScreen">
+
+  <StackPanel>
+    <!-- Main panel -->
+    <Panel Width="390" Height="585"
+           Background="#f1f1f1">
+      <Panel Width="360" Height="555">
+
+        <!-- Point List -->
+        <DataGrid Width="360" Height="370" Name="PointList"
+                  RowHeight="20" SelectionMode="Extended"
+                  AutoGenerateColumns="False"
+                  CanUserReorderColumns="False"
+                  CanUserSortColumns="False"
+                  IsReadOnly="True"
+                  VerticalAlignment="Top"
+                  GridLinesVisibility="All"
+                  Background="White" RowBackground="WhiteSmoke"
+                  SelectionChanged="PointSelection_Changed">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="180" Header="BPM" Binding="{Binding BPM}"/>
+            <DataGridTextColumn Width="180" Header="Ms" Binding="{Binding Ms}"/>
+          </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Other -->
+        <Panel Width="360" Height="180"
+               VerticalAlignment="Bottom">
+          <!-- BPM,Offset Panel -->
+          <Panel Width="170" Height="45"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top">
+
+            <!-- BPM -->
+            <TextBox Width="100" Height="20" MinHeight="20" Name="BPMBox"
+                     HorizontalAlignment="Right"
+                     VerticalAlignment="Top">0</TextBox>
+
+            <Label Width="60" Height="20"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top">
+              <TextBlock Text="  BPM"/>
+            </Label>
+
+            <!-- Offset -->
+            <TextBox Width="100" Height="20" MinHeight="20" Name="OffsetBox"
+                     HorizontalAlignment="Right"
+                     VerticalAlignment="Bottom"
+                     TextInput="OffsetBox_TextChanged">0</TextBox>
+
+            <Label Width="60" Height="20"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom">
+              <TextBlock Text="  Offset"/>
+            </Label>
+          </Panel>
+
+          <!-- Buttons -->
+          <Panel Width="185" Height="45"
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Top">
+
+            <!-- Add Point -->
+            <Button Width="90" Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Click="AddPoint_Click">Add Point</Button>
+
+            <!-- Update Point -->
+            <Button Width="90" Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Click="UpdatePoint_Click">Update Point</Button>
+
+            <!-- Delete Point -->
+            <Button Width="90" Height="20"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Click="DeletePoint_Click">Delete Point</Button>
+
+            <!-- Current Pos -->
+            <Button Width="90" Height="20"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Click="CurrentPos_Click">Current Pos</Button>
+          </Panel>
+
+          <!-- Other -->
+          <Panel Width="360" Height="130"
+                 VerticalAlignment="Bottom">
+
+            <!-- Move Selected -->
+            <Panel Width="185" Height="20"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Top">
+
+              <TextBox Width="90" Height="20" MinHeight="20" Name="MoveBox"
+                       HorizontalAlignment="Left">0</TextBox>
+
+              <Button Width="90" Height="20"
+                      HorizontalAlignment="Right"
+                      Click="MovePoint_Click">Move Points</Button>
+            </Panel>
+
+            <Label Width="170" Height="20"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top">
+              <TextBlock Text="  Move Selected Points (ms)"/>
+            </Label>
+          </Panel>
+
+          <!-- Importing,Tapper Panel -->
+          <Panel Width="360" Height="105"
+                 VerticalAlignment="Bottom">
+
+            <!-- Import Left -->
+            <Panel Width="178" Height="50"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top">
+
+              <!-- Paste OSU -->
+              <Button Width="86" Height="50"
+                      HorizontalAlignment="Left"
+                      Click="PasteOSU_Click">
+                <TextBlock TextAlignment="Center"
+                           Text="Paste OSU&#x0d;&#x0a;Timings"/>
+              </Button>
+
+              <!-- Paste ADOFAI -->
+              <Button Width="86" Height="50"
+                      HorizontalAlignment="Right"
+                      Click="PasteADOFAI_Click">
+                <TextBlock TextAlignment="Center"
+                           Text="Paste ADOFAI&#x0d;&#x0a;Timings"/>
+              </Button>
+            </Panel>
+
+            <!-- Import Right -->
+            <Panel Width="177" Height="50"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Top">
+
+              <!-- Paste Clone Hero -->
+              <Button Width="86" Height="50"
+                      HorizontalAlignment="Left"
+                      Click="PasteCH_Click">
+                <TextBlock TextAlignment="Center"
+                           Text="Paste Clone&#x0d;&#x0a;Hero Timings"/>
+              </Button>
+
+              <!-- Open Beatmap -->
+              <Button Width="86" Height="50"
+                      HorizontalAlignment="Right"
+                      Click="OpenBeatmap_Click">
+                <TextBlock TextAlignment="Center"
+                           Text="Open&#x0d;&#x0a;Beatmap&#x0d;&#x0a;Timings"/>
+              </Button>
+            </Panel>
+
+            <!-- BPM Tapper -->
+            <Button Width="177" Height="50"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Center"
+                    Click="OpenTapper_Click">Open BPM Tapper</Button>
+          </Panel>
+        </Panel>
+      </Panel>
+    </Panel>
+
+    <StackPanel.Styles>
+      <!-- Button -->
+      <Style Selector="Button">
+        <Setter Property="Background" Value="#e5e5e5"/>
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="11.5"/>
+        <Setter Property="Padding" Value="0"/>
+      </Style>
+
+      <!-- Label -->
+      <Style Selector="Label">
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+      </Style>
+
+      <!-- TextBox -->
+      <Style Selector="TextBox">
+        <Setter Property="Opacity" Value="1"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+      </Style>
+
+      <!-- ComboBox -->
+      <Style Selector="ComboBox">
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontSize" Value="12"/>
+      </Style>
+
+      <!-- CheckBox -->
+      <Style Selector="CheckBox">
+        <Setter Property="FontSize" Value="12"/>
+      </Style>
+
+      <!-- Button hover -->
+      <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="BorderBrush" Value="Black"/>
+      </Style>
+    </StackPanel.Styles>
+  </StackPanel>
+</Window>

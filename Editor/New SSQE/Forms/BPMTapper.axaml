@@ -1,0 +1,91 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="New_SSQE.BPMTapper"
+        Width="226" Height="244" CanResize="False"
+        WindowStartupLocation="CenterScreen">
+
+  <StackPanel>
+    <!-- Main panel -->
+    <Panel Width="226" Height="244"
+           Background="#f1f1f1">
+      <Panel Width="184" Height="220"
+             VerticalAlignment="Center">
+
+        <Panel Width="184" Height="98"
+               VerticalAlignment="Top">
+          <!-- BPM Box -->
+          <Label Height="32" Name="BPMBox"
+                 VerticalAlignment="Top"
+                 TextBlock.FontSize="16.5"></Label>
+
+          <Panel Width="184" Height="61"
+                 VerticalAlignment="Bottom">
+
+            <!-- BPM Decimal Box -->
+            <Label Height="24" Name="BPMDecimalBox"
+                   VerticalAlignment="Bottom"
+                   TextBlock.FontSize="12"></Label>
+
+            <!-- Decimal Places Label -->
+            <Label Width="96" Height="30"
+                   BorderThickness="0"
+                   HorizontalContentAlignment="Left"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   TextBlock.FontSize="12">Decimal Places</Label>
+
+            <!-- Decimal Places Box -->
+            <TextBox Width="88" Height="30" Name="DecimalPlacesBox"
+                     Opacity="100"
+                     HorizontalAlignment="Right"
+                     VerticalAlignment="Top"
+                     TextBlock.FontSize="12"
+                     TextBlock.FontWeight="Bold">2</TextBox>
+          </Panel>
+        </Panel>
+
+        <!-- Buttons -->
+        <Panel Width="184" Height="112"
+               VerticalAlignment="Bottom">
+          <!-- Tap Button -->
+          <Button Width="184" Height="65" Name="TapButton"
+                  VerticalAlignment="Top"
+                  Click="TapButton_Click">TAP</Button>
+          <!-- Reset Button -->
+          <Button Width="184" Height="41" Name="ResetButton"
+                  VerticalAlignment="Bottom"
+                  Click="ResetButton_Click">RESET</Button>
+        </Panel>
+      </Panel>
+    </Panel>
+
+    <StackPanel.Styles>
+      <!-- Button -->
+      <Style Selector="Button">
+        <Setter Property="Background" Value="#e5e5e5"/>
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="TextBlock.FontSize" Value="12"/>
+        <Setter Property="Width" Value="184"/>
+      </Style>
+
+      <!-- Label -->
+      <Style Selector="Label">
+        <Setter Property="Background" Value="#f5f5f5"/>
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="Width" Value="184"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+      </Style>
+
+      <!-- Button hover -->
+      <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="BorderBrush" Value="Black"/>
+      </Style>
+    </StackPanel.Styles>
+  </StackPanel>
+</Window>
