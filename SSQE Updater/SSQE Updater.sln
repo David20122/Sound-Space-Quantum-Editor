@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSQE Updater", "SSQE Updater\SSQE Updater.csproj", "{8F0417F2-6DD7-4D1F-B713-670A6DD63568}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8F0417F2-6DD7-4D1F-B713-670A6DD63568}.Debug|Any CPU.ActiveCfg = Release|x64
+		{8F0417F2-6DD7-4D1F-B713-670A6DD63568}.Debug|Any CPU.Build.0 = Release|x64
+		{8F0417F2-6DD7-4D1F-B713-670A6DD63568}.Debug|x64.ActiveCfg = Debug|x64
+		{8F0417F2-6DD7-4D1F-B713-670A6DD63568}.Debug|x64.Build.0 = Debug|x64
+		{8F0417F2-6DD7-4D1F-B713-670A6DD63568}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F0417F2-6DD7-4D1F-B713-670A6DD63568}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F0417F2-6DD7-4D1F-B713-670A6DD63568}.Release|x64.ActiveCfg = Release|x64
+		{8F0417F2-6DD7-4D1F-B713-670A6DD63568}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DFE73F32-D13F-4B1A-91E8-BC5EC82CB121}
+	EndGlobalSection
+EndGlobal
