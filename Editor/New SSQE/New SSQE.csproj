@@ -59,7 +59,7 @@
 
   <ItemGroup>
     <Reference Include="Bass.Net">
-      <HintPath>bin\x64\Debug\net6.0\Bass.Net.dll</HintPath>
+      <HintPath>bin\x64\Release\net6.0\Bass.Net.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
