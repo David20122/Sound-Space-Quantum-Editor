@@ -1749,6 +1749,8 @@ namespace New_SSQE
                             catch { }
                         }
                     }
+
+                    File.Delete(path);
                 }
             }
             catch
