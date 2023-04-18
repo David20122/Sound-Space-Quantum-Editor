@@ -1,0 +1,55 @@
+﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+
+namespace SSQE_Player.Models
+{
+    internal class Model
+    {
+        private readonly int vertexCount;
+        private readonly int VaO;
+
+        public Vector3 Size;
+
+        public Model(float[] vertices, int vao)
+        {
+            VaO = vao;
+
+            vertexCount = vertices.Length / 3;
+
+            Init(vertices);
+        }
+
+        private void Init(float[] vertices)
+        {
+            Vector3 min = (float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3 max = (float.MinValue, float.MinValue, float.MinValue);
+
+            for (int i = 0; i < vertexCount; i++)
+            {
+                Vector3 vec = (vertices[i * 3 + 0], vertices[i * 3 + 1], vertices[i * 3 + 2]);
+
+                min = Vector3.ComponentMin(min, vec);
+                max = Vector3.ComponentMax(max, vec);
+            }
+
+            Size = max - min;
+
+            for (int i = 0; i < vertexCount; i++)
+            {
+                vertices[i * 3 + 0] = min.X + Size.X / 2;
+                vertices[i * 3 + 1] = min.Y + Size.Y / 2;
+                vertices[i * 3 + 2] = min.Z + Size.Z / 2;
+            }
+        }
+
+        public void Bind()
+        {
+            GL.BindVertexArray(VaO);
+        }
+
+        public void Render()
+        {
+            GL.DrawArrays(PrimitiveType.Triangles, 0, vertexCount);
+        }
+    }
+}
