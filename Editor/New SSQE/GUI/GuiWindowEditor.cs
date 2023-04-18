@@ -68,11 +68,12 @@ namespace New_SSQE.GUI
         private readonly GuiButtonList CameraMode = new(10, 395, 256, 40, "cameraMode", 21, false, true);
         private readonly GuiCheckbox LockCursor = new(10, 445, 40, 40, "lockCursor", "Lock Cursor Within Grid", 25, false, true);
         private readonly GuiTextbox Sensitivity = new(10, 520, 128, 40, "1", 25, true, false, true, "sensitivity", "main", false, true);
-        private readonly GuiTextbox Parallax = new(10, 595, 128, 40, "1", 25, true, false, true, "parallax", "main", false, true);
-        private readonly GuiTextbox ApproachDistance = new(10, 670, 128, 40, "1", 25, true, false, true, "approachDistance", "main", false, true);
-        private readonly GuiSlider PlayerApproachRate = new(10, 745, 400, 32, "playerApproachRate", false, false, true);
-        private readonly GuiCheckbox FromStart = new(10, 785, 40, 40, "fromStart", "Play From Start", 25, false, true);
-        private readonly GuiButton PlayMap = new(10, 835, 256, 40, 18, "PLAY MAP", 21, false, true);
+        private readonly GuiTextbox Parallax = new(225, 520, 128, 40, "1", 25, true, false, true, "parallax", "main", false, true);
+        private readonly GuiTextbox ApproachDistance = new(10, 595, 128, 40, "1", 25, true, false, true, "approachDistance", "main", false, true);
+        private readonly GuiSlider PlayerApproachRate = new(10, 670, 400, 32, "playerApproachRate", false, false, true);
+        private readonly GuiCheckbox FromStart = new(10, 710, 40, 40, "fromStart", "Play From Start", 25, false, true);
+        private readonly GuiTextbox HitWindow = new(225, 595, 128, 40, "55", 25, true, false, true, "hitWindow", "main", false, true);
+        private readonly GuiButton PlayMap = new(10, 760, 256, 40, 18, "PLAY MAP", 21, false, true);
 
         private readonly GuiLabel ToastLabel = new(0, 0, 0, 0, "", 36);
 
@@ -107,11 +108,12 @@ namespace New_SSQE.GUI
         private readonly GuiLabel ClonePercentLabel = new(270, 467, 100, 30, "", 25, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel CloneThresholdLabel = new(10, 508, 158, 30, "Copied Streak Threshold:", 24, false, true, "main", false, Settings.settings["color1"]);
 
-        private readonly GuiLabel CameraModeLabel = new(10, 308, 158, 30, "Camera Mode:", 24, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel SensitivityLabel = new(10, 433, 158, 30, "Sensitivity:", 24, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ParallaxLabel = new(10, 511, 155, 30, "Parallax:", 24, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ApproachDistanceLabel = new(10, 583, 158, 30, "Approach Distance:", 24, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel PlayerApproachRateLabel = new(10, 658, 158, 30, "", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel CameraModeLabel = new(10, 368, 158, 30, "Camera Mode:", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel SensitivityLabel = new(10, 493, 158, 30, "Sensitivity:", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel ParallaxLabel = new(225, 493, 155, 30, "Parallax:", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel ApproachDistanceLabel = new(10, 568, 158, 30, "Approach Distance:", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel PlayerApproachRateLabel = new(10, 643, 158, 30, "", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel HitWindowLabel = new(225, 568, 158, 30, "Hit Window[ms]:", 24, false, true, "main", false, Settings.settings["color1"]);
 
         private float toastTime = 0f;
         private string navEnabled = "";
@@ -130,11 +132,12 @@ namespace New_SSQE.GUI
                 // Sliders
                 Tempo, MasterVolume, SfxVolume, BeatSnapDivisor, QuantumSnapDivisor, Timeline, TrackHeight, TrackCursorPos, ApproachRate, PlayerApproachRate,
                 // Boxes
-                ExportOffset, SfxOffset, BezierBox, RotateBox, ScaleBox, Sensitivity, Parallax, ApproachDistance, CloneThreshold,
+                ExportOffset, SfxOffset, BezierBox, RotateBox, ScaleBox, CloneThreshold, Sensitivity, Parallax, ApproachDistance, HitWindow,
                 // Labels
                 ZoomLabel, ZoomValueLabel, ClickModeLabel, BeatDivisorLabel, SnappingLabel, TempoLabel, MusicLabel, MusicValueLabel, SfxLabel, SfxValueLabel, CurrentTimeLabel,
                 CurrentMsLabel, TotalTimeLabel, NotesLabel, TrackHeightLabel, CursorPosLabel, ApproachRateLabel, ExportOffsetLabel, SfxOffsetLabel, DrawBezierLabel, RotateLabel,
-                ScaleLabel, ClonePercentLabel, CloneThresholdLabel, CameraModeLabel, SensitivityLabel, ParallaxLabel, ApproachDistanceLabel, PlayerApproachRateLabel, ToastLabel
+                ScaleLabel, ClonePercentLabel, CloneThresholdLabel, CameraModeLabel, SensitivityLabel, ParallaxLabel, ApproachDistanceLabel, PlayerApproachRateLabel,HitWindowLabel,
+                ToastLabel
             };
 
             BackgroundSquare = new(0, 0, 1920, 1080, Color.FromArgb(Settings.settings["editorBGOpacity"], 30, 30, 30), false, "background_editor.png", "editorbg");
@@ -629,12 +632,14 @@ namespace New_SSQE.GUI
             ApproachDistance.Visible = playerNav;
             PlayerApproachRate.Visible = playerNav;
             FromStart.Visible = playerNav;
+            HitWindow.Visible = playerNav;
             PlayMap.Visible = playerNav;
             CameraModeLabel.Visible = playerNav;
             SensitivityLabel.Visible = playerNav;
             ParallaxLabel.Visible = playerNav;
             ApproachDistanceLabel.Visible = playerNav;
             PlayerApproachRateLabel.Visible = playerNav;
+            HitWindowLabel.Visible = playerNav;
 
             OnResize(new Vector2i((int)Rect.Width, (int)Rect.Height));
         }

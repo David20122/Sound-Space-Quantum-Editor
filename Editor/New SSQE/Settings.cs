@@ -48,6 +48,7 @@ namespace New_SSQE
             {"sensitivity", 1 },
             {"parallax", 1 },
             {"approachDistance", 1 },
+            {"hitWindow", 55 },
 
             {"autosavedFile", "" },
             {"autosavedProperties", "" },
