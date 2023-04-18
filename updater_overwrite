@@ -1,1 +1,4 @@
-OpenTK.dll
+bass.dll
+Bass.Net.dll
+bass_fx.dll
+System.Json.dll
