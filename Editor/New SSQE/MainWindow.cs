@@ -1706,7 +1706,7 @@ namespace New_SSQE
                     ActionLogging.Register("Checking version of file 'SSQE Updater'");
                     if (File.Exists("SSQE Updater.exe"))
                     {
-                        var currentUpdaterVersion = FileVersionInfo.GetVersionInfo("SSQE Updater").FileVersion;
+                        var currentUpdaterVersion = FileVersionInfo.GetVersionInfo("SSQE Updater.exe").FileVersion;
 
                         // updater version check
                         if (currentUpdaterVersion != updaterVersion)
