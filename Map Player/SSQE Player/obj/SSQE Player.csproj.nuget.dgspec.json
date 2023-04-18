@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "F:\\source\\repos\\SSQE Player\\SSQE Player\\SSQE Player.csproj": {}
+    "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj": {}
   },
   "projects": {
-    "F:\\source\\repos\\SSQE Player\\SSQE Player\\SSQE Player.csproj": {
+    "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\source\\repos\\SSQE Player\\SSQE Player\\SSQE Player.csproj",
+        "projectUniqueName": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
         "projectName": "SSQE Player",
-        "projectPath": "F:\\source\\repos\\SSQE Player\\SSQE Player\\SSQE Player.csproj",
+        "projectPath": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
         "packagesPath": "C:\\Users\\Owner\\.nuget\\packages\\",
-        "outputPath": "F:\\source\\repos\\SSQE Player\\SSQE Player\\obj\\",
+        "outputPath": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "F:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

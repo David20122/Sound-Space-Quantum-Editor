@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "TV1rAeAY0NkDaRxJmMjrMo0dAPHiPsApkh97hbOnFMIXsx36DEIFvt9jRqnZQ5mJ7Ep6pg0B04yZM28Qpcn4Hg==",
+  "dgSpecHash": "SUhU1Wm8Bb7jlzmgYZsygh7RQqtJsbKapq5YaWjhkbH25GeZCt4MLKCrXqX/ixRNalZZZFEV5igOzIMWnd40jw==",
   "success": true,
-  "projectFilePath": "F:\\source\\repos\\SSQE Player\\SSQE Player\\SSQE Player.csproj",
+  "projectFilePath": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Owner\\.nuget\\packages\\opentk\\4.7.7\\opentk.4.7.7.nupkg.sha512",
     "C:\\Users\\Owner\\.nuget\\packages\\opentk.compute\\4.7.7\\opentk.compute.4.7.7.nupkg.sha512",
