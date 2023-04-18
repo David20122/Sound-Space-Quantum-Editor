@@ -75,6 +75,7 @@ namespace New_SSQE
             Size = (1280, 720),
             Title = $"Sound Space Quantum Editor {Assembly.GetExecutingAssembly().GetName().Version}",
             NumberOfSamples = 32,
+            WindowState = WindowState.Maximized
         })
         {
             Shader.Init();
@@ -91,7 +92,6 @@ namespace New_SSQE
 
             Instance = this;
 
-            WindowState = WindowState.Maximized;
             UpdateFrequency = 1 / 20.0;
 
             CheckForUpdates();
