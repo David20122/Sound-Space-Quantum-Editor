@@ -150,7 +150,7 @@ namespace SSQE_Player
                         MusicPlayer.Play();
                         CurrentWindow.Unpausing = true;
                     }
-                    else if (!CurrentWindow.Unpausing && MusicPlayer.IsPlaying && CurrentWindow.PauseTime + 1000f <= Settings.settings["currentTime"].Value)
+                    else if (!CurrentWindow.Unpausing && MusicPlayer.IsPlaying && CurrentWindow.PauseTime + 1500f <= Settings.settings["currentTime"].Value)
                     {
                         MusicPlayer.Pause();
 
