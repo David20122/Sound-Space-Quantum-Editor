@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace New_SSQE.GUI
 {
@@ -17,10 +19,10 @@ namespace New_SSQE.GUI
             var setting = Settings.settings[Setting];
             var possible = setting.Possible;
 
-            var index = possible.IndexOf(setting.Current);
-            index = index >= 0 ? index : possible.Count - 1;
+            var index = Array.IndexOf(possible, setting.Current);
+            index = index >= 0 ? index : possible.Length - 1;
 
-            setting.Current = possible[(index + 1) % possible.Count];
+            setting.Current = possible[(index + 1) % possible.Length];
             Text = setting.Current.ToString().ToUpper();
 
             Update();
