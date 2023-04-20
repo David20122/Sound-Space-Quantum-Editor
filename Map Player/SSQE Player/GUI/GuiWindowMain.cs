@@ -19,6 +19,7 @@ namespace SSQE_Player.GUI
         private readonly GuiLabel MissesLabel = new(930, 60, 60, 24, "", 24, true, Settings.settings["color2"]);
         private readonly GuiLabel InfoLabel = new(10, 10, 100, 50, "QUIT: Escape or R\nRESTART: Tab\nPAUSE: Space", 32, false, Settings.settings["color2"]);
         private readonly GuiLabel PausedLabel = new(930, 1000, 60, 80, "PAUSED", 64, true, Color.FromArgb(0, 127, 255));
+        private readonly GuiLabel HitWindowLabel = new(10, 1050, 60, 40, "", 24, false, Settings.settings["color2"]);
 
         private Matrix4 noteScale = Matrix4.CreateScale(1);
 
@@ -61,10 +62,12 @@ namespace SSQE_Player.GUI
         {
             Labels = new List<GuiLabel>
             {
-                AccuracyLabel, ComboLabel, MissesLabel, InfoLabel, PausedLabel
+                AccuracyLabel, ComboLabel, MissesLabel, InfoLabel, PausedLabel, HitWindowLabel
             };
 
-            hitWindow = Settings.settings["hitWindow"];
+            hitWindow = (int)Settings.settings["hitWindow"];
+            if (hitWindow != 55)
+                HitWindowLabel.Text = $"HW: {hitWindow}ms";
             noteIndex = startIndex;
 
             Init();
