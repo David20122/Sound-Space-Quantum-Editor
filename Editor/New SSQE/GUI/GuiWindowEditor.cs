@@ -61,7 +61,7 @@ namespace New_SSQE.GUI
         private readonly GuiButton OpenBookmarks = new(10, 310, 256, 40, 7, "EDIT BOOKMARKS", 21, false, true);
         private readonly GuiButton CopyBookmarks = new(10, 360, 256, 40, 20, "COPY BOOKMARKS", 21, false, true);
         private readonly GuiButton PasteBookmarks = new(10, 410, 256, 40, 21, "PASTE BOOKMARKS", 21, false, true);
-        private readonly GuiButton ScanClonedNotes = new(10, 460, 256, 40, 22, "SCAN FOR CLONED NOTES", 21, false, true);
+        private readonly GuiButton ScanClonedNotes = new(10, 460, 288, 40, 22, "SCAN FOR COPIED NOTES [WIP]", 21, false, true);
         private readonly GuiTextbox CloneThreshold = new(10, 535, 128, 40, "5", 25, true, false, true);
 
         private readonly GuiButton PlayerNav = new(10, 300, 400, 50, 17, "PLAYER >", 25, false, true);
@@ -105,7 +105,7 @@ namespace New_SSQE.GUI
         private readonly GuiLabel RotateLabel = new(10, 580, 158, 30, "Rotate by Degrees:", 24, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel ScaleLabel = new(10, 655, 158, 30, "Scale by Percent:", 24, false, true, "main", false, Settings.settings["color1"]);
 
-        private readonly GuiLabel ClonePercentLabel = new(270, 467, 100, 30, "", 25, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel ClonePercentLabel = new(302, 467, 100, 30, "", 25, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel CloneThresholdLabel = new(10, 508, 158, 30, "Copied Streak Threshold:", 24, false, true, "main", false, Settings.settings["color1"]);
 
         private readonly GuiLabel CameraModeLabel = new(10, 368, 158, 30, "Camera Mode:", 24, false, true, "main", false, Settings.settings["color1"]);
