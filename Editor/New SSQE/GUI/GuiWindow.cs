@@ -98,10 +98,11 @@ namespace New_SSQE.GUI
             if (Track != null && (Track.Rect.Contains(pos) || Track.HoveringPoint != null || Track.DraggingNote != null || Track.DraggingPoint != null))
                 Track.OnMouseClick(pos, right);
 
+            var controlsCopied = Controls.ToList();
+
             if (!right)
             {
                 buttonClicked = false;
-                var controlsCopied = Controls.ToList();
 
                 foreach (var control in controlsCopied)
                 {
@@ -140,6 +141,21 @@ namespace New_SSQE.GUI
                 editor.SelectedNotes.Clear();
                 editor.UpdateSelection();
                 editor.SelectedPoint = null;
+
+                foreach (var control in controlsCopied)
+                {
+                    if (control is not GuiSlider || control is GuiSliderTimeline)
+                        continue;
+
+                    var horizontal = control.Rect.Width > control.Rect.Height;
+                    var xdiff = horizontal ? 12f : 0f;
+                    var ydiff = horizontal ? 0f : 12f;
+
+                    var hitbox = new RectangleF(control.Rect.X - xdiff, control.Rect.Y - ydiff, control.Rect.Width + xdiff * 2f, control.Rect.Height + ydiff * 2f);
+
+                    if (control.Visible && hitbox.Contains(pos))
+                        control.OnMouseClick(pos, true);
+                }
             }
         }
 

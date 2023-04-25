@@ -177,7 +177,7 @@ namespace New_SSQE
                             else if (setting.Value.GetType() == typeof(Keybind))
                                 settings[setting.Key] = ConvertToKeybind(value);
                             else if (setting.Value.GetType() == typeof(SliderSetting))
-                                settings[setting.Key] = ConvertToSliderSetting(value);
+                                settings[setting.Key] = ConvertToSliderSetting(value, settings[setting.Key].Default);
                             else if (setting.Value.GetType() == typeof(ListSetting))
                                 settings[setting.Key].Current = value;
                             else if (setting.Key == "noteColors")
@@ -302,9 +302,9 @@ namespace New_SSQE
             return new Keybind(key, value[1], value[3], value[2]);
         }
 
-        private static SliderSetting ConvertToSliderSetting(JsonValue value)
+        private static SliderSetting ConvertToSliderSetting(JsonValue value, float defaultVal)
         {
-            return new SliderSetting(value[0], value[1], value[2]);
+            return new SliderSetting(value[0], value[1], value[2]) { Default = defaultVal };
         }
 
         public static string CompareKeybind(Keys key, bool ctrl, bool alt, bool shift)

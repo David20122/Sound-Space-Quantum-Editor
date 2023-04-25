@@ -18,6 +18,8 @@ namespace New_SSQE.GUI
         private float prevAlpha;
         private float prevValue;
 
+        private readonly float defaultValue;
+
         public GuiSlider(float posx, float posy, float sizex, float sizey, string setting, bool reverse, bool lockSize = false, bool moveWithOffset = false) : base(posx, posy, sizex, sizey)
         {
             Setting = setting;
@@ -25,6 +27,8 @@ namespace New_SSQE.GUI
             Reverse = reverse;
             LockSize = lockSize;
             MoveWithOffset = moveWithOffset;
+
+            defaultValue = Settings.settings[setting].Default;
 
             Init();
         }
@@ -168,7 +172,11 @@ namespace New_SSQE.GUI
         public override void OnMouseClick(Point pos, bool right)
         {
             MainWindow.Instance.SoundPlayer.Play(Settings.settings["clickSound"]);
-            Dragging = true;
+
+            if (right)
+                Settings.settings[Setting].Value = defaultValue;
+            else
+                Dragging = true;
         }
 
         public override void OnMouseUp(Point pos)
