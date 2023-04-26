@@ -56,7 +56,7 @@ namespace New_SSQE.GUI
             var previewFillVerts = GLU.Rect(0, 0, 65, 65, 1f, 1f, 1f, 0.125f);
             previewVerts = previewVerts.Concat(previewFillVerts).ToArray();
 
-            var approachVerts = GLU.OutlineAsTriangles(0, 0, 1, 1, 0.025f, 1f, 1f, 1f, 1f);
+            var approachVerts = GLU.OutlineAsTriangles(0, 0, 1, 1, 0.0125f, 1f, 1f, 1f, 1f);
             var selectVerts = GLU.OutlineAsTriangles(0, 0, 83, 83, 2, 1f, 1f, 1f, 1f);
             var hoverVerts = GLU.OutlineAsTriangles(0, 0, 83, 83, 2, 1f, 1f, 1f, 0.25f);
 

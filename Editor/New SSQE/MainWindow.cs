@@ -945,7 +945,7 @@ namespace New_SSQE
                 final[i + 1] = clone.ToString(culture);
             }
 
-            return string.Join(',', final);
+            return string.Join("", final);
         }
 
         public string ParseProperties()
@@ -1070,7 +1070,8 @@ namespace New_SSQE
                 var id = split[0];
 
                 for (int i = 1; i < split.Length; i++)
-                    Notes.Add(Note.New(split[i], culture));
+                    if (!string.IsNullOrWhiteSpace(split[i]))
+                        Notes.Add(Note.New(split[i], culture));
 
                 SortNotes();
 
