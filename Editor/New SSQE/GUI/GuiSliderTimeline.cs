@@ -41,7 +41,6 @@ namespace New_SSQE.GUI
 
             var noteVerts = GLU.Line(0, y + 5f, 0, y + lineRect.Height, 1, 1f, 1f, 1f, 1f);
             var pointVerts = GLU.Line(0, y - 10f, 0, y - lineRect.Height * 2f, 2, 1f, 1f, 1f, 1f);
-            var bookmarkVerts = GLU.Line(0, by - 40f, 0, by - 32f, 8, 1f, 1f, 1f, 1f);
 
             AddToBuffers(noteVerts, 0);
             AddToBuffers(pointVerts, 1);
@@ -102,9 +101,6 @@ namespace New_SSQE.GUI
             lineRect = new RectangleF(Rect.X + Rect.Height / 2f, Rect.Y + Rect.Height / 2f - 1.5f, Rect.Width - Rect.Height, 3f);
 
             GL.UseProgram(Shader.InstancedProgram);
-
-            var editor = MainWindow.Instance;
-            var setting = Settings.settings["currentTime"];
 
             if (prevRect != lineRect || prevHover != HoveringBookmark)
             {

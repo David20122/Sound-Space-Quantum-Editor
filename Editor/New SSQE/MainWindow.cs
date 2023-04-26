@@ -361,8 +361,8 @@ namespace New_SSQE
                                         SelectedNotes.Clear();
                                         SelectedPoint = null;
 
-                                        foreach (var note in copied)
-                                            Notes.Remove(note);
+                                        for (int i = 0; i < copied.Count; i++)
+                                            Notes.Remove(copied[i]);
                                         UpdateSelection();
 
                                         SortNotes();
