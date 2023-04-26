@@ -1710,7 +1710,7 @@ namespace New_SSQE
 
                         // editor version check
                         ActionLogging.Register("Checking version of editor");
-                        if (version != currentVersion)
+                        if (version != currentVersion && false) // disabled while in dev
                         {
                             var diag = MessageBox.Show($"New Editor version is available ({version}). Would you like to download the new version?", "Warning", "Yes", "No");
 
