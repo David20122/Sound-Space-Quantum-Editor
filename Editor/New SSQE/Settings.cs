@@ -68,7 +68,6 @@ namespace New_SSQE
             {"color4", Color.FromArgb(90, 90, 90) },
 
             {"noteColors", new List<Color>() { Color.FromArgb(255, 0, 255), Color.FromArgb(0, 255, 200) } },
-            {"mergedColor", Color.FromArgb(0, 0, 0) },
 
             {"trackHeight", new SliderSetting(16, 32, 1) },
             {"cursorPos", new SliderSetting(40, 100, 1) },
@@ -125,7 +124,7 @@ namespace New_SSQE
             foreach (var key in keptSet)
                 kept.Add(key, settings[key]);
 
-            settings = new(settingsCloned) { ["mergedColor"] = GetMergedColor() };
+            settings = new(settingsCloned);
 
             foreach (var key in kept.Keys)
                 settings[key] = kept[key];
@@ -138,25 +137,6 @@ namespace New_SSQE
 
             for (int i = 0; i < 9; i++)
                 MainWindow.Instance.KeyMapping.Add(keys[i], new Tuple<int, int>(i % 3, i / 3));
-        }
-
-        private static Color GetMergedColor()
-        {
-            float r = 0, g = 0, b = 0;
-            var colors = settings["noteColors"];
-
-            foreach (var color in colors)
-            {
-                r += color.R;
-                g += color.G;
-                b += color.B;
-            }
-
-            r /= colors.Count;
-            g /= colors.Count;
-            b /= colors.Count;
-
-            return Color.FromArgb(1, (int)r, (int)g, (int)b);
         }
 
         public static void Load()
@@ -214,8 +194,6 @@ namespace New_SSQE
                     catch (Exception ex)
                     { ActionLogging.Register($"Failed to update setting - {setting.Key} - {ex.GetType().Name}\n{ex.StackTrace}", "WARN"); }
                 }
-
-                settings["mergedColor"] = GetMergedColor();
             }
             catch (Exception ex)
             {

@@ -17,9 +17,6 @@ namespace New_SSQE
 
         public bool Anchored;
 
-        public Color Color;
-        public Color GridColor;
-
         public Note(float x, float y, long ms)
         {
             X = x;

@@ -1537,16 +1537,6 @@ namespace New_SSQE
             return false;
         }
 
-
-
-
-        public bool IsMegaNote(int i)
-        {
-            var ms = Notes[i].Ms;
-
-            return (i - 1 >= 0 && Notes[i - 1].Ms == ms) || (i + 1 < Notes.Count && Notes[i + 1].Ms == ms);
-        }
-
         public void SetTempo(float newTempo)
         {
             var tempoA = Math.Min(newTempo, 0.9f);
@@ -1562,18 +1552,6 @@ namespace New_SSQE
         public void SortNotes()
         {
             Notes = new List<Note>(Notes.OrderBy(n => n.Ms));
-
-            var noteColors = Settings.settings["noteColors"];
-            var colorCount = noteColors.Count;
-            var mergedColor = Settings.settings["mergedColor"];
-
-            for (int i = 0; i < Notes.Count; i++)
-            {
-                var color = noteColors[i % colorCount];
-
-                Notes[i].Color = IsMegaNote(i) ? mergedColor : color;
-                Notes[i].GridColor = color;
-            }
 
             if (CurrentWindow is GuiWindowEditor editor)
                 editor.Timeline.GenerateOffsets();
