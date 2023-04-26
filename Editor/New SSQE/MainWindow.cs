@@ -672,8 +672,13 @@ namespace New_SSQE
 
         public void UpdateSelection()
         {
-            for (int i = 0; i < Notes.Count; i++)
-                Notes[i].Selected = SelectedNotes.Contains(Notes[i]);
+            for (int i = 0; i < SelectedNotes.Count; i++)
+                SelectedNotes[i].TempSelected = true;
+            for  (int i = 0; i < Notes.Count; i++)
+            {
+                Notes[i].Selected = Notes[i].TempSelected;
+                Notes[i].TempSelected = false;
+            }
         }
 
         public long GetClosestNote(float currentMs)

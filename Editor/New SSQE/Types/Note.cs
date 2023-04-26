@@ -13,6 +13,7 @@ namespace New_SSQE
 
         public long DragStartMs;
         public bool Selected;
+        public bool TempSelected;
 
         public bool Anchored;
 
