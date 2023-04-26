@@ -930,19 +930,22 @@ namespace New_SSQE
         {
             var offset = (long)Settings.settings["exportOffset"];
 
-            var final = SoundID.ToString();
+            var final = new string[Notes.Count + 1];
+            final[0] = SoundID.ToString();
+
             var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
             culture.NumberFormat.NumberDecimalSeparator = ".";
 
-            foreach (var note in Notes)
+            for (int i = 0; i < Notes.Count; i++)
             {
+                var note = Notes[i];
                 var clone = copy ? new Note(MathHelper.Clamp(note.X, -0.85f, 2.85f), MathHelper.Clamp(note.Y, -0.85f, 2.85f), (long)MathHelper.Clamp(note.Ms, 0, Settings.settings["currentTime"].Max)) : note;
                 clone.Ms += offset;
 
-                final += clone.ToString(culture);
+                final[i + 1] = clone.ToString(culture);
             }
 
-            return final;
+            return string.Join(',', final);
         }
 
         public string ParseProperties()
