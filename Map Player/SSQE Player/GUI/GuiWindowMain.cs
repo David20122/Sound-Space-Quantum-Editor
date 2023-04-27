@@ -28,7 +28,7 @@ namespace SSQE_Player.GUI
         private Model CubeModel;
         private Model CursorModel;
 
-        private const float spawnZ = 25f;
+        private float spawnZ => Settings.settings["approachDistance"] * 25f;
         private float NoteSpeed => (Settings.settings["playerApproachRate"].Value + 1f) * 2.5f / MainWindow.Instance.Tempo;
         private readonly float hitWindow; // ms
         private int noteIndex = 0;

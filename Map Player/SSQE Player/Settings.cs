@@ -10,6 +10,7 @@ namespace SSQE_Player
         {
             {"sensitivity", 1f },
             {"parallax", 1f },
+            {"approachDistance", 1f },
             {"hitWindow", 55f },
 
             {"cameraMode", new ListSetting("half lock", "half lock", "full lock", "spin") },
