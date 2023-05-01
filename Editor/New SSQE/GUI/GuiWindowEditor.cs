@@ -23,19 +23,19 @@ namespace New_SSQE.GUI
         private readonly GuiCheckbox AutoAdvance = new(0, 0, 0, 0, "autoAdvance", "Auto-Advance", 25);
 
         private readonly GuiButton OptionsNav = new(10, 60, 400, 50, 3, "OPTIONS >", 25, false, true);
-        private readonly GuiCheckbox Autoplay = new(10, 130, 40, 40, "autoplay", "Autoplay", 25, false, true);
-        private readonly GuiCheckbox ApproachSquares = new(10, 180, 40, 40, "approachSquares", "Approach Squares", 25, false, true);
-        private readonly GuiCheckbox GridNumbers = new(10, 230, 40, 40, "gridNumbers", "Grid Numbers", 25, false, true);
-        private readonly GuiCheckbox GridLetters = new(10, 280, 40, 40, "gridLetters", "Grid Letters", 25, false, true);
-        private readonly GuiCheckbox Quantum = new(10, 330, 40, 40, "enableQuantum", "Quantum", 25, false, true);
-        private readonly GuiCheckbox Numpad = new(10, 380, 40, 40, "numpad", "Use Numpad", 25, false, true);
-        private readonly GuiCheckbox QuantumGridLines = new(10, 430, 40, 40, "quantumGridLines", "Quantum Grid Lines", 25, false, true);
-        private readonly GuiCheckbox QuantumGridSnap = new(10, 480, 40, 40, "quantumGridSnap", "Snap to Grid", 25, false, true);
-        private readonly GuiCheckbox Metronome = new(10, 530, 40, 40, "metronome", "Metronome", 25, false, true);
-        private readonly GuiCheckbox SeparateClickTools = new(10, 580, 40, 40, "separateClickTools", "Separate Click Tools", 25, false, true);
-        private readonly GuiSlider TrackHeight = new(378, 414, 32, 256, "trackHeight", false, false, true);
-        private readonly GuiSlider TrackCursorPos = new(10, 656, 400, 32, "cursorPos", false, false, true);
-        private readonly GuiSlider ApproachRate = new(378, 124, 32, 256, "approachRate", true, false, true);
+        private readonly GuiCheckbox Autoplay = new(10, 130, 35, 35, "autoplay", "Autoplay", 22, false, true);
+        private readonly GuiCheckbox ApproachSquares = new(10, 175, 35, 35, "approachSquares", "Approach Squares", 22, false, true);
+        private readonly GuiCheckbox GridNumbers = new(10, 220, 35, 35, "gridNumbers", "Grid Numbers", 22, false, true);
+        private readonly GuiCheckbox GridLetters = new(10, 265, 35, 35, "gridLetters", "Grid Letters", 22, false, true);
+        private readonly GuiCheckbox Quantum = new(10, 310, 35, 35, "enableQuantum", "Quantum", 22, false, true);
+        private readonly GuiCheckbox Numpad = new(10, 355, 35, 35, "numpad", "Use Numpad", 22, false, true);
+        private readonly GuiCheckbox QuantumGridLines = new(10, 400, 35, 35, "quantumGridLines", "Quantum Grid Lines", 22, false, true);
+        private readonly GuiCheckbox QuantumGridSnap = new(10, 445, 35, 35, "quantumGridSnap", "Snap to Grid", 22, false, true);
+        private readonly GuiCheckbox Metronome = new(10, 490, 35, 35, "metronome", "Metronome", 22, false, true);
+        private readonly GuiCheckbox SeparateClickTools = new(10, 535, 35, 35, "separateClickTools", "Separate Click Tools", 22, false, true);
+        private readonly GuiSlider TrackHeight = new(378, 384, 32, 224, "trackHeight", false, false, true);
+        private readonly GuiSlider TrackCursorPos = new(10, 596, 400, 32, "cursorPos", false, false, true);
+        private readonly GuiSlider ApproachRate = new(378, 124, 32, 224, "approachRate", true, false, true);
 
         private readonly GuiButton TimingNav = new(10, 120, 400, 50, 4, "TIMING >", 25, false, true);
         private readonly GuiTextbox ExportOffset = new(10, 210, 128, 40, "0", 25, true, false, true, "exportOffset");
@@ -94,9 +94,9 @@ namespace New_SSQE.GUI
         private readonly GuiLabel TotalTimeLabel = new(0, 0, 0, 30, "", 20, true, false, "main", true, Settings.settings["color1"]);
         private readonly GuiLabel NotesLabel = new(0, 0, 0, 30, "", 24, true, false, "main", true, Settings.settings["color1"]);
 
-        private readonly GuiLabel TrackHeightLabel = new(220, 630, 158, 30, "", 24, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel CursorPosLabel = new(10, 630, 158, 30, "", 24, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ApproachRateLabel = new(200, 340, 158, 30, "", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel TrackHeightLabel = new(220, 576, 158, 30, "", 22, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel CursorPosLabel = new(10, 576, 158, 30, "", 22, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel ApproachRateLabel = new(200, 308, 158, 30, "", 22, false, true, "main", false, Settings.settings["color1"]);
 
         private readonly GuiLabel ExportOffsetLabel = new(10, 183, 158, 30, "Export Offset[ms]:", 24, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel SfxOffsetLabel = new(10, 258, 158, 30, "SFX Offset[ms]:", 24, false, true, "main", false, Settings.settings["color1"]);
