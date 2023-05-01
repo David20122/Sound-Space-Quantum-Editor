@@ -37,6 +37,7 @@ namespace New_SSQE
             {"fromStart", false },
             {"reverseScroll", false },
             {"useVSync", false },
+            {"checkUpdates", true },
 
             {"editorBGOpacity", 255 },
             {"gridOpacity", 255 },

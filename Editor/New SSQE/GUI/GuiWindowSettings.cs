@@ -43,6 +43,7 @@ namespace New_SSQE.GUI
         private readonly GuiCheckbox SkipDownloadCheckbox = new(1350, 230, 55, 55, "skipDownload", "Skip Download from Roblox", 28);
         private readonly GuiCheckbox ReverseScrollCheckbox = new(1350, 305, 55, 55, "reverseScroll", "Reverse Scroll Direction", 28);
         private readonly GuiCheckbox UseVSyncCheckbox = new(1350, 380, 55, 55, "useVSync", "Enable VSync", 28);
+        private readonly GuiCheckbox CheckForUpdatesCheckbox = new(1350, 455, 55, 55, "checkUpdates", "Check For Updates", 28);
 
         private readonly GuiTextbox EditorBGOpacityTextbox = new(560, 160, 200, 50, "", 28, true, false, false, "editorBGOpacity");
         private readonly GuiLabel EditorBGOpacityLabel = new(560, 134, 200, 26, "Editor BG Opacity:", 24, false, false, "main", false);
@@ -78,7 +79,7 @@ namespace New_SSQE.GUI
                 // Buttons
                 BackButton, ResetButton, OpenDirectoryButton, KeybindsButton, Color1Picker, Color2Picker, Color3Picker, Color4Picker, NoteColorPicker,
                 // Checkboxes
-                WaveformCheckbox, ClassicWaveformCheckbox, AutosaveCheckbox, CorrectOnCopyCheckbox, SkipDownloadCheckbox, ReverseScrollCheckbox, UseVSyncCheckbox,
+                WaveformCheckbox, ClassicWaveformCheckbox, AutosaveCheckbox, CorrectOnCopyCheckbox, SkipDownloadCheckbox, ReverseScrollCheckbox, UseVSyncCheckbox, CheckForUpdatesCheckbox,
                 // Boxes
                 EditorBGOpacityTextbox, GridOpacityTextbox, TrackOpacityTextbox, AutosaveIntervalTextbox,
                 // Labels

@@ -94,12 +94,12 @@ namespace New_SSQE
 
             UpdateFrequency = 1 / 20.0;
 
-            CheckForUpdates();
-
             DiscordInit();
             SetActivity("Sitting in the menu");
 
             Settings.Load();
+
+            CheckForUpdates();
 
             OnMouseWheel(new MouseWheelEventArgs());
             SwitchWindow(new GuiWindowMenu());
@@ -1626,6 +1626,9 @@ namespace New_SSQE
 
         public static void CheckForUpdates()
         {
+            if (!Settings.settings["checkUpdates"])
+                return;
+
             var versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
             var currentVersion = versionInfo.FileVersion;
 
@@ -1710,7 +1713,7 @@ namespace New_SSQE
 
                         // editor version check
                         ActionLogging.Register("Checking version of editor");
-                        if (version != currentVersion && false) // disabled while in dev
+                        if (version != currentVersion)
                         {
                             var diag = MessageBox.Show($"New Editor version is available ({version}). Would you like to download the new version?", "Warning", "Yes", "No");
 
