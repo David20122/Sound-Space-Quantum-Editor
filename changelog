@@ -1,4 +1,50 @@
 ----------------------------------
+    -- 2.0.0.0 - 4/18/2023 --
+
+- NEW FRAMEWORK (editor, player, and updater)
+
+- rewrote rendering
+- all ui forms now have altered appearances, with similar functionality in most cases
+- fixed ctrl + backspace in form text boxes
+NOTE: for the timing and bookmark lists, dragging to select multiple rows no longer works (i may attempt to fix this for the future), however holding ctrl/shift to select multiple entries is an option
+- added support for .m4a files
+- fixed note color setting not registering correct mouse position
+- fixed being able to remove all note colors
+- improved button hover shading
+- fixed hover check when the cursor enters a different window
+- fixed create window scaling
+- resizing no longer causes stutters
+- fixed selecting notes while holding shift without any prior notes selected
+- fixed being able to drag select below the track while dragging a timing point
+- fixed being able to hover over multiple points
+- reorganized the settings menu
+- changed the appearance of the waveform, its color can now be customized using the new Color 4 setting and the old style can be enabled via "Use Classic Waveform" in settings
+- copying notes within a map now puts text in the clipboard rather than data allowing sections of maps to be sent to people much more easily (assuming theyre also using this editor version)
+- added reverse scroll direction option in settings affecting seeking through maps
+- export sspm keybind can now be changed in the keybinds menu
+- added support for loading sspm v1 and v2 files via "LOAD MAP" on the menu
+- added "REVIEW" nav tab and moved "EDIT BOOKMARKS" button to it
+- added support for copying/pasting bookmarks via easily readable text
+- added a button to scan for duplicated sections in a map, assigning it a score depending on how many instances are found of those sections
+NOTE: this feature is still work-in-progress so its results should be taken with a grain of salt
+- the default cover for exporting SSPM maps can now be changed via assets/textures/Cover.png
+- bookmarks now can have a range of times as a start position and end position
+- bookmarks on the timeline are now slightly transparent to make layered bookmarks more visible
+- disabled vsync by default and added an option to enable it in settings
+- right clicking sliders now resets them back to their default values
+- fixed lag when closing large maps
+- scaled down the options menu in the main window to accomodate the new "REVIEW" tab
+- added a 'Check For Updates' setting in the settings menu to toggle automatic update checking
+
+   -- P-2.0.0.0 - 4/18/2023 --
+   
+- added "RESTART: Tab" and "PAUSE: Space" text at the top left of the screen
+- the player is now affected by the editors current tempo when it is loaded
+- added support for pausing with space
+- reduced the default note spawn distance
+- the hit window can now be changed via player settings in the editor (default: 55, vulnus: 58)
+
+----------------------------------
    -- P-1.1.1.1 - 4/6/2023 --
    [DO NOT SKIP THIS VERSION]
 
