@@ -300,6 +300,8 @@ namespace New_SSQE.GUI
             base.Render(mousex, mousey, frametime);
         }
 
+        private bool playerRunning = false;
+
         public override void OnButtonClicked(int id)
         {
             var editor = MainWindow.Instance;
@@ -495,7 +497,7 @@ namespace New_SSQE.GUI
                     if (editor.MusicPlayer.IsPlaying)
                         editor.MusicPlayer.Pause();
 
-                    if (File.Exists("SSQE Player.exe"))
+                    if (!playerRunning && File.Exists("SSQE Player.exe"))
                     {
                         if (!Directory.Exists("assets/temp"))
                             Directory.CreateDirectory("assets/temp");
@@ -503,7 +505,15 @@ namespace New_SSQE.GUI
                         Settings.Save();
 
                         File.WriteAllText($"assets/temp/tempmap.txt", editor.ParseData());
-                        Process.Start("SSQE Player.exe", Settings.settings["fromStart"].ToString());
+
+                        Process process = Process.Start("SSQE Player.exe", Settings.settings["fromStart"].ToString());
+                        playerRunning = process != null;
+                        
+                        if (process != null)
+                        {
+                            process.EnableRaisingEvents = true;
+                            process.Exited += delegate { playerRunning = false; };
+                        }
                     }
 
                     break;
