@@ -17,6 +17,7 @@ namespace SSQE_Player
             {"hitSound", "hit" },
 
             {"lockCursor", true },
+            {"fullscreenPlayer", true },
 
             {"currentTime", new SliderSetting(0f, 0f, 0f) },
             {"tempo", new SliderSetting(0.9f, 1.4f, 0.05f) },

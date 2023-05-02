@@ -43,7 +43,7 @@ namespace SSQE_Player
             Size = (1280, 720),
             Title = $"Sound Space Map Player {Assembly.GetExecutingAssembly().GetName().Version}",
             NumberOfSamples = 32,
-            WindowState = WindowState.Fullscreen,
+            WindowState = WindowState.Maximized,
             Vsync = VSyncMode.Off
         })
         {
@@ -57,6 +57,8 @@ namespace SSQE_Player
             CursorState = CursorState.Grabbed;
 
             Settings.Load();
+            if (Settings.settings["fullscreenPlayer"])
+                WindowState = WindowState.Fullscreen;
 
             if (fromStart)
                 Settings.settings["currentTime"].Value = 0f;
@@ -116,9 +118,12 @@ namespace SSQE_Player
 
             Shader.SetViewport(Shader.FontTexProgram, w, h);
 
-            Camera.CalculateProjection();
             CurrentWindow?.OnResize(Size);
 
+            if (Instance == null)
+                return;
+
+            Camera.CalculateProjection();
             OnRenderFrame(new FrameEventArgs());
         }
 

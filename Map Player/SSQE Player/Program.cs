@@ -8,7 +8,7 @@ namespace SSQE_Player
         static void Main(string[] args)
         {
             // uncomment if debugging
-            //args = new string[1] { "true" };
+            args = new string[1] { "true" };
 
 
             if (args.Length == 0) { return; }
@@ -20,14 +20,10 @@ namespace SSQE_Player
             CultureInfo.DefaultThreadCurrentCulture = culture;
             CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-            try
-            {
-                MainWindow window = new(bool.Parse(args[0]));
+            MainWindow window = new(bool.Parse(args[0]));
 
-                using (window)
-                    window.Run();
-            }
-            catch { }
+            using (window)
+                window.Run();
         }
     }
 }
