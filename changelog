@@ -19,7 +19,7 @@ NOTE: for the timing and bookmark lists, dragging to select multiple rows no lon
 - fixed being able to hover over multiple points
 - reorganized the settings menu
 - changed the appearance of the waveform, its color can now be customized using the new Color 4 setting and the old style can be enabled via "Use Classic Waveform" in settings
-- copying notes within a map now puts text in the clipboard rather than data allowing sections of maps to be sent to people much more easily (assuming theyre also using this editor version)
+- copying notes within a map (ctrl+c) now puts text in the clipboard rather than data allowing sections of maps to be sent to people much more easily (assuming theyre also using this editor version)
 - added reverse scroll direction option in settings affecting seeking through maps
 - export sspm keybind can now be changed in the keybinds menu
 - added support for loading sspm v1 and v2 files via "LOAD MAP" on the menu
