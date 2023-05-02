@@ -42,7 +42,7 @@ NOTE: this feature is still work-in-progress so its results should be taken with
 - added "RESTART: Tab" and "PAUSE: Space" text at the top left of the screen
 - the player is now affected by the editors current tempo when it is loaded
 - added support for pausing with space
-- reduced the default note spawn distance
+- reduced the default note spawn distance (multiply current distance by 1.48 to revert)
 - the hit window can now be changed via player settings in the editor (default: 55, vulnus: 58)
 
 ----------------------------------
