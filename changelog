@@ -35,6 +35,7 @@ NOTE: this feature is still work-in-progress so its results should be taken with
 - fixed lag when closing large maps
 - scaled down the options menu in the main window to accomodate the new "REVIEW" tab
 - added a 'Check For Updates' setting in the settings menu to toggle automatic update checking
+- fixed being able to open the player multiple times without it closing
 
    -- P-2.0.0.0 - 4/18/2023 --
    
