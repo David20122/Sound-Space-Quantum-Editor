@@ -1,5 +1,5 @@
 ----------------------------------
-    -- 2.0.0.0 - 4/18/2023 --
+     -- 2.0.0.0 - 5/2/2023 --
 
 - NEW FRAMEWORK (editor, player, and updater)
 
@@ -38,7 +38,7 @@ NOTE: this feature is still work-in-progress so its results should be taken with
 - fixed being able to open the player multiple times without it closing
 - added a fullscreen toggle for whether to launch the player in fullscreen in settings
 
-   -- P-2.0.0.0 - 4/18/2023 --
+    -- P-2.0.0.0 - 5/2/2023 --
    
 - added "RESTART: Tab" and "PAUSE: Space" text at the top left of the screen
 - the player is now affected by the editors current tempo when it is loaded
