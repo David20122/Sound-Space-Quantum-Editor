@@ -6,7 +6,7 @@
 - rewrote rendering
 - all ui forms now have altered appearances, with similar functionality in most cases
 - fixed ctrl + backspace in form text boxes
-NOTE: for the timing and bookmark lists, dragging to select multiple rows no longer works (i may attempt to fix this for the future), however holding ctrl/shift to select multiple entries is an option
+NOTE: for the timing and bookmark lists, dragging to select multiple rows no longer works (i may attempt to fix this in the future), however holding ctrl/shift to select multiple entries is an option
 - added support for .m4a files
 - fixed note color setting not registering correct mouse position
 - fixed being able to remove all note colors
