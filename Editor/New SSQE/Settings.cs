@@ -39,6 +39,7 @@ namespace New_SSQE
             {"useVSync", false },
             {"checkUpdates", true },
             {"fullscreenPlayer", true },
+            {"approachFade", true },
 
             {"editorBGOpacity", 255 },
             {"gridOpacity", 255 },

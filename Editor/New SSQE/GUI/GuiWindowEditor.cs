@@ -70,10 +70,11 @@ namespace New_SSQE.GUI
         private readonly GuiTextbox Sensitivity = new(10, 520, 128, 40, "1", 25, true, false, true, "sensitivity", "main", false, true);
         private readonly GuiTextbox Parallax = new(225, 520, 128, 40, "1", 25, true, false, true, "parallax", "main", false, true);
         private readonly GuiTextbox ApproachDistance = new(10, 595, 128, 40, "1", 25, true, false, true, "approachDistance", "main", false, true);
-        private readonly GuiSlider PlayerApproachRate = new(10, 670, 400, 32, "playerApproachRate", false, false, true);
-        private readonly GuiCheckbox FromStart = new(10, 710, 40, 40, "fromStart", "Play From Start", 25, false, true);
         private readonly GuiTextbox HitWindow = new(225, 595, 128, 40, "55", 25, true, false, true, "hitWindow", "main", false, true);
-        private readonly GuiButton PlayMap = new(10, 760, 256, 40, 18, "PLAY MAP", 21, false, true);
+        private readonly GuiSlider PlayerApproachRate = new(10, 670, 400, 32, "playerApproachRate", false, false, true);
+        private readonly GuiCheckbox ApproachFade = new(10, 710, 40, 40, "approachFade", "Enable Approach Fade", 25, false, true);
+        private readonly GuiCheckbox FromStart = new(10, 760, 40, 40, "fromStart", "Play From Start", 25, false, true);
+        private readonly GuiButton PlayMap = new(10, 810, 256, 40, 18, "PLAY MAP", 21, false, true);
 
         private readonly GuiLabel ToastLabel = new(0, 0, 0, 0, "", 36);
 
@@ -112,8 +113,8 @@ namespace New_SSQE.GUI
         private readonly GuiLabel SensitivityLabel = new(10, 493, 158, 30, "Sensitivity:", 24, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel ParallaxLabel = new(225, 493, 155, 30, "Parallax:", 24, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel ApproachDistanceLabel = new(10, 568, 158, 30, "Approach Distance:", 24, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel PlayerApproachRateLabel = new(10, 643, 158, 30, "", 24, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel HitWindowLabel = new(225, 568, 158, 30, "Hit Window[ms]:", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel PlayerApproachRateLabel = new(10, 643, 158, 30, "", 24, false, true, "main", false, Settings.settings["color1"]);
 
         private float toastTime = 0f;
         private string navEnabled = "";
@@ -128,7 +129,7 @@ namespace New_SSQE.GUI
                 BezierButton, RotateButton, ScaleButton, ReviewNav, OpenBookmarks, CopyBookmarks, PasteBookmarks, ScanClonedNotes, PlayerNav, CameraMode, PlayMap,
                 // Checkboxes
                 AutoAdvance, Autoplay, ApproachSquares, GridNumbers, GridLetters, Quantum, Numpad, QuantumGridLines, QuantumGridSnap, Metronome, SeparateClickTools, CurveBezier,
-                LockCursor, FromStart,
+                LockCursor, ApproachFade, FromStart,
                 // Sliders
                 Tempo, MasterVolume, SfxVolume, BeatSnapDivisor, QuantumSnapDivisor, Timeline, TrackHeight, TrackCursorPos, ApproachRate, PlayerApproachRate,
                 // Boxes
@@ -640,16 +641,17 @@ namespace New_SSQE.GUI
             Sensitivity.Visible = playerNav;
             Parallax.Visible = playerNav;
             ApproachDistance.Visible = playerNav;
-            PlayerApproachRate.Visible = playerNav;
-            FromStart.Visible = playerNav;
             HitWindow.Visible = playerNav;
+            PlayerApproachRate.Visible = playerNav;
+            ApproachFade.Visible = playerNav;
+            FromStart.Visible = playerNav;
             PlayMap.Visible = playerNav;
             CameraModeLabel.Visible = playerNav;
             SensitivityLabel.Visible = playerNav;
             ParallaxLabel.Visible = playerNav;
             ApproachDistanceLabel.Visible = playerNav;
-            PlayerApproachRateLabel.Visible = playerNav;
             HitWindowLabel.Visible = playerNav;
+            PlayerApproachRateLabel.Visible = playerNav;
 
             OnResize(new Vector2i((int)Rect.Width, (int)Rect.Height));
         }
