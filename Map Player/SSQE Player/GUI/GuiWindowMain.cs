@@ -205,6 +205,7 @@ namespace SSQE_Player.GUI
             CubeModel.Bind();
 
             var sizeZ = (new Vector4(CubeModel.Size) * noteScale).Z;
+            var fade = Settings.settings["approachFade"];
 
             for (int i = 0; i < cubes.Count; i++)
             {
@@ -214,7 +215,9 @@ namespace SSQE_Player.GUI
                 var y = note.Y - 1;
                 var z = note.Z - sizeZ / 2f;
 
-                Vector4 color = (note.Color.R, note.Color.G, note.Color.B, Math.Min(1, (spawnZ - z) / 10));
+                Vector4 color = (note.Color.R, note.Color.G, note.Color.B, 1);
+                if (fade)
+                    color.W = Math.Min(1, (spawnZ - z) / 10);
 
                 Shader.SetTransform(noteScale * Matrix4.CreateTranslation(x, y, z));
                 Shader.SetColor(color);
