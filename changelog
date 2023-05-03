@@ -45,7 +45,7 @@ NOTE: this feature is still work-in-progress so its results should be taken with
 - added support for pausing with space
 - reduced the default note spawn distance (multiply current distance by 1.48 to revert)
 - the hit window can now be changed via player settings in the editor (default: 55, vulnus: 58)
-NOTE: the sens/parallax values may have changed a bit.. im not sure by how much but the scaling was not the same for some reason so im sorry in advance for any tuning you may have to do to get a good sens back
+NOTE: the sens/parallax values may have changed a bit, im not sure why but the scaling changed by a factor of 4 i *think* so i apologize for any tuning you may have to do with the sens but i tried getting it back to where it was
 
 ----------------------------------
    -- P-1.1.1.1 - 4/6/2023 --
