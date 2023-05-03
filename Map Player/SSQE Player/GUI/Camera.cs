@@ -39,7 +39,7 @@ namespace SSQE_Player.GUI
                     rotation = (MathHelper.Clamp(rotation.X + diff.Value.Y / 250f * sensitivity, -rad88, rad88), rotation.Y + diff.Value.X / 250f * sensitivity);
                 else
                 {
-                    LockedPos -= (diff.Value.X / 80f * sensitivity, diff.Value.Y / 80f * sensitivity);
+                    LockedPos -= (diff.Value.X / 70f * sensitivity, diff.Value.Y / 70f * sensitivity);
 
                     var cursorSize = MainWindow.CursorSize;
 

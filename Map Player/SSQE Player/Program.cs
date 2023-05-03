@@ -8,7 +8,7 @@ namespace SSQE_Player
         static void Main(string[] args)
         {
             // uncomment if debugging
-            args = new string[1] { "true" };
+            //args = new string[1] { "true" };
 
 
             if (args.Length == 0) { return; }
