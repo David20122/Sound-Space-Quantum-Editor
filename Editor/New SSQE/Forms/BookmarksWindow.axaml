@@ -95,8 +95,8 @@
       <!-- Button -->
       <Style Selector="Button">
         <Setter Property="Background" Value="#e5e5e5"/>
-        <Setter Property="BorderBrush" Value="Black"/>
-        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="CornerRadius" Value="2"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="FontSize" Value="11.5"/>
@@ -105,8 +105,8 @@
 
       <!-- Label -->
       <Style Selector="Label">
-        <Setter Property="BorderBrush" Value="Black"/>
-        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="CornerRadius" Value="2"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -116,7 +116,8 @@
       <!-- TextBox -->
       <Style Selector="TextBox">
         <Setter Property="Opacity" Value="1"/>
-        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="CornerRadius" Value="2"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
