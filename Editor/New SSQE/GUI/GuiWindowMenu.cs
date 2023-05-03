@@ -55,7 +55,7 @@ namespace New_SSQE.GUI
 
             try
             {
-                changelogText = WebClient.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/1.9%2B_rewrite/changelog");
+                changelogText = WebClient.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/changelog");
             }
             catch { changelogText = "Failed to load changelog"; }
 
