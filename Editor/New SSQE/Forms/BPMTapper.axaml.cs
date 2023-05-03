@@ -8,7 +8,7 @@ namespace New_SSQE
 {
     public partial class BPMTapper : Window
     {
-        private static BPMTapper? Instance;
+        public static BPMTapper? Instance;
 
         private static int taps = 0;
         private static bool tapping = false;

@@ -1609,6 +1609,11 @@ namespace New_SSQE
                 else if (window is GuiWindowMenu)
                     SetActivity("Sitting in the menu");
 
+                ExportSSPM.Instance?.Close();
+                BPMTapper.Instance?.Close();
+                TimingsWindow.Instance?.Close();
+                BookmarksWindow.Instance?.Close();
+
                 CurrentWindow?.Dispose();
                 CurrentWindow = window;
 

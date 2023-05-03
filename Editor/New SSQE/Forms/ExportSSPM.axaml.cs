@@ -10,7 +10,7 @@ namespace New_SSQE
 {
     public partial class ExportSSPM : Window
     {
-        private static ExportSSPM? Instance;
+        public static ExportSSPM? Instance;
 
         public ExportSSPM()
         {
