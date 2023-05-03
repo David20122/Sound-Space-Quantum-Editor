@@ -35,7 +35,7 @@ namespace SSQE_Updater
             {
                 try
                 {
-                    var overwriteList = WebClient.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/1.9%2B_rewrite/updater_overwrite");
+                    var overwriteList = WebClient.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_overwrite");
 
                     return overwriteList.Split('\n');
                 }
@@ -57,7 +57,7 @@ namespace SSQE_Updater
                     if (!string.IsNullOrWhiteSpace(redirect))
                     {
                         var version = redirect[(redirect.LastIndexOf("/") + 1)..];
-
+                        
                         if (version != currentVersion)
                             return version;
                     }
