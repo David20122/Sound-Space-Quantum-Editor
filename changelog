@@ -1,4 +1,14 @@
 ----------------------------------
+     -- 2.0.0.1 - 5/3/2023 --
+     
+- fixed forms remaining open when switching screens
+- slightly adjusted the look of the form buttons
+
+    -- P-2.0.1.0 - 5/3/2023 --
+    
+- added toggle for applying approach fade effect
+
+----------------------------------
      -- 2.0.0.0 - 5/2/2023 --
 
 - NEW FRAMEWORK (editor, player, and updater)
