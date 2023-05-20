@@ -69,25 +69,25 @@ namespace New_SSQE
         private ActivityManager activityManager;
         private bool discordEnabled = File.Exists("discord_game_sdk.dll");
 
+        private static WindowIcon GetWindowIcon()
+        {
+            var bytes = File.ReadAllBytes("assets/textures/Icon.ico");
+            var bmp = SKBitmap.Decode(bytes, new SKImageInfo(256, 256, SKColorType.Rgba8888));
+            var image = new OpenTK.Windowing.Common.Input.Image(bmp.Width, bmp.Height, bmp.Bytes);
+
+            return new WindowIcon(image);
+        }
+
         public MainWindow() : base(GameWindowSettings.Default, new NativeWindowSettings()
         {
             Size = (1280, 720),
             Title = $"Sound Space Quantum Editor {Assembly.GetExecutingAssembly().GetName().Version}",
             NumberOfSamples = 32,
-            WindowState = WindowState.Maximized
+            WindowState = WindowState.Maximized,
+            Icon = GetWindowIcon()
         })
         {
             Shader.Init();
-
-            using var mem = new MemoryStream();
-            Resources.icon.Save(mem);
-            mem.Seek(0, SeekOrigin.Begin);
-            SKBitmap bmp = SKBitmap.Decode(mem, new SKImageInfo(256, 256, SKColorType.Rgba8888));
-            mem.Close();
-
-            var image = new OpenTK.Windowing.Common.Input.Image(bmp.Width, bmp.Height, bmp.Bytes);
-
-            Icon = new WindowIcon(image);
 
             Instance = this;
 
