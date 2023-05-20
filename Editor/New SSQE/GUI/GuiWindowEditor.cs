@@ -52,10 +52,11 @@ namespace New_SSQE.GUI
         private readonly GuiCheckbox CurveBezier = new(10, 460, 40, 40, "curveBezier", "Curve Bezier", 25, false, true);
         private readonly GuiTextbox BezierBox = new(10, 532, 128, 40, "4", 25, true, false, true, "bezierDivisor");
         private readonly GuiButton BezierButton = new(143, 532, 128, 40, 13, "DRAW", 21, false, true);
-        private readonly GuiTextbox RotateBox = new(10, 607, 128, 40, "90", 25, true, false, true);
+        public readonly GuiTextbox RotateBox = new(10, 607, 128, 40, "90", 25, true, false, true);
         private readonly GuiButton RotateButton = new(143, 607, 128, 40, 14, "ROTATE", 21, false, true);
-        private readonly GuiTextbox ScaleBox = new(10, 682, 128, 40, "150", 25, true, false, true);
+        public readonly GuiTextbox ScaleBox = new(10, 682, 128, 40, "150", 25, true, false, true);
         private readonly GuiButton ScaleButton = new(143, 682, 128, 40, 15, "SCALE", 21, false, true);
+        private readonly GuiCheckbox ApplyOnPaste = new(10, 732, 40, 40, "applyOnPaste", "Apply Rotate/Scale On Paste", 25, false, true);
 
         private readonly GuiButton ReviewNav = new(10, 240, 400, 50, 19, "REVIEW >", 25, false, true);
         private readonly GuiButton OpenBookmarks = new(10, 310, 256, 40, 7, "EDIT BOOKMARKS", 21, false, true);
@@ -63,6 +64,7 @@ namespace New_SSQE.GUI
         private readonly GuiButton PasteBookmarks = new(10, 410, 256, 40, 21, "PASTE BOOKMARKS", 21, false, true);
         private readonly GuiButton ScanClonedNotes = new(10, 460, 288, 40, 22, "SCAN FOR COPIED NOTES [WIP]", 21, false, true);
         private readonly GuiTextbox CloneThreshold = new(10, 535, 128, 40, "5", 25, true, false, true);
+        private readonly GuiButton ExportSSPMButton = new(10, 585, 256, 40, 23, "EXPORT SSPM", 21, false, true);
 
         private readonly GuiButton PlayerNav = new(10, 300, 400, 50, 17, "PLAYER >", 25, false, true);
         private readonly GuiButtonList CameraMode = new(10, 395, 256, 40, "cameraMode", 21, false, true);
@@ -126,10 +128,10 @@ namespace New_SSQE.GUI
             {
                 // Buttons
                 CopyButton, BackButton, PlayPause, OptionsNav, TimingNav, UseCurrentMs, OpenTimings, ImportIni, PatternsNav, HFlip, VFlip, StoreNodes, ClearNodes,
-                BezierButton, RotateButton, ScaleButton, ReviewNav, OpenBookmarks, CopyBookmarks, PasteBookmarks, ScanClonedNotes, PlayerNav, CameraMode, PlayMap,
+                BezierButton, RotateButton, ScaleButton, ReviewNav, OpenBookmarks, CopyBookmarks, PasteBookmarks, ScanClonedNotes, PlayerNav, CameraMode, PlayMap, ExportSSPMButton,
                 // Checkboxes
                 AutoAdvance, Autoplay, ApproachSquares, GridNumbers, GridLetters, Quantum, Numpad, QuantumGridLines, QuantumGridSnap, Metronome, SeparateClickTools, CurveBezier,
-                LockCursor, ApproachFade, FromStart,
+                ApplyOnPaste, LockCursor, ApproachFade, FromStart,
                 // Sliders
                 Tempo, MasterVolume, SfxVolume, BeatSnapDivisor, QuantumSnapDivisor, Timeline, TrackHeight, TrackCursorPos, ApproachRate, PlayerApproachRate,
                 // Boxes
@@ -552,6 +554,11 @@ namespace New_SSQE.GUI
                     ClonePercentLabel.Text = $"Score: {Math.Round(score, 2)} {rating}";
 
                     break;
+
+                case 23:
+                    ExportSSPM.ShowWindow();
+
+                    break;
             }
 
             base.OnButtonClicked(id);
@@ -627,6 +634,7 @@ namespace New_SSQE.GUI
             DrawBezierLabel.Visible = patternsNav;
             RotateLabel.Visible = patternsNav;
             ScaleLabel.Visible = patternsNav;
+            ApplyOnPaste.Visible = patternsNav;
 
             OpenBookmarks.Visible = reviewNav;
             CopyBookmarks.Visible = reviewNav;
@@ -635,6 +643,7 @@ namespace New_SSQE.GUI
             ClonePercentLabel.Visible = reviewNav;
             CloneThreshold.Visible = reviewNav;
             CloneThresholdLabel.Visible = reviewNav;
+            ExportSSPMButton.Visible = reviewNav;
 
             CameraMode.Visible = playerNav;
             LockCursor.Visible = playerNav;
@@ -682,12 +691,12 @@ namespace New_SSQE.GUI
                     break;
 
                 case "Patterns":
-                    ReviewNav.Rect.Y = ScaleButton.Rect.Bottom + 20 * heightdiff;
+                    ReviewNav.Rect.Y = ApplyOnPaste.Rect.Bottom + 20 * heightdiff;
                     PlayerNav.Rect.Y = ReviewNav.Rect.Bottom + 10 * heightdiff;
                     break;
 
                 case "Review":
-                    PlayerNav.Rect.Y = CloneThreshold.Rect.Bottom + 20 * heightdiff;
+                    PlayerNav.Rect.Y = ExportSSPMButton.Rect.Bottom + 20 * heightdiff;
                     break;
             }
 

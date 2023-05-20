@@ -26,6 +26,7 @@ using System.Runtime.InteropServices;
 using BigInteger = System.Numerics.BigInteger;
 using SharpFont.Cache;
 using System.IO.Compression;
+using Avalonia.Styling;
 
 namespace New_SSQE
 {
@@ -355,6 +356,27 @@ namespace New_SSQE
                                     var offset = copied.Min(n => n.Ms);
 
                                     copied.ForEach(n => n.Ms = (long)Settings.settings["currentTime"].Value + n.Ms - offset);
+
+                                    if (Settings.settings["applyOnPaste"])
+                                    {
+                                        if (float.TryParse(editor.RotateBox.Text, out var deg) && float.TryParse(editor.ScaleBox.Text, out var scale))
+                                        {
+                                            foreach (var note in copied.ToList())
+                                            {
+                                                var angle = MathHelper.RadiansToDegrees(Math.Atan2(note.Y - 1, note.X - 1));
+                                                var distance = Math.Sqrt(Math.Pow(note.X - 1, 2) + Math.Pow(note.Y - 1, 2));
+                                                var anglef = MathHelper.DegreesToRadians(angle + deg);
+
+                                                note.X = (float)(Math.Cos(anglef) * distance + 1);
+                                                note.Y = (float)(Math.Sin(anglef) * distance + 1);
+
+                                                var scalef = scale / 100f;
+
+                                                note.X = (note.X - 1) * scalef + 1;
+                                                note.Y = (note.Y - 1) * scalef + 1;
+                                            }
+                                        }
+                                    }
 
                                     UndoRedoManager.Add("Paste Notes", () =>
                                     {

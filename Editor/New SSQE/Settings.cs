@@ -40,6 +40,7 @@ namespace New_SSQE
             {"checkUpdates", true },
             {"fullscreenPlayer", true },
             {"approachFade", true },
+            {"applyOnPaste", false },
 
             {"editorBGOpacity", 255 },
             {"gridOpacity", 255 },
