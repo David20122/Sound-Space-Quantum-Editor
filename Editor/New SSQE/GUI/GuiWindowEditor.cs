@@ -703,6 +703,7 @@ namespace New_SSQE.GUI
 
             CopyButton.Rect.Location = new PointF(Grid.Rect.X, Grid.Rect.Y - 42 - 75 * heightdiff);
             BackButton.Rect.Location = new PointF(Grid.Rect.X, Grid.Rect.Bottom + 84 * heightdiff);
+            ClickModeLabel.Rect.Location = new PointF(Grid.Rect.X, BackButton.Rect.Bottom + 10 * heightdiff);
 
             Timeline.Rect = new RectangleF(0, Rect.Height - 64f, Rect.Width - 576f, 64f);
             PlayPause.Rect = new RectangleF(Rect.Width - 576f, Rect.Height - 64f, 64f, 64f);
