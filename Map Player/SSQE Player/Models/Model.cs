@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
 namespace SSQE_Player.Models
@@ -6,11 +7,11 @@ namespace SSQE_Player.Models
     internal class Model
     {
         private readonly int vertexCount;
-        private readonly int VaO;
+        private readonly VertexArrayHandle VaO;
 
         public Vector3 Size;
 
-        public Model(float[] vertices, int vao)
+        public Model(float[] vertices, VertexArrayHandle vao)
         {
             VaO = vao;
 

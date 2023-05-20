@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
 namespace SSQE_Player.GUI
@@ -7,9 +8,9 @@ namespace SSQE_Player.GUI
     {
         // Texture15: "main" font
         
-        public static int Program;
-        public static int ModelProgram;
-        public static int FontTexProgram;
+        public static ProgramHandle Program;
+        public static ProgramHandle ModelProgram;
+        public static ProgramHandle FontTexProgram;
 
         private static readonly string vertexShader = @"#version 430 core
                                                           layout (location = 0) in vec3 position;
@@ -110,17 +111,17 @@ namespace SSQE_Player.GUI
             FontTexProgram = CompileShader(fontTexVertShader, fontTexFragShader);
         }
 
-        private static int CompileShader(string vertShader, string fragShader)
+        private static ProgramHandle CompileShader(string vertShader, string fragShader)
         {
-            int vs = GL.CreateShader(ShaderType.VertexShader);
+            ShaderHandle vs = GL.CreateShader(ShaderType.VertexShader);
             GL.ShaderSource(vs, vertShader);
             GL.CompileShader(vs);
 
-            int fs = GL.CreateShader(ShaderType.FragmentShader);
+            ShaderHandle fs = GL.CreateShader(ShaderType.FragmentShader);
             GL.ShaderSource(fs, fragShader);
             GL.CompileShader(fs);
 
-            int program = GL.CreateProgram();
+            ProgramHandle program = GL.CreateProgram();
             GL.AttachShader(program, vs);
             GL.AttachShader(program, fs);
 
@@ -135,42 +136,42 @@ namespace SSQE_Player.GUI
             return program;
         }
 
-        public static void SetViewport(int program, float w, float h)
+        public static void SetViewport(ProgramHandle program, float w, float h)
         {
             GL.UseProgram(program);
             int location = GL.GetUniformLocation(program, "ViewportSize");
-            GL.Uniform2(location, (float)w, (float)h);
+            GL.Uniform2f(location, (float)w, (float)h);
         }
 
         public static void SetTransform(Matrix4 transform)
         {
             GL.UseProgram(ModelProgram);
-            GL.UniformMatrix4(1, false, ref transform);
+            GL.UniformMatrix4f(1, false, transform);
         }
 
         public static void SetProjection(Matrix4 projection)
         {
             GL.UseProgram(ModelProgram);
-            GL.UniformMatrix4(2, false, ref projection);
+            GL.UniformMatrix4f(2, false, projection);
         }
 
         public static void SetView(Matrix4 view)
         {
             GL.UseProgram(ModelProgram);
-            GL.UniformMatrix4(3, false, ref view);
+            GL.UniformMatrix4f(3, false, view);
         }
 
         public static void SetColor(Vector4 vec)
         {
             GL.UseProgram(ModelProgram);
-            GL.Uniform4(4, vec);
+            GL.Uniform4f(4, vec);
         }
 
         public static void SetProjView(Matrix4 projection, Matrix4 view)
         {
             GL.UseProgram(Program);
             var projview = view * projection;
-            GL.UniformMatrix4(2, false, ref projview);
+            GL.UniformMatrix4f(2, false, projview);
         }
     }
 }

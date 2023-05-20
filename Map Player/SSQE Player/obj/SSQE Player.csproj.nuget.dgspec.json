@@ -47,7 +47,7 @@
           "dependencies": {
             "OpenTK": {
               "target": "Package",
-              "version": "[4.7.7, )"
+              "version": "[5.0.0-pre.8, )"
             },
             "SharpFont.Dependencies": {
               "target": "Package",

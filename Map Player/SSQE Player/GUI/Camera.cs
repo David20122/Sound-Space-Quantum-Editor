@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace SSQE_Player.GUI
 {
@@ -36,10 +37,10 @@ namespace SSQE_Player.GUI
                 var diff = current - prevMouse;
 
                 if (camMode == "spin")
-                    rotation = (MathHelper.Clamp(rotation.X + diff.Value.Y / 250f * sensitivity, -rad88, rad88), rotation.Y + diff.Value.X / 250f * sensitivity);
+                    rotation = (MathHelper.Clamp(rotation.X + diff.Value.Y / 1000f * sensitivity, -rad88, rad88), rotation.Y + diff.Value.X / 1000f * sensitivity);
                 else
                 {
-                    LockedPos -= (diff.Value.X / 62.5f * sensitivity, diff.Value.Y / 62.5f * sensitivity);
+                    LockedPos -= (diff.Value.X / 250f * sensitivity, diff.Value.Y / 250f * sensitivity);
 
                     var cursorSize = MainWindow.CursorSize;
 

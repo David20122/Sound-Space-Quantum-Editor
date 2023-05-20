@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using SkiaSharp;
 using SSQE_Player.Models;
@@ -54,8 +55,8 @@ namespace SSQE_Player.GUI
         public int Pauses;
         public float PauseTime = float.MinValue;
 
-        private int VaO;
-        private int VbO;
+        private VertexArrayHandle VaO;
+        private BufferHandle VbO;
         private int vertexCount;
 
         public GuiWindowMain(int startIndex) : base(0, 0, MainWindow.Instance.Size.X, MainWindow.Instance.Size.Y)
@@ -90,16 +91,16 @@ namespace SSQE_Player.GUI
             GL.BindVertexArray(VaO);
 
             var vertices = Update();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VbO);
-            GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * vertices.Length, vertices.ToArray(), BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, VbO);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, vertices, BufferUsageARB.StaticDraw);
 
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 7 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
             GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, 7 * sizeof(float), 3 * sizeof(float));
             GL.EnableVertexAttribArray(1);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindVertexArray(0);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
+            GL.BindVertexArray(VertexArrayHandle.Zero);
         }
 
         public override void Render(float mousex, float mousey, float frametime)
@@ -122,8 +123,8 @@ namespace SSQE_Player.GUI
 
             GL.Disable(EnableCap.CullFace);
             var vertices = Update();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VbO);
-            GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * vertices.Length, vertices.ToArray(), BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, VbO);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, vertices, BufferUsageARB.StaticDraw);
             GL.DrawArrays(PrimitiveType.Triangles, 0, vertexCount);
             GL.Enable(EnableCap.CullFace);
 

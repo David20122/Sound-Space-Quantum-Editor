@@ -1,11 +1,12 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 
 namespace SSQE_Player.Models
 {
     internal class ModelManager
     {
-        private static readonly List<int> VaOs = new();
-        private static readonly List<int> VbOs = new();
+        private static readonly List<VertexArrayHandle> VaOs = new();
+        private static readonly List<BufferHandle> VbOs = new();
 
         private readonly Dictionary<string, Model> models = new();
 
@@ -25,15 +26,15 @@ namespace SSQE_Player.Models
 
         public static Model LoadModelToVao(float[] vertices)
         {
-            int vao = CreateVao();
+            VertexArrayHandle vao = CreateVao();
             StoreDataInAttribList(vertices);
 
             return new Model(vertices, vao);
         }
 
-        private static int CreateVao()
+        private static VertexArrayHandle CreateVao()
         {
-            int vao = GL.GenVertexArray();
+            VertexArrayHandle vao = GL.GenVertexArray();
             VaOs.Add(vao);
 
             GL.BindVertexArray(vao);
@@ -43,11 +44,11 @@ namespace SSQE_Player.Models
 
         private static void StoreDataInAttribList(float[] data)
         {
-            int vbo = GL.GenBuffer();
+            BufferHandle vbo = GL.GenBuffer();
             VbOs.Add(vbo);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-            GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * data.Length, data, BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, vbo);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, data, BufferUsageARB.StaticDraw);
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
         }

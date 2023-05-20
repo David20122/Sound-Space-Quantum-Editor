@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using SharpFont;
@@ -24,18 +23,18 @@ namespace SSQE_Player
         private readonly SKBitmap Bitmap;
         
         public Vector2 CharSize;
-        public float[] AtlasMetrics;
-        public int VaO;
-        public int[] VbOs;
-        public int StaticVbO;
+        public Vector4[] AtlasMetrics;
+        public VertexArrayHandle VaO;
+        public BufferHandle[] VbOs;
+        public BufferHandle StaticVbO;
 
         private readonly int BmpWidth;
         private readonly int BmpHeight;
 
         private readonly int _baseline;
-        private readonly int _handle;
+        private readonly TextureHandle _handle;
 
-        public int Handle => _handle;
+        public TextureHandle Handle => _handle;
 
         // Change unit to store multiple fonts without having to switch between handles while rendering
         // Otherwise extract the handle via FTFont.Handle and manage switching elsewhere
@@ -115,7 +114,7 @@ namespace SSQE_Player
             BmpHeight = Bitmap.Height;
 
             // put font texture metrics into array for uploading to a font shader
-            AtlasMetrics = new float[CharRange * 4];
+            AtlasMetrics = new Vector4[CharRange];
 
             int charsPerLine = (int)(BmpWidth / (CharSize.X + CharSpacing));
             float txW = CharSize.X / BmpWidth;
@@ -126,14 +125,11 @@ namespace SSQE_Player
                 float txX = (i % charsPerLine) * (CharSize.X + CharSpacing);
                 float txY = (i / charsPerLine) * (CharSize.Y + CharSpacing);
 
-                AtlasMetrics[i * 4 + 0] = txX / BmpWidth;
-                AtlasMetrics[i * 4 + 1] = txY / BmpHeight;
-                AtlasMetrics[i * 4 + 2] = txW;
-                AtlasMetrics[i * 4 + 3] = txH;
+                AtlasMetrics[i] = (txX / BmpWidth, txY / BmpHeight, txW, txH);
             }
 
             // prep instance data in shader
-            VbOs = new int[2];
+            VbOs = new BufferHandle[2];
 
             VaO = GL.GenVertexArray();
             VbOs[0] = GL.GenBuffer();
@@ -150,8 +146,8 @@ namespace SSQE_Player
                 CharSize.X, 0
             };
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, StaticVbO);
-            GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * data.Length, data, BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, StaticVbO);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, data, BufferUsageARB.StaticDraw);
 
             GL.BindVertexArray(VaO);
 
@@ -169,8 +165,8 @@ namespace SSQE_Player
             GL.VertexArrayAttribBinding(VaO, 2, 2);
             GL.VertexBindingDivisor(2, 1);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindVertexArray(0);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
+            GL.BindVertexArray(VertexArrayHandle.Zero);
 
 
             // Store the font texture as a png in the current directory - for debugging
@@ -190,13 +186,13 @@ namespace SSQE_Player
             _handle = GL.GenTexture();
 
             GL.ActiveTexture(unit);
-            GL.BindTexture(TextureTarget.Texture2D, _handle);
+            GL.BindTexture(TextureTarget.Texture2d, _handle);
 
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, BmpWidth, BmpHeight, 0,
+            GL.TexImage2D(TextureTarget.Texture2d, 0, InternalFormat.Rgba, BmpWidth, BmpHeight, 0,
                 PixelFormat.Bgra, PixelType.UnsignedByte, Bitmap.GetPixels());
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
             canvas.Dispose();
             surface.Dispose();

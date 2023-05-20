@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+﻿using System.Drawing;
 
 namespace SSQE_Player.Types
 {
@@ -10,9 +10,9 @@ namespace SSQE_Player.Types
 
         public long Ms;
 
-        public Color4 Color;
+        public Color Color;
 
-        public Cube(float z, float x, float y, long ms, Color4 color)
+        public Cube(float z, float x, float y, long ms, Color color)
         {
             Z = z;
             X = x;

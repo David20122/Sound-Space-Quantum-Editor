@@ -57,7 +57,7 @@ namespace SSQE_Player.GUI
                 prevColor = Color;
             }
 
-            GL.Uniform4(TexColorLocation, Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f);
+            GL.Uniform4f(TexColorLocation, Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f);
             FontRenderer.RenderData(FontVertices);
         }
 

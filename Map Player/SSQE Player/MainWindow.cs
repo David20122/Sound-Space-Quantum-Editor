@@ -2,20 +2,12 @@
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
 using SSQE_Player.GUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.ComponentModel;
-using OpenTK.Windowing.Common.Input;
-using SkiaSharp;
-using System.Resources;
 using SSQE_Player.Models;
+using OpenTK.Graphics;
 
 namespace SSQE_Player
 {
@@ -38,23 +30,30 @@ namespace SSQE_Player
         public float StartTime;
         public float Tempo;
 
+        private unsafe void SetInputMode()
+        {
+            GLFW.SetInputMode(WindowPtr, RawMouseMotionAttribute.RawMouseMotion, true);
+        }
+
         public MainWindow(bool fromStart) : base(GameWindowSettings.Default, new NativeWindowSettings()
         {
             Size = (1280, 720),
             Title = $"Sound Space Map Player {Assembly.GetExecutingAssembly().GetName().Version}",
             NumberOfSamples = 32,
-            WindowState = WindowState.Maximized,
-            Vsync = VSyncMode.Off
+            WindowState = WindowState.Maximized
         })
         {
+            VSync = VSyncMode.Off;
+
+            CursorState = CursorState.Grabbed;
+            SetInputMode();
+
             Shader.Init();
             FontRenderer.Init();
 
             // icon broken idk
 
             Instance = this;
-
-            CursorState = CursorState.Grabbed;
 
             Settings.Load();
             if (Settings.settings["fullscreenPlayer"])
@@ -78,19 +77,21 @@ namespace SSQE_Player
 
         protected override void OnRenderFrame(FrameEventArgs args)
         {
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
-
-            var mouse = MouseState;
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             if (MusicPlayer.IsPlaying)
                 Settings.settings["currentTime"].Value = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
 
+            var mouse = MouseState;
+
             Camera.Update(mouse.X, mouse.Y);
             CurrentWindow?.Render(mouse.X, mouse.Y, (float)args.Time);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindVertexArray(0);
-            
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
+            GL.BindVertexArray(VertexArrayHandle.Zero);
+
+            // more fps???
+            Console.WriteLine();
             SwapBuffers();
         }
 
@@ -104,7 +105,7 @@ namespace SSQE_Player
 
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
+            GL.CullFace(TriangleFace.Back);
         }
 
         protected override void OnResize(ResizeEventArgs e)
