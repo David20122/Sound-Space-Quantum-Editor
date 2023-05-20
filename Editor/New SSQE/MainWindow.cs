@@ -24,9 +24,7 @@ using MouseButton = OpenTK.Windowing.GraphicsLibraryFramework.MouseButton;
 using OpenTK.Windowing.Common.Input;
 using System.Runtime.InteropServices;
 using BigInteger = System.Numerics.BigInteger;
-using SharpFont.Cache;
 using System.IO.Compression;
-using Avalonia.Styling;
 
 namespace New_SSQE
 {
@@ -115,6 +113,8 @@ namespace New_SSQE
         {
             if (discordEnabled)
                 try { discord.RunCallbacks(); } catch { }
+
+            ExportSSPM.UpdateID();
         }
 
         protected override void OnLoad()
@@ -144,8 +144,6 @@ namespace New_SSQE
             GL.BindVertexArray(0);
 
             SwapBuffers();
-
-            ExportSSPM.UpdateID();
         }
 
         protected override void OnResize(ResizeEventArgs e)
