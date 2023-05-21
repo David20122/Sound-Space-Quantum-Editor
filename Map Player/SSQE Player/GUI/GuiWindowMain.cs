@@ -1,15 +1,9 @@
 ﻿using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using SkiaSharp;
 using SSQE_Player.Models;
 using SSQE_Player.Types;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SSQE_Player.GUI
 {
@@ -21,6 +15,7 @@ namespace SSQE_Player.GUI
         private readonly GuiLabel InfoLabel = new(10, 10, 100, 50, "QUIT: Escape or R\nRESTART: Tab\nPAUSE: Space", 32, false, Settings.settings["color2"]);
         private readonly GuiLabel PausedLabel = new(930, 1000, 60, 80, "PAUSED", 64, true, Color.FromArgb(0, 127, 255));
         private readonly GuiLabel HitWindowLabel = new(10, 1050, 60, 40, "", 24, false, Settings.settings["color2"]);
+        private readonly GuiLabel FPSLabel = new(1800, 1050, 60, 40, "", 24, false, Settings.settings["color2"]);
 
         private Matrix4 noteScale = Matrix4.CreateScale(1);
 
@@ -59,11 +54,14 @@ namespace SSQE_Player.GUI
         private BufferHandle VbO;
         private int vertexCount;
 
+        private int frames;
+        private float time;
+
         public GuiWindowMain(int startIndex) : base(0, 0, MainWindow.Instance.Size.X, MainWindow.Instance.Size.Y)
         {
             Labels = new List<GuiLabel>
             {
-                AccuracyLabel, ComboLabel, MissesLabel, InfoLabel, PausedLabel, HitWindowLabel
+                AccuracyLabel, ComboLabel, MissesLabel, InfoLabel, PausedLabel, HitWindowLabel, FPSLabel
             };
 
             hitWindow = (int)Settings.settings["hitWindow"];
@@ -137,6 +135,16 @@ namespace SSQE_Player.GUI
             ComboLabel.Text = combo.ToString();
             MissesLabel.Text = $"{misses} | {Pauses}";
 
+            frames++;
+            time += frametime;
+
+            if (time >= 0.25f)
+            {
+                FPSLabel.Text = CalculateFPS();
+                frames = 0;
+                time = 0;
+            }
+            
             base.Render(mousex, mousey, frametime);
         }
 
@@ -301,6 +309,11 @@ namespace SSQE_Player.GUI
                 return "--.--%";
             else
                 return $"{(float)hits / (hits + misses) * 100:##0.00}%";
+        }
+
+        private string CalculateFPS()
+        {
+            return $"FPS: {frames / time:##0}";
         }
 
         private void HitNote()
