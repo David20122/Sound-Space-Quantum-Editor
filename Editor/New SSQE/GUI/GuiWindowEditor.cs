@@ -739,6 +739,7 @@ namespace New_SSQE.GUI
 
             CopyButton.Update();
             BackButton.Update();
+            ClickModeLabel.Update();
 
             Timeline.Update();
             PlayPause.Update();
