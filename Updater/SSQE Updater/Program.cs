@@ -8,9 +8,9 @@ namespace SSQE_Updater
         static void Main(string[] args)
         {
             var currentPath = Directory.GetCurrentDirectory();
-            var currentVersion = "";
+            string currentVersion = "";
             if (File.Exists("Sound Space Quantum Editor.exe"))
-                currentVersion = FileVersionInfo.GetVersionInfo("Sound Space Quantum Editor.exe").FileVersion;
+                currentVersion = FileVersionInfo.GetVersionInfo("Sound Space Quantum Editor.exe").FileVersion ?? "";
 
             var newVersion = CheckVersion();
             var file = $"SSQE{newVersion}.zip";
@@ -21,7 +21,7 @@ namespace SSQE_Updater
                 
                 try
                 {
-                    WebClient.DownloadFile($"https://github.com/David20122/Sound-Space-Quantum-Editor/releases/download/{newVersion}/SSQE{newVersion}.zip", file);
+                    WebClient.DownloadFile($"https://github.com/David20122/Sound-Space-Quantum-Editor/releases/download/{newVersion}/{file}", file);
                     ExtractFile();
                 }
                 catch
@@ -31,17 +31,59 @@ namespace SSQE_Updater
                 }
             }
 
+            bool IsNewer(string oldVersion, string checkVersion)
+            {
+                string[] oldSplit = oldVersion.Split('.');
+                string[] checkSplit = checkVersion.Split('.');
+
+                for (int i = 0; i < oldSplit.Length; i++)
+                {
+                    string old = oldSplit[i];
+                    string check = checkSplit[i];
+                    int oldI = int.Parse(old);
+                    int checkI = int.Parse(check);
+
+                    if (oldI < checkI)
+                        return true;
+                    else if (oldI > checkI)
+                        return false;
+                }
+
+                return false;
+            }
+
             string[] GetOverwrites()
             {
                 try
                 {
-                    var overwriteList = WebClient.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_overwrite");
+                    List<string> overwrites = new();
 
-                    return overwriteList.Split('\n');
+                    var overwriteList = WebClient.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_overwrite");
+                    var split = overwriteList.Split('\n');
+                    var overwriteVersion = "";
+
+                    int i = 0;
+                    while (i < split.Length && !string.IsNullOrWhiteSpace(split[i]))
+                    {
+                        overwrites.Add(split[i]);
+                        i++;
+                    }
+
+                    for (int j = i; j < split.Length; j++)
+                    {
+                        var line = split[j];
+                        if (j == 0 || string.IsNullOrWhiteSpace(split[j - 1]))
+                            overwriteVersion = line;
+
+                        if (!string.IsNullOrWhiteSpace(line) && line != overwriteVersion && IsNewer(currentVersion, overwriteVersion))
+                            overwrites.Add(line);
+                    }
+
+                    return overwrites.ToArray();
                 }
                 catch
                 {
-                    Console.WriteLine("Failed to fetch overrides");
+                    Console.WriteLine("Failed to fetch overwrites");
                     Quit();
                 }
 
