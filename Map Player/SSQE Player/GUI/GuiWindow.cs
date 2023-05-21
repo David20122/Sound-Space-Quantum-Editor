@@ -15,7 +15,7 @@ namespace SSQE_Player.GUI
             Rect = new(posx, posy, sizex, sizey);
         }
 
-        public virtual void Render(float mousex, float mousey, float frametime)
+        public virtual void Render(float frametime)
         {
             GL.Disable(EnableCap.DepthTest);
             GL.Disable(EnableCap.CullFace);

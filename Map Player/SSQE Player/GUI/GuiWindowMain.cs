@@ -101,7 +101,7 @@ namespace SSQE_Player.GUI
             GL.BindVertexArray(VertexArrayHandle.Zero);
         }
 
-        public override void Render(float mousex, float mousey, float frametime)
+        public override void Render(float frametime)
         {
             if (Resetting)
                 resetTimer += frametime;
@@ -145,7 +145,7 @@ namespace SSQE_Player.GUI
                 time = 0;
             }
             
-            base.Render(mousex, mousey, frametime);
+            base.Render(frametime);
         }
 
         public override void OnResize(Vector2i size)

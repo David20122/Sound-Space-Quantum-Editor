@@ -1,11 +1,9 @@
-﻿using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 
 namespace SSQE_Player.GUI
 {
     internal class Camera
     {
-        private Vector2? prevMouse;
         private Vector2 rotation = (0, MathHelper.Pi);
 
         private Matrix4 projection;
@@ -26,43 +24,32 @@ namespace SSQE_Player.GUI
 
         public void Update(float mousex, float mousey)
         {
-            Vector2 current = (mousex, mousey);
             Vector3 camOffset = new();
 
-            prevMouse ??= current;
-
-            // move camera
-            if (prevMouse != null)
+            if (camMode == "spin")
+                rotation = (MathHelper.Clamp(rotation.X + mousey / 1000f * sensitivity, -rad88, rad88), rotation.Y + mousex / 1000f * sensitivity);
+            else
             {
-                var diff = current - prevMouse;
+                LockedPos -= (mousex / 250f * sensitivity, mousey / 250f * sensitivity);
 
-                if (camMode == "spin")
-                    rotation = (MathHelper.Clamp(rotation.X + diff.Value.Y / 1000f * sensitivity, -rad88, rad88), rotation.Y + diff.Value.X / 1000f * sensitivity);
-                else
-                {
-                    LockedPos -= (diff.Value.X / 250f * sensitivity, diff.Value.Y / 250f * sensitivity);
+                var cursorSize = MainWindow.CursorSize;
 
-                    var cursorSize = MainWindow.CursorSize;
+                var xf = MathHelper.Clamp(LockedPos.X, -1.5f + cursorSize.X / 2f, 1.5f - cursorSize.X / 2f);
+                var yf = MathHelper.Clamp(LockedPos.Y, -1.5f + cursorSize.Y / 2f, 1.5f - cursorSize.Y / 2f);
 
-                    var xf = MathHelper.Clamp(LockedPos.X, -1.5f + cursorSize.X / 2f, 1.5f - cursorSize.X / 2f);
-                    var yf = MathHelper.Clamp(LockedPos.Y, -1.5f + cursorSize.Y / 2f, 1.5f - cursorSize.Y / 2f);
+                if (lockCursor)
+                    LockedPos = (xf, yf);
 
-                    if (lockCursor)
-                        LockedPos = (xf, yf);
-
-                    if (camMode == "half lock")
-                        camOffset = (xf * parallax / 5f, yf * parallax / 5f, 0);
-                }
-
-                var rot = Matrix4.CreateRotationY(rotation.Y) * Matrix4.CreateRotationX(rotation.X);
-
-                lookVector = (rot * -Vector4.UnitZ).Xyz;
-                cameraPos = -Vector3.UnitZ * 3.5f + lookVector * (1.25f, 1.25f, 0) + camOffset;
-
-                view = Matrix4.CreateTranslation(-cameraPos) * rot;
+                if (camMode == "half lock")
+                    camOffset = (xf * parallax / 5f, yf * parallax / 5f, 0);
             }
 
-            prevMouse = current;
+            var rot = Matrix4.CreateRotationY(rotation.Y) * Matrix4.CreateRotationX(rotation.X);
+
+            lookVector = (rot * -Vector4.UnitZ).Xyz;
+            cameraPos = -Vector3.UnitZ * 3.5f + lookVector * (1.25f, 1.25f, 0) + camOffset;
+
+            view = Matrix4.CreateTranslation(-cameraPos) * rot;
 
             Shader.SetProjection(projection);
             Shader.SetView(view);

@@ -82,16 +82,14 @@ namespace SSQE_Player
             if (MusicPlayer.IsPlaying)
                 Settings.settings["currentTime"].Value = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
 
-            var mouse = MouseState;
+            var pos = MouseState.Delta;
 
-            Camera.Update(mouse.X, mouse.Y);
-            CurrentWindow?.Render(mouse.X, mouse.Y, (float)args.Time);
+            Camera.Update(pos.X, pos.Y);
+            CurrentWindow?.Render((float)args.Time);
 
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
             GL.BindVertexArray(VertexArrayHandle.Zero);
 
-            // more fps???
-            Console.WriteLine();
             SwapBuffers();
         }
 
@@ -125,7 +123,6 @@ namespace SSQE_Player
                 return;
 
             Camera.CalculateProjection();
-            OnRenderFrame(new FrameEventArgs());
         }
 
         protected override void OnKeyDown(KeyboardKeyEventArgs e)
