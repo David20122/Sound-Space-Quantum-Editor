@@ -4,6 +4,7 @@ using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using OpenTK.Mathematics;
+using OpenTK.Graphics;
 
 namespace New_SSQE.GUI
 {
@@ -67,8 +68,8 @@ namespace New_SSQE.GUI
         {
             ClearBuffers();
 
-            VaOs = new int[15];
-            VbOs = new int[30];
+            VaOs = new VertexArrayHandle[15];
+            VbOs = new BufferHandle[30];
             VertexCounts = new int[15];
 
             // notes
@@ -443,9 +444,9 @@ namespace New_SSQE.GUI
             var color1 = Settings.settings["color1"];
             var color2 = Settings.settings["color2"];
 
-            GL.Uniform4(TexColorLocation, color1.R / 255f, color1.G / 255f, color1.B / 255f, color1.A / 255f);
+            GL.Uniform4f(TexColorLocation, color1.R / 255f, color1.G / 255f, color1.B / 255f, color1.A / 255f);
             FontRenderer.RenderData("main", color1Texts.ToArray());
-            GL.Uniform4(TexColorLocation, color2.R / 255f, color2.G / 255f, color2.B / 255f, color2.A / 255f);
+            GL.Uniform4f(TexColorLocation, color2.R / 255f, color2.G / 255f, color2.B / 255f, color2.A / 255f);
             FontRenderer.RenderData("main", color2Texts.ToArray());
         }
 

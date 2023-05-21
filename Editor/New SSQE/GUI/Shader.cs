@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using System;
 
 namespace New_SSQE.GUI
@@ -12,12 +13,12 @@ namespace New_SSQE.GUI
         // Texture14: "square" Font
         // Texture15: "main" Font
 
-        public static int Program;
-        public static int TexProgram;
-        public static int FontTexProgram;
-        public static int InstancedProgram;
-        public static int GridInstancedProgram;
-        public static int WaveformProgram;
+        public static ProgramHandle Program;
+        public static ProgramHandle TexProgram;
+        public static ProgramHandle FontTexProgram;
+        public static ProgramHandle InstancedProgram;
+        public static ProgramHandle GridInstancedProgram;
+        public static ProgramHandle WaveformProgram;
 
         private readonly static string vertexShader = @"#version 330 core
                                                layout (location = 0) in vec2 aPosition;
@@ -231,25 +232,25 @@ namespace New_SSQE.GUI
             WaveformProgram = CompileShader(waveformVertShader, waveformFragShader, "Waveform");
         }
 
-        private static int CompileShader(string vertShader, string fragShader, string tag)
+        private static ProgramHandle CompileShader(string vertShader, string fragShader, string tag)
         {
-            int vs = GL.CreateShader(ShaderType.VertexShader);
+            ShaderHandle vs = GL.CreateShader(ShaderType.VertexShader);
             GL.ShaderSource(vs, vertShader);
             GL.CompileShader(vs);
 
-            string vsLog = GL.GetShaderInfoLog(vs);
+            GL.GetShaderInfoLog(vs, out string vsLog);
             if (!string.IsNullOrWhiteSpace(vsLog))
                 ActionLogging.Register($"Failed to compile vertex shader with tag '{tag}' - {vsLog}", "ERROR");
 
-            int fs = GL.CreateShader(ShaderType.FragmentShader);
+            ShaderHandle fs = GL.CreateShader(ShaderType.FragmentShader);
             GL.ShaderSource(fs, fragShader);
             GL.CompileShader(fs);
 
-            string fsLog = GL.GetShaderInfoLog(fs);
+            GL.GetShaderInfoLog(fs, out string fsLog);
             if (!string.IsNullOrWhiteSpace(fsLog))
                 ActionLogging.Register($"Failed to compile fragment shader with tag '{tag}' - {fsLog}", "ERROR");
 
-            int program = GL.CreateProgram();
+            ProgramHandle program = GL.CreateProgram();
             GL.AttachShader(program, vs);
             GL.AttachShader(program, fs);
 
@@ -264,11 +265,11 @@ namespace New_SSQE.GUI
             return program;
         }
 
-        public static void SetViewport(int program, float w, float h)
+        public static void SetViewport(ProgramHandle program, float w, float h)
         {
             GL.UseProgram(program);
             int location = GL.GetUniformLocation(program, "ViewportSize");
-            GL.Uniform2(location, (float)w, (float)h);
+            GL.Uniform2f(location, (float)w, (float)h);
         }
     }
 }

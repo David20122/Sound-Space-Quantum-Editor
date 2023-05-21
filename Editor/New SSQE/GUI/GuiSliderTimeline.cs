@@ -5,6 +5,7 @@ using OpenTK.Mathematics;
 using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
+using OpenTK.Graphics;
 
 namespace New_SSQE.GUI
 {
@@ -32,8 +33,8 @@ namespace New_SSQE.GUI
         {
             ClearBuffers();
 
-            VaOs = new int[2];
-            VbOs = new int[4];
+            VaOs = new VertexArrayHandle[2];
+            VbOs = new BufferHandle[4];
             VertexCounts = new int[2];
 
             var y = lineRect.Y + lineRect.Height / 2f;
@@ -124,7 +125,7 @@ namespace New_SSQE.GUI
         {
             if (HoveringBookmark != null)
             {
-                GL.Uniform4(TexColorLocation, textColor.R / 255f, textColor.G / 255f, textColor.B / 255f, textColor.A / 255f);
+                GL.Uniform4f(TexColorLocation, textColor.R / 255f, textColor.G / 255f, textColor.B / 255f, textColor.A / 255f);
                 FontRenderer.RenderData("main", FontVertices);
             }
         }

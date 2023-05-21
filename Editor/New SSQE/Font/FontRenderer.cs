@@ -39,13 +39,13 @@ namespace New_SSQE
         public static void SetActive(string font)
         {
             var location = GL.GetUniformLocation(Shader.FontTexProgram, "texture0");
-            GL.Uniform1(location, FontIndex[font].Item2);
+            GL.Uniform1i(location, FontIndex[font].Item2);
 
             location = GL.GetUniformLocation(Shader.FontTexProgram, "TexLookup");
-            GL.Uniform4(location, FtFont.CharRange, fonts[font].AtlasMetrics);
+            GL.Uniform4f(location, FtFont.CharRange, fonts[font].AtlasMetrics);
 
             location = GL.GetUniformLocation(Shader.FontTexProgram, "CharSize");
-            GL.Uniform2(location, fonts[font].CharSize);
+            GL.Uniform2f(location, fonts[font].CharSize);
 
             GL.BindVertexArray(fonts[font].VaO);
         }
@@ -54,10 +54,10 @@ namespace New_SSQE
         {
             alpha ??= new float[data.Length];
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, fonts[font].VbOs[0]);
-            GL.BufferData(BufferTarget.ArrayBuffer, 4 * sizeof(float) * data.Length, data, BufferUsageHint.DynamicDraw);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, fonts[font].VbOs[1]);
-            GL.BufferData(BufferTarget.ArrayBuffer, 1 * sizeof(float) * alpha.Length, alpha, BufferUsageHint.DynamicDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, fonts[font].VbOs[0]);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, data, BufferUsageARB.DynamicDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, fonts[font].VbOs[1]);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, alpha, BufferUsageARB.DynamicDraw);
 
             GL.BindVertexBuffer(0, fonts[font].StaticVbO, IntPtr.Zero, 2 * sizeof(float));
             GL.BindVertexBuffer(1, fonts[font].VbOs[0], IntPtr.Zero, 4 * sizeof(float));

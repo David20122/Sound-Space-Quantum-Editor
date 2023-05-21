@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
@@ -8,13 +9,13 @@ namespace New_SSQE.GUI
 {
     internal abstract class WindowControl : IDisposable
     {
-        public int VaO;
-        public int VbO;
+        public VertexArrayHandle VaO;
+        public BufferHandle VbO;
 
-        public int tVaO;
-        public int tVbO;
+        public VertexArrayHandle tVaO;
+        public BufferHandle tVbO;
 
-        public int tHandle = -1;
+        public TextureHandle tHandle = TextureHandle.Zero;
 
         public RectangleF Rect;
         public RectangleF OriginRect;
@@ -58,8 +59,8 @@ namespace New_SSQE.GUI
             // normal rendering
             GL.BindVertexArray(VaO);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VbO);
-            GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * vertices.Item1.Length, vertices.Item1, BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, VbO);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, vertices.Item1, BufferUsageARB.StaticDraw);
 
             GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
@@ -70,8 +71,8 @@ namespace New_SSQE.GUI
             // texture rendering
             GL.BindVertexArray(tVaO);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, tVbO);
-            GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * vertices.Item2.Length, vertices.Item2, BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, tVbO);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, vertices.Item2, BufferUsageARB.StaticDraw);
 
             GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
@@ -83,21 +84,21 @@ namespace New_SSQE.GUI
             GL.EnableVertexAttribArray(2);
 
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindVertexArray(0);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
+            GL.BindVertexArray(VertexArrayHandle.Zero);
         }
 
         public void Update()
         {
             var vertices = GetVertices();
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VbO);
-            GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * vertices.Item1.Length, vertices.Item1, Dynamic ? BufferUsageHint.DynamicDraw : BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, VbO);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, vertices.Item1, Dynamic ? BufferUsageARB.DynamicDraw : BufferUsageARB.StaticDraw);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, tVbO);
-            GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * vertices.Item2.Length, vertices.Item2, Dynamic ? BufferUsageHint.DynamicDraw : BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, tVbO);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, vertices.Item2, Dynamic ? BufferUsageARB.DynamicDraw : BufferUsageARB.StaticDraw);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
         }
 
         public virtual void Dispose()
@@ -112,7 +113,7 @@ namespace New_SSQE.GUI
             GL.DeleteVertexArray(tVaO);
             GL.DeleteBuffer(tVbO);
 
-            if (tHandle >= 0)
+            if (tHandle.Handle >= 0)
                 GL.DeleteTexture(tHandle);
         }
 
@@ -135,8 +136,8 @@ namespace New_SSQE.GUI
 
 
         // Instancing
-        public int[] VaOs = Array.Empty<int>();
-        public int[] VbOs = Array.Empty<int>();
+        public VertexArrayHandle[] VaOs = Array.Empty<VertexArrayHandle>();
+        public BufferHandle[] VbOs = Array.Empty<BufferHandle>();
         public int[] VertexCounts = Array.Empty<int>();
 
         public virtual void AddToBuffers(float[] vertices, int index)
@@ -145,8 +146,8 @@ namespace New_SSQE.GUI
             var staticVbO = GL.GenBuffer();
             var vbo = GL.GenBuffer();
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, staticVbO);
-            GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * vertices.Length, vertices, BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, staticVbO);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, vertices, BufferUsageARB.StaticDraw);
 
             GL.BindVertexArray(vao);
 
@@ -163,8 +164,8 @@ namespace New_SSQE.GUI
             GL.VertexArrayAttribBinding(vao, 2, 1);
             GL.VertexBindingDivisor(1, 1);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindVertexArray(0);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
+            GL.BindVertexArray(VertexArrayHandle.Zero);
 
 
             VaOs[index] = vao;
@@ -177,8 +178,8 @@ namespace New_SSQE.GUI
         {
             if (data.Length > 0)
             {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, VbOs[2 * index + 1]);
-                GL.BufferData(BufferTarget.ArrayBuffer, 4 * sizeof(float) * data.Length, data, BufferUsageHint.DynamicDraw);
+                GL.BindBuffer(BufferTargetARB.ArrayBuffer, VbOs[2 * index + 1]);
+                GL.BufferData(BufferTargetARB.ArrayBuffer, data, BufferUsageARB.DynamicDraw);
 
                 GL.BindVertexArray(VaOs[index]);
                 GL.BindVertexBuffer(0, VbOs[2 * index], IntPtr.Zero, 6 * sizeof(float));

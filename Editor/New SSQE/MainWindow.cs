@@ -25,6 +25,7 @@ using OpenTK.Windowing.Common.Input;
 using System.Runtime.InteropServices;
 using BigInteger = System.Numerics.BigInteger;
 using System.IO.Compression;
+using OpenTK.Graphics;
 
 namespace New_SSQE
 {
@@ -140,9 +141,9 @@ namespace New_SSQE
 
             CurrentWindow?.Render(Mouse.X, Mouse.Y, (float)args.Time);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindVertexArray(0);
-
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
+            GL.BindVertexArray(VertexArrayHandle.Zero);
+            
             SwapBuffers();
         }
 

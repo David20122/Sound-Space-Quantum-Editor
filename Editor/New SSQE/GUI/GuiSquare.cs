@@ -33,7 +33,7 @@ namespace New_SSQE.GUI
                 tHandle = TextureManager.GetOrRegister(TextureName, SKBitmap.Decode(fs), false);
 
                 GL.ActiveTexture(TextureUnit.Texture0);
-                GL.BindTexture(TextureTarget.Texture2D, tHandle);
+                GL.BindTexture(TextureTarget.Texture2d, tHandle);
             }
 
             Init();

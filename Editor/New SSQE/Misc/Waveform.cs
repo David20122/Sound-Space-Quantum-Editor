@@ -1,4 +1,5 @@
 ﻿using New_SSQE.GUI;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
@@ -9,8 +10,8 @@ namespace New_SSQE
     internal class Waveform
     {
         private static float[] WaveModel = Array.Empty<float>();
-        private static int VaO;
-        private static int VbO;
+        private static VertexArrayHandle VaO;
+        private static BufferHandle VbO;
         private static int posLocation;
 
         private static bool isUploaded = false;
@@ -175,18 +176,18 @@ namespace New_SSQE
             var color = Settings.settings["color4"];
             float[] c = new float[3] { color.R / 255f, color.G / 255f, color.B / 255f };
             int colorLocation = GL.GetUniformLocation(Shader.WaveformProgram, "LineColor");
-            GL.Uniform3(colorLocation, c[0], c[1], c[2]);
+            GL.Uniform3f(colorLocation, c[0], c[1], c[2]);
 
             GL.BindVertexArray(VaO);
             
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VbO);
-            GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * WaveModel.Length, WaveModel, BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, VbO);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, WaveModel, BufferUsageARB.StaticDraw);
 
             GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindVertexArray(0);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
+            GL.BindVertexArray(VertexArrayHandle.Zero);
 
             isUploaded = true;
         }
@@ -196,7 +197,7 @@ namespace New_SSQE
             float dist = endPos - startPos;
 
             GL.UseProgram(Shader.WaveformProgram);
-            GL.Uniform3(posLocation, startPos, dist, trackHeight);
+            GL.Uniform3f(posLocation, startPos, dist, trackHeight);
 
             GL.BindVertexArray(VaO);
             GL.DrawArrays(PrimitiveType.LineStrip, 0, WaveModel.Length / 2);

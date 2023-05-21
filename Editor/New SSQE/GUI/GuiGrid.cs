@@ -6,6 +6,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using AvaloniaEdit.Utils;
+using OpenTK.Graphics;
 
 namespace New_SSQE.GUI
 {
@@ -44,8 +45,8 @@ namespace New_SSQE.GUI
         {
             ClearBuffers();
 
-            VaOs = new int[5];
-            VbOs = new int[10];
+            VaOs = new VertexArrayHandle[5];
+            VbOs = new BufferHandle[10];
             VertexCounts = new int[5];
 
             var noteVerts = GLU.OutlineAsTriangles(0, 0, 75, 75, 2, 1f, 1f, 1f, 1f);
@@ -187,7 +188,7 @@ namespace New_SSQE.GUI
             GL.UseProgram(Shader.FontTexProgram);
             FontRenderer.SetActive("main");
 
-            GL.Uniform4(TexColorLocation, 0.2f, 0.2f, 0.2f, 1f);
+            GL.Uniform4f(TexColorLocation, 0.2f, 0.2f, 0.2f, 1f);
             FontRenderer.RenderData("main", color1Texts.ToArray());
 
             // render dynamic elements
@@ -201,7 +202,7 @@ namespace New_SSQE.GUI
 
         public override void RenderTexture()
         {
-            GL.Uniform4(TexColorLocation, 1f, 1f, 1f, 1f);
+            GL.Uniform4f(TexColorLocation, 1f, 1f, 1f, 1f);
             FontRenderer.RenderData("main", color2Texts.ToArray(), alphas.ToArray());
 
             // layer bezier preview and autoplay cursor on top
