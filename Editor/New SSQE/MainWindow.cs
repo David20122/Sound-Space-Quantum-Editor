@@ -1287,19 +1287,15 @@ namespace New_SSQE
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                var newfile = Path.ChangeExtension(FileName, ".ini");
+                TimingPoints.Clear();
+                Bookmarks.Clear();
 
-                if (dialog.FileName != newfile && newfile != null)
-                {
-                    TimingPoints.Clear();
-                    Bookmarks.Clear();
+                Settings.settings["defaultPath"] = Path.GetDirectoryName(dialog.FileName) ?? "";
 
-                    Settings.settings["defaultPath"] = Path.GetDirectoryName(dialog.FileName) ?? "";
+                LoadProperties(File.ReadAllText(dialog.FileName));
 
-                    File.Copy(dialog.FileName, newfile, true);
-
-                    LoadProperties(File.ReadAllText(newfile));
-                }
+                if (CurrentWindow is GuiWindowEditor editor)
+                    editor.Timeline.GenerateOffsets();
             }
         }
 
