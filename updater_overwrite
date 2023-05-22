@@ -1,2 +1,13 @@
 Sound Space Quantum Editor.exe
 Sound Space Quantum Editor.dll
+
+2.1.0.0
+OpenTK.Compute.dll
+OpenTK.Core.dll
+OpenTK.Graphics.dll
+OpenTK.Input.dll
+OpenTK.Mathematics.dll
+OpenTK.OpenAL.dll
+OpenTK.Windowing.Common.dll
+OpenTK.Windowing.Desktop.dll
+OpenTK.Windowing.GraphicsLibraryFramework.dll
