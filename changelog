@@ -1,4 +1,20 @@
 ----------------------------------
+     -- 2.1.0.0 - 5/22/2023 --
+     
+- updated to OpenTK 5
+- removed unused runtimes for new installs
+- added a button in the 'REVIEW' tab to export the current map as an SSPM file alongside the old keybind
+- added an option to apply the current rotate and scale values on paste
+- fixed the location of the click mode label
+- fixed importing .ini files
+
+    -- P-2.1.0.0 - 5/22/2023 --
+     
+- updated to OpenTK 5
+- fixed camera movement
+NOTE: you may need to adjust your sensitivity again, but this time its the same as it used to be before v2.0
+- added an fps counter to the bottom right
+     
     -- U-2.0.1.0 - 5/22/2023 --
     
 - added support for only replacing certain files depending on the current editor version
