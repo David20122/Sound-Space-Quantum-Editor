@@ -50,7 +50,6 @@ namespace New_SSQE
         public readonly Dictionary<Keys, Tuple<int, int>> KeyMapping = new();
 
         public Point Mouse = new(-1, -1);
-        public Point LastMouse = new(-1, -1);
 
         public float Tempo = 1f;
         public float Zoom = 1f;
@@ -133,11 +132,11 @@ namespace New_SSQE
             if (MusicPlayer.IsPlaying && CurrentWindow is GuiWindowEditor)
                 Settings.settings["currentTime"].Value = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
 
-            if (Mouse != LastMouse)
-            {
+            var mouse = MouseState;
+            if (mouse.Delta.Length != 0)
                 CurrentWindow?.OnMouseMove(Mouse);
-                LastMouse = Mouse;
-            }
+            Mouse.X = (int)mouse.X;
+            Mouse.Y = (int)mouse.Y;
 
             CurrentWindow?.Render(Mouse.X, Mouse.Y, (float)args.Time);
 
@@ -166,11 +165,6 @@ namespace New_SSQE
             CurrentWindow?.OnResize(Size);
 
             OnRenderFrame(new FrameEventArgs());
-        }
-
-        protected override void OnMouseMove(MouseMoveEventArgs e)
-        {
-            Mouse = new((int)e.X, (int)e.Y);
         }
 
         protected override void OnMouseUp(MouseButtonEventArgs e)
