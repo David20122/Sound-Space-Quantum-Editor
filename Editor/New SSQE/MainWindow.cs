@@ -138,7 +138,14 @@ namespace New_SSQE
             Mouse.X = (int)mouse.X;
             Mouse.Y = (int)mouse.Y;
 
-            CurrentWindow?.Render(Mouse.X, Mouse.Y, (float)args.Time);
+            try
+            {
+                CurrentWindow?.Render(Mouse.X, Mouse.Y, (float)args.Time);
+            }
+            catch (Exception ex)
+            {
+                ActionLogging.Register($"Failed to render frame - {ex.GetType().Name}\n{ex.StackTrace}", "ERROR");
+            }
 
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
             GL.BindVertexArray(VertexArrayHandle.Zero);
