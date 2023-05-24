@@ -149,8 +149,8 @@ namespace New_SSQE.GUI
 
         public override void GenerateOffsets()
         {
-            color1Texts = new();
-            color2Texts = new();
+            color1Texts.Clear();
+            color2Texts.Clear();
 
             var editor = MainWindow.Instance;
             var currentTime = Settings.settings["currentTime"].Value;
