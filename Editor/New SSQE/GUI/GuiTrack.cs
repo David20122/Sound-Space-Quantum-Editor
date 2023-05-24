@@ -276,12 +276,12 @@ namespace New_SSQE.GUI
                 }
             }
 
-            RegisterData(3, notePassedLocationOffsets.ToArray());
-            RegisterData(2, notePassedOffsets.ToArray());
-            RegisterData(14, passedTextLineOffsets.ToArray());
-            RegisterData(1, noteLocationOffsets.ToArray());
-            RegisterData(0, noteOffsets.ToArray());
-            RegisterData(13, textLineOffsets.ToArray());
+            RegisterData(3, notePassedLocationOffsets);
+            RegisterData(2, notePassedOffsets);
+            RegisterData(14, passedTextLineOffsets);
+            RegisterData(1, noteLocationOffsets);
+            RegisterData(0, noteOffsets);
+            RegisterData(13, textLineOffsets);
 
             RegisterData(4, noteSelectOffsets.ToArray());
             RegisterData(5, new Vector4[1] { noteHoverOffset });
@@ -301,80 +301,114 @@ namespace New_SSQE.GUI
 
 
             // bpm lines
-            var startBpmOffsets = new List<Vector4>();
-            var fullBpmOffsets = new List<Vector4>();
-            var halfBpmOffsets = new List<Vector4>();
-            var subBpmOffsets = new List<Vector4>();
+            double multiplier = beatDivisor % 1 == 0 ? 1f : 1f / (beatDivisor % 1);
+            int divisor = (int)Math.Round(beatDivisor * multiplier);
+            bool doubleDiv = divisor % 2 == 0;
+            int divOff = divisor - 1 - (doubleDiv ? 1 : 0);
+
+            Vector4[] startBpmOffsets, fullBpmOffsets, halfBpmOffsets, subBpmOffsets;
+            int numPoints = editor.TimingPoints.Count;
+            int numFull = 0, numHalf = 0, numSub = 0;
+
+            Vector3i[] metrics = new Vector3i[numPoints];
+            Vector3i current = (0, 0, 0);
+
+            for (int i = 0; i < numPoints; i++)
+            {
+                var point = editor.TimingPoints[i];
+                if (point.BPM == 0)
+                    continue;
+
+                double nextMs = i + 1 < numPoints ? editor.TimingPoints[i + 1].Ms : totalTime;
+                double totalMs = nextMs - point.Ms;
+
+                double stepMs = 60000 / point.BPM * multiplier;
+
+                int full = (int)(totalMs / stepMs);
+                int half = doubleDiv ? (int)(totalMs / (stepMs / 2) - full) : 0;
+                int sub = (int)(totalMs / (stepMs / divisor) - full - half);
+
+                metrics[i] = (full, half, sub);
+
+                numFull += full;
+                numHalf += half;
+                numSub += sub;
+            }
+
+            startBpmOffsets = new Vector4[numPoints];
+            fullBpmOffsets = new Vector4[numFull];
+            halfBpmOffsets = new Vector4[numHalf];
+            subBpmOffsets = new Vector4[numSub];
 
             var pointHoverOffset = new Vector4(-1920, 0, 0, 0);
             var pointSelectOffset = new Vector4(-1920, 0, 0, 0);
 
-            var multiplier = beatDivisor % 1 == 0 ? 1f : 1f / (beatDivisor % 1);
-
-            for (int i = 0; i < editor.TimingPoints.Count; i++)
+            for (int i = 0; i < numPoints; i++)
             {
                 var point = editor.TimingPoints[i];
+                if (point.BPM == 0)
+                    continue;
 
-                if (point.BPM > 0)
+                var pointMetrics = metrics[i];
+
+                double stepMs = 60000 / point.BPM * multiplier;
+                double halfStep = stepMs / 2;
+                double stepSmall = stepMs / divisor;
+                double curStep = stepSmall;
+                float lineX = cursorX - posX + point.Ms / 1000f * noteStep;
+                startBpmOffsets[i] = (lineX, 1f, 0f, 0f);
+                double x;
+
+                var pointRect = new RectangleF(lineX, Rect.Height, 72, 52);
+                var hovering = HoveringPoint == null && DraggingPoint == null && pointRect.Contains(mouse);
+                var pointSelected = editor.SelectedPoint == point;
+
+                var numText = $"{point.BPM:##,###.###} BPM";
+                var msText = $"{point.Ms:##,##0}ms";
+
+                color1Texts.AddRange(FontRenderer.Print((int)lineX + 3, (int)Rect.Height + 28, numText, 16, "main"));
+                color2Texts.AddRange(FontRenderer.Print((int)lineX + 3, (int)Rect.Height + 43, msText, 16, "main"));
+
+                if (hovering)
                 {
-                    var nextMs = i + 1 < editor.TimingPoints.Count ? editor.TimingPoints[i + 1].Ms : totalTime * 2;
-                    var nextX = i + 1 < editor.TimingPoints.Count ? cursorX - posX + nextMs / 1000f * noteStep : endX;
-
-                    var stepX = 60 / point.BPM * noteStep;
-                    var stepXSmall = stepX / beatDivisor;
-                    var lineX = cursorX - posX + point.Ms / 1000f * noteStep;
-
-                    startBpmOffsets.Add((lineX, 1f, 0f, 0f));
-
-                    var pointRect = new RectangleF(lineX, Rect.Height, 72, 52);
-                    var hovering = HoveringPoint == null && DraggingPoint == null && pointRect.Contains(mouse);
-                    var pointSelected = editor.SelectedPoint == point;
-                    
-                    var numText = $"{point.BPM:##,###.###} BPM";
-                    var msText = $"{point.Ms:##,##0}ms";
-
-                    color1Texts.AddRange(FontRenderer.Print((int)lineX + 3, (int)Rect.Height + 28, numText, 16, "main"));
-                    color2Texts.AddRange(FontRenderer.Print((int)lineX + 3, (int)Rect.Height + 43, msText, 16, "main"));
-
-                    if (hovering)
-                    {
-                        pointHoverOffset = (lineX, 0f, 1f, 0.25f);
-                        HoveringPoint = point;
-                    }
-                    else if (pointSelected)
-                        pointSelectOffset = (lineX, 0f, 0.5f, 1f);
-
-                    var divisor = multiplier * beatDivisor;
-                    stepX *= multiplier;
-
-                    while (lineX < nextX && lineX < endX)
-                    {
-                        fullBpmOffsets.Add((lineX, c2[0], c2[1], c2[2]));
-
-                        for (int j = 1; j < divisor; j++)
-                        {
-                            var x = lineX + j * stepXSmall;
-
-                            if (x < nextX && x < endX)
-                            {
-                                var half = j == divisor / 2 && divisor % 2 == 0;
-
-                                if (half)
-                                    halfBpmOffsets.Add((x, c3[0], c3[1], c3[2]));
-                                else
-                                    subBpmOffsets.Add((x, c1[0], c1[1], c1[2]));
-                            }
-                        }
-
-                        lineX += stepX;
-                    }
+                    pointHoverOffset = (lineX, 0f, 1f, 0.25f);
+                    HoveringPoint = point;
                 }
+                else if (pointSelected)
+                    pointSelectOffset = (lineX, 0f, 0.5f, 1f);
+
+                for (int j = 0; j < pointMetrics.X; j++)
+                {
+                    x = lineX + stepMs * (j + 1) / 1000f * noteStep;
+                    fullBpmOffsets[current.X + j] = ((float)x, c2[0], c2[1], c2[2]);
+                }
+
+                for (int j = 0; j < pointMetrics.Y; j++)
+                {
+                    x = lineX + (stepMs * j + halfStep) / 1000f * noteStep;
+                    halfBpmOffsets[current.Y + j] = ((float)x, c3[0], c3[1], c3[2]);
+                }
+
+                for (int j = 0; j < pointMetrics.Z; j++)
+                {
+                    int cur = j % divOff;
+
+                    if (cur == 0 && j > 0)
+                        curStep += stepSmall;
+                    else if (cur + 1 == divisor / 2 && doubleDiv)
+                        curStep += stepSmall;
+
+                    x = lineX + (stepSmall * j + curStep) / 1000f * noteStep;
+                    subBpmOffsets[current.Z + j] = ((float)x, c1[0], c1[1], c1[2]);
+                }
+
+                current += pointMetrics;
             }
 
-            RegisterData(7, startBpmOffsets.ToArray());
-            RegisterData(8, fullBpmOffsets.ToArray());
-            RegisterData(9, halfBpmOffsets.ToArray());
-            RegisterData(10, subBpmOffsets.ToArray());
+            RegisterData(7, startBpmOffsets);
+            RegisterData(8, fullBpmOffsets);
+            RegisterData(9, halfBpmOffsets);
+            RegisterData(10, subBpmOffsets);
             RegisterData(11, new Vector4[1] { pointHoverOffset });
             RegisterData(12, new Vector4[1] { pointSelectOffset });
         }
