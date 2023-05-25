@@ -274,26 +274,21 @@ namespace New_SSQE.GUI
             //render grid letters
             if (Settings.settings["gridLetters"])
             {
-                // kept breaking for some reason
-                try
+                var copy = new Dictionary<Keys, Tuple<int, int>>(MainWindow.Instance.KeyMapping);
+
+                foreach (var key in copy)
                 {
-                    var copy = new Dictionary<Keys, Tuple<int, int>>(MainWindow.Instance.KeyMapping);
+                    var letter = key.Key.ToString().Replace("KeyPad", "");
+                    var tuple = key.Value;
 
-                    foreach (var key in copy)
-                    {
-                        var letter = key.Key.ToString().Replace("KeyPad", "");
-                        var tuple = key.Value;
+                    var x = Rect.X + tuple.Item1 * cellSize + cellSize / 2f;
+                    var y = Rect.Y + tuple.Item2 * cellSize + cellSize / 2f;
 
-                        var x = Rect.X + tuple.Item1 * cellSize + cellSize / 2f;
-                        var y = Rect.Y + tuple.Item2 * cellSize + cellSize / 2f;
+                    var width = FontRenderer.GetWidth(letter, 38, "main");
+                    var height = FontRenderer.GetHeight(38, "main");
 
-                        var width = FontRenderer.GetWidth(letter, 38, "main");
-                        var height = FontRenderer.GetHeight(38, "main");
-
-                        color1Texts.AddRange(FontRenderer.Print((int)(x - width / 2f), (int)(y - height / 2f + 5f), letter, 38, "main"));
-                    }
+                    color1Texts.AddRange(FontRenderer.Print((int)(x - width / 2f), (int)(y - height / 2f + 5f), letter, 38, "main"));
                 }
-                catch { }
             }
 
             Indices["rectLength"] = rects.Count / 6;
