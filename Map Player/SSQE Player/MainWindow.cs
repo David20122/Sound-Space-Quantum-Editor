@@ -30,6 +30,9 @@ namespace SSQE_Player
         public float StartTime;
         public float Tempo;
 
+        private bool isFullscreen = false;
+        private Vector2i startSize;
+
         private unsafe void SetInputMode()
         {
             GLFW.SetInputMode(WindowPtr, RawMouseMotionAttribute.RawMouseMotion, true);
@@ -37,12 +40,15 @@ namespace SSQE_Player
 
         public MainWindow(bool fromStart) : base(GameWindowSettings.Default, new NativeWindowSettings()
         {
-            Size = (1280, 720),
+            Size = (1920, 1080),
             Title = $"Sound Space Map Player {Assembly.GetExecutingAssembly().GetName().Version}",
             NumberOfSamples = 32,
-            WindowState = WindowState.Maximized
+            WindowState = WindowState.Fullscreen
         })
         {
+            startSize = Size;
+            SwitchFullscreen();
+
             VSync = VSyncMode.Off;
 
             CursorState = CursorState.Grabbed;
@@ -56,8 +62,9 @@ namespace SSQE_Player
             Instance = this;
 
             Settings.Load();
-            if (Settings.settings["fullscreenPlayer"])
-                WindowState = WindowState.Fullscreen;
+
+            if (!Settings.settings["fullscreenPlayer"])
+                SwitchFullscreen();
 
             if (fromStart)
                 Settings.settings["currentTime"].Value = 0f;
@@ -112,8 +119,8 @@ namespace SSQE_Player
             var h = Math.Max(e.Height, 720);
             Size = new Vector2i(w, h);
 
-            base.OnResize(new ResizeEventArgs(w, h));
             GL.Viewport(0, 0, w, h);
+            base.OnResize(new ResizeEventArgs(w, h));
 
             Shader.SetViewport(Shader.FontTexProgram, w, h);
 
@@ -123,6 +130,20 @@ namespace SSQE_Player
                 return;
 
             Camera.CalculateProjection();
+        }
+
+        private void SwitchFullscreen()
+        {
+            isFullscreen ^= true;
+
+            WindowState = isFullscreen ? WindowState.Normal : WindowState.Maximized;
+            WindowBorder = isFullscreen ? WindowBorder.Hidden : WindowBorder.Resizable;
+
+            if (isFullscreen)
+            {
+                Size = startSize;
+                Location = (0, 0);
+            }
         }
 
         protected override void OnKeyDown(KeyboardKeyEventArgs e)
@@ -135,7 +156,7 @@ namespace SSQE_Player
                     break;
 
                 case Keys.F11:
-                    WindowState = WindowState == WindowState.Fullscreen ? WindowState.Normal : WindowState.Fullscreen;
+                    SwitchFullscreen();
                     break;
 
                 case Keys.R:

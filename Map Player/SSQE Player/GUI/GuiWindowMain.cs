@@ -224,7 +224,7 @@ namespace SSQE_Player.GUI
                 var y = note.Y - 1;
                 var z = note.Z - sizeZ / 2f;
 
-                Vector4 color = (note.Color.R, note.Color.G, note.Color.B, 1);
+                Vector4 color = (note.Color.R / 255f, note.Color.G / 255f, note.Color.B / 255f, 1);
                 if (fade)
                     color.W = Math.Min(1, (spawnZ - z) / 10);
 
@@ -238,7 +238,7 @@ namespace SSQE_Player.GUI
         {
             var pos = MainWindow.Instance.CursorPos - Vector3.UnitZ * 0.01f;
             var color2 = Settings.settings["color2"];
-            Vector4 c = (color2.R, color2.G, color2.B, 1);
+            Vector4 c = (color2.R / 255f, color2.G / 255f, color2.B / 255f, 1);
 
             var cursorSize = MainWindow.CursorSize;
 
