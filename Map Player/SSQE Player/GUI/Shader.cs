@@ -71,7 +71,7 @@ namespace SSQE_Player.GUI
                                                uniform vec2 CharSize;
                                                
                                                uniform vec4 TexColor;
-                                               uniform vec2 ViewportSize;
+                                               uniform mat4 Projection;
                                                 
                                                void main()
                                                {
@@ -82,10 +82,7 @@ namespace SSQE_Player.GUI
                                                    float tx = texLocation.x + texLocation.z * (aPosition.x / CharSize.x);
                                                    float ty = texLocation.y + texLocation.w * (aPosition.y / CharSize.y);
 
-                                                   float nx = x / ViewportSize.x * 2.0f - 1.0f;
-                                                   float ny = y / ViewportSize.y * -2.0f + 1.0f;
-
-                                                   gl_Position = vec4(nx, ny, 0.0f, 1.0f);
+                                                   gl_Position = Projection * vec4(x, y, 0.0f, 1.0f);
 
                                                    texColor = vec4(TexColor.x, TexColor.y, TexColor.z, TexColor.w * (1.0f - aCharAlpha));
                                                    texCoord = vec2(tx, ty);
@@ -136,11 +133,13 @@ namespace SSQE_Player.GUI
             return program;
         }
 
-        public static void SetViewport(ProgramHandle program, float w, float h)
+        public static void UploadOrtho(ProgramHandle program, float w, float h)
         {
+            Matrix4 ortho = Matrix4.CreateOrthographicOffCenter(0.0f, w, h, 0.0f, 0.0f, 1.0f);
+
             GL.UseProgram(program);
-            int location = GL.GetUniformLocation(program, "ViewportSize");
-            GL.Uniform2f(location, (float)w, (float)h);
+            int location = GL.GetUniformLocation(program, "Projection");
+            GL.UniformMatrix4f(location, false, ortho);
         }
 
         public static void SetTransform(Matrix4 transform)

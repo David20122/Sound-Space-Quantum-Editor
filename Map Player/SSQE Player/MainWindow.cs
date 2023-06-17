@@ -122,7 +122,7 @@ namespace SSQE_Player
             GL.Viewport(0, 0, w, h);
             base.OnResize(new ResizeEventArgs(w, h));
 
-            Shader.SetViewport(Shader.FontTexProgram, w, h);
+            Shader.UploadOrtho(Shader.FontTexProgram, w, h);
 
             CurrentWindow?.OnResize(Size);
 
