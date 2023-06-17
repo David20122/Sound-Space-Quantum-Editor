@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 
 namespace New_SSQE.GUI
@@ -25,14 +26,11 @@ namespace New_SSQE.GUI
                                                layout (location = 1) in vec4 aColor;
                                                out vec4 vertexColor;
 
-                                               uniform vec2 ViewportSize;
+                                               uniform mat4 Projection;
                                                 
                                                void main()
                                                {
-                                                   float nx = aPosition.x / ViewportSize.x * 2.0f - 1.0f;
-                                                   float ny = aPosition.y / ViewportSize.y * -2.0f + 1.0f;
-
-                                                   gl_Position = vec4(nx, ny, 0.0f, 1.0f);
+                                                   gl_Position = Projection * vec4(aPosition.x, aPosition.y, 0.0f, 1.0f);
                                                    vertexColor = aColor;
                                                }";
 
@@ -53,14 +51,11 @@ namespace New_SSQE.GUI
                                                out vec2 texCoord;
                                                out float alpha;
 
-                                               uniform vec2 ViewportSize;
+                                               uniform mat4 Projection;
                                                 
                                                void main()
                                                {
-                                                   float nx = aPosition.x / ViewportSize.x * 2.0f - 1.0f;
-                                                   float ny = aPosition.y / ViewportSize.y * -2.0f + 1.0f;
-
-                                                   gl_Position = vec4(nx, ny, 0.0f, 1.0f);
+                                                   gl_Position = Projection * vec4(aPosition.x, aPosition.y, 0.0f, 1.0f);
                                                    texCoord = aTexCoord;
                                                    alpha = aAlpha;
                                                }";
@@ -90,7 +85,7 @@ namespace New_SSQE.GUI
                                                uniform vec2 CharSize;
                                                
                                                uniform vec4 TexColor;
-                                               uniform vec2 ViewportSize;
+                                               uniform mat4 Projection;
                                                 
                                                void main()
                                                {
@@ -101,10 +96,7 @@ namespace New_SSQE.GUI
                                                    float tx = texLocation.x + texLocation.z * (aPosition.x / CharSize.x);
                                                    float ty = texLocation.y + texLocation.w * (aPosition.y / CharSize.y);
 
-                                                   float nx = x / ViewportSize.x * 2.0f - 1.0f;
-                                                   float ny = y / ViewportSize.y * -2.0f + 1.0f;
-
-                                                   gl_Position = vec4(nx, ny, 0.0f, 1.0f);
+                                                   gl_Position = Projection * vec4(x, y, 0.0f, 1.0f);
 
                                                    texColor = vec4(TexColor.x, TexColor.y, TexColor.z, TexColor.w * (1.0f - aCharAlpha));
                                                    texCoord = vec2(tx, ty);
@@ -130,15 +122,13 @@ namespace New_SSQE.GUI
                                                                                       // due to needing Y and vec5 not existing, Y = int(r / 2) and R = r - Y * 2
                                                out vec4 vertexColor;
 
-                                               uniform vec2 ViewportSize;
+                                               uniform mat4 Projection;
                                                 
                                                void main()
                                                {
                                                    int yf = int(aOffset.y * 0.5);
-                                                   float nx = (aPosition.x + aOffset.x) / ViewportSize.x * 2.0f - 1.0f;
-                                                   float ny = (aPosition.y + yf) / ViewportSize.y * -2.0f + 1.0f;
 
-                                                   gl_Position = vec4(nx, ny, 0.0f, 1.0f);
+                                                   gl_Position = Projection * vec4(aPosition.x + aOffset.x, aPosition.y + yf, 0.0f, 1.0f);
                                                    vertexColor = vec4(aOffset.y - yf * 2, aOffset.z, aOffset.w, aColor.w);
                                                }";
 
@@ -158,7 +148,7 @@ namespace New_SSQE.GUI
                                                                                       // vector8 moment?
                                                out vec4 vertexColor;
 
-                                               uniform vec2 ViewportSize;
+                                               uniform mat4 Projection;
                                                 
                                                void main()
                                                {
@@ -174,10 +164,7 @@ namespace New_SSQE.GUI
                                                    float b = aOffset.z - w * 2;
                                                    float a = aOffset.w - h * 2;
 
-                                                   float nx = (x + aPosition.x * w) / ViewportSize.x * 2.0f - 1.0f;
-                                                   float ny = (y + aPosition.y * h) / ViewportSize.y * -2.0f + 1.0f;
-
-                                                   gl_Position = vec4(nx, ny, 0.0f, 1.0f);
+                                                   gl_Position = Projection * vec4(x + aPosition.x * w, y + aPosition.y * h, 0.0f, 1.0f);
                                                    vertexColor = vec4(r, g, b, a * aColor.w);
                                                }";
 
@@ -194,7 +181,7 @@ namespace New_SSQE.GUI
                                                layout (location = 0) in vec2 aPosition;
                                                out vec4 vertexColor;
 
-                                               uniform vec2 ViewportSize;
+                                               uniform mat4 Projection;
                                                uniform vec3 WavePos;
                                                uniform vec3 LineColor;
                                                 
@@ -205,10 +192,7 @@ namespace New_SSQE.GUI
                                                    float y = (aPosition.y + 1) * yOff;
                                                    float cy = abs(aPosition.y);
 
-                                                   float nx = x / ViewportSize.x * 2.0f - 1.0f;
-                                                   float ny = y / ViewportSize.y * -2.0f + 1.0f;
-
-                                                   gl_Position = vec4(nx, ny, 0.0f, 1.0f);
+                                                   gl_Position = Projection * vec4(x, y, 0.0f, 1.0f);
                                                    //vertexColor = vec4(cy, (1.0f - cy) * 0.5f, 0.0f, 1.0f);
                                                    vertexColor = vec4(LineColor, 1.0f);
                                                }";
@@ -265,11 +249,13 @@ namespace New_SSQE.GUI
             return program;
         }
 
-        public static void SetViewport(ProgramHandle program, float w, float h)
+        public static void UploadOrtho(ProgramHandle program, float w, float h)
         {
+            Matrix4 ortho = Matrix4.CreateOrthographicOffCenter(0f, w, h, 0f, 0.0f, 1.0f);
+
             GL.UseProgram(program);
-            int location = GL.GetUniformLocation(program, "ViewportSize");
-            GL.Uniform2f(location, (float)w, (float)h);
+            int location = GL.GetUniformLocation(program, "Projection");
+            GL.UniformMatrix4f(location, false, ortho);
         }
     }
 }

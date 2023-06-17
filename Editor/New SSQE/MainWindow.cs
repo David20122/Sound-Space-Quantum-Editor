@@ -162,12 +162,12 @@ namespace New_SSQE
             base.OnResize(new ResizeEventArgs(w, h));
             GL.Viewport(0, 0, w, h);
 
-            Shader.SetViewport(Shader.Program, w, h);
-            Shader.SetViewport(Shader.TexProgram, w, h);
-            Shader.SetViewport(Shader.FontTexProgram, w, h);
-            Shader.SetViewport(Shader.InstancedProgram, w, h);
-            Shader.SetViewport(Shader.GridInstancedProgram, w, h);
-            Shader.SetViewport(Shader.WaveformProgram, w, h);
+            Shader.UploadOrtho(Shader.Program, w, h);
+            Shader.UploadOrtho(Shader.TexProgram, w, h);
+            Shader.UploadOrtho(Shader.FontTexProgram, w, h);
+            Shader.UploadOrtho(Shader.InstancedProgram, w, h);
+            Shader.UploadOrtho(Shader.GridInstancedProgram, w, h);
+            Shader.UploadOrtho(Shader.WaveformProgram, w, h);
 
             CurrentWindow?.OnResize(Size);
 
