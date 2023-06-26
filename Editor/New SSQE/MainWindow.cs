@@ -69,6 +69,28 @@ namespace New_SSQE
         private ActivityManager activityManager;
         private bool discordEnabled = File.Exists("discord_game_sdk.dll");
 
+
+
+        // hacky workaround for fullscreen being awful
+        private bool isFullscreen = false;
+        private Vector2i startSize = new(1920, 1080);
+
+        private void SwitchFullscreen()
+        {
+            isFullscreen ^= true;
+
+            WindowState = isFullscreen ? WindowState.Normal : WindowState.Maximized;
+            WindowBorder = isFullscreen ? WindowBorder.Hidden : WindowBorder.Resizable;
+
+            if (isFullscreen)
+            {
+                Size = startSize;
+                Location = (0, 0);
+            }
+        }
+
+
+
         private static WindowIcon GetWindowIcon()
         {
             var bytes = File.ReadAllBytes("assets/textures/Icon.ico");
@@ -215,7 +237,7 @@ namespace New_SSQE
 
             if (e.Key == Keys.F11)
             {
-                ToggleFullscreen();
+                SwitchFullscreen();
                 return;
             }
 
@@ -1674,11 +1696,6 @@ namespace New_SSQE
 
                 Settings.Save();
             }
-        }
-
-        public void ToggleFullscreen()
-        {
-            WindowState = IsFullscreen ? WindowState.Normal : WindowState.Fullscreen;
         }
 
 
