@@ -1,4 +1,21 @@
 ----------------------------------
+     -- 2.1.0.1 - 6/26/2023 --
+
+- editor and player files are now self contained! (they dont need as many files cluttering the directory any more)
+
+- fixed toggling fullscreen
+- slightly adjusted the appearance of crash reports
+- optimized mouse movement
+- optimized rendering bpm lines
+- export sspm options are now saved in a map's .ini file when exported
+- fixed exporting difficulty
+
+    -- P-2.1.0.1 - 6/26/2023 --
+
+- fixed toggling fullscreen
+- fixed note colors
+
+----------------------------------
      -- 2.1.0.0 - 5/22/2023 --
      
 - updated to OpenTK 5
