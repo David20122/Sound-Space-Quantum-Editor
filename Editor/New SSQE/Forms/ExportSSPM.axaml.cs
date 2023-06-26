@@ -1,8 +1,6 @@
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
-using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -19,7 +17,17 @@ namespace New_SSQE
 
             InitializeComponent();
 
-            SongNameBox.Text = Path.GetFileNameWithoutExtension(MainWindow.Instance.FileName) ?? "Untitled Song";
+            MapperBox.Text = Settings.settings["mappers"];
+            SongNameBox.Text = Settings.settings["songName"];
+            UseCover.IsChecked = Settings.settings["useCover"];
+            CoverPathBox.Text = Settings.settings["cover"];
+
+            foreach (ComboBoxItem item in DifficultyBox.Items)
+            {
+                if (item?.Content.ToString() == Settings.settings["difficulty"])
+                    DifficultyBox.SelectedItem = item;
+            }
+
             CreateID();
         }
 
@@ -38,7 +46,10 @@ namespace New_SSQE
             if (MapperBox.Text == null)
                 return new string[] { "None" };
 
-            var mappers = MapperBox.Text.Split("\r\n");
+            var mappers = MapperBox.Text.Split("\n");
+            for (int i = 0; i < mappers.Length; i++)
+                mappers[i] = mappers[i].Replace("\r", "");
+
             var mappersList = new List<string>();
 
             foreach (var mapper in mappers)
@@ -75,8 +86,15 @@ namespace New_SSQE
             editor.info["songId"] = MapIDBox.Content.ToString() ?? "";
             editor.info["mapName"] = GetSongName();
             editor.info["mappers"] = string.Join("\n", GetMappers());
-            editor.info["coverPath"] = (UseCover.IsChecked ?? false) ? (CoverPathBox.Content.ToString() ?? "") : "";
-            editor.info["difficulty"] = editor.difficulties.ContainsKey(DifficultyBox.SelectedItem?.ToString() ?? "") ? (DifficultyBox.SelectedItem?.ToString() ?? "") : "N/A";
+            editor.info["coverPath"] = (UseCover.IsChecked ?? false) ? CoverPathBox.Text : "";
+            var item = DifficultyBox.SelectedItem as ComboBoxItem;
+            editor.info["difficulty"] = editor.difficulties.ContainsKey(item?.Content.ToString() ?? "") ? (item?.Content.ToString() ?? "") : "N/A";
+
+            Settings.settings["mappers"] = editor.info["mappers"];
+            Settings.settings["songName"] = editor.info["mapName"];
+            Settings.settings["difficulty"] = editor.info["difficulty"];
+            Settings.settings["useCover"] = UseCover.IsChecked ?? false;
+            Settings.settings["cover"] = CoverPathBox.Text;
 
             Close();
 
@@ -98,10 +116,10 @@ namespace New_SSQE
             {
                 Settings.settings["coverPath"] = Path.GetDirectoryName(dialog.FileName) ?? "";
 
-                CoverPathBox.Content = dialog.FileName;
+                CoverPathBox.Text = dialog.FileName;
             }
             else
-                CoverPathBox.Content = "Default";
+                CoverPathBox.Text = "Default";
         }
     }
 }

@@ -88,9 +88,11 @@
                        HorizontalAlignment="Right">
 
                   <!-- Cover Path -->
-                  <Label Width="176" Height="25" Name="CoverPathBox"
+                  <TextBox Width="176" MinHeight="25" Height="25"
+                         IsReadOnly="True"
+                         Name="CoverPathBox"
                          HorizontalAlignment="Left"
-                         Background="#dfdfdf">Default</Label>
+                         Background="#dfdfdf">Default</TextBox>
 
                   <!-- Select Cover Button -->
                   <Button Width="55" Height="25"

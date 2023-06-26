@@ -989,6 +989,12 @@ namespace New_SSQE
                 {"currentTime", Settings.settings["currentTime"].Value },
                 {"beatDivisor", Settings.settings["beatDivisor"].Value },
                 {"exportOffset", Settings.settings["exportOffset"] },
+
+                {"mappers", Settings.settings["mappers"] },
+                {"songName", Settings.settings["songName"] },
+                {"difficulty", Settings.settings["difficulty"] },
+                {"useCover", Settings.settings["useCover"] },
+                {"cover", Settings.settings["cover"] }
             };
 
             return json.ToString();
@@ -1060,6 +1066,12 @@ namespace New_SSQE
         public bool LoadMap(string pathOrData, bool file = false, bool autosave = false)
         {
             FileName = file ? pathOrData : null;
+
+            Settings.settings["mappers"] = "";
+            Settings.settings["songName"] = Path.GetFileNameWithoutExtension(FileName) ?? "Untitled Song";
+            Settings.settings["difficulty"] = "N/A";
+            Settings.settings["useCover"] = true;
+            Settings.settings["cover"] = "Default";
 
             Notes.Clear();
             SelectedNotes.Clear();
@@ -1260,6 +1272,31 @@ namespace New_SSQE
 
                             foreach (var note in Notes)
                                 note.Ms -= (long)Settings.settings["exportOffset"];
+
+                            break;
+
+                        case "mappers":
+                            Settings.settings["mappers"] = key.Value;
+
+                            break;
+
+                        case "songName":
+                            Settings.settings["songName"] = key.Value;
+
+                            break;
+
+                        case "difficulty":
+                            Settings.settings["difficulty"] = key.Value;
+
+                            break;
+
+                        case "useCover":
+                            Settings.settings["useCover"] = key.Value;
+
+                            break;
+
+                        case "cover":
+                            Settings.settings["cover"] = key.Value;
 
                             break;
                     }
@@ -1652,7 +1689,7 @@ namespace New_SSQE
             if (!Settings.settings["checkUpdates"])
                 return;
 
-            var versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+            var versionInfo = FileVersionInfo.GetVersionInfo(Process.GetCurrentProcess().MainModule?.FileName ?? "");
             var currentVersion = versionInfo.FileVersion;
 
             try
@@ -2117,7 +2154,7 @@ namespace New_SSQE
 
             if (formatVersion[0] == 0x01 && formatVersion[1] == 0x00)
             {
-                string GetNextVariablString()
+                string GetNextVariableString()
                 {
                     List<byte> bytes = new();
 
@@ -2139,9 +2176,9 @@ namespace New_SSQE
                 data.Read(reservedSpace, 0, 2);
 
                 // metadata
-                string mapID = GetNextVariablString();
-                string mapName = GetNextVariablString();
-                string mappers = GetNextVariablString();
+                string mapID = GetNextVariableString();
+                string mapName = GetNextVariableString();
+                string mappers = GetNextVariableString();
 
                 byte[] lastMs = new byte[4];
                 byte[] noteCount = new byte[4];

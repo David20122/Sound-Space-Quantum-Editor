@@ -110,7 +110,13 @@ namespace New_SSQE
 
             {"gridKeys", new List<Keys> { Keys.Q, Keys.W, Keys.E, Keys.A, Keys.S, Keys.D, Keys.Z, Keys.X, Keys.C } },
 
-            {"patterns", new List<string> {"", "", "", "", "", "", "", "", "", "" } }
+            {"patterns", new List<string> {"", "", "", "", "", "", "", "", "", "" } },
+
+            {"mappers", "" },
+            {"songName", "" },
+            {"difficulty", "N/A" },
+            {"useCover", true },
+            {"cover", "Default" }
         };
 
         private static readonly List<Keys> numpadKeys = new() { Keys.KeyPad7, Keys.KeyPad8, Keys.KeyPad9, Keys.KeyPad4, Keys.KeyPad5, Keys.KeyPad6, Keys.KeyPad1, Keys.KeyPad2, Keys.KeyPad3 };
