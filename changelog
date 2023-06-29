@@ -1,7 +1,7 @@
 ----------------------------------
      -- 2.1.0.2 - 6/28/2023 --
 
-- loaded .sspm files now keep their settings on export
+- loaded sspm files now keep their settings on export
 
 ----------------------------------
      -- 2.1.0.1 - 6/26/2023 --
@@ -25,7 +25,7 @@
      
 - updated to OpenTK 5
 - removed unused runtimes for new installs
-- added a button in the 'REVIEW' tab to export the current map as an SSPM file alongside the old keybind
+- added a button in the 'REVIEW' tab to export the current map as an sspm file alongside the old keybind
 - added an option to apply the current rotate and scale values on paste
 - fixed the location of the click mode label
 - fixed importing .ini files
@@ -80,7 +80,7 @@ NOTE: for the timing and bookmark lists, dragging to select multiple rows no lon
 - added support for copying/pasting bookmarks via easily readable text
 - added a button to scan for duplicated sections in a map, assigning it a score depending on how many instances are found of those sections
 NOTE: this feature is still work-in-progress so its results should be taken with a grain of salt
-- the default cover for exporting SSPM maps can now be changed via assets/textures/Cover.png
+- the default cover for exporting sspm maps can now be changed via assets/textures/Cover.png
 - bookmarks now can have a range of times as a start position and end position
 - bookmarks on the timeline are now slightly transparent to make layered bookmarks more visible
 - disabled vsync by default and added an option to enable it in settings
