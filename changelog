@@ -1,4 +1,9 @@
 ----------------------------------
+     -- 2.1.0.2 - 6/28/2023 --
+
+- loaded .sspm files now keep their settings on export
+
+----------------------------------
      -- 2.1.0.1 - 6/26/2023 --
 
 - editor and player files are now self contained! (they dont need as many files cluttering the directory any more)
