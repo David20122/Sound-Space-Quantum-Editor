@@ -1967,7 +1967,7 @@ namespace New_SSQE
             {"difficulty", "" },
         };
 
-        public Dictionary<string, byte> difficulties = new()
+        public static Dictionary<string, byte> difficulties = new()
         {
             {"N/A", 0x00 },
             {"Easy", 0x01 },
@@ -2197,6 +2197,9 @@ namespace New_SSQE
                 string mapName = GetNextVariableString();
                 string mappers = GetNextVariableString();
 
+                Settings.settings["songName"] = mapName;
+                Settings.settings["mappers"] = mappers;
+
                 byte[] lastMs = new byte[4];
                 byte[] noteCount = new byte[4];
                 byte[] difficulty = new byte[1];
@@ -2206,9 +2209,17 @@ namespace New_SSQE
                 data.Read(noteCount, 0, 4);
                 data.Read(difficulty, 0, 1);
 
+                foreach (var key in difficulties)
+                {
+                    if (key.Value == difficulty[0])
+                        Settings.settings["difficulty"] = key.Key;
+                }
+
                 // read cover
                 byte[] containsCover = new byte[1];
                 data.Read(containsCover, 0, 1);
+
+                Settings.settings["useCover"] = containsCover[0] == 0x02;
 
                 if (containsCover[0] == 0x02)
                 {
@@ -2218,6 +2229,9 @@ namespace New_SSQE
                     int coverLengthF = BitConverter.ToInt32(coverLength);
                     byte[] cover = new byte[coverLengthF];
                     data.Read(cover, 0, coverLengthF);
+
+                    File.WriteAllBytes($"cached/{mapID}.png", cover);
+                    Settings.settings["cover"] = $"cached/{mapID}.png";
                 }
 
                 // read audio
@@ -2334,6 +2348,12 @@ namespace New_SSQE
                 data.Read(containsCover, 0, 1);
                 data.Read(requiresMod, 0, 1);
 
+                foreach (var key in difficulties)
+                {
+                    if (key.Value == difficulty[0])
+                        Settings.settings["difficulty"] = key.Key;
+                }
+
                 // read pointers
                 data.Read(customDataOffset, 0, 8);
                 data.Read(customDataLength, 0, 8);
@@ -2351,6 +2371,8 @@ namespace New_SSQE
                 string mapName = GetNextVariableString();
                 string songName = GetNextVariableString();
 
+                Settings.settings["songName"] = mapName;
+
                 byte[] mapperCount = new byte[2];
                 data.Read(mapperCount, 0, 2);
                 uint mapperCountF = BitConverter.ToUInt16(mapperCount);
@@ -2359,6 +2381,8 @@ namespace New_SSQE
 
                 for (int i = 0; i < mapperCountF; i++)
                     mappers[i] = GetNextVariableString();
+
+                Settings.settings["mappers"] = string.Join("\n", mappers);
 
                 // read custom data block
                 int customDataLengthF = (int)BitConverter.ToInt64(customDataLength);
@@ -2375,12 +2399,17 @@ namespace New_SSQE
                     File.WriteAllBytes($"cached/{mapID}.asset", audio);
                 }
 
+                Settings.settings["useCover"] = containsCover[0] == 0x01;
+
                 // read cover
                 if (containsCover[0] == 0x01)
                 {
                     int coverLengthF = (int)BitConverter.ToInt64(coverLength);
                     byte[] cover = new byte[coverLengthF];
                     data.Read(cover, 0, coverLengthF);
+
+                    File.WriteAllBytes($"cached/{mapID}.png", cover);
+                    Settings.settings["cover"] = $"cached/{mapID}.png";
                 }
 
                 mapData = mapID;

@@ -88,7 +88,7 @@ namespace New_SSQE
             editor.info["mappers"] = string.Join("\n", GetMappers());
             editor.info["coverPath"] = (UseCover.IsChecked ?? false) ? CoverPathBox.Text : "";
             var item = DifficultyBox.SelectedItem as ComboBoxItem;
-            editor.info["difficulty"] = editor.difficulties.ContainsKey(item?.Content.ToString() ?? "") ? (item?.Content.ToString() ?? "") : "N/A";
+            editor.info["difficulty"] = MainWindow.difficulties.ContainsKey(item?.Content.ToString() ?? "") ? (item?.Content.ToString() ?? "") : "N/A";
 
             Settings.settings["mappers"] = editor.info["mappers"];
             Settings.settings["songName"] = editor.info["mapName"];
