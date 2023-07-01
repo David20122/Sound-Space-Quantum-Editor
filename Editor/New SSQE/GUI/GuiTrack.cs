@@ -5,6 +5,7 @@ using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using OpenTK.Mathematics;
 using OpenTK.Graphics;
+using System.Buffers;
 
 namespace New_SSQE.GUI
 {
@@ -49,6 +50,8 @@ namespace New_SSQE.GUI
 
         private bool selecting;
         private RectangleF selectHitbox;
+
+        private readonly ArrayPool<Vector4> Pool = ArrayPool<Vector4>.Shared;
 
 
         public GuiTrack() : base(0, 0, MainWindow.Instance.ClientSize.X, 0)
@@ -172,18 +175,17 @@ namespace New_SSQE.GUI
             var beatDivisor = Settings.settings["beatDivisor"].Value + 1f;
 
             var posX = currentTime / 1000f * noteStep;
-            var maxX = totalTime / 1000f * noteStep;
             var cursorX = Rect.Width * Settings.settings["cursorPos"].Value / 100f;
-            var endX = cursorX - posX + maxX + 1;
 
             var noteColors = Settings.settings["noteColors"];
             var colorCount = noteColors.Count;
-            var noteOffsets = new Vector4[normalCount];
-            var textLineOffsets = new Vector4[normalCount];
-            var notePassedOffsets = new Vector4[passedCount];
-            var noteLocationOffsets = new Vector4[normalCount];
-            var notePassedLocationOffsets = new Vector4[passedCount];
-            var passedTextLineOffsets = new Vector4[passedCount];
+            
+            var noteOffsets = Pool.Rent(normalCount);
+            var textLineOffsets = Pool.Rent(normalCount);
+            var notePassedOffsets = Pool.Rent(passedCount);
+            var noteLocationOffsets = Pool.Rent(normalCount);
+            var notePassedLocationOffsets = Pool.Rent(passedCount);
+            var passedTextLineOffsets = Pool.Rent(passedCount);
 
             var color1 = Settings.settings["color1"];
             var c1 = new float[] { color1.R / 255f, color1.G / 255f, color1.B / 255f };
@@ -283,6 +285,13 @@ namespace New_SSQE.GUI
             RegisterData(0, noteOffsets);
             RegisterData(13, textLineOffsets);
 
+            Pool.Return(noteOffsets, true);
+            Pool.Return(textLineOffsets, true);
+            Pool.Return(notePassedOffsets, true);
+            Pool.Return(noteLocationOffsets, true);
+            Pool.Return(notePassedLocationOffsets, true);
+            Pool.Return(passedTextLineOffsets, true);
+
             RegisterData(4, noteSelectOffsets.ToArray());
             RegisterData(5, new Vector4[1] { noteHoverOffset });
             RegisterData(6, noteDragOffsets.ToArray());
@@ -306,7 +315,6 @@ namespace New_SSQE.GUI
             bool doubleDiv = divisor % 2 == 0;
             int divOff = divisor - 1 - (doubleDiv ? 1 : 0);
 
-            Vector4[] startBpmOffsets, fullBpmOffsets, halfBpmOffsets, subBpmOffsets;
             int numPoints = editor.TimingPoints.Count;
             int numFull = 0, numHalf = 0, numSub = 0;
 
@@ -335,10 +343,10 @@ namespace New_SSQE.GUI
                 numSub += sub;
             }
 
-            startBpmOffsets = new Vector4[numPoints];
-            fullBpmOffsets = new Vector4[numFull];
-            halfBpmOffsets = new Vector4[numHalf];
-            subBpmOffsets = new Vector4[numSub];
+            var startBpmOffsets = Pool.Rent(numPoints);
+            var fullBpmOffsets = Pool.Rent(numFull);
+            var halfBpmOffsets = Pool.Rent(numHalf);
+            var subBpmOffsets = Pool.Rent(numSub);
 
             var pointHoverOffset = new Vector4(-1920, 0, 0, 0);
             var pointSelectOffset = new Vector4(-1920, 0, 0, 0);
@@ -411,6 +419,11 @@ namespace New_SSQE.GUI
             RegisterData(10, subBpmOffsets);
             RegisterData(11, new Vector4[1] { pointHoverOffset });
             RegisterData(12, new Vector4[1] { pointSelectOffset });
+
+            Pool.Return(startBpmOffsets, true);
+            Pool.Return(fullBpmOffsets, true);
+            Pool.Return(halfBpmOffsets, true);
+            Pool.Return(subBpmOffsets, true);
         }
 
         private float prevHeight = 0;

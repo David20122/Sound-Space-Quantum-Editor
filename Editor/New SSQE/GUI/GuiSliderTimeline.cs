@@ -1,11 +1,11 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using System;
-using OpenTK.Mathematics;
-using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK.Graphics;
+using System.Buffers;
+using OpenTK.Mathematics;
 
 namespace New_SSQE.GUI
 {
@@ -20,6 +20,8 @@ namespace New_SSQE.GUI
 
         private RectangleF lineRect;
         private RectangleF prevRect;
+
+        private readonly ArrayPool<Vector4> Pool = ArrayPool<Vector4>.Shared;
 
         public GuiSliderTimeline(float posx, float posy, float sizex, float sizey, bool reverse, bool lockSize = false) : base(posx, posy, sizex, sizey, "currentTime", reverse, lockSize)
         {
@@ -38,7 +40,6 @@ namespace New_SSQE.GUI
             VertexCounts = new int[2];
 
             var y = lineRect.Y + lineRect.Height / 2f;
-            var by = lineRect.Y + lineRect.Height;
 
             var noteVerts = GLU.Line(0, y + 5f, 0, y + lineRect.Height, 1, 1f, 1f, 1f, 1f);
             var pointVerts = GLU.Line(0, y - 10f, 0, y - lineRect.Height * 2f, 2, 1f, 1f, 1f, 1f);
@@ -47,8 +48,7 @@ namespace New_SSQE.GUI
             AddToBuffers(pointVerts, 1);
         }
 
-        private Vector4[] noteOffsets = Array.Empty<Vector4>();
-        private Vector4[] pointOffsets = Array.Empty<Vector4>();
+        private int NoteLen, PointLen;
 
         // stuff here doesnt need to be updated every frame
         public override void GenerateOffsets()
@@ -57,8 +57,8 @@ namespace New_SSQE.GUI
 
             var setting = Settings.settings[Setting];
 
-            noteOffsets = new Vector4[editor.Notes.Count];
-            pointOffsets = new Vector4[editor.TimingPoints.Count];
+            var noteOffsets = Pool.Rent(editor.Notes.Count);
+            var pointOffsets = Pool.Rent(editor.TimingPoints.Count);
 
             var color1 = Settings.settings["color1"];
             var c1 = new float[] { color1.R / 255f, color1.G / 255f, color1.B / 255f };
@@ -87,14 +87,20 @@ namespace New_SSQE.GUI
 
             RegisterData(0, noteOffsets);
             RegisterData(1, pointOffsets);
+
+            NoteLen = noteOffsets.Length;
+            PointLen = pointOffsets.Length;
+
+            Pool.Return(noteOffsets);
+            Pool.Return(pointOffsets);
         }
 
         private void RenderOffsets()
         {
             GL.BindVertexArray(VaOs[0]);
-            GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[0], noteOffsets.Length);
+            GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[0], NoteLen);
             GL.BindVertexArray(VaOs[1]);
-            GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[1], pointOffsets.Length);
+            GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[1], PointLen);
         }
 
         public override void Render(float mousex, float mousey, float frametime)
