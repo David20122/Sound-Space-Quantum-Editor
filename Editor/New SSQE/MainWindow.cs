@@ -970,7 +970,7 @@ namespace New_SSQE
             return false;
         }
 
-        public string ParseData(bool copy = false)
+        public string ParseData(bool copy = false, bool applyOffset = true)
         {
             var offset = (long)Settings.settings["exportOffset"];
 
@@ -984,7 +984,8 @@ namespace New_SSQE
             {
                 var note = Notes[i];
                 var clone = copy ? new Note(MathHelper.Clamp(note.X, -0.85f, 2.85f), MathHelper.Clamp(note.Y, -0.85f, 2.85f), (long)MathHelper.Clamp(note.Ms, 0, Settings.settings["currentTime"].Max)) : note;
-                clone.Ms += offset;
+                if (applyOffset)
+                    clone.Ms += offset;
 
                 final[i + 1] = clone.ToString(culture);
             }

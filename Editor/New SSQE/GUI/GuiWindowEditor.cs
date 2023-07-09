@@ -507,7 +507,7 @@ namespace New_SSQE.GUI
 
                         Settings.Save();
 
-                        File.WriteAllText($"assets/temp/tempmap.txt", editor.ParseData());
+                        File.WriteAllText($"assets/temp/tempmap.txt", editor.ParseData(false, false));
 
                         Process process = Process.Start("SSQE Player.exe", Settings.settings["fromStart"].ToString());
                         playerRunning = process != null;
