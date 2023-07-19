@@ -2291,7 +2291,7 @@ namespace New_SSQE
 
                     uint msF = BitConverter.ToUInt32(ms);
 
-                    mapData += $",{xF}|{yF}|{msF}";
+                    mapData += $",{2 - xF}|{2 - yF}|{msF}";
                 }
             }
             else if (formatVersion[0] == 0x02 && formatVersion[1] == 0x00)
@@ -2477,7 +2477,7 @@ namespace New_SSQE
 
                     uint msF = BitConverter.ToUInt32(ms);
 
-                    mapData += $",{xF}|{yF}|{msF}";
+                    mapData += $",{2 - xF}|{2 - yF}|{msF}";
                 }
             }
             else
