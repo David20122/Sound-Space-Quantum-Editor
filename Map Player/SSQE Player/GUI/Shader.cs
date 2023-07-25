@@ -12,12 +12,12 @@ namespace SSQE_Player.GUI
         public static ProgramHandle ModelProgram;
         public static ProgramHandle FontTexProgram;
 
-        private static readonly string vertexShader = @"#version 430 core
+        private static readonly string vertexShader = @"#version 330 core
                                                           layout (location = 0) in vec3 position;
                                                           layout (location = 1) in vec4 color;
                                                           out vec4 pass_color;
 
-                                                          layout (location = 2) uniform mat4 projectionMatrix;
+                                                          uniform mat4 projectionMatrix;
 
                                                           void main()
                                                           {
@@ -25,7 +25,7 @@ namespace SSQE_Player.GUI
                                                               pass_color = color;
                                                           }";
 
-        private static readonly string fragmentShader = @"#version 430 core
+        private static readonly string fragmentShader = @"#version 330 core
                                                           in vec4 pass_color;
                                                           out vec4 out_Color;
 
@@ -34,14 +34,14 @@ namespace SSQE_Player.GUI
                                                               out_Color = pass_color;
                                                           }";
 
-        private static readonly string modelVertShader = @"#version 430 core
+        private static readonly string modelVertShader = @"#version 330 core
                                                           layout (location = 0) in vec3 position;
                                                           out vec4 pass_color;
 
-                                                          layout (location = 1) uniform mat4 transformationMatrix;
-                                                          layout (location = 2) uniform mat4 projectionMatrix;
-                                                          layout (location = 3) uniform mat4 viewMatrix;
-                                                          layout (location = 4) uniform vec4 colorIn;
+                                                          uniform mat4 transformationMatrix;
+                                                          uniform mat4 projectionMatrix;
+                                                          uniform mat4 viewMatrix;
+                                                          uniform vec4 colorIn;
 
                                                           void main()
                                                           {
@@ -50,16 +50,7 @@ namespace SSQE_Player.GUI
 	                                                          pass_color = colorIn;
                                                           }";
 
-        private static readonly string modelFragShader = @"#version 430 core
-                                                          in vec4 pass_color;
-                                                          out vec4 out_Color;
-
-                                                          void main()
-                                                          {
-	                                                          out_Color = pass_color;
-                                                          }";
-
-        private readonly static string fontTexVertShader = @"#version 430 core
+        private readonly static string fontTexVertShader = @"#version 330 core
                                                layout (location = 0) in vec2 aPosition;
                                                layout (location = 1) in vec4 aCharLayout;
                                                layout (location = 2) in float aCharAlpha;
@@ -84,11 +75,11 @@ namespace SSQE_Player.GUI
 
                                                    gl_Position = Projection * vec4(x, y, 0.0f, 1.0f);
 
-                                                   texColor = vec4(TexColor.x, TexColor.y, TexColor.z, TexColor.w * (1.0f - aCharAlpha));
+                                                   texColor = vec4(TexColor.xyz, TexColor.w * (1.0f - aCharAlpha));
                                                    texCoord = vec2(tx, ty);
                                                }";
 
-        private readonly static string fontTexFragShader = @"#version 430 core
+        private readonly static string fontTexFragShader = @"#version 330 core
                                                out vec4 FragColor;
 
                                                in vec4 texColor;
@@ -98,14 +89,22 @@ namespace SSQE_Player.GUI
                                                
                                                void main()
                                                {
-                                                   FragColor = vec4(texColor.x, texColor.y, texColor.z, texture(texture0, texCoord).w * texColor.w);
+                                                   FragColor = vec4(texColor.xyz, texture(texture0, texCoord).w * texColor.w);
                                                }";
+
+        private readonly static Dictionary<string, int> uniforms = new();
 
         public static void Init()
         {
             Program = CompileShader(vertexShader, fragmentShader);
-            ModelProgram = CompileShader(modelVertShader, modelFragShader);
+            ModelProgram = CompileShader(modelVertShader, fragmentShader);
             FontTexProgram = CompileShader(fontTexVertShader, fontTexFragShader);
+
+            uniforms.Add("VertexProjection", GL.GetUniformLocation(Program, "projectionMatrix"));
+            uniforms.Add("ModelTransformation", GL.GetUniformLocation(ModelProgram, "transformationMatrix"));
+            uniforms.Add("ModelProjection", GL.GetUniformLocation(ModelProgram, "projectionMatrix"));
+            uniforms.Add("ModelView", GL.GetUniformLocation(ModelProgram, "viewMatrix"));
+            uniforms.Add("ModelColor", GL.GetUniformLocation(ModelProgram, "colorIn"));
         }
 
         private static ProgramHandle CompileShader(string vertShader, string fragShader)
@@ -145,32 +144,32 @@ namespace SSQE_Player.GUI
         public static void SetTransform(Matrix4 transform)
         {
             GL.UseProgram(ModelProgram);
-            GL.UniformMatrix4f(1, false, transform);
+            GL.UniformMatrix4f(uniforms["ModelTransformation"], false, transform);
         }
 
         public static void SetProjection(Matrix4 projection)
         {
             GL.UseProgram(ModelProgram);
-            GL.UniformMatrix4f(2, false, projection);
+            GL.UniformMatrix4f(uniforms["ModelProjection"], false, projection);
         }
 
         public static void SetView(Matrix4 view)
         {
             GL.UseProgram(ModelProgram);
-            GL.UniformMatrix4f(3, false, view);
+            GL.UniformMatrix4f(uniforms["ModelView"], false, view);
         }
 
         public static void SetColor(Vector4 vec)
         {
             GL.UseProgram(ModelProgram);
-            GL.Uniform4f(4, vec);
+            GL.Uniform4f(uniforms["ModelColor"], vec);
         }
 
         public static void SetProjView(Matrix4 projection, Matrix4 view)
         {
             GL.UseProgram(Program);
             var projview = view * projection;
-            GL.UniformMatrix4f(2, false, projview);
+            GL.UniformMatrix4f(uniforms["VertexProjection"], false, projview);
         }
     }
 }
