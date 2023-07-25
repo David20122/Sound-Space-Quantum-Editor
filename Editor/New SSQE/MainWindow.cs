@@ -187,6 +187,7 @@ namespace New_SSQE
             Shader.UploadOrtho(Shader.Program, w, h);
             Shader.UploadOrtho(Shader.TexProgram, w, h);
             Shader.UploadOrtho(Shader.FontTexProgram, w, h);
+            Shader.UploadOrtho(Shader.NoteInstancedProgram, w, h);
             Shader.UploadOrtho(Shader.InstancedProgram, w, h);
             Shader.UploadOrtho(Shader.GridInstancedProgram, w, h);
             Shader.UploadOrtho(Shader.WaveformProgram, w, h);

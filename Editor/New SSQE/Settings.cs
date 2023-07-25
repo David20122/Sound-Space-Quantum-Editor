@@ -6,6 +6,9 @@ using System.IO;
 using System.Linq;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Common;
+using New_SSQE.GUI;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace New_SSQE
 {
@@ -140,6 +143,44 @@ namespace New_SSQE
                 settings[key] = kept[key];
         }
 
+        public static void RefreshColors()
+        {
+            GL.UseProgram(Shader.NoteInstancedProgram);
+            int location = GL.GetUniformLocation(Shader.NoteInstancedProgram, "NoteColors");
+            Vector4[] colors = new Vector4[32];
+
+            for (int i = 0; i < settings["noteColors"].Count; i++)
+            {
+                var color = settings["noteColors"][i];
+                colors[i] = (color.R / 255f, color.G / 255f, color.B / 255f, 1f);
+            }
+
+            GL.Uniform4f(location, 32, colors);
+
+            GL.UseProgram(Shader.GridInstancedProgram);
+            location = GL.GetUniformLocation(Shader.GridInstancedProgram, "NoteColors");
+            GL.Uniform4f(location, 32, colors);
+
+            GL.UseProgram(Shader.InstancedProgram);
+            location = GL.GetUniformLocation(Shader.InstancedProgram, "Colors");
+            colors = new Vector4[10];
+
+            for (int i = 0; i < 4; i++)
+            {
+                var color = settings[$"color{i + 1}"];
+                colors[i] = (color.R / 255f, color.G / 255f, color.B / 255f, 1f);
+            }
+
+            colors[4] = (1f, 1f, 1f, 1f);
+            colors[5] = (0f, 1f, 0.25f, 1f);
+            colors[6] = (0f, 0.5f, 1f, 1f);
+            colors[7] = (0.75f, 0.75f, 0.75f, 1f);
+            colors[8] = (1f, 0f, 0f, 1f);
+            colors[9] = (0.5f, 0.5f, 0.5f, 1f);
+
+            GL.Uniform4f(location, 10, colors);
+        }
+
         public static void RefreshKeyMapping()
         {
             var keys = settings["numpad"] ? numpadKeys : settings["gridKeys"];
@@ -217,6 +258,7 @@ namespace New_SSQE
             MainWindow.Instance.SoundPlayer.Volume = settings["sfxVolume"].Value;
 
             RefreshKeyMapping();
+            RefreshColors();
 
             isLoaded = true;
         }

@@ -120,29 +120,27 @@ namespace New_SSQE.GUI
                 var progress = Math.Min(1f, (float)Math.Pow(1 - Math.Min(1f, (note.Ms - currentTime) * approachRate / 750f), 2f));
                 var noteRect = new RectangleF(x, y, noteSize, noteSize);
 
-                var color = noteColors[i % noteColors.Count];
-                var c = new float[] { color.R / 255f, color.G / 255f, color.B / 255f };
-                Vector4 vec = (2 * (int)x + c[0], 2 * (int)y + c[1], 2f + c[2], 2f + progress);
+                var c = i % noteColors.Count;
 
                 if (approachSquares)
                 {
                     var outlineSize = 4 + noteSize + noteSize * (1 - progress) * 2 + 0.5f;
 
-                    approachOffsets.Add((2 * (int)(x - outlineSize / 2f + noteSize / 2f + 0.5f) + c[0], 2 * (int)(y - outlineSize / 2f + noteSize / 2f + 0.5f)
-                                        + c[1], 2 * (int)outlineSize + c[2], 2 * (int)outlineSize + progress));
+                    approachOffsets.Add((x - outlineSize / 2f + noteSize / 2f, y - outlineSize / 2f + noteSize / 2f, 2 * (int)outlineSize + progress, c));
+
                 }
 
                 if (note.Selected)
-                    selectOffsets.Add((2 * (int)(x - 4) + 0f, 2 * (int)(y - 4) + 0.5f, 2 + 1f, 2 + progress));
+                    selectOffsets.Add((x - 4, y - 4, progress, 6));
 
                 if (!isHoveringNote && noteRect.Contains(mouse) && (!separateClickTools || selectTool))
                 {
                     HoveringNote = note;
-                    hoverOffset = (2 * (int)(x - 4) + 0f, 2 * (int)(y - 4) + 1f, 2 + 0.25f, 2 + 1f);
+                    hoverOffset = (x - 4, y - 4, 1, 5);
                     isHoveringNote = true;
                 }
 
-                noteOffsets.Add(vec);
+                noteOffsets.Add((x, y, 2f + progress, c));
 
                 if (gridNumbers)
                 {
@@ -162,10 +160,13 @@ namespace New_SSQE.GUI
             
             //render fake note
             if (Hovering && (!separateClickTools || !selectTool) && (HoveringNote == null || separateClickTools))
-                AddPreviewNote(mouse.X, mouse.Y, Color.FromArgb(127, 127, 127), true);
+                AddPreviewNote(mouse.X, mouse.Y, 9, true);
 
+            GL.UseProgram(Shader.GridInstancedProgram);
             RegisterData(0, noteOffsets.ToArray());
             RegisterData(1, approachOffsets.ToArray());
+
+            GL.UseProgram(Shader.InstancedProgram);
             RegisterData(2, selectOffsets.ToArray());
             RegisterData(3, new Vector4[1] { hoverOffset });
             RegisterData(4, previewNoteOffsets.ToArray());
@@ -192,8 +193,6 @@ namespace New_SSQE.GUI
             FontRenderer.RenderData("main", color1Texts.ToArray());
 
             // render dynamic elements
-            GL.UseProgram(Shader.GridInstancedProgram);
-
             GenerateOffsets();
 
             // undo program switch
@@ -540,10 +539,8 @@ namespace New_SSQE.GUI
             bezierVertices.Clear();
         }
 
-        public void AddPreviewNote(float x, float y, Color color, bool mouse = false)
+        public void AddPreviewNote(float x, float y, int c, bool mouse = false)
         {
-            var c = new float[] { color.R / 255f, color.G / 255f, color.B / 255f };
-
             var cellSize = Rect.Width / 3f;
             var noteSize = cellSize * 0.65f;
             var cellGap = (cellSize - noteSize) / 2f;
@@ -552,7 +549,7 @@ namespace New_SSQE.GUI
             x = Rect.X + pos.X * cellSize + cellGap;
             y = Rect.Y + pos.Y * cellSize + cellGap;
 
-            previewNoteOffsets.Add((2 * (int)x + c[0], 2 * (int)y + c[1], 2f + c[2], 3f));
+            previewNoteOffsets.Add((x, y, 1, c));
             bezierVertices.AddRange(new float[6] { x + noteSize / 2f, y + noteSize / 2f, 1f, 1f, 1f, 1f });
         }
     }

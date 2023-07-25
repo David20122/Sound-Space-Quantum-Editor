@@ -17,6 +17,7 @@ namespace New_SSQE.GUI
         public static ProgramHandle Program;
         public static ProgramHandle TexProgram;
         public static ProgramHandle FontTexProgram;
+        public static ProgramHandle NoteInstancedProgram;
         public static ProgramHandle InstancedProgram;
         public static ProgramHandle GridInstancedProgram;
         public static ProgramHandle WaveformProgram;
@@ -70,7 +71,7 @@ namespace New_SSQE.GUI
                                                void main()
                                                {
                                                    vec4 color = texture(texture0, texCoord);
-                                                   FragColor = vec4(color.x, color.y, color.z, color.w * alpha);
+                                                   FragColor = vec4(color.xyz, color.w * alpha);
                                                }";
 
         private readonly static string fontTexVertShader = @"#version 330 core
@@ -98,7 +99,7 @@ namespace New_SSQE.GUI
 
                                                    gl_Position = Projection * vec4(x, y, 0.0f, 1.0f);
 
-                                                   texColor = vec4(TexColor.x, TexColor.y, TexColor.z, TexColor.w * (1.0f - aCharAlpha));
+                                                   texColor = vec4(TexColor.xyz, TexColor.w * (1.0f - aCharAlpha));
                                                    texCoord = vec2(tx, ty);
                                                }";
 
@@ -112,69 +113,64 @@ namespace New_SSQE.GUI
                                                
                                                void main()
                                                {
-                                                   FragColor = vec4(texColor.x, texColor.y, texColor.z, texture(texture0, texCoord).w * texColor.w);
+                                                   FragColor = vec4(texColor.xyz, texture(texture0, texCoord).w * texColor.w);
+                                               }";
+
+        private readonly static string noteInstancedVertShader = @"#version 330 core
+                                               layout (location = 0) in vec2 aPosition;
+                                               layout (location = 1) in vec4 aColor; // only using one component but inputting vec4 for compatibility
+                                               layout (location = 2) in vec4 aOffset; // x, y, a, c
+                                               
+                                               out vec4 vertexColor;
+
+                                               uniform mat4 Projection;
+                                               uniform vec4 NoteColors[32];
+                                                
+                                               void main()
+                                               {
+                                                   vec4 color = NoteColors[int(aOffset.w)];
+
+                                                   gl_Position = Projection * vec4(aPosition.x + aOffset.x, aPosition.y + aOffset.y, 0.0f, 1.0f);
+                                                   vertexColor = vec4(color.xyz, aColor.w * aOffset.z);
                                                }";
 
         private readonly static string instancedVertShader = @"#version 330 core
                                                layout (location = 0) in vec2 aPosition;
                                                layout (location = 1) in vec4 aColor; // only using one component but inputting vec4 for compatibility
-                                               layout (location = 2) in vec4 aOffset; // x, r/y, g, b
-                                                                                      // due to needing Y and vec5 not existing, Y = int(r / 2) and R = r - Y * 2
+                                               layout (location = 2) in vec4 aOffset; // x, y, a, c
+                                               
                                                out vec4 vertexColor;
 
                                                uniform mat4 Projection;
+                                               uniform vec4 Colors[10];
                                                 
                                                void main()
                                                {
-                                                   int yf = int(aOffset.y * 0.5);
+                                                   vec4 color = Colors[int(aOffset.w)];
 
-                                                   gl_Position = Projection * vec4(aPosition.x + aOffset.x, aPosition.y + yf, 0.0f, 1.0f);
-                                                   vertexColor = vec4(aOffset.y - yf * 2, aOffset.z, aOffset.w, aColor.w);
-                                               }";
-
-        private readonly static string instancedFragShader = @"#version 330 core
-                                               out vec4 FragColor;
-                                               in vec4 vertexColor;
-                                                
-                                               void main()
-                                               {
-                                                   FragColor = vertexColor;
+                                                   gl_Position = Projection * vec4(aPosition.x + aOffset.x, aPosition.y + aOffset.y, 0.0f, 1.0f);
+                                                   vertexColor = vec4(color.xyz, aColor.w * aOffset.z);
                                                }";
 
         private readonly static string gridInstancedVertShader = @"#version 330 core
                                                layout (location = 0) in vec2 aPosition;
-                                               layout (location = 1) in vec4 aColor;
-                                               layout (location = 2) in vec4 aOffset; // x/r, y/g, w/b, h/a
-                                                                                      // vector8 moment?
+                                               layout (location = 1) in vec4 aColor; // only using one component but inputting vec4 for compatibility
+                                               layout (location = 2) in vec4 aOffset; // x, y, s/a, c
+                                               
                                                out vec4 vertexColor;
 
                                                uniform mat4 Projection;
+                                               uniform vec4 NoteColors[32];
                                                 
                                                void main()
                                                {
-                                                   // first half of component: int(a * 0.5) - divide by 2 and take its integer portion
-                                                   // second half of component: subtract 2 * first from the component
-                                                   int x = int(aOffset.x * 0.5);
-                                                   int y = int(aOffset.y * 0.5);
-                                                   int w = int(aOffset.z * 0.5);
-                                                   int h = int(aOffset.w * 0.5);
+                                                   int s = int(aOffset.z * 0.5);
+                                                   float a = aOffset.z - s * 2;
 
-                                                   float r = aOffset.x - x * 2;
-                                                   float g = aOffset.y - y * 2;
-                                                   float b = aOffset.z - w * 2;
-                                                   float a = aOffset.w - h * 2;
+                                                   vec4 color = NoteColors[int(aOffset.w)];
 
-                                                   gl_Position = Projection * vec4(x + aPosition.x * w, y + aPosition.y * h, 0.0f, 1.0f);
-                                                   vertexColor = vec4(r, g, b, a * aColor.w);
-                                               }";
-
-        private readonly static string gridInstancedFragShader = @"#version 330 core
-                                               out vec4 FragColor;
-                                               in vec4 vertexColor;
-                                                
-                                               void main()
-                                               {
-                                                   FragColor = vertexColor;
+                                                   gl_Position = Projection * vec4(aPosition.x * s + aOffset.x, aPosition.y * s + aOffset.y, 0.0f, 1.0f);
+                                                   vertexColor = vec4(color.xyz, aColor.w * a);
                                                }";
 
         private readonly static string waveformVertShader = @"#version 330 core
@@ -187,23 +183,8 @@ namespace New_SSQE.GUI
                                                 
                                                void main()
                                                {
-                                                   float yOff = WavePos.z * 0.5f;
-                                                   float x = aPosition.x * WavePos.y + WavePos.x;
-                                                   float y = (aPosition.y + 1) * yOff;
-                                                   float cy = abs(aPosition.y);
-
-                                                   gl_Position = Projection * vec4(x, y, 0.0f, 1.0f);
-                                                   //vertexColor = vec4(cy, (1.0f - cy) * 0.5f, 0.0f, 1.0f);
+                                                   gl_Position = Projection * vec4(aPosition.x * WavePos.y + WavePos.x, (aPosition.y + 1) * (WavePos.z * 0.5f), 0.0f, 1.0f);
                                                    vertexColor = vec4(LineColor, 1.0f);
-                                               }";
-
-        private readonly static string waveformFragShader = @"#version 330 core
-                                               out vec4 FragColor;
-                                               in vec4 vertexColor;
-                                                
-                                               void main()
-                                               {
-                                                   FragColor = vertexColor;
                                                }";
 
         public static void Init()
@@ -211,9 +192,10 @@ namespace New_SSQE.GUI
             Program = CompileShader(vertexShader, fragmentShader, "Main");
             TexProgram = CompileShader(texVertShader, texFragShader, "Texture");
             FontTexProgram = CompileShader(fontTexVertShader, fontTexFragShader, "Font");
-            InstancedProgram = CompileShader(instancedVertShader, instancedFragShader, "Instancing");
-            GridInstancedProgram = CompileShader(gridInstancedVertShader, gridInstancedFragShader, "Grid Instancing");
-            WaveformProgram = CompileShader(waveformVertShader, waveformFragShader, "Waveform");
+            NoteInstancedProgram = CompileShader(noteInstancedVertShader, fragmentShader, "Track");
+            InstancedProgram = CompileShader(instancedVertShader, fragmentShader, "Timeline");
+            GridInstancedProgram = CompileShader(gridInstancedVertShader, fragmentShader, "Grid");
+            WaveformProgram = CompileShader(waveformVertShader, fragmentShader, "Waveform");
         }
 
         private static ProgramHandle CompileShader(string vertShader, string fragShader, string tag)

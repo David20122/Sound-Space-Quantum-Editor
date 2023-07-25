@@ -189,7 +189,7 @@ namespace New_SSQE.GUI
                         var xg = (xf + 0.5f) * Grid.Rect.Width / 3f + Grid.Rect.X;
                         var yg = (yf + 0.5f) * Grid.Rect.Width / 3f + Grid.Rect.Y;
 
-                        Grid.AddPreviewNote(xf, yf, color3);
+                        Grid.AddPreviewNote(xf, yf, 2);
 
                         xprev = xg;
                         yprev = yg;
@@ -213,7 +213,7 @@ namespace New_SSQE.GUI
                             var xg = (xf + 0.5f) * Grid.Rect.Width / 3f + Grid.Rect.X;
                             var yg = (yf + 0.5f) * Grid.Rect.Width / 3f + Grid.Rect.Y;
 
-                            Grid.AddPreviewNote(xf, yf, color3);
+                            Grid.AddPreviewNote(xf, yf, 2);
 
                             xprev = xg;
                             yprev = yg;

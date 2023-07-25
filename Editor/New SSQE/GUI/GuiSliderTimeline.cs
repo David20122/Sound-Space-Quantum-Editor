@@ -60,9 +60,6 @@ namespace New_SSQE.GUI
             var noteOffsets = Pool.Rent(editor.Notes.Count);
             var pointOffsets = Pool.Rent(editor.TimingPoints.Count);
 
-            var color1 = Settings.settings["color1"];
-            var c1 = new float[] { color1.R / 255f, color1.G / 255f, color1.B / 255f };
-
             // notes
             for (int i = 0; i < editor.Notes.Count; i++)
             {
@@ -71,7 +68,7 @@ namespace New_SSQE.GUI
                 var progress = note.Ms / setting.Max;
                 var x = lineRect.X + progress * lineRect.Width;
 
-                noteOffsets[i] = (x, c1[0], c1[1], c1[2]);
+                noteOffsets[i] = (x, 0, 1, 0);
             }
 
             // points
@@ -82,7 +79,7 @@ namespace New_SSQE.GUI
                 var progress = point.Ms / setting.Max;
                 var x = lineRect.X + progress * lineRect.Width - 1f;
 
-                pointOffsets[i] = (x, c1[0], c1[1], c1[2]);
+                pointOffsets[i] = (x, 0, 1, 0);
             }
 
             RegisterData(0, noteOffsets);

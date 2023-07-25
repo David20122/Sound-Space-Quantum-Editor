@@ -211,14 +211,14 @@ namespace New_SSQE.GUI
         {
             var setting = Settings.settings["noteColors"];
 
-            NoteColorSquares.Clear();
-            Controls.Remove(NoteColorHoverSquare);
-
             foreach (var control in NoteColorSquares)
             {
                 Controls.Remove(control);
                 control.Dispose();
             }
+
+            NoteColorSquares.Clear();
+            Controls.Remove(NoteColorHoverSquare);
 
             for (int i = 0; i < setting.Count; i++)
             {
@@ -230,6 +230,7 @@ namespace New_SSQE.GUI
             }
 
             Controls.Add(NoteColorHoverSquare);
+            
 
             OnResize(MainWindow.Instance.ClientSize);
             OnMouseMove(MainWindow.Instance.Mouse);
@@ -287,7 +288,10 @@ namespace New_SSQE.GUI
                     };
 
                     if (dialog1.ShowDialog() == DialogResult.OK)
+                    {
                         Settings.settings["color1"] = dialog1.Color;
+                        Settings.RefreshColors();
+                    }
 
                     break;
 
@@ -298,7 +302,10 @@ namespace New_SSQE.GUI
                     };
 
                     if (dialog2.ShowDialog() == DialogResult.OK)
+                    {
                         Settings.settings["color2"] = dialog2.Color;
+                        Settings.RefreshColors();
+                    }
 
                     break;
 
@@ -309,7 +316,10 @@ namespace New_SSQE.GUI
                     };
 
                     if (dialog3.ShowDialog() == DialogResult.OK)
+                    {
                         Settings.settings["color3"] = dialog3.Color;
+                        Settings.RefreshColors();
+                    }
 
                     break;
 
@@ -320,20 +330,27 @@ namespace New_SSQE.GUI
                     };
 
                     if (dialog4.ShowDialog() == DialogResult.OK)
+                    {
                         Settings.settings["color4"] = dialog4.Color;
+                        Settings.RefreshColors();
+                    }
 
                     break;
 
                 case 8:
-                    var dialogN = new ColorDialog()
+                    if (Settings.settings["noteColors"].Count < 32)
                     {
-                        Color = Color.White
-                    };
+                        var dialogN = new ColorDialog()
+                        {
+                            Color = Color.White
+                        };
 
-                    if (dialogN.ShowDialog() == DialogResult.OK)
-                    {
-                        Settings.settings["noteColors"].Add(dialogN.Color);
-                        RefreshNoteColors();
+                        if (dialogN.ShowDialog() == DialogResult.OK)
+                        {
+                            Settings.settings["noteColors"].Add(dialogN.Color);
+                            RefreshNoteColors();
+                            Settings.RefreshColors();
+                        }
                     }
 
                     break;

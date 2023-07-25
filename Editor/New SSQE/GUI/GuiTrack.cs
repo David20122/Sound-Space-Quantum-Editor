@@ -86,14 +86,6 @@ namespace New_SSQE.GUI
             // text line
             var textLineVerts = GLU.Line(0.5f, Rect.Height + 3, 0.5f, Rect.Height + 28, 1, 1f, 1f, 1f, 1f);
 
-            // passed
-            var notePassedVerts = new List<float>();
-            notePassedVerts.AddRange(GLU.Rect(noteRect, 1f, 1f, 1f, 0.35f / 20f));
-            notePassedVerts.AddRange(GLU.OutlineAsTriangles(noteRect, 1, 1f, 1f, 1f, 0.35f));
-            var notePassedLocationVerts = GLU.Rect(0, 0, 9, 9, 1f, 1f, 1f, 0.35f);
-            // text line
-            var passedTextLineVerts = GLU.Line(0.5f, Rect.Height + 3, 0.5f, Rect.Height + 28, 1, 1f, 1f, 1f, 0.35f);
-
             for (int j = 0; j < 9; j++)
             {
                 var indexX = 2 - j % 3;
@@ -103,15 +95,11 @@ namespace New_SSQE.GUI
                 var gridY = cellGap + indexY * 12 + 4.5f;
 
                 noteVerts.AddRange(GLU.OutlineAsTriangles(gridX, gridY, 9, 9, 1, 1f, 1f, 1f, 1f * 0.45f));
-                notePassedVerts.AddRange(GLU.OutlineAsTriangles(gridX, gridY, 9, 9, 1, 1f, 1f, 1f, 0.35f * 0.45f));
             }
 
             AddToBuffers(noteVerts.ToArray(), 0);
             AddToBuffers(noteLocationVerts.ToArray(), 1);
             AddToBuffers(textLineVerts, 13);
-            AddToBuffers(notePassedVerts.ToArray(), 2);
-            AddToBuffers(notePassedLocationVerts.ToArray(), 3);
-            AddToBuffers(passedTextLineVerts, 14);
 
             // note select box
             var noteSelectVerts = GLU.OutlineAsTriangles(-4, cellGap - 4, noteSize + 8, noteSize + 8, 1, 1f, 1f, 1f, 1f);
@@ -158,15 +146,6 @@ namespace New_SSQE.GUI
             var editor = MainWindow.Instance;
             var currentTime = Settings.settings["currentTime"].Value;
 
-            int normalCount;
-            int passedCount = 0;
-
-            for (int i = 0; i < editor.Notes.Count; i++)
-                if (currentTime - 1 > editor.Notes[i].Ms)
-                    passedCount++;
-            normalCount = editor.Notes.Count - passedCount;
-
-
             var mouse = editor.Mouse;
             var noteStep = editor.NoteStep;
 
@@ -180,19 +159,9 @@ namespace New_SSQE.GUI
             var noteColors = Settings.settings["noteColors"];
             var colorCount = noteColors.Count;
             
-            var noteOffsets = Pool.Rent(normalCount);
-            var textLineOffsets = Pool.Rent(normalCount);
-            var notePassedOffsets = Pool.Rent(passedCount);
-            var noteLocationOffsets = Pool.Rent(normalCount);
-            var notePassedLocationOffsets = Pool.Rent(passedCount);
-            var passedTextLineOffsets = Pool.Rent(passedCount);
-
-            var color1 = Settings.settings["color1"];
-            var c1 = new float[] { color1.R / 255f, color1.G / 255f, color1.B / 255f };
-            var color2 = Settings.settings["color2"];
-            var c2 = new float[] { color2.R / 255f, color2.G / 255f, color2.B / 255f };
-            var color3 = Settings.settings["color3"];
-            var c3 = new float[] { color3.R / 255f, color3.G / 255f, color3.B / 255f };
+            var noteOffsets = Pool.Rent(editor.Notes.Count);
+            var textLineOffsets = Pool.Rent(editor.Notes.Count);
+            var noteLocationOffsets = Pool.Rent(editor.Notes.Count);
 
             var noteHoverOffset = new Vector4(-1920, 0, 0, 0);
             var noteSelectOffsets = new List<Vector4>();
@@ -213,27 +182,17 @@ namespace New_SSQE.GUI
             for (int i = 0; i < editor.Notes.Count; i++)
             {
                 var note = editor.Notes[i];
-                var passed = i < passedCount;
+                var a = note.Ms < currentTime - 1 ? 0.35f : 1f;
 
                 var x = cursorX - posX + note.Ms / 1000f * noteStep;
                 var gridX = x + note.X * 12 + 4.5f;
-                var gridY = (int)(cellGap + note.Y * 12 + 4.5f) * 2;
+                var gridY = cellGap + note.Y * 12 + 4.5f;
 
-                var color = noteColors[i % colorCount];
-                var c = new float[] { color.R / 255f, color.G / 255f, color.B / 255f };
+                int c = i % colorCount;
 
-                if (!passed)
-                {
-                    noteOffsets[i - passedCount] = (x, c[0], c[1], c[2]);
-                    noteLocationOffsets[i - passedCount] = (gridX, gridY + c[0], c[1], c[2]);
-                    textLineOffsets[i - passedCount] = (x, 1f, 1f, 1f);
-                }
-                else
-                {
-                    notePassedOffsets[i] = (x, c[0], c[1], c[2]);
-                    notePassedLocationOffsets[i] = (gridX, gridY + c[0], c[1], c[2]);
-                    passedTextLineOffsets[i] = (x, 1f, 1f, 1f);
-                }
+                noteOffsets[i] = (x, 0, a, c);
+                noteLocationOffsets[i] = (gridX, gridY, a, c);
+                textLineOffsets[i] = (x, 0, a, 4);
 
                 var noteRect = new RectangleF(x, cellGap, noteSize, noteSize);
                 var hovering = HoveringNote == null && DraggingNote == null && noteRect.Contains(mouse.X, mouse.Y);
@@ -251,15 +210,15 @@ namespace New_SSQE.GUI
 
                 if (hovering)
                 {
-                    noteHoverOffset = (x, 0f, 1f, 0.25f);
+                    noteHoverOffset = (x, 0, 1, 5);
                     HoveringNote = note;
                 }
                 else if (noteSelected)
                 {
                     if (DraggingNote == null)
-                        noteSelectOffsets.Add((x, 0f, 0.5f, 1f));
+                        noteSelectOffsets.Add((x, 0, 1, 6));
                     else
-                        noteDragOffsets.Add((x, 0.75f, 0.75f, 0.75f));
+                        noteDragOffsets.Add((x, 0, 1, 7));
                 }
 
 
@@ -278,19 +237,17 @@ namespace New_SSQE.GUI
                 }
             }
 
-            RegisterData(3, notePassedLocationOffsets);
-            RegisterData(2, notePassedOffsets);
-            RegisterData(14, passedTextLineOffsets);
+            GL.UseProgram(Shader.NoteInstancedProgram);
             RegisterData(1, noteLocationOffsets);
             RegisterData(0, noteOffsets);
-            RegisterData(13, textLineOffsets);
 
             Pool.Return(noteOffsets, true);
-            Pool.Return(textLineOffsets, true);
-            Pool.Return(notePassedOffsets, true);
             Pool.Return(noteLocationOffsets, true);
-            Pool.Return(notePassedLocationOffsets, true);
-            Pool.Return(passedTextLineOffsets, true);
+
+            GL.UseProgram(Shader.InstancedProgram);
+            RegisterData(13, textLineOffsets);
+
+            Pool.Return(textLineOffsets, true);
 
             RegisterData(4, noteSelectOffsets.ToArray());
             RegisterData(5, new Vector4[1] { noteHoverOffset });
@@ -364,7 +321,7 @@ namespace New_SSQE.GUI
                 double stepSmall = stepMs / divisor;
                 double curStep = stepSmall;
                 float lineX = cursorX - posX + point.Ms / 1000f * noteStep;
-                startBpmOffsets[i] = (lineX, 1f, 0f, 0f);
+                startBpmOffsets[i] = (lineX, 0, 1, 8);
                 double x;
 
                 var pointRect = new RectangleF(lineX, Rect.Height, 72, 52);
@@ -379,22 +336,22 @@ namespace New_SSQE.GUI
 
                 if (hovering)
                 {
-                    pointHoverOffset = (lineX, 0f, 1f, 0.25f);
+                    pointHoverOffset = (lineX, 0, 1, 5);
                     HoveringPoint = point;
                 }
                 else if (pointSelected)
-                    pointSelectOffset = (lineX, 0f, 0.5f, 1f);
+                    pointSelectOffset = (lineX, 0, 1, 6);
 
                 for (int j = 0; j < pointMetrics.X; j++)
                 {
                     x = lineX + stepMs * (j + 1) / 1000f * noteStep;
-                    fullBpmOffsets[current.X + j] = ((float)x, c2[0], c2[1], c2[2]);
+                    fullBpmOffsets[current.X + j] = ((float)x, 0, 1, 1);
                 }
 
                 for (int j = 0; j < pointMetrics.Y; j++)
                 {
                     x = lineX + (stepMs * j + halfStep) / 1000f * noteStep;
-                    halfBpmOffsets[current.Y + j] = ((float)x, c3[0], c3[1], c3[2]);
+                    halfBpmOffsets[current.Y + j] = ((float)x, 0, 1, 2);
                 }
 
                 for (int j = 0; j < pointMetrics.Z; j++)
@@ -407,7 +364,7 @@ namespace New_SSQE.GUI
                         curStep += stepSmall;
 
                     x = lineX + (stepSmall * j + curStep) / 1000f * noteStep;
-                    subBpmOffsets[current.Z + j] = ((float)x, c1[0], c1[1], c1[2]);
+                    subBpmOffsets[current.Z + j] = ((float)x, 0, 1, 0);
                 }
 
                 current += pointMetrics;
@@ -452,7 +409,6 @@ namespace New_SSQE.GUI
                 Waveform.Render(StartX, EndX, Rect.Height);
 
             // render dynamic elements
-            GL.UseProgram(Shader.InstancedProgram);
             GenerateOffsets();
 
             // render static elements
