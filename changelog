@@ -1,4 +1,12 @@
 ----------------------------------
+     -- 2.1.0.3 - 8/2/2023 --
+
+- fixed mirroring sspm files on load
+- fixed drag lines following notes on the track
+- made waveform more detailed
+- slight optimizations
+
+----------------------------------
      -- 2.1.0.2 - 6/28/2023 --
 
 - loaded sspm files now keep their settings on export
