@@ -218,7 +218,10 @@ namespace New_SSQE.GUI
                     if (DraggingNote == null)
                         noteSelectOffsets.Add((x, 0, 1, 6));
                     else
-                        noteDragOffsets.Add((x, 0, 1, 7));
+                    {
+                        var dragX = cursorX - posX + note.DragStartMs / 1000f * noteStep;
+                        noteDragOffsets.Add((dragX, 0, 1, 7));
+                    }
                 }
 
 

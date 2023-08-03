@@ -1,7 +1,6 @@
 ﻿using New_SSQE.GUI;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using System;
 using Un4seen.Bass;
 
@@ -37,7 +36,7 @@ namespace New_SSQE
                 Bass.BASS_ChannelSetPosition(streamID, 0L);
             }
 
-            double resolution = 0.005;
+            double resolution = 0.002;
             int bpf = (int)Bass.BASS_ChannelSeconds2Bytes(streamID, resolution);
 
             int framesToRender = (int)Math.Ceiling(length / bpf);
@@ -48,7 +47,7 @@ namespace New_SSQE
 
             // i dont care enough to go through these and figure out actual names right now
             int num1 = 0;
-            int num2 = (int)Bass.BASS_ChannelSeconds2Bytes(streamID, 1.0) / bpf * bpf;
+            int num2 = (int)Bass.BASS_ChannelSeconds2Bytes(streamID, 1.0);
             int num3 = num2 / bpf;
             int num4 = num2 / bps;
             int num5 = bpf / bps;
@@ -194,10 +193,8 @@ namespace New_SSQE
 
         public static void Render(float startPos, float endPos, float trackHeight)
         {
-            float dist = endPos - startPos;
-
             GL.UseProgram(Shader.WaveformProgram);
-            GL.Uniform3f(posLocation, startPos, dist, trackHeight);
+            GL.Uniform3f(posLocation, startPos, endPos - startPos, trackHeight);
 
             GL.BindVertexArray(VaO);
             GL.DrawArrays(PrimitiveType.LineStrip, 0, WaveModel.Length / 2);

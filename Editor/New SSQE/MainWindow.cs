@@ -26,6 +26,7 @@ using System.Runtime.InteropServices;
 using BigInteger = System.Numerics.BigInteger;
 using System.IO.Compression;
 using OpenTK.Graphics;
+using Avalonia.Controls.Primitives;
 
 namespace New_SSQE
 {
@@ -717,13 +718,10 @@ namespace New_SSQE
 
         public void UpdateSelection()
         {
+            for (int i = 0; i < Notes.Count; i++)
+                Notes[i].Selected = false;
             for (int i = 0; i < SelectedNotes.Count; i++)
-                SelectedNotes[i].TempSelected = true;
-            for  (int i = 0; i < Notes.Count; i++)
-            {
-                Notes[i].Selected = Notes[i].TempSelected;
-                Notes[i].TempSelected = false;
-            }
+                SelectedNotes[i].Selected = true;
         }
 
         public long GetClosestNote(float currentMs)
