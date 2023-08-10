@@ -1,4 +1,10 @@
 ----------------------------------
+     -- 2.1.0.4 - 8/10/2023 --
+
+- fixed importing OSU timing points
+- fixed rendering timing points past the end of a song
+
+----------------------------------
      -- 2.1.0.3 - 8/2/2023 --
 
 - fixed mirroring sspm files on load
