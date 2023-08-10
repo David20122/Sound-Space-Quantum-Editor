@@ -218,10 +218,14 @@ namespace New_SSQE
 
             try
             {
+                data = data.Replace("\r\n", "\n");
+
                 if (data.Contains("TimingPoints"))
                 {
                     data = data[(data.IndexOf("TimingPoints") + 13)..];
-                    data = data[..data.IndexOf("[")];
+
+                    if (data.Contains('['))
+                        data = data[..data.IndexOf("[")];
                 }
 
                 var split = data.Split('\n');
@@ -232,12 +236,13 @@ namespace New_SSQE
                     if (line.Contains(','))
                     {
                         var subsplit = line.Split(',');
-
-                        var time = long.Parse(subsplit[0], culture);
-                        var bpm = float.Parse(subsplit[1], culture);
-                        bpm = (float)Math.Abs(Math.Round(60000 / bpm, 3));
                         
-                        if (bpm > 0)
+                        var time = (long)double.Parse(subsplit[0], culture);
+                        var bpm = float.Parse(subsplit[1], culture);
+                        var inherited = subsplit.Length > 6 ? subsplit[6] == "1" : bpm > 0;
+                        bpm = (float)Math.Abs(Math.Round(60000 / bpm, 3));
+
+                        if (bpm > 0 && inherited)
                             newPoints.Add(new TimingPoint(bpm, time));
                     }
                 }
@@ -270,6 +275,8 @@ namespace New_SSQE
 
             try
             {
+                data = data.Replace("\r\n", "\n");
+
                 var firstBpmStr = data[(data.IndexOf("bpm") + 6)..];
                 var offsetStr = data[data.IndexOf("offset")..];
                 offsetStr = offsetStr[..offsetStr.IndexOf(",")].Replace("offset\": ", "");
@@ -421,6 +428,8 @@ namespace New_SSQE
 
             try
             {
+                data = data.Replace("\r\n", "\n");
+
                 var resolutionStr = data[data.IndexOf("Resolution")..];
                 resolutionStr = resolutionStr[..resolutionStr.IndexOf("\n")].Replace("Resolution = ", "");
                 var resolution = decimal.Parse(resolutionStr, culture);

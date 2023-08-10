@@ -284,10 +284,10 @@ namespace New_SSQE.GUI
             for (int i = 0; i < numPoints; i++)
             {
                 var point = editor.TimingPoints[i];
-                if (point.BPM == 0)
+                if (point.BPM == 0 || point.Ms > totalTime)
                     continue;
 
-                double nextMs = i + 1 < numPoints ? editor.TimingPoints[i + 1].Ms : totalTime;
+                double nextMs = i + 1 < numPoints ? Math.Min(editor.TimingPoints[i + 1].Ms, totalTime) : totalTime;
                 double totalMs = nextMs - point.Ms;
 
                 double stepMs = 60000 / point.BPM * multiplier;
