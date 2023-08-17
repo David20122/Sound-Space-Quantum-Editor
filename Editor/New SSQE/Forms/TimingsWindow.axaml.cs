@@ -37,6 +37,17 @@ namespace New_SSQE
 
             new TimingsWindow().Show();
             Instance?.ResetList();
+
+            if (Dataset.Count > 0)
+            {
+                TimingPoint point = MainWindow.Instance.GetCurrentBpm(Settings.settings["currentTime"].Value);
+
+                foreach (var item in Dataset)
+                {
+                    if (item.Ms == point.Ms && item.BPM == point.BPM && Instance?.PointList.SelectedItems.Count == 0)
+                        Instance?.PointList.SelectedItems.Add(item);
+                }
+            }
         }
 
         private void AddPoint_Click(object sender, RoutedEventArgs e)
