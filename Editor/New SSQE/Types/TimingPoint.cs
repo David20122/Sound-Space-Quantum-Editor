@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Globalization;
 
 namespace New_SSQE
 {
@@ -15,6 +15,21 @@ namespace New_SSQE
         {
             BPM = bpm;
             Ms = ms;
+        }
+
+        public TimingPoint(string data, CultureInfo culture)
+        {
+            var split = data.Split('|');
+
+            BPM = float.Parse(split[0], culture);
+            Ms = long.Parse(split[1]);
+        }
+
+        public string ToString(CultureInfo culture)
+        {
+            var bpm = Math.Round(BPM, 2);
+
+            return $",{bpm.ToString(culture)}|{Ms}";
         }
     }
 }

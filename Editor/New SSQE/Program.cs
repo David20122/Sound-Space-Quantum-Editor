@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using System;
 using System.IO;
-using System.Runtime;
 
 namespace New_SSQE
 {
@@ -15,12 +14,6 @@ namespace New_SSQE
 
                 ActionLogging.Register("[Normal application exit]");
                 var logs = string.Join('\n', ActionLogging.Logs);
-
-                var lines = new string[]
-                {
-                    logs,
-                    "If you see any lines that may have caused undesired actions or bugs within the editor, please submit them as a bug report"
-                };
 
                 File.WriteAllText("logs.txt", logs);
             }

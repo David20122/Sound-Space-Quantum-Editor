@@ -64,7 +64,7 @@ namespace New_SSQE
 
             foreach (var line in split)
             {
-                var note = Note.New(line, culture);
+                var note = new Note(line, culture);
 
                 if (note != null)
                     notes.Add(note);

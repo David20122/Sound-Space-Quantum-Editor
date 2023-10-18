@@ -7,23 +7,24 @@ namespace New_SSQE
 {
     internal class UndoRedoManager
     {
-        private List<URAction> actions = new();
+        public readonly List<URAction> actions = new();
 
-        private int index = -1;
+        public int _index = -1;
 
-        public void Add(string label, Action undo, Action redo, bool runRedo = true)
+        public void Add(string label, Action undo, Action redo, bool runRedo = true, bool reload = false)
         {
             try
             {
-                while (index + 1 < actions.Count)
-                    actions.RemoveAt(index + 1);
+                while (_index + 1 < actions.Count)
+                    actions.RemoveAt(_index + 1);
 
                 actions.Add(new URAction(label, undo, redo));
-                ActionLogging.Register($"Action registered: {label}");
-                index++;
+                if (reload)
+                    ActionLogging.Register($"Action registered: {label}");
+                _index++;
 
-                if (runRedo && index < actions.Count && index >= 0)
-                    actions[index].Redo?.Invoke();
+                if (runRedo && _index < actions.Count && _index >= 0)
+                    actions[_index].Redo?.Invoke();
             }
             catch (Exception ex)
             {
@@ -33,36 +34,36 @@ namespace New_SSQE
 
         public void Undo()
         {
-            if (index >= 0)
+            if (_index >= 0)
             {
-                var action = actions[index];
+                var action = actions[_index];
 
                 if (MainWindow.Instance.CurrentWindow is GuiWindowEditor editor)
                     editor.ShowToast($"UNDONE: {action.Label}", Color.FromArgb(255, 109, 0));
 
                     action.Undo?.Invoke();
-                index--;
+                _index--;
             }
         }
 
         public void Redo()
         {
-            if (index + 1 < actions.Count)
+            if (_index + 1 < actions.Count)
             {
-                var action = actions[index + 1];
+                var action = actions[_index + 1];
 
                 if (MainWindow.Instance.CurrentWindow is GuiWindowEditor editor)
                     editor.ShowToast($"REDONE: {action.Label}", Color.FromArgb(255, 109, 0));
 
                     action.Redo?.Invoke();
-                index++;
+                _index++;
             }
         }
 
         public void Clear()
         {
             actions.Clear();
-            index = -1;
+            _index = -1;
         }
     }
 }

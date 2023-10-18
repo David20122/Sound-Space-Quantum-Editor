@@ -11,7 +11,8 @@ namespace New_SSQE.GUI
     internal class GuiWindowEditor : GuiWindow
     {
         private readonly GuiButton CopyButton = new(0, 0, 301, 42, 0, "COPY MAP DATA", 21, true);
-        private readonly GuiButton BackButton = new(0, 0, 301, 42, 1, "BACK TO MENU", 21, true);
+        private readonly GuiButton BackButton = new(0, 0, 235, 42, 1, "BACK TO MENU", 21, true);
+        private readonly GuiButton SaveButton = new(0, 0, 61, 42, 24, "SAVE", 21, true);
 
         private readonly GuiSlider Tempo = new(0, 0, 0, 0, "tempo", false);
         private readonly GuiSlider MasterVolume = new(0, 0, 0, 0, "masterVolume", true);
@@ -127,7 +128,7 @@ namespace New_SSQE.GUI
             Controls = new List<WindowControl>
             {
                 // Buttons
-                CopyButton, BackButton, PlayPause, OptionsNav, TimingNav, UseCurrentMs, OpenTimings, ImportIni, PatternsNav, HFlip, VFlip, StoreNodes, ClearNodes,
+                CopyButton, BackButton, SaveButton, PlayPause, OptionsNav, TimingNav, UseCurrentMs, OpenTimings, ImportIni, PatternsNav, HFlip, VFlip, StoreNodes, ClearNodes,
                 BezierButton, RotateButton, ScaleButton, ReviewNav, OpenBookmarks, CopyBookmarks, PasteBookmarks, ScanClonedNotes, PlayerNav, CameraMode, PlayMap, ExportSSPMButton,
                 // Checkboxes
                 AutoAdvance, Autoplay, ApproachSquares, GridNumbers, GridLetters, Quantum, Numpad, QuantumGridLines, QuantumGridSnap, Metronome, SeparateClickTools, CurveBezier,
@@ -560,6 +561,12 @@ namespace New_SSQE.GUI
                     ExportSSPM.ShowWindow();
 
                     break;
+
+                case 24:
+                    if (editor.SaveMap(true))
+                        ShowToast("SAVED", Settings.settings["color1"]);
+
+                    break;
             }
 
             base.OnButtonClicked(id);
@@ -704,6 +711,7 @@ namespace New_SSQE.GUI
 
             CopyButton.Rect.Location = new PointF(Grid.Rect.X, Grid.Rect.Y - 42 - 75 * heightdiff);
             BackButton.Rect.Location = new PointF(Grid.Rect.X, Grid.Rect.Bottom + 84 * heightdiff);
+            SaveButton.Rect.Location = new PointF(BackButton.Rect.Right + 5, BackButton.Rect.Y);
             ClickModeLabel.Rect.Location = new PointF(Grid.Rect.X, BackButton.Rect.Bottom + 10 * heightdiff);
 
             Timeline.Rect = new RectangleF(0, Rect.Height - 64f, Rect.Width - 576f, 64f);
@@ -740,6 +748,7 @@ namespace New_SSQE.GUI
 
             CopyButton.Update();
             BackButton.Update();
+            SaveButton.Update();
             ClickModeLabel.Update();
 
             Timeline.Update();

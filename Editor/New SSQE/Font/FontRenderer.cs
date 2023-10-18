@@ -65,5 +65,19 @@ namespace New_SSQE
 
             GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, 6, data.Length);
         }
+
+        public static string TrimText(string text, int fontSize, int width, string font = "main")
+        {
+            string end = "...";
+            int endWidth = GetWidth(end, fontSize, font);
+
+            if (GetWidth(text, fontSize, font) < width)
+                return text;
+
+            while (GetWidth(text, fontSize, font) >= width - endWidth)
+                text = text[..^1];
+
+            return text + end;
+        }
     }
 }

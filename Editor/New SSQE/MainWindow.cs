@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 using BigInteger = System.Numerics.BigInteger;
 using System.IO.Compression;
 using OpenTK.Graphics;
-using Avalonia.Controls.Primitives;
+using New_SSQE.Types;
 
 namespace New_SSQE
 {
@@ -38,6 +38,9 @@ namespace New_SSQE
         public UndoRedoManager UndoRedoManager = new();
 
         public GuiWindow CurrentWindow;
+
+        public List<Map> Maps = new();
+        public Map CurrentMap;
 
         public List<Note> Notes = new();
         public List<Note> SelectedNotes = new();
@@ -113,6 +116,8 @@ namespace New_SSQE
             return new WindowIcon(image);
         }
 
+        private const string cacheFile = "assets/temp/cache.txt";
+
         public MainWindow() : base(GameWindowSettings.Default, new NativeWindowSettings()
         {
             Size = (1280, 720),
@@ -141,6 +146,9 @@ namespace New_SSQE
 
             OnMouseWheel(new MouseWheelEventArgs());
             SwitchWindow(new GuiWindowMenu());
+
+            if (File.Exists(cacheFile) && !string.IsNullOrWhiteSpace(File.ReadAllText(cacheFile)))
+                LoadCache();
         }
 
         public void SetVSync(VSyncMode mode)
@@ -682,13 +690,37 @@ namespace New_SSQE
 
         protected override void OnClosing(CancelEventArgs e)
         {
+            bool cancel = false;
+
+            List<Map> tempSave = new();
+            List<Map> tempKeep = new();
+
+            foreach (Map map in Maps.ToList())
+            {
+                if (map.IsSaved())
+                    tempKeep.Add(map);
+                else
+                    tempSave.Add(map);
+            }
+
+            foreach (Map map in tempSave)
+                cancel |= !map.Close(false);
+
+            if (!cancel)
+            {
+                foreach (Map map in tempKeep)
+                    map.Close(false, false, false);
+            }
+
+            e.Cancel = cancel;
+
+            if (CurrentWindow is GuiWindowMenu menu)
+                menu.AssembleMapList();
+
             Settings.Save();
 
             TimingsWindow.Instance?.Close();
             BookmarksWindow.Instance?.Close();
-
-            if (CurrentWindow is GuiWindowEditor)
-                e.Cancel = !SaveMap(false);
 
             if (!e.Cancel)
             {
@@ -1040,6 +1072,11 @@ namespace New_SSQE
             return json.ToString();
         }
 
+        public bool IsSaved()
+        {
+            return FileName != null && File.ReadAllText(FileName) == ParseData();
+        }
+
         public bool SaveMap(bool forced, bool fileForced = false)
         {
             if (FileName != null && !File.Exists(FileName))
@@ -1056,7 +1093,7 @@ namespace New_SSQE
                 var result = DialogResult.No;
 
                 if (!forced)
-                    result = MessageBox.Show("Would you like to save before closing?", "Warning", "Yes", "No", "Cancel");
+                    result = MessageBox.Show($"{Path.GetFileNameWithoutExtension(FileName) ?? "Untitled Song"} ({SoundID})\n\nWould you like to save before closing?", "Warning", "Yes", "No", "Cancel");
 
                 if (forced || result == DialogResult.Yes)
                 {
@@ -1105,6 +1142,22 @@ namespace New_SSQE
 
         public bool LoadMap(string pathOrData, bool file = false, bool autosave = false)
         {
+            CurrentMap?.Save();
+            
+            foreach (Map map in Maps)
+            {
+                if (file && pathOrData == map.RawFileName && map.IsSaved())
+                {
+                    map.MakeCurrent();
+                    SwitchWindow(new GuiWindowEditor());
+
+                    return true;
+                }
+            }
+            
+            CurrentMap = new Map();
+
+            SoundID = "-1";
             FileName = file ? pathOrData : null;
 
             Settings.settings["mappers"] = "";
@@ -1134,6 +1187,14 @@ namespace New_SSQE
                 return false;
 
             var data = file ? File.ReadAllText(pathOrData) : pathOrData;
+
+            try
+            {
+                while (true)
+                    data = WebClient.DownloadString(data);
+            }
+            catch { }
+
             var split = data.Split(',');
 
             var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
@@ -1145,7 +1206,7 @@ namespace New_SSQE
 
                 for (int i = 1; i < split.Length; i++)
                     if (!string.IsNullOrWhiteSpace(split[i]))
-                        Notes.Add(Note.New(split[i], culture));
+                        Notes.Add(new(split[i], culture));
 
                 SortNotes();
 
@@ -1174,6 +1235,12 @@ namespace New_SSQE
                     SortTimings();
                     SortBookmarks();
 
+                    CurrentMap.Save();
+                    CurrentMap.MakeCurrent();
+
+                    Maps.Add(CurrentMap);
+                    CacheMaps();
+
                     SwitchWindow(new GuiWindowEditor());
                 }
             }
@@ -1187,6 +1254,34 @@ namespace New_SSQE
             }
 
             return SoundID != "-1";
+        }
+
+        public void CacheMaps()
+        {
+            string[] data = new string[Maps.Count];
+
+            for (int i = 0; i < Maps.Count; i++)
+                data[i] = Maps[i].ToString();
+
+            string text = string.Join("\0\n\0", data);
+
+            if (!Directory.Exists("assets/temp"))
+                Directory.CreateDirectory("assets/temp");
+            File.WriteAllText(cacheFile, text);
+        }
+
+        public void LoadCache()
+        {
+            Maps.Clear();
+            string[] data = File.ReadAllText(cacheFile).Split("\0\n\0");
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                Map map = new();
+
+                if (map.FromString(data[i]))
+                    Maps.Add(map);
+            }
         }
 
         public void LoadLegacyProperties(string text)
@@ -1680,40 +1775,26 @@ namespace New_SSQE
 
         public void SwitchWindow(GuiWindow window)
         {
-            if (CurrentWindow is not GuiWindowEditor || SaveMap(false))
+            if (CurrentWindow is GuiWindowEditor)
+                CurrentMap.Save();
+
+            if (window is GuiWindowEditor)
             {
-                if (CurrentWindow is GuiWindowEditor)
-                {
-                    SoundID = "-1";
-                    FileName = null;
-
-                    Notes.Clear();
-                    UndoRedoManager.Clear();
-                    SelectedNotes.Clear();
-                    UpdateSelection();
-                    SelectedPoint = null;
-
-                    MusicPlayer.Reset();
-                }
-
-                if (window is GuiWindowEditor)
-                {
-                    SetActivity("Editing a map");
-                    RunAutosave(DateTime.Now.Millisecond);
-                }
-                else if (window is GuiWindowMenu)
-                    SetActivity("Sitting in the menu");
-
-                ExportSSPM.Instance?.Close();
-                BPMTapper.Instance?.Close();
-                TimingsWindow.Instance?.Close();
-                BookmarksWindow.Instance?.Close();
-
-                CurrentWindow?.Dispose();
-                CurrentWindow = window;
-
-                Settings.Save();
+                SetActivity("Editing a map");
+                RunAutosave(DateTime.Now.Millisecond);
             }
+            else if (window is GuiWindowMenu)
+                SetActivity("Sitting in the menu");
+
+            ExportSSPM.Instance?.Close();
+            BPMTapper.Instance?.Close();
+            TimingsWindow.Instance?.Close();
+            BookmarksWindow.Instance?.Close();
+
+            CurrentWindow?.Dispose();
+            CurrentWindow = window;
+
+            Settings.Save();
         }
 
 

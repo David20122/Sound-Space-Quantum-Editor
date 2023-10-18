@@ -24,23 +24,21 @@ namespace New_SSQE
             Ms = ms;
         }
 
+        public Note(string data, CultureInfo culture)
+        {
+            var split = data.Split('|');
+
+            X = 2 - float.Parse(split[0], culture);
+            Y = 2 - float.Parse(split[1], culture);
+            Ms = long.Parse(split[2]);
+        }
+
         public string ToString(CultureInfo culture)
         {
             var x = Math.Round(2 - X, 2);
             var y = Math.Round(2 - Y, 2);
 
             return $",{x.ToString(culture)}|{y.ToString(culture)}|{Ms}";
-        }
-
-        public static Note New(string data, CultureInfo culture)
-        {
-            var split = data.Split('|');
-
-            var x = 2 - float.Parse(split[0], culture);
-            var y = 2 - float.Parse(split[1], culture);
-            var ms = long.Parse(split[2]);
-
-            return new Note(x, y, ms);
         }
     }
 }

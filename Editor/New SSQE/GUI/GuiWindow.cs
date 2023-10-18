@@ -104,8 +104,9 @@ namespace New_SSQE.GUI
             {
                 buttonClicked = false;
 
-                foreach (var control in controlsCopied)
+                for (int i = controlsCopied.Count; i > 0; i--)
                 {
+                    var control = controlsCopied[i - 1];
                     var hitbox = control.Rect;
 
                     if (control is GuiSlider)
