@@ -228,7 +228,8 @@ namespace New_SSQE.GUI
         {
             Grid?.ClearPreviewNotes();
 
-            toastTime = Math.Min(2, toastTime + frametime);
+            if (frametime < 2)
+                toastTime = Math.Min(2, toastTime + frametime);
 
             var toastOffset = 1f;
 
@@ -240,7 +241,7 @@ namespace New_SSQE.GUI
             var toastHeight = FontRenderer.GetHeight(ToastLabel.TextSize, ToastLabel.Font);
             ToastLabel.Rect.Location = new PointF(Rect.X + Rect.Width / 2f, Rect.Height - toastOffset * toastHeight * 2.25f + toastHeight / 2f);
             ToastLabel.Color = Color.FromArgb((int)(Math.Pow(toastOffset, 3) * 255), ToastLabel.Color);
-
+            
             ToastLabel.Update();
 
             var editor = MainWindow.Instance;
