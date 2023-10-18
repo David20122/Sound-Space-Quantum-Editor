@@ -375,7 +375,13 @@ namespace SSQE_Player.GUI
 
             waitTimer = 2000f;
             started = false;
+
             Paused = false;
+            Unpausing = false;
+            PauseTime = float.MinValue;
+            Pauses = 0;
+
+            resetTimer = 0;
 
             MainWindow.Instance.MusicPlayer.Reset();
             Settings.settings["currentTime"].Value = MainWindow.Instance.StartTime;
