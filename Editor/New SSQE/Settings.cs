@@ -120,7 +120,9 @@ namespace New_SSQE
             {"songName", "" },
             {"difficulty", "N/A" },
             {"useCover", true },
-            {"cover", "Default" }
+            {"cover", "Default" },
+
+            {"debugMode", false },
         };
 
         private static readonly List<Keys> numpadKeys = new() { Keys.KeyPad7, Keys.KeyPad8, Keys.KeyPad9, Keys.KeyPad4, Keys.KeyPad5, Keys.KeyPad6, Keys.KeyPad1, Keys.KeyPad2, Keys.KeyPad3 };

@@ -14,6 +14,12 @@ namespace New_SSQE
             var logF = $"[{timestamp} - {tag.ToUpper()}] {log}";
 
             Logs.Add(logF);
+
+            if (Settings.settings["debugMode"])
+            {
+                var logs = string.Join('\n', Logs);
+                File.WriteAllText("logs-debug.txt", logs);
+            }
         }
     }
 }

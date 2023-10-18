@@ -92,6 +92,18 @@ namespace New_SSQE
 
 
 
+        private static void OnDebugMessage(DebugSource source, DebugType type, uint id, DebugSeverity severity, int length, IntPtr pMessage, IntPtr pUserParam)
+        {
+            string message = Marshal.PtrToStringAnsi(pMessage, length);
+
+            if (type == DebugType.DebugTypeError)
+                ActionLogging.Register($"[OpenGL Error] (source={source} type={type} id={id}) {message}", "WARN");
+        }
+
+        private static GLDebugProc DebugMessageDelegate = OnDebugMessage;
+
+
+
         private static WindowIcon GetWindowIcon()
         {
             var bytes = File.ReadAllBytes("assets/textures/Icon.ico");
@@ -107,9 +119,13 @@ namespace New_SSQE
             Title = $"Sound Space Quantum Editor {Assembly.GetExecutingAssembly().GetName().Version}",
             NumberOfSamples = 32,
             WindowState = WindowState.Maximized,
-            Icon = GetWindowIcon()
+            Icon = GetWindowIcon(),
+            Flags = ContextFlags.Debug
         })
         {
+            GL.DebugMessageCallback(DebugMessageDelegate, IntPtr.Zero);
+            GL.Enable(EnableCap.DebugOutput);
+
             Shader.Init();
 
             Instance = this;
