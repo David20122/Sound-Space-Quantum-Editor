@@ -180,7 +180,18 @@ namespace SSQE_Player
                         CurrentWindow.Paused = true;
                     }
                     break;
+
+                case Keys.LeftControl:
+                case Keys.RightControl:
+                    CursorState = CursorState.Normal;
+                    break;
             }
+        }
+
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            if (e.Button == MouseButton.Left && IsFocused)
+                CursorState = CursorState.Grabbed;
         }
 
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
