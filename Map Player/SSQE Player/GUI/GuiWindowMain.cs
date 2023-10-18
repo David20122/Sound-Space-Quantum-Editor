@@ -67,12 +67,17 @@ namespace SSQE_Player.GUI
 
             Labels = new List<GuiLabel>
             {
-                AccuracyLabel, ComboLabel, MissesLabel, InfoLabel, PausedLabel, HitWindowLabel, FPSLabel
+                AccuracyLabel, ComboLabel, MissesLabel, InfoLabel, PausedLabel, HitWindowTempoLabel, OffsetLabel, FPSLabel
             };
 
             hitWindow = (int)Settings.settings["hitWindow"];
+            float tempo = (float)Math.Round(Settings.settings["tempo"].Value + 0.1f, 4) * 100f;
+
             if (hitWindow != 55)
-                HitWindowLabel.Text = $"HW: {hitWindow}ms";
+                HitWindowTempoLabel.Text = $"HW: {hitWindow}ms";
+            if (tempo != 100f)
+                HitWindowTempoLabel.Text += (hitWindow != 55 ? " | " : "") + $"Tempo: {tempo:#0.##}%";
+
             noteIndex = startIndex;
 
             Init();
