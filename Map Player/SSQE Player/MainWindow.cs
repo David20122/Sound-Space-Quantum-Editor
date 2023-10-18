@@ -94,9 +94,6 @@ namespace SSQE_Player
             Camera.Update(pos.X, pos.Y);
             CurrentWindow?.Render((float)args.Time);
 
-            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
-            GL.BindVertexArray(VertexArrayHandle.Zero);
-
             SwapBuffers();
         }
 
@@ -204,6 +201,11 @@ namespace SSQE_Player
                     CurrentWindow.Unpausing = false;
                     break;
             }
+        }
+
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            CurrentWindow.Offset += (int)e.OffsetY;
         }
 
         protected override void OnClosing(CancelEventArgs e)
