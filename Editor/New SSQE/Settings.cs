@@ -49,6 +49,7 @@ namespace New_SSQE
             {"gridOpacity", 255 },
             {"trackOpacity", 255 },
             {"autosaveInterval", 5 },
+            {"waveformDetail", 5 },
             {"sfxOffset", 0 },
             {"exportOffset", 0 },
             {"bezierDivisor", 4 },

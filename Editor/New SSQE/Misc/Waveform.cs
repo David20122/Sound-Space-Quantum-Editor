@@ -36,7 +36,7 @@ namespace New_SSQE
                 Bass.BASS_ChannelSetPosition(streamID, 0L);
             }
 
-            double resolution = 0.002;
+            double resolution = 1 / (double)Settings.settings["waveformDetail"] / 100;
             int bpf = (int)Bass.BASS_ChannelSeconds2Bytes(streamID, resolution);
 
             int framesToRender = (int)Math.Ceiling(length / bpf);

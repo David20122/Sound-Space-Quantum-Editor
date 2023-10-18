@@ -58,8 +58,11 @@ namespace New_SSQE.GUI
         private readonly GuiLabel TrackOpacityLabel = new(560, 434, 200, 26, "Track Opacity:", 24, false, false, "main", false);
         private readonly GuiSquare TrackOpacitySquare = new(770, 445, 75, 75, Color.FromArgb(255, 255, 255, 255));
 
-        private readonly GuiTextbox AutosaveIntervalTextbox = new(950, 256, 200, 50, "", 28, true, false, false, "autosaveInterval", "main", false, true);
+        private readonly GuiTextbox AutosaveIntervalTextbox = new(950, 256, 200, 50, "", 28, true, false, false, "autosaveInterval", "main", false, true, true);
         private readonly GuiLabel AutosaveIntervalLabel = new(950, 230, 200, 26, "Autosave Interval (min):", 24, false, false, "main", false);
+
+        private readonly GuiTextbox WaveformDetailTextbox = new(950, 556, 200, 50, "", 28, true, false, false, "waveformDetail", "main", false, true, true);
+        private readonly GuiLabel WaveformDetailLabel = new(950, 530, 200, 26, "Waveform Level of Detail:", 24, false, false, "main", false);
 
         private readonly List<GuiSquare> ColorPickerSquares = new();
         private readonly List<GuiSquare> OpacitySquares = new();
@@ -83,9 +86,10 @@ namespace New_SSQE.GUI
                 WaveformCheckbox, ClassicWaveformCheckbox, AutosaveCheckbox, CorrectOnCopyCheckbox, SkipDownloadCheckbox, ReverseScrollCheckbox, UseVSyncCheckbox,
                 CheckForUpdatesCheckbox, FullscreenPlayerCheckbox,
                 // Boxes
-                EditorBGOpacityTextbox, GridOpacityTextbox, TrackOpacityTextbox, AutosaveIntervalTextbox,
+                EditorBGOpacityTextbox, GridOpacityTextbox, TrackOpacityTextbox, AutosaveIntervalTextbox, WaveformDetailTextbox,
                 // Labels
-                Color1Label, Color2Label, Color3Label, Color4Label, NoteColorLabel, NoteColorInfo, EditorBGOpacityLabel, GridOpacityLabel, TrackOpacityLabel, AutosaveIntervalLabel
+                Color1Label, Color2Label, Color3Label, Color4Label, NoteColorLabel, NoteColorInfo, EditorBGOpacityLabel, GridOpacityLabel, TrackOpacityLabel, AutosaveIntervalLabel,
+                WaveformDetailLabel
             };
 
             BackgroundSquare = new(0, 0, 1920, 1080, Color.FromArgb(255, 30, 30, 30), false, "background_menu.png", "menubg");
