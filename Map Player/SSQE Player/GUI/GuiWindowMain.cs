@@ -57,10 +57,14 @@ namespace SSQE_Player.GUI
 
         private int frames;
         private float time;
+        private int startIndex;
+
         public int Offset;
 
         public GuiWindowMain(int startIndex) : base(0, 0, MainWindow.Instance.Size.X, MainWindow.Instance.Size.Y)
         {
+            this.startIndex = startIndex;
+
             Labels = new List<GuiLabel>
             {
                 AccuracyLabel, ComboLabel, MissesLabel, InfoLabel, PausedLabel, HitWindowLabel, FPSLabel
@@ -360,7 +364,7 @@ namespace SSQE_Player.GUI
         public void Reset()
         {
             cubes.Clear();
-            noteIndex = 0;
+            noteIndex = startIndex;
 
             hits = 0;
             misses = 0;
