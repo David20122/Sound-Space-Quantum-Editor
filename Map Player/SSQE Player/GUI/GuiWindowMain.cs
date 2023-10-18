@@ -12,9 +12,10 @@ namespace SSQE_Player.GUI
         private readonly GuiLabel AccuracyLabel = new(930, 10, 60, 24, "", 24, true, Settings.settings["color1"]);
         private readonly GuiLabel ComboLabel = new(930, 35, 60, 24, "", 24, true, Settings.settings["color1"]);
         private readonly GuiLabel MissesLabel = new(930, 60, 60, 24, "", 24, true, Settings.settings["color2"]);
-        private readonly GuiLabel InfoLabel = new(10, 10, 100, 50, "QUIT: Escape or R\nRESTART: Tab\nPAUSE: Space", 32, false, Settings.settings["color2"]);
-        private readonly GuiLabel PausedLabel = new(930, 1000, 60, 80, "PAUSED", 64, true, Color.FromArgb(0, 127, 255));
-        private readonly GuiLabel HitWindowLabel = new(10, 1050, 60, 40, "", 24, false, Settings.settings["color2"]);
+        private readonly GuiLabel InfoLabel = new(10, 10, 100, 50, "QUIT: Escape or R\nRESTART: Tab\nPAUSE: Space\nOFFSET: Scroll", 32, false, Settings.settings["color2"]);
+        private readonly GuiLabel PausedLabel = new(930, 980, 60, 60, "PAUSED", 64, true, Color.FromArgb(0, 127, 255));
+        private readonly GuiLabel HitWindowTempoLabel = new(10, 1050, 60, 40, "", 24, false, Settings.settings["color2"]);
+        private readonly GuiLabel OffsetLabel = new(930, 1040, 60, 40, "", 24, true, Settings.settings["color2"]);
         private readonly GuiLabel FPSLabel = new(1800, 1050, 60, 40, "", 24, false, Settings.settings["color2"]);
 
         private Matrix4 noteScale = Matrix4.CreateScale(1);
@@ -56,6 +57,7 @@ namespace SSQE_Player.GUI
 
         private int frames;
         private float time;
+        public int Offset;
 
         public GuiWindowMain(int startIndex) : base(0, 0, MainWindow.Instance.Size.X, MainWindow.Instance.Size.Y)
         {
@@ -134,6 +136,7 @@ namespace SSQE_Player.GUI
             AccuracyLabel.Text = CalculateAccuracy();
             ComboLabel.Text = combo.ToString();
             MissesLabel.Text = $"{misses} | {Pauses}";
+            OffsetLabel.Text = Offset != 0 ? $"Offset: {Offset:#0}ms" : "";
 
             frames++;
             time += frametime;
@@ -158,7 +161,7 @@ namespace SSQE_Player.GUI
         private void AlignNotes(float frametime)
         {
             var main = MainWindow.Instance;
-            var currentTime = Settings.settings["currentTime"].Value - waitTimer;
+            var currentTime = Settings.settings["currentTime"].Value - waitTimer - Offset;
 
             waitTimer = Math.Max(0f, waitTimer - frametime * 1000f);
             if (waitTimer <= 0 && !started)
