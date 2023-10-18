@@ -39,6 +39,9 @@ namespace SSQE_Player
 
         public static void SetActive()
         {
+            // why does discord streaming unbind the texture
+            GL.BindTexture(TextureTarget.Texture2d, main.Handle);
+
             GL.BindVertexArray(main.VaO);
         }
 
