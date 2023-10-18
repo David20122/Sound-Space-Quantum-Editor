@@ -511,6 +511,8 @@ namespace New_SSQE
                                 }, () =>
                                 {
                                     TimingPoints.Remove(clone);
+
+                                    SortTimings();
                                 });
                             }
 
