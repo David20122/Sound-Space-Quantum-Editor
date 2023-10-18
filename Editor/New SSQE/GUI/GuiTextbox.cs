@@ -16,6 +16,7 @@ namespace New_SSQE.GUI
         public string Setting;
         public bool IsKeybind;
         public bool IsFloat;
+        public bool IsPositive;
 
         public bool Numeric;
         public bool Focused;
@@ -25,7 +26,7 @@ namespace New_SSQE.GUI
         private Color textColor;
         private Color prevColor = Color.White;
 
-        public GuiTextbox(float posx, float posy, float sizex, float sizey, string text, int textSize, bool numeric, bool lockSize = false, bool moveWithOffset = false, string setting = "", string font = "main", bool isKeybind = false, bool isFloat = false) : base(posx, posy, sizex, sizey)
+        public GuiTextbox(float posx, float posy, float sizex, float sizey, string text, int textSize, bool numeric, bool lockSize = false, bool moveWithOffset = false, string setting = "", string font = "main", bool isKeybind = false, bool isFloat = false, bool isPositive = false) : base(posx, posy, sizex, sizey)
         {
             Text = text;
             prevText = Text;
@@ -37,6 +38,7 @@ namespace New_SSQE.GUI
             Setting = setting;
             IsKeybind = isKeybind;
             IsFloat = isFloat;
+            IsPositive = isPositive;
 
             if (isKeybind)
             {
@@ -293,7 +295,11 @@ namespace New_SSQE.GUI
         private void SetSetting()
         {
             if (Setting != "" && (IsFloat ? float.TryParse(Text, out _) : int.TryParse(Text, out _)))
-                Settings.settings[Setting] = float.Parse(Text);
+            {
+                var num = IsFloat ? float.Parse(Text) : int.Parse(Text);
+                if (!IsPositive || (IsPositive && num > 0))
+                    Settings.settings[Setting] = num;
+            }
         }
 
         // i dont remember how this works but it does so woo
