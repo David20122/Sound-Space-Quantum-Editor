@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Drawing;
 
 namespace New_SSQE
 {
@@ -13,7 +12,6 @@ namespace New_SSQE
 
         public long DragStartMs;
         public bool Selected;
-        public bool TempSelected;
 
         public bool Anchored;
 

@@ -70,7 +70,11 @@ namespace New_SSQE.Types
             editor.SoundID = soundID;
 
             if (loadAudio)
+            {
                 editor.LoadAudio(soundID);
+                Settings.settings["currentTime"].Max = (float)editor.MusicPlayer.TotalTime.TotalMilliseconds;
+                Settings.settings["currentTime"].Step = (float)editor.MusicPlayer.TotalTime.TotalMilliseconds / 2000f;
+            }
 
             Settings.settings["currentTime"].Value = currentTime;
             Settings.settings["beatDivisor"].Value = beatDivisor;
