@@ -293,6 +293,16 @@ namespace SSQE_Player.GUI
 
             // grid
             vertices.AddRange(GLU.Outline(-1.5f, -1.5f, 0, 3, 3, 0.02f, c1));
+
+            // grid guides
+            if (Settings.settings["gridGuides"])
+            {
+                vertices.AddRange(GLU.Line(-0.5f, -1.5f, 0, -0.5f, 1.5f, 0, 0.01f, 0.5f, 0.5f, 0.5f, 0.5f));
+                vertices.AddRange(GLU.Line(0.5f, -1.5f, 0, 0.5f, 1.5f, 0, 0.01f, 0.5f, 0.5f, 0.5f, 0.5f));
+                vertices.AddRange(GLU.Line(-1.5f, -0.5f, 0, 1.5f, -0.5f, 0, 0.01f, 0.5f, 0.5f, 0.5f, 0.5f));
+                vertices.AddRange(GLU.Line(-1.5f, 0.5f, 0, 1.5f, 0.5f, 0, 0.01f, 0.5f, 0.5f, 0.5f, 0.5f));
+            }
+
             // lines
             vertices.AddRange(GLU.FadingLine(-2.5f, -1.5f, -10, -2.5f, -1.5f, 75, 0.06f, c1));
             vertices.AddRange(GLU.FadingLine(2.5f, -1.5f, -10, 2.5f, -1.5f, 75, 0.06f, c1));

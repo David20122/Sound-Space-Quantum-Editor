@@ -19,6 +19,7 @@ namespace SSQE_Player
             {"lockCursor", true },
             {"fullscreenPlayer", true },
             {"approachFade", false },
+            {"gridGuides", false },
 
             {"currentTime", new SliderSetting(0f, 0f, 0f) },
             {"tempo", new SliderSetting(0.9f, 1.4f, 0.05f) },

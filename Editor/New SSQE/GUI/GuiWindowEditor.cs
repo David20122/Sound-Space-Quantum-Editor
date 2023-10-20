@@ -76,8 +76,9 @@ namespace New_SSQE.GUI
         private readonly GuiTextbox HitWindow = new(225, 595, 128, 40, "55", 25, true, false, true, "hitWindow", "main", false, true);
         private readonly GuiSlider PlayerApproachRate = new(10, 670, 400, 32, "playerApproachRate", false, false, true);
         private readonly GuiCheckbox ApproachFade = new(10, 710, 40, 40, "approachFade", "Enable Approach Fade", 25, false, true);
-        private readonly GuiCheckbox FromStart = new(10, 760, 40, 40, "fromStart", "Play From Start", 25, false, true);
-        private readonly GuiButton PlayMap = new(10, 810, 256, 40, 18, "PLAY MAP", 21, false, true);
+        private readonly GuiCheckbox GridGuides = new(10, 760, 40, 40, "gridGuides", "Show Grid Guides", 25, false, true);
+        private readonly GuiCheckbox FromStart = new(10, 810, 40, 40, "fromStart", "Play From Start", 25, false, true);
+        private readonly GuiButton PlayMap = new(10, 860, 256, 40, 18, "PLAY MAP", 21, false, true);
 
         private readonly GuiLabel ToastLabel = new(0, 0, 0, 0, "", 36);
 
@@ -132,7 +133,7 @@ namespace New_SSQE.GUI
                 BezierButton, RotateButton, ScaleButton, ReviewNav, OpenBookmarks, CopyBookmarks, PasteBookmarks, ScanClonedNotes, PlayerNav, CameraMode, PlayMap, ExportSSPMButton,
                 // Checkboxes
                 AutoAdvance, Autoplay, ApproachSquares, GridNumbers, GridLetters, Quantum, Numpad, QuantumGridLines, QuantumGridSnap, Metronome, SeparateClickTools, CurveBezier,
-                ApplyOnPaste, LockCursor, ApproachFade, FromStart,
+                ApplyOnPaste, LockCursor, ApproachFade, FromStart, GridGuides,
                 // Sliders
                 Tempo, MasterVolume, SfxVolume, BeatSnapDivisor, QuantumSnapDivisor, Timeline, TrackHeight, TrackCursorPos, ApproachRate, PlayerApproachRate,
                 // Boxes
@@ -661,6 +662,7 @@ namespace New_SSQE.GUI
             HitWindow.Visible = playerNav;
             PlayerApproachRate.Visible = playerNav;
             ApproachFade.Visible = playerNav;
+            GridGuides.Visible = playerNav;
             FromStart.Visible = playerNav;
             PlayMap.Visible = playerNav;
             CameraModeLabel.Visible = playerNav;
