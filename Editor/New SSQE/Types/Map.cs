@@ -93,10 +93,6 @@ namespace New_SSQE.Types
 
             editor.UndoRedoManager._index = urIndex;
 
-            editor.SortNotes();
-            editor.SortTimings();
-            editor.SortBookmarks();
-
             editor.UpdateSelection();
         }
 
