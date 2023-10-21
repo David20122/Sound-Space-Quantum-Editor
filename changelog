@@ -1,4 +1,27 @@
 ----------------------------------
+     -- 2.1.1.0 - 10/20/2023 --
+
+- fixed showing Saved toast on new file
+- fixed showing deletion of timing points from the track on the timing window
+- added a setting to change the waveform's level of detail
+- the autosave interval can no longer be set to less than or equal to 0
+- the current timing point is now highlighted in the timing window when opened
+- added a save button to the editor window next to the back to menu button
+- opened maps are now cached and can be accessed via the bottom of the menu after exiting, allowing multiple maps or versions of a map to be loaded on the same instance and easily navigate between them
+
+    -- P-2.1.1.0 - 10/20/2023 --
+
+- required OpenGL version now matches the editor (3.3)
+- fixed rendering text when streaming to Discord
+- fixed resetting the pause counter after restarting a map
+- fixed pausing not working after restarting a map
+- fixed the wrong note index being used when restarting a map
+- the tempo is now shown in the bottom left of the window when it is not 100%
+- scrolling up and down now adjusts the map's offset
+- pressing CTRL now releases the cursor from being locked in the player, can be undone by clicking anywhere in the window or by refocusing the window
+- added a setting to enable grid guides
+
+----------------------------------
      -- 2.1.0.4 - 8/10/2023 --
 
 - fixed importing OSU timing points
