@@ -76,6 +76,8 @@ namespace New_SSQE.Types
                 Settings.settings["currentTime"].Step = (float)editor.MusicPlayer.TotalTime.TotalMilliseconds / 2000f;
             }
 
+            editor.MusicPlayer.Tempo = tempo;
+
             Settings.settings["currentTime"].Value = currentTime;
             Settings.settings["beatDivisor"].Value = beatDivisor;
             Settings.settings["exportOffset"] = exportOffset;
