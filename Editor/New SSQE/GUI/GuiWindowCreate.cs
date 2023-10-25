@@ -52,6 +52,9 @@ namespace New_SSQE.GUI
                     break;
 
                 case 1:
+                    editor.CurrentMap?.Save();
+                    editor.CurrentMap = null;
+
                     if (editor.PromptImport(audioId, true))
                         editor.LoadMap(MainWindow.Instance.SoundID);
 
