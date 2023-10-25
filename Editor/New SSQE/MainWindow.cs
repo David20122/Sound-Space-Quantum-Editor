@@ -41,6 +41,7 @@ namespace New_SSQE
 
         public List<Map> Maps = new();
         public Map CurrentMap;
+        private Map prevMap;
 
         public List<Note> Notes = new();
         public List<Note> SelectedNotes = new();
@@ -192,6 +193,12 @@ namespace New_SSQE
             catch (Exception ex)
             {
                 ActionLogging.Register($"Failed to render frame - {ex.GetType().Name}\n{ex.StackTrace}", "ERROR");
+            }
+
+            if (CurrentMap != prevMap && CurrentWindow is GuiWindowEditor editor)
+            {
+                editor.Timeline.GenerateOffsets();
+                prevMap = CurrentMap;
             }
 
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
