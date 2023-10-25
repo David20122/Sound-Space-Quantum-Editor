@@ -1,4 +1,11 @@
 ----------------------------------
+     -- 2.1.1.1 - 10/24/2023 --
+
+- fixed updating tempo when reloading a map
+- fixed importing files via the create menu overwriting the asset id of the previously loaded map
+- fixed ghost notes and rendering artifacts on the timeline
+
+----------------------------------
      -- 2.1.1.0 - 10/20/2023 --
 
 - fixed showing Saved toast on new file
