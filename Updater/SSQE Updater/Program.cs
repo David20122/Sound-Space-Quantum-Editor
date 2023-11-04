@@ -33,6 +33,9 @@ namespace SSQE_Updater
 
             bool IsNewer(string oldVersion, string checkVersion)
             {
+                if (string.IsNullOrWhiteSpace(oldVersion))
+                    return true;
+
                 string[] oldSplit = oldVersion.Split('.');
                 string[] checkSplit = checkVersion.Split('.');
 
