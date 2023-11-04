@@ -63,6 +63,7 @@ namespace New_SSQE.GUI
             if (IsTextured)
             {
                 TextureManager.SetActive(0);
+                GL.BindTexture(TextureTarget.Texture2d, tHandle);
 
                 GL.BindVertexArray(tVaO);
                 GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
