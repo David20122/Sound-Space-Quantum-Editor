@@ -699,6 +699,8 @@ namespace New_SSQE
         {
             bool cancel = false;
 
+            Map temp = CurrentMap;
+
             List<Map> tempSave = new();
             List<Map> tempKeep = new();
 
@@ -718,6 +720,8 @@ namespace New_SSQE
                 foreach (Map map in tempKeep)
                     map.Close(false, false, false);
             }
+            else
+                temp.MakeCurrent();
 
             e.Cancel = cancel;
 
