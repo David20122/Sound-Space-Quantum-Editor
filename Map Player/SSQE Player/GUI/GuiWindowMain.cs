@@ -71,7 +71,7 @@ namespace SSQE_Player.GUI
             };
 
             hitWindow = (int)Settings.settings["hitWindow"];
-            float tempo = (float)Math.Round(Settings.settings["tempo"].Value + 0.1f, 4) * 100f;
+            float tempo = (float)Math.Round(MainWindow.Instance.Tempo, 4) * 100f;
 
             if (hitWindow != 55)
                 HitWindowTempoLabel.Text = $"HW: {hitWindow}ms";
