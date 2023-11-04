@@ -1,4 +1,20 @@
 ----------------------------------
+     -- 2.1.1.2 - 11/3/2023 --
+
+- added a small toast that appears when placing a note without a timing point present, with a cooldown of 5 seconds between each appearance
+- fixed background disappearing after streaming to discord
+- fixed the wrong map being loaded after cancelling a close
+
+    -- P-2.1.1.1 - 11/3/2023 --
+
+- fixed tempo text above 100%
+- fixed tempo not affecting the note speed during the pre-map delay
+
+    -- U-2.0.1.1 - 11/3/2023 --
+
+- fixed version check when no editor exe is present
+
+----------------------------------
      -- 2.1.1.1 - 10/24/2023 --
 
 - fixed updating tempo when reloading a map
