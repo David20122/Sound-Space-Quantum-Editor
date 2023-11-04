@@ -73,13 +73,13 @@ namespace SSQE_Player
             var startIndex = LoadMap(File.ReadAllText("assets/temp/tempmap.txt"));
             RegisterModels();
 
-            Camera = new();
-            CurrentWindow = new(startIndex);
-
             MusicPlayer.Volume = Settings.settings["masterVolume"].Value;
             SoundPlayer.Volume = Settings.settings["sfxVolume"].Value;
 
             SetTempo(Settings.settings["tempo"].Value);
+
+            Camera = new();
+            CurrentWindow = new(startIndex);
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)

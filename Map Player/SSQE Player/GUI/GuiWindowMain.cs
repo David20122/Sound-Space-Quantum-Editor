@@ -71,6 +71,7 @@ namespace SSQE_Player.GUI
             };
 
             hitWindow = (int)Settings.settings["hitWindow"];
+            waitTimer *= MainWindow.Instance.Tempo;
             float tempo = (float)Math.Round(MainWindow.Instance.Tempo, 4) * 100f;
 
             if (hitWindow != 55)
@@ -172,7 +173,7 @@ namespace SSQE_Player.GUI
             var main = MainWindow.Instance;
             var currentTime = Settings.settings["currentTime"].Value - waitTimer - Offset;
 
-            waitTimer = Math.Max(0f, waitTimer - frametime * 1000f);
+            waitTimer = Math.Max(0f, waitTimer - frametime * 1000f * main.Tempo);
             if (waitTimer <= 0 && !started)
             {
                 started = true;
