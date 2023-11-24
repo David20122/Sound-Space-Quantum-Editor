@@ -58,6 +58,9 @@ namespace New_SSQE
             {"parallax", 1 },
             {"approachDistance", 1 },
             {"hitWindow", 55 },
+            {"fov", 70 },
+            {"noteScale", 1 },
+            {"cursorScale", 1 },
 
             {"autosavedFile", "" },
             {"autosavedProperties", "" },

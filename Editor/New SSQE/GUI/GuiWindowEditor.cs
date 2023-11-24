@@ -68,10 +68,13 @@ namespace New_SSQE.GUI
         private readonly GuiButton ExportSSPMButton = new(10, 585, 256, 40, 23, "EXPORT SSPM", 21, false, true);
 
         private readonly GuiButton PlayerNav = new(10, 300, 400, 50, 17, "PLAYER >", 25, false, true);
-        private readonly GuiButtonList CameraMode = new(10, 395, 256, 40, "cameraMode", 21, false, true);
+        private readonly GuiButtonList CameraMode = new(10, 395, 148, 40, "cameraMode", 21, false, true);
+        private readonly GuiTextbox NoteScale = new(168, 395, 108, 40, "1", 25, true, false, true, "noteScale", "main", false, true);
+        private readonly GuiTextbox CursorScale = new(285, 395, 108, 40, "1", 25, true, false, true, "cursorScale", "main", false, true);
         private readonly GuiCheckbox LockCursor = new(10, 445, 40, 40, "lockCursor", "Lock Cursor Within Grid", 25, false, true);
-        private readonly GuiTextbox Sensitivity = new(10, 520, 128, 40, "1", 25, true, false, true, "sensitivity", "main", false, true);
-        private readonly GuiTextbox Parallax = new(225, 520, 128, 40, "1", 25, true, false, true, "parallax", "main", false, true);
+        private readonly GuiTextbox Sensitivity = new(10, 520, 108, 40, "1", 25, true, false, true, "sensitivity", "main", false, true);
+        private readonly GuiTextbox Parallax = new(128, 520, 108, 40, "1", 25, true, false, true, "parallax", "main", false, true);
+        private readonly GuiTextbox FieldOfView = new(245, 520, 108, 40, "70", 25, true, false, true, "fov", "main", false, true);
         private readonly GuiTextbox ApproachDistance = new(10, 595, 128, 40, "1", 25, true, false, true, "approachDistance", "main", false, true);
         private readonly GuiTextbox HitWindow = new(225, 595, 128, 40, "55", 25, true, false, true, "hitWindow", "main", false, true);
         private readonly GuiSlider PlayerApproachRate = new(10, 670, 400, 32, "playerApproachRate", false, false, true);
@@ -113,9 +116,12 @@ namespace New_SSQE.GUI
         private readonly GuiLabel ClonePercentLabel = new(302, 467, 100, 30, "", 25, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel CloneThresholdLabel = new(10, 508, 158, 30, "Copied Streak Threshold:", 24, false, true, "main", false, Settings.settings["color1"]);
 
-        private readonly GuiLabel CameraModeLabel = new(10, 368, 158, 30, "Camera Mode:", 24, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel SensitivityLabel = new(10, 493, 158, 30, "Sensitivity:", 24, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ParallaxLabel = new(225, 493, 155, 30, "Parallax:", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel CameraModeLabel = new(10, 368, 128, 30, "Camera Mode:", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel NoteScaleLabel = new(168, 368, 128, 30, "Note Size:", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel CursorScaleLabel = new(285, 368, 128, 30, "Cursor Size:", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel SensitivityLabel = new(10, 493, 128, 30, "Sensitivity:", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel ParallaxLabel = new(128, 493, 128, 30, "Parallax:", 24, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel FieldOfViewLabel = new(245, 493, 128, 30, "FOV:", 24, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel ApproachDistanceLabel = new(10, 568, 158, 30, "Approach Distance:", 24, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel HitWindowLabel = new(225, 568, 158, 30, "Hit Window[ms]:", 24, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel PlayerApproachRateLabel = new(10, 643, 158, 30, "", 24, false, true, "main", false, Settings.settings["color1"]);
@@ -137,12 +143,12 @@ namespace New_SSQE.GUI
                 // Sliders
                 Tempo, MasterVolume, SfxVolume, BeatSnapDivisor, QuantumSnapDivisor, Timeline, TrackHeight, TrackCursorPos, ApproachRate, PlayerApproachRate,
                 // Boxes
-                ExportOffset, SfxOffset, BezierBox, RotateBox, ScaleBox, CloneThreshold, Sensitivity, Parallax, ApproachDistance, HitWindow,
+                ExportOffset, SfxOffset, BezierBox, RotateBox, ScaleBox, CloneThreshold, NoteScale, CursorScale, Sensitivity, Parallax, FieldOfView, ApproachDistance, HitWindow,
                 // Labels
                 ZoomLabel, ZoomValueLabel, ClickModeLabel, BeatDivisorLabel, SnappingLabel, TempoLabel, MusicLabel, MusicValueLabel, SfxLabel, SfxValueLabel, CurrentTimeLabel,
                 CurrentMsLabel, TotalTimeLabel, NotesLabel, TrackHeightLabel, CursorPosLabel, ApproachRateLabel, ExportOffsetLabel, SfxOffsetLabel, DrawBezierLabel, RotateLabel,
-                ScaleLabel, ClonePercentLabel, CloneThresholdLabel, CameraModeLabel, SensitivityLabel, ParallaxLabel, ApproachDistanceLabel, PlayerApproachRateLabel,HitWindowLabel,
-                ToastLabel
+                ScaleLabel, ClonePercentLabel, CloneThresholdLabel, CameraModeLabel, NoteScaleLabel, CursorScaleLabel, SensitivityLabel, ParallaxLabel, FieldOfViewLabel,
+                ApproachDistanceLabel, PlayerApproachRateLabel, HitWindowLabel, ToastLabel
             };
 
             BackgroundSquare = new(0, 0, 1920, 1080, Color.FromArgb(Settings.settings["editorBGOpacity"], 30, 30, 30), false, "background_editor.png", "editorbg");
@@ -655,9 +661,12 @@ namespace New_SSQE.GUI
             ExportSSPMButton.Visible = reviewNav;
 
             CameraMode.Visible = playerNav;
+            NoteScale.Visible = playerNav;
+            CursorScale.Visible = playerNav;
             LockCursor.Visible = playerNav;
             Sensitivity.Visible = playerNav;
             Parallax.Visible = playerNav;
+            FieldOfView.Visible = playerNav;
             ApproachDistance.Visible = playerNav;
             HitWindow.Visible = playerNav;
             PlayerApproachRate.Visible = playerNav;
@@ -666,8 +675,11 @@ namespace New_SSQE.GUI
             FromStart.Visible = playerNav;
             PlayMap.Visible = playerNav;
             CameraModeLabel.Visible = playerNav;
+            NoteScaleLabel.Visible = playerNav;
+            CursorScaleLabel.Visible = playerNav;
             SensitivityLabel.Visible = playerNav;
             ParallaxLabel.Visible = playerNav;
+            FieldOfViewLabel.Visible = playerNav;
             ApproachDistanceLabel.Visible = playerNav;
             HitWindowLabel.Visible = playerNav;
             PlayerApproachRateLabel.Visible = playerNav;

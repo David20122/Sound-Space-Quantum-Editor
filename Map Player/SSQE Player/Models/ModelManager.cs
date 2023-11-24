@@ -10,9 +10,9 @@ namespace SSQE_Player.Models
 
         private readonly Dictionary<string, Model> models = new();
 
-        public void RegisterModel(string name, float[] vertices)
+        public void RegisterModel(string name, float[] vertices, float scale)
         {
-            var model = LoadModelToVao(vertices);
+            var model = LoadModelToVao(vertices, scale);
 
             models.Add(name, model);
         }
@@ -24,12 +24,12 @@ namespace SSQE_Player.Models
             return model;
         }
 
-        public static Model LoadModelToVao(float[] vertices)
+        public static Model LoadModelToVao(float[] vertices, float scale)
         {
             VertexArrayHandle vao = CreateVao();
             StoreDataInAttribList(vertices);
 
-            return new Model(vertices, vao);
+            return new Model(vertices, scale, vao);
         }
 
         private static VertexArrayHandle CreateVao()

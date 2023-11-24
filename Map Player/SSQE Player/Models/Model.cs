@@ -11,16 +11,16 @@ namespace SSQE_Player.Models
 
         public Vector3 Size;
 
-        public Model(float[] vertices, VertexArrayHandle vao)
+        public Model(float[] vertices, float scale, VertexArrayHandle vao)
         {
             VaO = vao;
 
             vertexCount = vertices.Length / 3;
 
-            Init(vertices);
+            Init(vertices, scale);
         }
 
-        private void Init(float[] vertices)
+        private void Init(float[] vertices, float scale)
         {
             Vector3 min = (float.MaxValue, float.MaxValue, float.MaxValue);
             Vector3 max = (float.MinValue, float.MinValue, float.MinValue);
@@ -33,7 +33,7 @@ namespace SSQE_Player.Models
                 max = Vector3.ComponentMax(max, vec);
             }
 
-            Size = max - min;
+            Size = (max - min) / scale;
 
             for (int i = 0; i < vertexCount; i++)
             {

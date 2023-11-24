@@ -13,7 +13,7 @@ namespace SSQE_Player.GUI
         private Vector3 cameraPos;
 
         private readonly float rad88 = MathHelper.DegreesToRadians(88);
-        private readonly float rad70 = MathHelper.DegreesToRadians(70);
+        private readonly float radFoV = MathHelper.DegreesToRadians(Settings.settings["fov"]);
 
         private readonly string camMode = Settings.settings["cameraMode"].Current;
         private readonly bool lockCursor = Settings.settings["lockCursor"];
@@ -75,7 +75,7 @@ namespace SSQE_Player.GUI
 
         public void CalculateProjection()
         {
-            projection = Matrix4.CreatePerspectiveFieldOfView(rad70, MainWindow.Instance.Size.X / (float)MainWindow.Instance.Size.Y, 0.1f, 1000);
+            projection = Matrix4.CreatePerspectiveFieldOfView(radFoV, MainWindow.Instance.Size.X / (float)MainWindow.Instance.Size.Y, 0.1f, 1000);
         }
     }
 }

@@ -276,8 +276,8 @@ namespace SSQE_Player
             var noteModel = ObjModel.FromFile("assets/models/note.obj");
             var cursorModel = ObjModel.FromFile("assets/models/cursor.obj");
 
-            ModelManager.RegisterModel("note", noteModel.GetVertices());
-            ModelManager.RegisterModel("cursor", cursorModel.GetVertices());
+            ModelManager.RegisterModel("note", noteModel.GetVertices(), Settings.settings["noteScale"]);
+            ModelManager.RegisterModel("cursor", cursorModel.GetVertices(), Settings.settings["cursorScale"]);
         }
 
         private void SetTempo(float newTempo)
