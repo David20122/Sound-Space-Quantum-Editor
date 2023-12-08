@@ -1177,6 +1177,7 @@ namespace New_SSQE
             Settings.settings["difficulty"] = "N/A";
             Settings.settings["useCover"] = true;
             Settings.settings["cover"] = "Default";
+            Settings.settings["customDifficulty"] = "";
 
             Notes.Clear();
             SelectedNotes.Clear();
