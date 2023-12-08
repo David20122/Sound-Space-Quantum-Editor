@@ -1,57 +1,72 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="New_SSQE.ExportSSPM"
-        Width="344" Height="334" CanResize="False"
+        Width="344" Height="358" CanResize="False"
         WindowStartupLocation="CenterScreen">
 
   <StackPanel>
     <!-- Main panel -->
-    <Panel Width="344" Height="334"
+    <Panel Width="344" Height="358"
            Background="#f1f1f1">
-      <Panel Width="320" Height="310">
-        <!-- ID,Name,Difficulty Panel -->
-        <Panel Width="320" Height="70"
+      <Panel Width="320" Height="334">
+        <!-- ID,Name,Difficulty,CDiff Panel -->
+        <Panel Width="320" Height="94"
                VerticalAlignment="Top">
 
-          <!-- Map ID -->
-          <Label Width="236" Height="20" Name="MapIDBox"
-               VerticalAlignment="Top"
-               HorizontalAlignment="Right"
-               Background="#dfdfdf"></Label>
-
-          <Label Width="84" Height="20"
+          <!-- ID,Name,Difficulty Panel -->
+          <Panel Width="320" Height="70"
+                 VerticalAlignment="Top">
+            <!-- Map ID -->
+            <Label Width="236" Height="20" Name="MapIDBox"
                  VerticalAlignment="Top"
-                 HorizontalAlignment="Left"
-                 BorderThickness="0">Map ID</Label>
+                 HorizontalAlignment="Right"
+                 Background="#dfdfdf"></Label>
 
-          <!-- Song Name -->
-          <TextBox Width="236" Height="20" Name="SongNameBox"
-                   MinHeight="20"
+            <Label Width="84" Height="20"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"
+                   BorderThickness="0">Map ID</Label>
+
+            <!-- Song Name -->
+            <TextBox Width="236" Height="20" Name="SongNameBox"
+                     MinHeight="20"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Right"></TextBox>
+
+            <Label Width="84" Height="20"
                    VerticalAlignment="Center"
+                   HorizontalAlignment="Left"
+                   BorderThickness="0">Song Name</Label>
+
+            <!-- Difficulty -->
+            <ComboBox Width="236" Height="20" Name="DifficultyBox"
+                      VerticalAlignment="Bottom"
+                      HorizontalAlignment="Right"
+                      SelectedIndex="0">
+              <ComboBoxItem>N/A</ComboBoxItem>
+              <ComboBoxItem>Easy</ComboBoxItem>
+              <ComboBoxItem>Medium</ComboBoxItem>
+              <ComboBoxItem>Hard</ComboBoxItem>
+              <ComboBoxItem>Logic</ComboBoxItem>
+              <ComboBoxItem>Tasukete</ComboBoxItem>
+            </ComboBox>
+
+            <Label Width="84" Height="20"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   BorderThickness="0">Difficulty</Label>
+          </Panel>
+
+          <!-- Custom Difficulty -->
+          <TextBox Width="136" Height="20" Name="CustomDifficultyBox"
+                   MinHeight="20"
+                   VerticalAlignment="Bottom"
                    HorizontalAlignment="Right"></TextBox>
 
-          <Label Width="84" Height="20"
-                 VerticalAlignment="Center"
-                 HorizontalAlignment="Left"
-                 BorderThickness="0">Song Name</Label>
-
-          <!-- Difficulty -->
-          <ComboBox Width="236" Height="20" Name="DifficultyBox"
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Right"
-                    SelectedIndex="0">
-            <ComboBoxItem>N/A</ComboBoxItem>
-            <ComboBoxItem>Easy</ComboBoxItem>
-            <ComboBoxItem>Medium</ComboBoxItem>
-            <ComboBoxItem>Hard</ComboBoxItem>
-            <ComboBoxItem>Logic</ComboBoxItem>
-            <ComboBoxItem>Tasukete</ComboBoxItem>
-          </ComboBox>
-
-          <Label Width="84" Height="20"
+          <Label Width="184" Height="20"
                  VerticalAlignment="Bottom"
                  HorizontalAlignment="Left"
-                 BorderThickness="0">Difficulty</Label>
+                 BorderThickness="0">Custom Difficulty (Optional)</Label>
         </Panel>
 
         <!-- Other -->

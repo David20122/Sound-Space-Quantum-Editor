@@ -125,6 +125,7 @@ namespace New_SSQE
             {"difficulty", "N/A" },
             {"useCover", true },
             {"cover", "Default" },
+            {"customDifficulty", "" },
 
             {"debugMode", false },
         };

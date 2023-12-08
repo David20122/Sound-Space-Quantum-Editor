@@ -21,6 +21,7 @@ namespace New_SSQE
             SongNameBox.Text = Settings.settings["songName"];
             UseCover.IsChecked = Settings.settings["useCover"];
             CoverPathBox.Text = Settings.settings["cover"];
+            CustomDifficultyBox.Text = Settings.settings["customDifficulty"];
 
             foreach (ComboBoxItem item in DifficultyBox.Items)
             {
@@ -89,12 +90,14 @@ namespace New_SSQE
             editor.info["coverPath"] = (UseCover.IsChecked ?? false) ? CoverPathBox.Text : "";
             var item = DifficultyBox.SelectedItem as ComboBoxItem;
             editor.info["difficulty"] = MainWindow.difficulties.ContainsKey(item?.Content.ToString() ?? "") ? (item?.Content.ToString() ?? "") : "N/A";
+            editor.info["customDifficulty"] = CustomDifficultyBox.Text;
 
             Settings.settings["mappers"] = editor.info["mappers"];
             Settings.settings["songName"] = editor.info["mapName"];
             Settings.settings["difficulty"] = editor.info["difficulty"];
             Settings.settings["useCover"] = UseCover.IsChecked ?? false;
             Settings.settings["cover"] = CoverPathBox.Text;
+            Settings.settings["customDifficulty"] = CustomDifficultyBox.Text;
 
             Close();
 

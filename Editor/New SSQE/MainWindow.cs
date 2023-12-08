@@ -1077,7 +1077,8 @@ namespace New_SSQE
                 {"songName", Settings.settings["songName"] },
                 {"difficulty", Settings.settings["difficulty"] },
                 {"useCover", Settings.settings["useCover"] },
-                {"cover", Settings.settings["cover"] }
+                {"cover", Settings.settings["cover"] },
+                {"customDifficulty", Settings.settings["customDifficulty"] }
             };
 
             return json.ToString();
@@ -1443,6 +1444,11 @@ namespace New_SSQE
 
                         case "cover":
                             Settings.settings["cover"] = key.Value;
+
+                            break;
+
+                        case "customDifficulty":
+                            Settings.settings["customDifficulty"] = key.Value;
 
                             break;
                     }
@@ -2075,6 +2081,7 @@ namespace New_SSQE
             {"mappers", "" },
             {"coverPath", "" },
             {"difficulty", "" },
+            {"customDifficulty", "" },
         };
 
         public static Dictionary<string, byte> difficulties = new()
@@ -2174,7 +2181,19 @@ namespace New_SSQE
 
             var offset = header.Length + 20 + metadata.Length + 80 + strings.Length; // for pointers
 
-            var customData = new byte[] { 0x00, 0x00 }; // no custom data
+            var customData = new byte[] { 0x00, 0x00 }; // default custom data - none
+
+            if (!string.IsNullOrWhiteSpace(info["customDifficulty"]))
+            {
+                var field = Encoding.ASCII.GetBytes("difficulty_name");
+                var fieldf = BitConverter.GetBytes((ushort)field.Length).Concat(field).ToArray();
+
+                var customDifficulty = Encoding.ASCII.GetBytes(info["customDifficulty"]);
+                var customDifficultyf = BitConverter.GetBytes((ushort)customDifficulty.Length).Concat(customDifficulty).ToArray();
+
+                customData = (new byte[] { 0x01, 0x00 }).Concat(fieldf).Concat(new byte[] { 0x09 }).Concat(customDifficultyf).ToArray();
+            }
+
             var customDataOffset = BitConverter.GetBytes((ulong)offset);
             var customDataLength = BitConverter.GetBytes((ulong)customData.Length);
             offset += customData.Length;
@@ -2405,11 +2424,11 @@ namespace New_SSQE
             }
             else if (formatVersion[0] == 0x02 && formatVersion[1] == 0x00)
             {
-                string GetNextVariableString()
+                string GetNextVariableString(bool fourBytes = false)
                 {
                     byte[] length = new byte[2];
                     data.Read(length, 0, 2);
-                    int lengthF = BitConverter.ToUInt16(length);
+                    int lengthF = (int)(fourBytes ? BitConverter.ToUInt32(length) : BitConverter.ToUInt16(length));
 
                     byte[] str = new byte[lengthF];
                     data.Read(str, 0, lengthF);
@@ -2495,9 +2514,86 @@ namespace New_SSQE
                 Settings.settings["mappers"] = string.Join("\n", mappers);
 
                 // read custom data block
-                int customDataLengthF = (int)BitConverter.ToInt64(customDataLength);
-                byte[] customData = new byte[customDataLengthF];
-                data.Read(customData, 0, customDataLengthF);
+                // may implement more fields in the future, but right now only 'difficulty_name' is used
+                try
+                {
+                    void SetField(string field, dynamic value)
+                    {
+                        switch (field)
+                        {
+                            case "difficulty_name":
+                                Settings.settings["customDifficulty"] = value;
+                                break;
+                        }
+                    }
+
+                    byte[] customCount = new byte[2];
+                    data.Read(customCount, 0, 2);
+                    uint customCountF = BitConverter.ToUInt16(customCount);
+
+                    for (int i = 0; i < customCountF; i++)
+                    {
+                        string field = GetNextVariableString();
+                        byte[] id = new byte[1];
+                        data.Read(id, 0, 1);
+
+                        // discard all but 0x08 and 0x0a
+                        switch (id[0])
+                        {
+                            case 0x00:
+                                continue;
+                            case 0x01:
+                                data.Read(new byte[1], 0, 1);
+                                break;
+                            case 0x02:
+                                data.Read(new byte[2], 0, 2);
+                                break;
+                            case 0x03:
+                            case 0x05:
+                                data.Read(new byte[4], 0, 4);
+                                break;
+                            case 0x04:
+                            case 0x06:
+                                data.Read(new byte[8], 0, 8);
+                                break;
+                            case 0x07:
+                                byte[] type = new byte[1];
+                                data.Read(type, 0, 1);
+
+                                if (type[0] == 0x00)
+                                    data.Read(new byte[2], 0, 2);
+                                else if (type[0] == 0x01)
+                                    data.Read(new byte[16], 0, 2);
+                                break;
+                            case 0x08:
+                                GetNextVariableString();
+                                break;
+                            case 0x09:
+                                SetField(field, GetNextVariableString());
+                                break;
+                            case 0x0a:
+                                GetNextVariableString(true);
+                                break;
+                            case 0x0b:
+                                SetField(field, GetNextVariableString(true));
+                                break;
+                            case 0x0c:
+                                data.Read(new byte[1], 0, 1);
+
+                                byte[] valueLength = new byte[4];
+                                data.Read(valueLength, 0, 4);
+                                int valueLengthF = (int)BitConverter.ToUInt32(valueLength);
+
+                                data.Read(new byte[valueLengthF], 0, valueLengthF);
+                                break;
+                        }
+                    }
+                }
+                catch { }
+
+                // jump to beginning of audio block in case custom data reading was unsuccessful
+                long audioOffsetF = BitConverter.ToInt64(audioOffset);
+                data.Seek(audioOffsetF, SeekOrigin.Begin);
 
                 // read and cache audio
                 if (containsAudio[0] == 0x01)
