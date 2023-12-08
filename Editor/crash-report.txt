@@ -1,6 +1,6 @@
 // whoops
 
-[6/26/2023 6:27:05 PM - ERROR] [Error encountered in application]
+[12/7/2023 5:50:07 PM - ERROR] [Error encountered in application]
 
 Could not find a part of the path 'F:\GitHub\SSQE\Editor\assets\sounds'.
 
@@ -13,9 +13,9 @@ Could not find a part of the path 'F:\GitHub\SSQE\Editor\assets\sounds'.
    at System.IO.Directory.GetFiles(String path, String searchPattern, EnumerationOptions enumerationOptions)
    at System.IO.Directory.GetFiles(String path)
    at New_SSQE.SoundPlayer..ctor() in F:\GitHub\SSQE\Editor\New SSQE\Misc\SoundPlayer.cs:line 10
-   at New_SSQE.MainWindow..ctor() in F:\GitHub\SSQE\Editor\New SSQE\MainWindow.cs:line 36
-   at New_SSQE.Program.Start() in F:\GitHub\SSQE\Editor\New SSQE\Program.cs:line 67
-   at New_SSQE.Program..cctor() in F:\GitHub\SSQE\Editor\New SSQE\Program.cs:line 14
+   at New_SSQE.MainWindow..ctor() in F:\GitHub\SSQE\Editor\New SSQE\MainWindow.cs:line 39
+   at New_SSQE.Program.Start() in F:\GitHub\SSQE\Editor\New SSQE\Program.cs:line 60
+   at New_SSQE.Program..cctor() in F:\GitHub\SSQE\Editor\New SSQE\Program.cs:line 13
 
 |******************|
 |  POSSIBLE FIXES  |
