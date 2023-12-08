@@ -145,11 +145,11 @@ namespace New_SSQE
 
             CheckForUpdates();
 
-            OnMouseWheel(new MouseWheelEventArgs());
-            SwitchWindow(new GuiWindowMenu());
-
             if (File.Exists(cacheFile) && !string.IsNullOrWhiteSpace(File.ReadAllText(cacheFile)))
                 LoadCache();
+
+            OnMouseWheel(new MouseWheelEventArgs());
+            SwitchWindow(new GuiWindowMenu());
         }
 
         public void SetVSync(VSyncMode mode)
@@ -721,7 +721,7 @@ namespace New_SSQE
                     map.Close(false, false, false);
             }
             else
-                temp.MakeCurrent();
+                temp?.MakeCurrent();
 
             e.Cancel = cancel;
 
@@ -1276,7 +1276,7 @@ namespace New_SSQE
             for (int i = 0; i < Maps.Count; i++)
                 data[i] = Maps[i].ToString();
 
-            string text = string.Join("\0\n\0", data);
+            string text = string.Join("\r\0", data);
 
             if (!Directory.Exists("assets/temp"))
                 Directory.CreateDirectory("assets/temp");
@@ -1286,7 +1286,7 @@ namespace New_SSQE
         public void LoadCache()
         {
             Maps.Clear();
-            string[] data = File.ReadAllText(cacheFile).Split("\0\n\0");
+            string[] data = File.ReadAllText(cacheFile).Split("\r\0");
 
             for (int i = 0; i < data.Length; i++)
             {

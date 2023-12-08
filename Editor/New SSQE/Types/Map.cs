@@ -32,6 +32,7 @@ namespace New_SSQE.Types
         private string difficulty;
         private bool useCover;
         private string cover;
+        private string customDifficulty;
 
         private List<URAction> urActions;
         private int urIndex;
@@ -87,6 +88,7 @@ namespace New_SSQE.Types
             Settings.settings["difficulty"] = difficulty;
             Settings.settings["useCover"] = useCover;
             Settings.settings["cover"] = cover;
+            Settings.settings["customDifficulty"] = customDifficulty;
 
             editor.UndoRedoManager.Clear();
 
@@ -126,6 +128,7 @@ namespace New_SSQE.Types
             difficulty = Settings.settings["difficulty"];
             useCover = Settings.settings["useCover"];
             cover = Settings.settings["cover"];
+            customDifficulty = Settings.settings["customDifficulty"];
 
             urActions = editor.UndoRedoManager.actions.ToList();
             urIndex = editor.UndoRedoManager._index;
@@ -155,7 +158,8 @@ namespace New_SSQE.Types
                 songName,
                 difficulty,
                 useCover.ToString(culture),
-                cover
+                cover,
+                customDifficulty
             };
 
             return string.Join("\n\0", items);
@@ -165,11 +169,13 @@ namespace New_SSQE.Types
         {
             try
             {
+                Save();
+
                 string[] items = data.Split("\n\0");
 
-                string[] notestr = items[0].Split(",");
-                string[] timingstr = items[1].Split(",");
-                string[] bookmarkstr = items[2].Split(",");
+                string[] notestr = items[0].Length > 0 ? items[0].Split(",") : Array.Empty<string>();
+                string[] timingstr = items[1].Length > 0 ? items[1].Split(",") : Array.Empty<string>();
+                string[] bookmarkstr = items[2].Length > 0 ? items[2].Split(",") : Array.Empty<string>();
 
                 for (int i = 0; i < notestr.Length; i++)
                     notes.Add(new(notestr[i], culture));
@@ -193,6 +199,7 @@ namespace New_SSQE.Types
                 difficulty = items[12];
                 useCover = bool.Parse(items[13]);
                 cover = items[14];
+                customDifficulty = items[15];
 
                 urIndex = -1;
 
