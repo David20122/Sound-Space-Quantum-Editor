@@ -76,6 +76,8 @@ namespace New_SSQE
 
 
 
+        private bool closing = false;
+
         // hacky workaround for fullscreen being awful
         private bool isFullscreen = false;
         private Vector2i startSize = new(1920, 1080);
@@ -175,6 +177,9 @@ namespace New_SSQE
 
         protected override void OnRenderFrame(FrameEventArgs args)
         {
+            if (closing)
+                return;
+
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             if (MusicPlayer.IsPlaying && CurrentWindow is GuiWindowEditor)
@@ -697,6 +702,8 @@ namespace New_SSQE
 
         protected override void OnClosing(CancelEventArgs e)
         {
+            closing = true;
+
             bool cancel = false;
 
             Map temp = CurrentMap;
@@ -738,6 +745,8 @@ namespace New_SSQE
                 MusicPlayer.Dispose();
                 CurrentWindow?.Dispose();
             }
+
+            closing = !e.Cancel;
         }
 
 
