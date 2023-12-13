@@ -1,4 +1,11 @@
 ----------------------------------
+     -- 2.1.1.5 - 12/12/2023 --
+    -- P-2.1.2.1 - 12/12/2023 --
+
+- fixed attempting to render frames while closing
+- fixed crash on older Intel GPUs
+
+----------------------------------
      -- 2.1.1.4 - 12/7/2023 --
 
 - added an sspm export option for a custom difficulty name
