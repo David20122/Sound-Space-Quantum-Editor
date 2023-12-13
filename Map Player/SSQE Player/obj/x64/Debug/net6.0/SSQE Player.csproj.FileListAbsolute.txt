@@ -74,3 +74,4 @@ F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\refint\SSQE Player.dl
 F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE Player.pdb
 F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE Player.genruntimeconfig.cache
 F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\ref\SSQE Player.dll
+F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE Player.sourcelink.json

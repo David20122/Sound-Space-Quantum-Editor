@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "WQhkaHY8KhGO4hxLKJ5St6OgRkGBs9BQyKyWiVeVsXIQJiSC85hclqzvAKekdESfjhsRpveKeIigjO7F4I2oYw==",
+  "dgSpecHash": "irfOJ8eXOHkjcrjIprqbWx1hXxmCHxv+QX31J8xC5Gc19NG2dlD/pjBXNwOasUVN7eRw6KR5L541BAG7PMRnsw==",
   "success": true,
   "projectFilePath": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
   "expectedPackageFiles": [
@@ -23,5 +23,16 @@
     "C:\\Users\\Owner\\.nuget\\packages\\system.json\\4.7.1\\system.json.4.7.1.nupkg.sha512",
     "C:\\Users\\Owner\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'SkiaSharp' 2.88.1 has a known high severity vulnerability, https://github.com/advisories/GHSA-j7hp-h8jx-5ppr",
+      "libraryId": "SkiaSharp",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    }
+  ]
 }

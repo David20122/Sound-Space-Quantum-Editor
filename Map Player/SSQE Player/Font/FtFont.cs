@@ -153,16 +153,16 @@ namespace SSQE_Player
 
             GL.EnableVertexAttribArray(0);
             GL.VertexAttribFormat(0, 2, VertexAttribType.Float, false, 0);
-            GL.VertexArrayAttribBinding(VaO, 0, 0);
+            GL.VertexAttribBinding(0, 0);
 
             GL.EnableVertexAttribArray(1);
             GL.VertexAttribFormat(1, 4, VertexAttribType.Float, false, 0);
-            GL.VertexArrayAttribBinding(VaO, 1, 1);
+            GL.VertexAttribBinding(1, 1);
             GL.VertexBindingDivisor(1, 1);
 
             GL.EnableVertexAttribArray(2);
             GL.VertexAttribFormat(2, 1, VertexAttribType.Float, false, 0);
-            GL.VertexArrayAttribBinding(VaO, 2, 2);
+            GL.VertexAttribBinding(2, 2);
             GL.VertexBindingDivisor(2, 1);
 
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);

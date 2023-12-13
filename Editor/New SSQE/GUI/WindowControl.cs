@@ -153,15 +153,15 @@ namespace New_SSQE.GUI
 
             GL.EnableVertexAttribArray(0);
             GL.VertexAttribFormat(0, 2, VertexAttribType.Float, false, 0);
-            GL.VertexArrayAttribBinding(vao, 0, 0);
+            GL.VertexAttribBinding(0, 0);
 
             GL.EnableVertexAttribArray(1);
             GL.VertexAttribFormat(1, 4, VertexAttribType.Float, false, 2 * sizeof(float));
-            GL.VertexArrayAttribBinding(vao, 1, 0);
+            GL.VertexAttribBinding(1, 0);
 
             GL.EnableVertexAttribArray(2);
             GL.VertexAttribFormat(2, 4, VertexAttribType.Float, false, 0);
-            GL.VertexArrayAttribBinding(vao, 2, 1);
+            GL.VertexAttribBinding(2, 1);
             GL.VertexBindingDivisor(1, 1);
 
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
