@@ -4,6 +4,7 @@
 
 - fixed attempting to render frames while closing
 - fixed crash on some older Intel IGPUs
+- loading is now aborted with a crash report if supported OpenGL version is less than minimum (4.3)
 
 ----------------------------------
      -- 2.1.1.4 - 12/7/2023 --
