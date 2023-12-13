@@ -3,7 +3,7 @@
     -- P-2.1.2.1 - 12/12/2023 --
 
 - fixed attempting to render frames while closing
-- fixed crash on older Intel IGPUs
+- fixed crash on some older Intel IGPUs
 
 ----------------------------------
      -- 2.1.1.4 - 12/7/2023 --
@@ -55,7 +55,6 @@
 
     -- P-2.1.1.0 - 10/20/2023 --
 
-- required OpenGL version now matches the editor (3.3)
 - fixed rendering text when streaming to Discord
 - fixed resetting the pause counter after restarting a map
 - fixed pausing not working after restarting a map
