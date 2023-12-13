@@ -15,5 +15,10 @@
   </ItemGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <Import Project="$(NuGetPackageRoot)sharpfont.dependencies\2.6.0\build\SharpFont.Dependencies.props" Condition="Exists('$(NuGetPackageRoot)sharpfont.dependencies\2.6.0\build\SharpFont.Dependencies.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.net.illink.tasks\7.0.100-1.23211.1\build\Microsoft.NET.ILLink.Tasks.props" Condition="Exists('$(NuGetPackageRoot)microsoft.net.illink.tasks\7.0.100-1.23211.1\build\Microsoft.NET.ILLink.Tasks.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.net.illink.analyzers\7.0.100-1.23211.1\build\Microsoft.NET.ILLink.Analyzers.props" Condition="Exists('$(NuGetPackageRoot)microsoft.net.illink.analyzers\7.0.100-1.23211.1\build\Microsoft.NET.ILLink.Analyzers.props')" />
   </ImportGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgMicrosoft_NET_ILLink_Tasks Condition=" '$(PkgMicrosoft_NET_ILLink_Tasks)' == '' ">C:\Users\Owner\.nuget\packages\microsoft.net.illink.tasks\7.0.100-1.23211.1</PkgMicrosoft_NET_ILLink_Tasks>
+  </PropertyGroup>
 </Project>
