@@ -128,9 +128,20 @@ namespace New_SSQE
             NumberOfSamples = 32,
             WindowState = WindowState.Maximized,
             Icon = GetWindowIcon(),
-            Flags = ContextFlags.Debug
+            Flags = ContextFlags.Debug,
+
+            APIVersion = new Version(4, 3)
         })
         {
+            ActionLogging.Register("Required OpenGL version: 4.3");
+            ActionLogging.Register("Current OpenGL version: " + (GL.GetString(StringName.Version) ?? "N/A"));
+
+            string version = GL.GetString(StringName.Version) ?? "";
+            string sub = version[..version.IndexOf(" ")];
+
+            if (string.IsNullOrWhiteSpace(version) || Version.Parse(sub) < APIVersion)
+                throw new Exception("Unsupported OpenGL version (Minimum: 4.3)");
+
             GL.DebugMessageCallback(DebugMessageDelegate, IntPtr.Zero);
             GL.Enable(EnableCap.DebugOutput);
 
