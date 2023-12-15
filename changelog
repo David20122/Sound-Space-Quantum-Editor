@@ -1,4 +1,10 @@
 ----------------------------------
+     -- 2.1.1.6 - 12/14/2023 --
+
+- fixed snapping notes to their original position on the track
+- the map select bar on the bottom of the menu can now be scrolled with the scroll wheel when hovering over it
+
+----------------------------------
      -- 2.1.1.5 - 12/12/2023 --
     -- P-2.1.2.1 - 12/12/2023 --
 
