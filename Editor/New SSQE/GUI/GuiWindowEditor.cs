@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Drawing;
 using OpenTK.Mathematics;
+using New_SSQE.Types;
 
 namespace New_SSQE.GUI
 {
@@ -324,7 +325,7 @@ namespace New_SSQE.GUI
                 case 0:
                     try
                     {
-                        Clipboard.SetText(editor.ParseData(Settings.settings["correctOnCopy"]));
+                        Clipboard.SetText(Map.Save(editor.SoundID, editor.Notes, Settings.settings["correctOnCopy"]));
                         ShowToast("COPIED TO CLIPBOARD", Color.FromArgb(0, 255, 200));
                     }
                     catch { ShowToast("FAILED TO COPY", Color.FromArgb(255, 200, 0)); }
@@ -516,7 +517,7 @@ namespace New_SSQE.GUI
 
                         Settings.Save();
 
-                        File.WriteAllText($"assets/temp/tempmap.txt", editor.ParseData(false, false));
+                        File.WriteAllText($"assets/temp/tempmap.txt", Map.Save(editor.SoundID, editor.Notes, false, false));
 
                         Process process = Process.Start("SSQE Player.exe", Settings.settings["fromStart"].ToString());
                         playerRunning = process != null;

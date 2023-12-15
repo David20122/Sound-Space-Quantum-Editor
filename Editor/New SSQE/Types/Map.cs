@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK.Mathematics;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -37,7 +38,7 @@ namespace New_SSQE.Types
         private List<URAction> urActions;
         private int urIndex;
 
-        private CultureInfo culture;
+        private static CultureInfo culture;
 
         public string FileName => Path.GetFileNameWithoutExtension(fileName) ?? soundID;
         public string? RawFileName => fileName;
@@ -261,6 +262,43 @@ namespace New_SSQE.Types
 
             string str = string.Join("", bookmarkstr);
             return str[Math.Min(1, str.Length)..];
+        }
+
+
+
+
+        public static string Parse(string data, List<Note> notes)
+        {
+            var split = data.Split(',');
+
+            for (int i = 1; i < split.Length; i++)
+                if (!string.IsNullOrWhiteSpace(split[i]))
+                    notes.Add(new(split[i], culture));
+
+            return split[0];
+        }
+
+        public static string Save(string id, List<Note> notes, bool copy = false, bool applyOffset = true)
+        {
+            var offset = (long)Settings.settings["exportOffset"];
+
+            var final = new string[notes.Count + 1];
+            final[0] = id;
+
+            var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+            culture.NumberFormat.NumberDecimalSeparator = ".";
+
+            for (int i = 0; i < notes.Count; i++)
+            {
+                var note = notes[i];
+                var clone = copy ? new Note(MathHelper.Clamp(note.X, -0.85f, 2.85f), MathHelper.Clamp(note.Y, -0.85f, 2.85f), (long)MathHelper.Clamp(note.Ms, 0, Settings.settings["currentTime"].Max)) : note;
+                if (applyOffset)
+                    clone.Ms += offset;
+
+                final[i + 1] = clone.ToString(culture);
+            }
+
+            return string.Join("", final);
         }
     }
 }

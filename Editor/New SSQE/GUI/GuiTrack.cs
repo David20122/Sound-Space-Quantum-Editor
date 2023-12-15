@@ -617,13 +617,13 @@ namespace New_SSQE.GUI
 
                 var cellStep = editor.NoteStep;
 
-                var x = Math.Abs(pos.X - DragStartPoint.X) >= 5 ? pos.X : DragStartPoint.X;
-                var offset = (x - DragStartPoint.X) / cellStep * 1000f;
-                var cursorms = (x - Rect.Width * cursorPos / 100f - noteSize / 2f) / cellStep * 1000f + currentTime.Value;
+                var offset = (pos.X - DragStartPoint.X) / cellStep * 1000f;
+                var cursorms = (pos.X - Rect.Width * cursorPos / 100f - noteSize / 2f) / cellStep * 1000f + currentTime.Value;
 
                 if (DraggingNote != null)
                 {
                     offset = DraggingNote.DragStartMs - cursorms;
+                    offset = Math.Abs(offset) / 1000f * cellStep <= 5f ? 0 : offset;
                     var currentBpm = editor.GetCurrentBpm(cursorms).BPM;
 
                     if (currentBpm > 0)

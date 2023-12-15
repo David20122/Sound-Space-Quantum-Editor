@@ -167,7 +167,8 @@ namespace New_SSQE
 
         public void SetVSync(VSyncMode mode)
         {
-            VSync = mode;
+            if (Context.IsCurrent)
+                VSync = mode;
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -449,7 +450,7 @@ namespace New_SSQE
                                         }
                                     }
 
-                                    UndoRedoManager.Add("Paste Notes", () =>
+                                    UndoRedoManager.Add($"PASTE NOTE{(copied.Count > 0 ? "S" : "")}", () =>
                                     {
                                         SelectedNotes.Clear();
                                         SelectedPoint = null;
@@ -703,11 +704,16 @@ namespace New_SSQE
                     setting.Value = currentTime;
                 }
             }
-            else if (CurrentWindow is GuiWindowMenu)
+            else if (CurrentWindow is GuiWindowMenu menu)
             {
-                var setting = Settings.settings["changelogPosition"];
+                if (menu.MapSelectBackdrop.Rect.Contains(Mouse))
+                    menu.ScrollMaps(e.OffsetY > 0);
+                else
+                {
+                    var setting = Settings.settings["changelogPosition"];
 
-                setting.Value = MathHelper.Clamp(setting.Value + setting.Step * e.OffsetY, 0f, setting.Max);
+                    setting.Value = MathHelper.Clamp(setting.Value + setting.Step * e.OffsetY, 0f, setting.Max);
+                }
             }
         }
 
@@ -1050,29 +1056,6 @@ namespace New_SSQE
             return false;
         }
 
-        public string ParseData(bool copy = false, bool applyOffset = true)
-        {
-            var offset = (long)Settings.settings["exportOffset"];
-
-            var final = new string[Notes.Count + 1];
-            final[0] = SoundID.ToString();
-
-            var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-            culture.NumberFormat.NumberDecimalSeparator = ".";
-
-            for (int i = 0; i < Notes.Count; i++)
-            {
-                var note = Notes[i];
-                var clone = copy ? new Note(MathHelper.Clamp(note.X, -0.85f, 2.85f), MathHelper.Clamp(note.Y, -0.85f, 2.85f), (long)MathHelper.Clamp(note.Ms, 0, Settings.settings["currentTime"].Max)) : note;
-                if (applyOffset)
-                    clone.Ms += offset;
-
-                final[i + 1] = clone.ToString(culture);
-            }
-
-            return string.Join("", final);
-        }
-
         public string ParseProperties()
         {
             var timingfinal = new JsonArray();
@@ -1106,7 +1089,7 @@ namespace New_SSQE
 
         public bool IsSaved()
         {
-            return FileName != null && File.ReadAllText(FileName) == ParseData();
+            return FileName != null && File.Exists(FileName) && File.ReadAllText(FileName) == Map.Save(SoundID, Notes);
         }
 
         public bool SaveMap(bool forced, bool fileForced = false)
@@ -1118,7 +1101,7 @@ namespace New_SSQE
                 Settings.settings["lastFile"] = FileName;
             Settings.Save();
 
-            var data = ParseData();
+            var data = Map.Save(SoundID, Notes);
 
             if (forced || (FileName == null && (Notes.Count > 0 || TimingPoints.Count > 0)) || (FileName != null && data != File.ReadAllText(FileName)))
             {
@@ -1228,18 +1211,9 @@ namespace New_SSQE
             }
             catch { }
 
-            var split = data.Split(',');
-
-            var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-            culture.NumberFormat.NumberDecimalSeparator = ".";
-
             try
             {
-                var id = split[0];
-
-                for (int i = 1; i < split.Length; i++)
-                    if (!string.IsNullOrWhiteSpace(split[i]))
-                        Notes.Add(new(split[i], culture));
+                string id = Map.Parse(data, Notes);
 
                 SortNotes();
 
@@ -1580,7 +1554,7 @@ namespace New_SSQE
             {
                 if (FileName == null)
                 {
-                    Settings.settings["autosavedFile"] = ParseData();
+                    Settings.settings["autosavedFile"] = Map.Save(SoundID, Notes);
                     Settings.settings["autosavedProperties"] = ParseProperties();
                     Settings.Save();
 
@@ -1846,115 +1820,86 @@ namespace New_SSQE
             var versionInfo = FileVersionInfo.GetVersionInfo(Process.GetCurrentProcess().MainModule?.FileName ?? "");
             var currentVersion = versionInfo.FileVersion;
 
-            try
+            Dictionary<string, string> links = new()
             {
-                var playerVersion = WebClient.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/player_version").Replace("\n", "");
+                {"SSQE Player Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/player_version" },
+                {"SSQE Player Zip", "https://github.com/David20122/Sound-Space-Quantum-Editor/raw/2.0%2B_rewrite/SSQE%20Player.zip" },
+                {"SSQE Updater Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_version" },
+                {"SSQE Updater Zip", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/SSQE%20Updater.zip" },
+                {"Editor Redirect", "https://github.com/David20122/Sound-Space-Quantum-Editor/releases/latest" }
+            };
 
-                // player exists check
-                ActionLogging.Register("Searching for file 'SSQE Player'");
-                if (!File.Exists("SSQE Player.exe"))
+            static void ExtractFile(string path)
+            {
+                using (ZipArchive archive = ZipFile.OpenRead(path))
                 {
-                    var diag = MessageBox.Show("Map player is not present in this directory. Would you like to download it?", "Warning", "Yes", "No");
+                    foreach (var entry in archive.Entries)
+                    {
+                        try
+                        {
+                            entry.ExtractToFile(entry.FullName, true);
+                        }
+                        catch { ActionLogging.Register($"Failed to extract file: {entry.FullName}", "WARN"); }
+                    }
+                }
+
+                File.Delete(path);
+            }
+
+            void Download(string file)
+            {
+                ActionLogging.Register($"Attempting to download file '{file}'");
+                WebClient.DownloadFile(links[$"{file} Zip"], $"{file}.zip");
+                ExtractFile($"{file}.zip");
+            }
+
+            void Run(string file, string tag)
+            {
+                ActionLogging.Register($"Searching for file '{file}'");
+                if (File.Exists($"{file}.exe"))
+                {
+                    string current = FileVersionInfo.GetVersionInfo($"{file}.exe").FileVersion ?? "";
+                    string version = WebClient.DownloadString(links[$"{file} Version"]).Trim();
+
+                    if (current != version)
+                    {
+                        DialogResult diag = MessageBox.Show($"New {tag} version is available ({version}). Would you like to download the new version?", "Warning", "Yes", "No");
+
+                        if (diag == DialogResult.Yes)
+                            Download(file);
+                    }
+                }
+                else
+                {
+                    DialogResult diag = MessageBox.Show($"{tag} is not present in this directory. Would you like to download it?", "Warning", "Yes", "No");
 
                     if (diag == DialogResult.Yes)
-                    {
-                        ActionLogging.Register("Attempting to download file 'SSQE Player.exe'");
-                        WebClient.DownloadFile("https://github.com/David20122/Sound-Space-Quantum-Editor/raw/2.0%2B_rewrite/SSQE%20Player.zip", "SSQE Player.zip");
-                        ExtractFile("SSQE Player.zip");
-                    }
+                        Download(file);
                 }
+            }
 
-                // player version check
-                ActionLogging.Register("Checking version of file 'SSQE Player'");
-                if (File.Exists("SSQE Player.exe"))
+            try
+            {
+                Run("SSQE Player", "Map Player");
+                Run("SSQE Updater", "Auto Updater");
+
+                var redirect = WebClient.GetRedirect(links["Editor Redirect"]);
+
+                if (File.Exists("SSQE Updater.exe") && redirect != "")
                 {
-                    var currentPlayerVersion = FileVersionInfo.GetVersionInfo("SSQE Player.exe").FileVersion;
+                    var version = redirect[(redirect.LastIndexOf("/") + 1)..];
 
-                    if (currentPlayerVersion != playerVersion)
+                    ActionLogging.Register("Checking version of editor");
+                    if (version != currentVersion)
                     {
-                        var diag = MessageBox.Show($"New Player version is available ({playerVersion}). Would you like to download the new version?", "Warning", "Yes", "No");
+                        var diag = MessageBox.Show($"New Editor version is available ({version}). Would you like to download the new version?", "Warning", "Yes", "No");
 
                         if (diag == DialogResult.Yes)
                         {
-                            ActionLogging.Register("Attempting to download file 'SSQE Player'");
-                            WebClient.DownloadFile("https://github.com/David20122/Sound-Space-Quantum-Editor/raw/2.0%2B_rewrite/SSQE%20Player.zip", "SSQE Player.zip");
-                            ExtractFile("SSQE Player.zip");
+                            ActionLogging.Register("Attempting to run updater");
+                            Process.Start("SSQE Updater.exe");
                         }
                     }
-                }
-
-                var redirect = WebClient.GetRedirect("https://github.com/David20122/Sound-Space-Quantum-Editor/releases/latest");
-
-                if (redirect != "")
-                {
-                    var rep = redirect.LastIndexOf("/") + 1;
-                    var version = redirect[rep..];
-
-                    var updaterVersion = WebClient.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_version").Replace("\n", "");
-
-                    // updater exists check
-                    ActionLogging.Register("Searching for file 'SSQE Updater'");
-                    if (!File.Exists("SSQE Updater.exe"))
-                    {
-                        var diag = MessageBox.Show("Auto updater is not present in this directory. Would you like to download it?", "Warning", "Yes", "No");
-
-                        if (diag == DialogResult.Yes)
-                        {
-                            ActionLogging.Register("Attempting to download file 'SSQE Updater'");
-                            WebClient.DownloadFile("https://github.com/David20122/Sound-Space-Quantum-Editor/raw/2.0%2B_rewrite/SSQE%20Updater.zip", "SSQE Updater.zip");
-                            ExtractFile("SSQE Updater.zip");
-                        }
-                    }
-
-                    // run updater
-                    ActionLogging.Register("Checking version of file 'SSQE Updater'");
-                    if (File.Exists("SSQE Updater.exe"))
-                    {
-                        var currentUpdaterVersion = FileVersionInfo.GetVersionInfo("SSQE Updater.exe").FileVersion;
-
-                        // updater version check
-                        if (currentUpdaterVersion != updaterVersion)
-                        {
-                            var diag = MessageBox.Show($"New Updater version is available ({updaterVersion}). Would you like to download the new version?", "Warning", "Yes", "No");
-
-                            if (diag == DialogResult.Yes)
-                            {
-                                ActionLogging.Register("Attempting to download file 'SSQE Updater'");
-                                WebClient.DownloadFile("https://github.com/David20122/Sound-Space-Quantum-Editor/raw/2.0%2B_rewrite/SSQE%20Updater.zip", "SSQE Updater.zip");
-                                ExtractFile("SSQE Updater.zip");
-                            }
-                        }
-
-                        // editor version check
-                        ActionLogging.Register("Checking version of editor");
-                        if (version != currentVersion)
-                        {
-                            var diag = MessageBox.Show($"New Editor version is available ({version}). Would you like to download the new version?", "Warning", "Yes", "No");
-
-                            if (diag == DialogResult.Yes)
-                            {
-                                ActionLogging.Register("Attempting to run updater");
-                                Process.Start("SSQE Updater.exe");
-                            }
-                        }
-                    }
-                }
-
-                static void ExtractFile(string path)
-                {
-                    using (ZipArchive archive = ZipFile.OpenRead(path))
-                    {
-                        foreach (var entry in archive.Entries)
-                        {
-                            try
-                            {
-                                entry.ExtractToFile(entry.FullName, true);
-                            }
-                            catch { }
-                        }
-                    }
-
-                    File.Delete(path);
                 }
             }
             catch

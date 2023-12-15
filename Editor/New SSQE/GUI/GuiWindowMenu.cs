@@ -25,7 +25,7 @@ namespace New_SSQE.GUI
         private readonly GuiSquare ChangelogBackdrop1 = new(35, 180, 950, 790, Color.FromArgb(40, 0, 0, 0));
         private readonly GuiSquare ChangelogBackdrop2 = new(55, 230, 900, 715, Color.FromArgb(50, 0, 0, 0));
 
-        private readonly GuiSquare MapSelectBackdrop = new(0, 1040, 1920, 40, Color.FromArgb(50, 0, 0, 0));
+        public readonly GuiSquare MapSelectBackdrop = new(0, 1040, 1920, 40, Color.FromArgb(50, 0, 0, 0));
         private readonly GuiButton NavLeft = new(0, 1040, 40, 40, 6, "<", 32);
         private readonly GuiButton NavRight = new(1880, 1040, 40, 40, 7, ">", 32);
 
@@ -307,6 +307,16 @@ namespace New_SSQE.GUI
             }
 
             base.OnButtonClicked(id);
+        }
+
+        public void ScrollMaps(bool up)
+        {
+            if (up && mapOffset < MainWindow.Instance.Maps.Count - mapSelects.Count)
+                mapOffset++;
+            else if (!up && mapOffset > 0)
+                mapOffset--;
+
+            AssembleMapList();
         }
     }
 }
