@@ -271,7 +271,7 @@ namespace New_SSQE
             isLoaded = true;
         }
 
-        public static void Save()
+        public static void Save(bool reload = true)
         {
             if (!isLoaded)
                 return;
@@ -325,7 +325,8 @@ namespace New_SSQE
             }
             catch { Console.WriteLine("Failed to save settings"); }
 
-            Load();
+            if (reload)
+                Load();
         }
 
         private static Keys ConvertToKey(JsonValue value)

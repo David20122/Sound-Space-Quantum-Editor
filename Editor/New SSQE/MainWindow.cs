@@ -1092,14 +1092,14 @@ namespace New_SSQE
             return FileName != null && File.Exists(FileName) && File.ReadAllText(FileName) == Map.Save(SoundID, Notes);
         }
 
-        public bool SaveMap(bool forced, bool fileForced = false)
+        public bool SaveMap(bool forced, bool fileForced = false, bool reload = true)
         {
             if (FileName != null && !File.Exists(FileName))
                 FileName = null;
 
             if (FileName != null)
                 Settings.settings["lastFile"] = FileName;
-            Settings.Save();
+            Settings.Save(reload);
 
             var data = Map.Save(SoundID, Notes);
 
@@ -1556,11 +1556,11 @@ namespace New_SSQE
                 {
                     Settings.settings["autosavedFile"] = Map.Save(SoundID, Notes);
                     Settings.settings["autosavedProperties"] = ParseProperties();
-                    Settings.Save();
+                    Settings.Save(false);
 
                     editor.ShowToast("AUTOSAVED", Settings.settings["color1"]);
                 }
-                else if (SaveMap(true))
+                else if (SaveMap(true, false, false))
                     editor.ShowToast("AUTOSAVED", Settings.settings["color1"]);
             }
         }
