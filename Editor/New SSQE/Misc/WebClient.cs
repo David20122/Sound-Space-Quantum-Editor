@@ -9,6 +9,10 @@ namespace New_SSQE
     internal class WebClient
     {
         private static readonly HttpClient client = new();
+        private static readonly HttpClient robloxClient = new(new HttpClientHandler()
+        {
+            AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
+        });
         private static readonly HttpClient redirectClient = new(new HttpClientHandler()
         {
             AllowAutoRedirect = false
@@ -52,11 +56,12 @@ namespace New_SSQE
         {
             var result = Task.Run(async () =>
             {
+                var determined = fromRoblox ? robloxClient : client;
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
                 if (fromRoblox)
                     request.Headers.Add("User-agent", "RobloxProxy");
 
-                using HttpResponseMessage response = await client.SendAsync(request);
+                using HttpResponseMessage response = await determined.SendAsync(request);
                 using HttpContent content = response.Content;
 
                 var stream = content.ReadAsStreamAsync().Result;

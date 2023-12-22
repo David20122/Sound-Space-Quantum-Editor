@@ -52,18 +52,17 @@ namespace New_SSQE
 
         public static void RenderData(string font, Vector4[] data, float[]? alpha = null)
         {
-            alpha ??= new float[data.Length];
+            if (data.Length > 0)
+            {
+                alpha ??= new float[data.Length];
 
-            GL.BindBuffer(BufferTargetARB.ArrayBuffer, fonts[font].VbOs[0]);
-            GL.BufferData(BufferTargetARB.ArrayBuffer, data, BufferUsageARB.DynamicDraw);
-            GL.BindBuffer(BufferTargetARB.ArrayBuffer, fonts[font].VbOs[1]);
-            GL.BufferData(BufferTargetARB.ArrayBuffer, alpha, BufferUsageARB.DynamicDraw);
+                GL.BindBuffer(BufferTargetARB.ArrayBuffer, fonts[font].VbOs[0]);
+                GL.BufferData(BufferTargetARB.ArrayBuffer, data, BufferUsageARB.DynamicDraw);
+                GL.BindBuffer(BufferTargetARB.ArrayBuffer, fonts[font].VbOs[1]);
+                GL.BufferData(BufferTargetARB.ArrayBuffer, alpha, BufferUsageARB.DynamicDraw);
 
-            GL.BindVertexBuffer(0, fonts[font].StaticVbO, IntPtr.Zero, 2 * sizeof(float));
-            GL.BindVertexBuffer(1, fonts[font].VbOs[0], IntPtr.Zero, 4 * sizeof(float));
-            GL.BindVertexBuffer(2, fonts[font].VbOs[1], IntPtr.Zero, 1 * sizeof(float));
-
-            GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, 6, data.Length);
+                GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, 6, data.Length);
+            }
         }
 
         public static string TrimText(string text, int fontSize, int width, string font = "main")

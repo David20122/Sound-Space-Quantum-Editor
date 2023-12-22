@@ -54,10 +54,6 @@ namespace SSQE_Player
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, main.VbOs[1]);
             GL.BufferData(BufferTargetARB.ArrayBuffer, alpha, BufferUsageARB.DynamicDraw);
 
-            GL.BindVertexBuffer(0, main.StaticVbO, IntPtr.Zero, 2 * sizeof(float));
-            GL.BindVertexBuffer(1, main.VbOs[0], IntPtr.Zero, 4 * sizeof(float));
-            GL.BindVertexBuffer(2, main.VbOs[1], IntPtr.Zero, 1 * sizeof(float));
-
             GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, 6, data.Length);
         }
     }

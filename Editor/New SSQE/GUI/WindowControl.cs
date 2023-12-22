@@ -151,18 +151,16 @@ namespace New_SSQE.GUI
 
             GL.BindVertexArray(vao);
 
+            GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
-            GL.VertexAttribFormat(0, 2, VertexAttribType.Float, false, 0);
-            GL.VertexAttribBinding(0, 0);
 
+            GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, 6 * sizeof(float), 2 * sizeof(float));
             GL.EnableVertexAttribArray(1);
-            GL.VertexAttribFormat(1, 4, VertexAttribType.Float, false, 2 * sizeof(float));
-            GL.VertexAttribBinding(1, 0);
 
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, vbo);
+            GL.VertexAttribPointer(2, 4, VertexAttribPointerType.Float, false, 4 * sizeof(float), 0);
             GL.EnableVertexAttribArray(2);
-            GL.VertexAttribFormat(2, 4, VertexAttribType.Float, false, 0);
-            GL.VertexAttribBinding(2, 1);
-            GL.VertexBindingDivisor(1, 1);
+            GL.VertexAttribDivisor(2, 1);
 
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
             GL.BindVertexArray(VertexArrayHandle.Zero);
@@ -182,9 +180,6 @@ namespace New_SSQE.GUI
                 GL.BufferData(BufferTargetARB.ArrayBuffer, data, BufferUsageARB.DynamicDraw);
 
                 GL.BindVertexArray(VaOs[index]);
-                GL.BindVertexBuffer(0, VbOs[2 * index], IntPtr.Zero, 6 * sizeof(float));
-                GL.BindVertexBuffer(1, VbOs[2 * index + 1], IntPtr.Zero, 4 * sizeof(float));
-
                 GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[index], data.Length);
             }
         }

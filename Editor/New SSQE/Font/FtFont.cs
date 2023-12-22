@@ -153,19 +153,18 @@ namespace New_SSQE
 
             GL.BindVertexArray(VaO);
 
+            GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
-            GL.VertexAttribFormat(0, 2, VertexAttribType.Float, false, 0);
-            GL.VertexAttribBinding(0, 0);
 
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, VbOs[0]);
+            GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, 4 * sizeof(float), 0);
             GL.EnableVertexAttribArray(1);
-            GL.VertexAttribFormat(1, 4, VertexAttribType.Float, false, 0);
-            GL.VertexAttribBinding(1, 1);
-            GL.VertexBindingDivisor(1, 1);
+            GL.VertexAttribDivisor(1, 1);
 
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, VbOs[1]);
+            GL.VertexAttribPointer(2, 1, VertexAttribPointerType.Float, false, 1 * sizeof(float), 0);
             GL.EnableVertexAttribArray(2);
-            GL.VertexAttribFormat(2, 1, VertexAttribType.Float, false, 0);
-            GL.VertexAttribBinding(2, 2);
-            GL.VertexBindingDivisor(2, 1);
+            GL.VertexAttribDivisor(2, 1);
 
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
             GL.BindVertexArray(VertexArrayHandle.Zero);

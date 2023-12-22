@@ -95,9 +95,11 @@ namespace New_SSQE.GUI
         private void RenderOffsets()
         {
             GL.BindVertexArray(VaOs[0]);
-            GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[0], NoteLen);
+            if (NoteLen > 0)
+                GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[0], NoteLen);
             GL.BindVertexArray(VaOs[1]);
-            GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[1], PointLen);
+            if (PointLen > 0)
+                GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[1], PointLen);
         }
 
         public override void Render(float mousex, float mousey, float frametime)

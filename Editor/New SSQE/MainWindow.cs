@@ -98,18 +98,6 @@ namespace New_SSQE
 
 
 
-        private static void OnDebugMessage(DebugSource source, DebugType type, uint id, DebugSeverity severity, int length, IntPtr pMessage, IntPtr pUserParam)
-        {
-            string message = Marshal.PtrToStringAnsi(pMessage, length);
-
-            if (type == DebugType.DebugTypeError)
-                ActionLogging.Register($"[OpenGL Error] (source={source} type={type} id={id}) {message}", "WARN");
-        }
-
-        private static GLDebugProc DebugMessageDelegate = OnDebugMessage;
-
-
-
         private static WindowIcon GetWindowIcon()
         {
             var bytes = File.ReadAllBytes("assets/textures/Icon.ico");
@@ -130,20 +118,17 @@ namespace New_SSQE
             Icon = GetWindowIcon(),
             Flags = ContextFlags.Debug,
 
-            APIVersion = new Version(4, 3)
+            APIVersion = new Version(3, 3)
         })
         {
-            ActionLogging.Register("Required OpenGL version: 4.3");
+            ActionLogging.Register("Required OpenGL version: 3.3");
             ActionLogging.Register("Current OpenGL version: " + (GL.GetString(StringName.Version) ?? "N/A"));
 
             string version = GL.GetString(StringName.Version) ?? "";
             string sub = version[..version.IndexOf(" ")];
 
             if (string.IsNullOrWhiteSpace(version) || Version.Parse(sub) < APIVersion)
-                throw new Exception("Unsupported OpenGL version (Minimum: 4.3)");
-
-            GL.DebugMessageCallback(DebugMessageDelegate, IntPtr.Zero);
-            GL.Enable(EnableCap.DebugOutput);
+                throw new Exception("Unsupported OpenGL version (Minimum: 3.3)");
 
             Shader.Init();
 
@@ -220,6 +205,10 @@ namespace New_SSQE
 
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
             GL.BindVertexArray(VertexArrayHandle.Zero);
+
+            var err = GL.GetError();
+            if (err != OpenTK.Graphics.OpenGL.ErrorCode.NoError)
+                ActionLogging.Register($"OpenGL Error: '{err}'", "WARN");
             
             SwapBuffers();
         }

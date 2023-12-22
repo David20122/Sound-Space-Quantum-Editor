@@ -12,7 +12,7 @@ namespace SSQE_Player.GUI
         private readonly GuiLabel AccuracyLabel = new(930, 10, 60, 24, "", 24, true, Settings.settings["color1"]);
         private readonly GuiLabel ComboLabel = new(930, 35, 60, 24, "", 24, true, Settings.settings["color1"]);
         private readonly GuiLabel MissesLabel = new(930, 60, 60, 24, "", 24, true, Settings.settings["color2"]);
-        private readonly GuiLabel InfoLabel = new(10, 10, 100, 50, "QUIT: Escape or R\nRESTART: Tab\nPAUSE: Space\n\nOFFSET: Scroll\nUNFOCUS: CTRL\nFOCUS: LMB", 24, false, Settings.settings["color2"]);
+        private readonly GuiLabel InfoLabel = new(10, 10, 100, 50, "QUIT: Escape or R\nRESTART: Tab\nPAUSE: Space\n\nOFFSET: Scroll\nUNFOCUS: CTRL+U\nFOCUS: LMB", 24, false, Settings.settings["color2"]);
         private readonly GuiLabel PausedLabel = new(930, 980, 60, 60, "PAUSED", 64, true, Color.FromArgb(0, 127, 255));
         private readonly GuiLabel HitWindowTempoLabel = new(10, 1050, 60, 40, "", 24, false, Settings.settings["color2"]);
         private readonly GuiLabel OffsetLabel = new(930, 1040, 60, 40, "", 24, true, Settings.settings["color2"]);

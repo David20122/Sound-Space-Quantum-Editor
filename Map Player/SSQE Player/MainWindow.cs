@@ -181,8 +181,7 @@ namespace SSQE_Player
                     }
                     break;
 
-                case Keys.LeftControl:
-                case Keys.RightControl:
+                case Keys.U when e.Control:
                     CursorState = CursorState.Normal;
                     break;
             }
