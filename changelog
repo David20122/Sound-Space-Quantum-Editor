@@ -1,4 +1,11 @@
 ----------------------------------
+     -- 2.1.1.8 - 12/22/2023 --
+    -- P-2.1.2.2 - 12/22/2023 --
+
+- required OpenGL version is now 3.3
+- fixed Roblox audio decompression when downloaded via the editor
+
+----------------------------------
      -- 2.1.1.7 - 12/19/2023 --
 
 - fixed a crash during autosaving on some systems
