@@ -1,4 +1,12 @@
 ----------------------------------
+      -- 2.1.2.0 - 1/8/2023 --
+
+- optimized waveform rendering
+- fixed a memory leak with waveform data
+- fixed note shifting when saving with an export offset other than 0
+- fixed logging editor actions
+
+----------------------------------
      -- 2.1.1.8 - 12/22/2023 --
 
 - required OpenGL version is now 3.3
