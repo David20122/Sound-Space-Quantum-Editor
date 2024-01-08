@@ -1,5 +1,5 @@
 ----------------------------------
-      -- 2.1.2.0 - 1/8/2023 --
+      -- 2.1.2.0 - 1/8/2024 --
 
 - optimized waveform rendering
 - fixed a memory leak with waveform data
