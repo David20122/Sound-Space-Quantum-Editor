@@ -134,7 +134,7 @@ namespace New_SSQE
 
             Instance = this;
 
-            UpdateFrequency = 1 / 20.0;
+            UpdateFrequency = 20.0;
 
             DiscordInit();
             SetActivity("Sitting in the menu");
@@ -177,7 +177,7 @@ namespace New_SSQE
             if (closing)
                 return;
 
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             if (MusicPlayer.IsPlaying && CurrentWindow is GuiWindowEditor)
                 Settings.settings["currentTime"].Value = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
