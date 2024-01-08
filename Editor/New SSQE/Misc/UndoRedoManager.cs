@@ -21,7 +21,7 @@ namespace New_SSQE
                     actions.RemoveAt(_index + 1);
 
                 actions.Add(new URAction(label, undo, redo));
-                if (reload)
+                if (!reload)
                     ActionLogging.Register($"Action registered: {label}");
                 _index++;
 

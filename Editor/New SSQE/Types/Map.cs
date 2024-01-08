@@ -94,7 +94,7 @@ namespace New_SSQE.Types
             editor.UndoRedoManager.Clear();
 
             for (int i = 0; i < urActions.Count; i++)
-                editor.UndoRedoManager.Add(urActions[i].Label, urActions[i].Undo, urActions[i].Redo, false);
+                editor.UndoRedoManager.Add(urActions[i].Label, urActions[i].Undo, urActions[i].Redo, false, true);
 
             editor.UndoRedoManager._index = urIndex;
 
