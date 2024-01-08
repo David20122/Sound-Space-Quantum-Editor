@@ -40,6 +40,7 @@ namespace New_SSQE.GUI
 
         private float StartX = 0f;
         private float EndX = 0f;
+        private Vector4 PosSet = new();
 
         private readonly Dictionary<string, int> Indices = new()
         {
@@ -409,7 +410,7 @@ namespace New_SSQE.GUI
 
             // render waveform
             if (Settings.settings["waveform"])
-                Waveform.Render(StartX, EndX, Rect.Height);
+                Waveform.Render(PosSet, Rect.Height);
 
             // render dynamic elements
             GenerateOffsets();
@@ -487,12 +488,11 @@ namespace New_SSQE.GUI
             var cursorX = Rect.Width * Settings.settings["cursorPos"].Value / 100f;
             var endX = cursorX - posX + maxX + 1;
 
-            StartX = -posX + cursorX;
-            EndX = endX;
-
             StartPos = Math.Max(0, (-cursorX * 1000f / noteStep + currentTime) / totalTime);
             EndPos = Math.Min(1, ((Rect.Width - cursorX) * 1000f / noteStep + currentTime) / totalTime);
-            
+
+            PosSet = (-posX + cursorX, endX, StartPos, EndPos);
+
             HoveringNote = null;
             HoveringPoint = null;
 

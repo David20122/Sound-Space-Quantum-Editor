@@ -1,7 +1,9 @@
 ﻿using New_SSQE.GUI;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
+using System.Drawing;
 using Un4seen.Bass;
 
 namespace New_SSQE
@@ -9,11 +11,14 @@ namespace New_SSQE
     internal class Waveform
     {
         private static float[] WaveModel = Array.Empty<float>();
+        private static int waveLength = 0;
         private static VertexArrayHandle VaO;
         private static BufferHandle VbO;
         private static int posLocation;
 
         private static bool isUploaded = false;
+        private static double resolution = 0.0d;
+        private static bool classic = false;
 
         private struct Level
         {
@@ -36,7 +41,7 @@ namespace New_SSQE
                 Bass.BASS_ChannelSetPosition(streamID, 0L);
             }
 
-            double resolution = 1 / (double)Settings.settings["waveformDetail"] / 100;
+            resolution = 1 / (double)Settings.settings["waveformDetail"] / 100;
             int bpf = (int)Bass.BASS_ChannelSeconds2Bytes(streamID, resolution);
 
             int framesToRender = (int)Math.Ceiling(length / bpf);
@@ -97,7 +102,7 @@ namespace New_SSQE
             catch { }
 
             // process data
-            bool classic = Settings.settings["classicWaveform"];
+            classic = Settings.settings["classicWaveform"];
             WaveModel = new float[data.Length * (classic ? 2 : 4)];
 
             int maxPeak = 0;
@@ -194,13 +199,16 @@ namespace New_SSQE
             isUploaded = true;
         }
 
-        public static void Render(float startPos, float endPos, float trackHeight)
+        public static void Render(Vector4 pos, float trackHeight)
         {
+            int start = Math.Max(0, (int)(pos.Z * waveLength) - 1);
+            int end = Math.Min(waveLength, (int)(pos.W * waveLength) + 1);
+
             GL.UseProgram(Shader.WaveformProgram);
-            GL.Uniform3f(posLocation, startPos, endPos - startPos, trackHeight);
+            GL.Uniform3f(posLocation, pos.X, pos.Y - pos.X, trackHeight);
 
             GL.BindVertexArray(VaO);
-            GL.DrawArrays(PrimitiveType.LineStrip, 0, WaveModel.Length / 2);
+            GL.DrawArrays(PrimitiveType.LineStrip, start, end - start);
         }
 
         private static void Dispose()
