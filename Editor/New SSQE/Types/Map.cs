@@ -291,7 +291,7 @@ namespace New_SSQE.Types
             for (int i = 0; i < notes.Count; i++)
             {
                 var note = notes[i];
-                var clone = copy ? new Note(MathHelper.Clamp(note.X, -0.85f, 2.85f), MathHelper.Clamp(note.Y, -0.85f, 2.85f), (long)MathHelper.Clamp(note.Ms, 0, Settings.settings["currentTime"].Max)) : note;
+                var clone = copy ? new Note(MathHelper.Clamp(note.X, -0.85f, 2.85f), MathHelper.Clamp(note.Y, -0.85f, 2.85f), (long)MathHelper.Clamp(note.Ms, 0, Settings.settings["currentTime"].Max)) : note.Clone();
                 if (applyOffset)
                     clone.Ms += offset;
 

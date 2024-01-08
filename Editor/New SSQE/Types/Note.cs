@@ -38,5 +38,10 @@ namespace New_SSQE
 
             return $",{x.ToString(culture)}|{y.ToString(culture)}|{Ms}";
         }
+
+        public Note Clone()
+        {
+            return new(X, Y, Ms);
+        }
     }
 }
