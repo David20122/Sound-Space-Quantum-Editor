@@ -1,4 +1,9 @@
 ----------------------------------
+      -- 2.1.2.1 - 1/8/2024 --
+
+- fixed a stutter caused by a previous fix
+
+----------------------------------
       -- 2.1.2.0 - 1/8/2024 --
 
 - optimized waveform rendering
