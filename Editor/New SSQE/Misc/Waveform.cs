@@ -136,7 +136,7 @@ namespace New_SSQE
                 }
             }
 
-            if (!isUploaded)
+            if (isUploaded)
                 Dispose();
             Upload();
 
@@ -182,6 +182,9 @@ namespace New_SSQE
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, VbO);
             GL.BufferData(BufferTargetARB.ArrayBuffer, WaveModel, BufferUsageARB.StaticDraw);
 
+            waveLength = WaveModel.Length / 2;
+            WaveModel = Array.Empty<float>();
+
             GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
 
@@ -202,8 +205,12 @@ namespace New_SSQE
 
         private static void Dispose()
         {
-            GL.DeleteVertexArray(VaO);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, VbO);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, 0, IntPtr.Zero, BufferUsageARB.StaticDraw);
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
             GL.DeleteBuffer(VbO);
+
+            GL.DeleteVertexArray(VaO);
 
             isUploaded = false;
         }
