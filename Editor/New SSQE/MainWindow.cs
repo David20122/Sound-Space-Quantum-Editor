@@ -134,8 +134,6 @@ namespace New_SSQE
 
             Instance = this;
 
-            UpdateFrequency = 20.0;
-
             DiscordInit();
             SetActivity("Sitting in the menu");
 
@@ -156,14 +154,6 @@ namespace New_SSQE
                 VSync = mode;
         }
 
-        protected override void OnUpdateFrame(FrameEventArgs args)
-        {
-            if (discordEnabled)
-                try { discord.RunCallbacks(); } catch { }
-
-            ExportSSPM.UpdateID();
-        }
-
         protected override void OnLoad()
         {
             GL.ClearColor(0f, 0f, 0f, 1f);
@@ -172,10 +162,28 @@ namespace New_SSQE
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         }
 
+        private void UpdateFrame(FrameEventArgs args)
+        {
+            if (discordEnabled)
+                try { discord.RunCallbacks(); } catch { }
+
+            ExportSSPM.UpdateID();
+        }
+
+        private double frameTime;
+        private const double updateFrequency = 1 / 20.0;
+
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             if (closing)
                 return;
+
+            frameTime += args.Time;
+            if (frameTime > updateFrequency)
+            {
+                UpdateFrame(new FrameEventArgs(frameTime));
+                frameTime = 0;
+            }
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
