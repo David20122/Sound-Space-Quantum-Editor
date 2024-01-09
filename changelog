@@ -1,4 +1,12 @@
 ----------------------------------
+      -- 2.1.2.2 - 1/9/2024 --
+
+- fixed resetting slider settings to default on track height, tempo, and volumes
+- fixed overlapping button and slider hitboxes
+- reduced slider hitbox size along its line
+- changelog slider is now hidden if it has nothing to scroll
+
+----------------------------------
       -- 2.1.2.1 - 1/8/2024 --
 
 - fixed a stutter caused by a previous fix
