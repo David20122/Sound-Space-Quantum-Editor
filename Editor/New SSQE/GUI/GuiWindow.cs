@@ -107,18 +107,8 @@ namespace New_SSQE.GUI
                 for (int i = controlsCopied.Count; i > 0; i--)
                 {
                     var control = controlsCopied[i - 1];
-                    var hitbox = control.Rect;
-
-                    if (control is GuiSlider)
-                    {
-                        var horizontal = control.Rect.Width > control.Rect.Height;
-                        var xdiff = horizontal ? 12f : 0f;
-                        var ydiff = horizontal ? 0f : 12f;
-
-                        hitbox = new RectangleF(control.Rect.X - xdiff, control.Rect.Y - ydiff, control.Rect.Width + xdiff * 2f, control.Rect.Height + ydiff * 2f);
-                    }
-
-                    if (!buttonClicked && control.Visible && hitbox.Contains(pos))
+                    
+                    if (!buttonClicked && control.Visible && control.Rect.Contains(pos))
                         control.OnMouseClick(pos, false);
                     else if (control is GuiTextbox box)
                         box.Focused = false;
