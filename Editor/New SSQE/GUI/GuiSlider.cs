@@ -177,6 +177,8 @@ namespace New_SSQE.GUI
                 Settings.settings[Setting].Value = defaultValue;
             else
                 Dragging = true;
+
+            MainWindow.Instance.CurrentWindow?.OnButtonClicked(-1);
         }
 
         public override void OnMouseUp(Point pos)
