@@ -161,6 +161,7 @@ namespace New_SSQE.GUI
             var setting = Settings.settings["changelogPosition"];
 
             setting.Max = lines.Count - (int)(715f * heightdiff / ChangelogLabel.TextSize);
+            ChangelogSlider.Visible = setting.Max > 0;
 
             for (int i = 0; i < lines.Count; i++)
                 if (i >= setting.Max - setting.Value && i < setting.Max - setting.Value + 715f * heightdiff / ChangelogLabel.TextSize - 1)
