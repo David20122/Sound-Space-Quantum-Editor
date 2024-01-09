@@ -175,6 +175,31 @@ namespace New_SSQE.GUI
 
             if (right)
                 Settings.settings[Setting].Value = defaultValue;
+
+                switch (Setting)
+                {
+                    case "trackHeight":
+                        editor.YOffset = 64 + defaultValue;
+                        editor.OnResize(MainWindow.Instance.ClientSize);
+
+                        break;
+
+                    case "sfxVolume":
+                        MainWindow.Instance.SoundPlayer.Volume = defaultValue;
+
+                        break;
+
+                    case "masterVolume":
+                        MainWindow.Instance.MusicPlayer.Volume = defaultValue;
+
+                        break;
+
+                    case "tempo":
+                        MainWindow.Instance.SetTempo(defaultValue);
+
+                        break;
+                }
+            }
             else
                 Dragging = true;
 
