@@ -174,6 +174,8 @@ namespace New_SSQE.GUI
             MainWindow.Instance.SoundPlayer.Play(Settings.settings["clickSound"]);
 
             if (right)
+            {
+                var editor = MainWindow.Instance.CurrentWindow as GuiWindowEditor;
                 Settings.settings[Setting].Value = defaultValue;
 
                 switch (Setting)
