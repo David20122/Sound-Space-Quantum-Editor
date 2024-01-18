@@ -19,12 +19,17 @@ namespace New_SSQE
             }
             catch (Exception e)
             {
+                try
+                {
+                    MainWindow.Instance.CurrentMap?.Save();
+                    MainWindow.Instance.CacheMaps();
+                }
+                catch { }
+
                 ActionLogging.Register("[Error encountered in application]", "ERROR");
                 var logs = string.Join('\n', ActionLogging.Logs);
 
                 var text = @$"// whoops
-
-{logs}
 
 {e.Message}
 
@@ -42,6 +47,8 @@ If a missing DLL error is thrown but the main directory contains said file, try 
 Try updating your graphics driver to the latest version if none of the previous solutions apply to your situation.
 
 If none of these work or this error was thrown while the editor was already running, report the error in the official Sound Space Discord server to attempt to resolve the issue if possible.
+
+{logs}
                 ";
 
                 File.WriteAllText("crash-report.txt", text);
