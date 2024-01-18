@@ -391,7 +391,7 @@ namespace New_SSQE.GUI
 
                     var selected = editor.SelectedNotes.ToList();
 
-                    if (editor.ShiftHeld)
+                    if (editor.ShiftHeld && selected.Count > 0)
                     {
                         selected = new List<Note> { selected[0] };
 
