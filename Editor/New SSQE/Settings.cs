@@ -45,6 +45,7 @@ namespace New_SSQE
             {"approachFade", true },
             {"gridGuides", false },
             {"applyOnPaste", false },
+            {"jumpPaste", false },
 
             {"editorBGOpacity", 255 },
             {"gridOpacity", 255 },

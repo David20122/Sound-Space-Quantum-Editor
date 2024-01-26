@@ -25,16 +25,17 @@ namespace New_SSQE.GUI
         private readonly GuiCheckbox AutoAdvance = new(0, 0, 0, 0, "autoAdvance", "Auto-Advance", 25);
 
         private readonly GuiButton OptionsNav = new(10, 60, 400, 50, 3, "OPTIONS >", 25, false, true);
-        private readonly GuiCheckbox Autoplay = new(10, 130, 35, 35, "autoplay", "Autoplay", 22, false, true);
-        private readonly GuiCheckbox ApproachSquares = new(10, 175, 35, 35, "approachSquares", "Approach Squares", 22, false, true);
-        private readonly GuiCheckbox GridNumbers = new(10, 220, 35, 35, "gridNumbers", "Grid Numbers", 22, false, true);
-        private readonly GuiCheckbox GridLetters = new(10, 265, 35, 35, "gridLetters", "Grid Letters", 22, false, true);
-        private readonly GuiCheckbox Quantum = new(10, 310, 35, 35, "enableQuantum", "Quantum", 22, false, true);
-        private readonly GuiCheckbox Numpad = new(10, 355, 35, 35, "numpad", "Use Numpad", 22, false, true);
-        private readonly GuiCheckbox QuantumGridLines = new(10, 400, 35, 35, "quantumGridLines", "Quantum Grid Lines", 22, false, true);
-        private readonly GuiCheckbox QuantumGridSnap = new(10, 445, 35, 35, "quantumGridSnap", "Snap to Grid", 22, false, true);
-        private readonly GuiCheckbox Metronome = new(10, 490, 35, 35, "metronome", "Metronome", 22, false, true);
-        private readonly GuiCheckbox SeparateClickTools = new(10, 535, 35, 35, "separateClickTools", "Separate Click Tools", 22, false, true);
+        private readonly GuiCheckbox Autoplay = new(10, 130, 30, 30, "autoplay", "Autoplay", 20, false, true);
+        private readonly GuiCheckbox ApproachSquares = new(10, 170, 30, 30, "approachSquares", "Approach Squares", 20, false, true);
+        private readonly GuiCheckbox GridNumbers = new(10, 210, 30, 30, "gridNumbers", "Grid Numbers", 20, false, true);
+        private readonly GuiCheckbox GridLetters = new(10, 250, 30, 30, "gridLetters", "Grid Letters", 20, false, true);
+        private readonly GuiCheckbox Quantum = new(10, 290, 30, 30, "enableQuantum", "Quantum", 20, false, true);
+        private readonly GuiCheckbox Numpad = new(10, 330, 30, 30, "numpad", "Use Numpad", 20, false, true);
+        private readonly GuiCheckbox QuantumGridLines = new(10, 370, 30, 30, "quantumGridLines", "Quantum Grid Lines", 20, false, true);
+        private readonly GuiCheckbox QuantumGridSnap = new(10, 410, 30, 30, "quantumGridSnap", "Snap to Grid", 20, false, true);
+        private readonly GuiCheckbox Metronome = new(10, 450, 30, 30, "metronome", "Metronome", 20, false, true);
+        private readonly GuiCheckbox SeparateClickTools = new(10, 490, 30, 30, "separateClickTools", "Separate Click Tools", 20, false, true);
+        private readonly GuiCheckbox JumpOnPaste = new(10, 530, 30, 30, "jumpPaste", "Jump on Paste", 20, false, true);
         private readonly GuiSlider TrackHeight = new(378, 384, 32, 224, "trackHeight", false, false, true);
         private readonly GuiSlider TrackCursorPos = new(10, 596, 400, 32, "cursorPos", false, false, true);
         private readonly GuiSlider ApproachRate = new(378, 124, 32, 224, "approachRate", true, false, true);
@@ -139,8 +140,8 @@ namespace New_SSQE.GUI
                 CopyButton, BackButton, SaveButton, PlayPause, OptionsNav, TimingNav, UseCurrentMs, OpenTimings, ImportIni, PatternsNav, HFlip, VFlip, StoreNodes, ClearNodes,
                 BezierButton, RotateButton, ScaleButton, ReviewNav, OpenBookmarks, CopyBookmarks, PasteBookmarks, ScanClonedNotes, PlayerNav, CameraMode, PlayMap, ExportSSPMButton,
                 // Checkboxes
-                AutoAdvance, Autoplay, ApproachSquares, GridNumbers, GridLetters, Quantum, Numpad, QuantumGridLines, QuantumGridSnap, Metronome, SeparateClickTools, CurveBezier,
-                ApplyOnPaste, LockCursor, ApproachFade, FromStart, GridGuides,
+                AutoAdvance, Autoplay, ApproachSquares, GridNumbers, GridLetters, Quantum, Numpad, QuantumGridLines, QuantumGridSnap, Metronome, SeparateClickTools, JumpOnPaste,
+                CurveBezier, ApplyOnPaste, LockCursor, ApproachFade, FromStart, GridGuides,
                 // Sliders
                 Tempo, MasterVolume, SfxVolume, BeatSnapDivisor, QuantumSnapDivisor, Timeline, TrackHeight, TrackCursorPos, ApproachRate, PlayerApproachRate,
                 // Boxes
@@ -621,6 +622,7 @@ namespace New_SSQE.GUI
             QuantumGridSnap.Visible = optionsNav;
             Metronome.Visible = optionsNav;
             SeparateClickTools.Visible = optionsNav;
+            JumpOnPaste.Visible = optionsNav;
             TrackHeight.Visible = optionsNav;
             TrackCursorPos.Visible = optionsNav;
             ApproachRate.Visible = optionsNav;

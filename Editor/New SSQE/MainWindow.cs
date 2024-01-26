@@ -423,6 +423,7 @@ namespace New_SSQE
                                 if (copied.Count > 0)
                                 {
                                     var offset = copied.Min(n => n.Ms);
+                                    var max = copied.Max(n => n.Ms);
 
                                     copied.ForEach(n => n.Ms = (long)Settings.settings["currentTime"].Value + n.Ms - offset);
 
@@ -446,6 +447,9 @@ namespace New_SSQE
                                             }
                                         }
                                     }
+
+                                    if (Settings.settings["jumpPaste"])
+                                        Settings.settings["currentTime"].Value += max - offset;
 
                                     UndoRedoManager.Add($"PASTE NOTE{(copied.Count > 0 ? "S" : "")}", () =>
                                     {
