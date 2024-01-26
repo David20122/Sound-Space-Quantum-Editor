@@ -122,7 +122,7 @@ namespace New_SSQE.Types
 
             currentTime = Settings.settings["currentTime"].Value;
             beatDivisor = Settings.settings["beatDivisor"].Value;
-            exportOffset = Settings.settings["exportOffset"];
+            exportOffset = (long)Settings.settings["exportOffset"];
 
             mappers = Settings.settings["mappers"];
             songName = Settings.settings["songName"];
@@ -193,7 +193,7 @@ namespace New_SSQE.Types
 
                 currentTime = float.Parse(items[7], culture);
                 beatDivisor = float.Parse(items[8], culture);
-                exportOffset = int.Parse(items[9]);
+                exportOffset = long.Parse(items[9]);
 
                 mappers = items[10];
                 songName = items[11];
