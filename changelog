@@ -6,7 +6,7 @@
 - fixed invalid character appearing when pasting bookmarks
 - fixed placing bound patterns
 
-     -- P-2.1.2.1 - 2/7/2024 --
+     -- P-2.1.2.3 - 2/7/2024 --
 
 - added optional fps limit setting
 
