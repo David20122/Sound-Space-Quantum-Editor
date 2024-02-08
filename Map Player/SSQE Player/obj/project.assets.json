@@ -2,6 +2,18 @@
   "version": 3,
   "targets": {
     "net6.0": {
+      "Microsoft.NET.ILLink.Analyzers/7.0.100-1.23211.1": {
+        "type": "package",
+        "build": {
+          "build/Microsoft.NET.ILLink.Analyzers.props": {}
+        }
+      },
+      "Microsoft.NET.ILLink.Tasks/7.0.100-1.23211.1": {
+        "type": "package",
+        "build": {
+          "build/Microsoft.NET.ILLink.Tasks.props": {}
+        }
+      },
       "OpenTK/5.0.0-pre.8": {
         "type": "package",
         "dependencies": {
@@ -285,9 +297,317 @@
           }
         }
       }
+    },
+    "net6.0/win-x64": {
+      "Microsoft.NET.ILLink.Analyzers/7.0.100-1.23211.1": {
+        "type": "package",
+        "build": {
+          "build/Microsoft.NET.ILLink.Analyzers.props": {}
+        }
+      },
+      "Microsoft.NET.ILLink.Tasks/7.0.100-1.23211.1": {
+        "type": "package",
+        "build": {
+          "build/Microsoft.NET.ILLink.Tasks.props": {}
+        }
+      },
+      "OpenTK/5.0.0-pre.8": {
+        "type": "package",
+        "dependencies": {
+          "OpenTK.Compute": "5.0.0-pre.8",
+          "OpenTK.Core": "5.0.0-pre.8",
+          "OpenTK.Graphics": "5.0.0-pre.8",
+          "OpenTK.Input": "5.0.0-pre.8",
+          "OpenTK.Mathematics": "5.0.0-pre.8",
+          "OpenTK.OpenAL": "5.0.0-pre.8",
+          "OpenTK.Windowing.Common": "5.0.0-pre.8",
+          "OpenTK.Windowing.Desktop": "5.0.0-pre.8",
+          "OpenTK.Windowing.GraphicsLibraryFramework": "5.0.0-pre.8"
+        }
+      },
+      "OpenTK.Compute/5.0.0-pre.8": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/OpenTK.Compute.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/OpenTK.Compute.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "OpenTK.Core/5.0.0-pre.8": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/OpenTK.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/OpenTK.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "OpenTK.Graphics/5.0.0-pre.8": {
+        "type": "package",
+        "dependencies": {
+          "OpenTK.Core": "[5.0.0-pre.8, 6.0.0-pre)",
+          "OpenTK.Mathematics": "[5.0.0-pre.8, 6.0.0-pre)"
+        },
+        "compile": {
+          "lib/net5.0/OpenTK.Graphics.dll": {
+            "related": ".pdb"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/OpenTK.Graphics.dll": {
+            "related": ".pdb"
+          }
+        }
+      },
+      "OpenTK.Input/5.0.0-pre.8": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/OpenTK.Input.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/OpenTK.Input.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "OpenTK.Mathematics/5.0.0-pre.8": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "5.0.0"
+        },
+        "compile": {
+          "lib/net5.0/OpenTK.Mathematics.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/OpenTK.Mathematics.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "OpenTK.OpenAL/5.0.0-pre.8": {
+        "type": "package",
+        "dependencies": {
+          "OpenTK.Core": "[5.0.0-pre.8, 6.0.0-pre)",
+          "OpenTK.Mathematics": "[5.0.0-pre.8, 6.0.0-pre)"
+        },
+        "compile": {
+          "lib/net5.0/OpenTK.OpenAL.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/OpenTK.OpenAL.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "OpenTK.redist.glfw/3.3.8.30": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/_._": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/_._": {}
+        },
+        "native": {
+          "runtimes/win-x64/native/glfw3.dll": {}
+        }
+      },
+      "OpenTK.Windowing.Common/5.0.0-pre.8": {
+        "type": "package",
+        "dependencies": {
+          "OpenTK.Core": "[5.0.0-pre.8, 6.0.0-pre)",
+          "OpenTK.Mathematics": "[5.0.0-pre.8, 6.0.0-pre)"
+        },
+        "compile": {
+          "lib/net5.0/OpenTK.Windowing.Common.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/OpenTK.Windowing.Common.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "OpenTK.Windowing.Desktop/5.0.0-pre.8": {
+        "type": "package",
+        "dependencies": {
+          "OpenTK.Core": "[5.0.0-pre.8, 6.0.0-pre)",
+          "OpenTK.Mathematics": "[5.0.0-pre.8, 6.0.0-pre)",
+          "OpenTK.Windowing.Common": "[5.0.0-pre.8, 6.0.0-pre)",
+          "OpenTK.Windowing.GraphicsLibraryFramework": "[5.0.0-pre.8, 6.0.0-pre)"
+        },
+        "compile": {
+          "lib/net5.0/OpenTK.Windowing.Desktop.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/OpenTK.Windowing.Desktop.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "OpenTK.Windowing.GraphicsLibraryFramework/5.0.0-pre.8": {
+        "type": "package",
+        "dependencies": {
+          "OpenTK.Core": "[5.0.0-pre.8, 6.0.0-pre)",
+          "OpenTK.redist.glfw": "3.3.8.30"
+        },
+        "compile": {
+          "lib/net5.0/OpenTK.Windowing.GraphicsLibraryFramework.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/OpenTK.Windowing.GraphicsLibraryFramework.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "SharpFont.Dependencies/2.6.0": {
+        "type": "package",
+        "build": {
+          "build/SharpFont.Dependencies.props": {}
+        }
+      },
+      "SkiaSharp/2.88.1": {
+        "type": "package",
+        "dependencies": {
+          "SkiaSharp.NativeAssets.Win32": "2.88.1",
+          "SkiaSharp.NativeAssets.macOS": "2.88.1"
+        },
+        "compile": {
+          "lib/net6.0/SkiaSharp.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/SkiaSharp.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "SkiaSharp.NativeAssets.macOS/2.88.1": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/_._": {}
+        },
+        "runtime": {
+          "lib/net5.0/_._": {}
+        }
+      },
+      "SkiaSharp.NativeAssets.Win32/2.88.1": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/_._": {}
+        },
+        "runtime": {
+          "lib/net5.0/_._": {}
+        },
+        "native": {
+          "runtimes/win-x64/native/libSkiaSharp.dll": {}
+        }
+      },
+      "SpaceWizards.SharpFont/1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/netcoreapp3.0/SpaceWizards.SharpFont.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/SpaceWizards.SharpFont.dll": {}
+        }
+      },
+      "System.Json/4.7.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/System.Json.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Json.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "System.Runtime.CompilerServices.Unsafe/5.0.0": {
+        "type": "package",
+        "compile": {
+          "ref/netstandard2.1/System.Runtime.CompilerServices.Unsafe.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.dll": {
+            "related": ".xml"
+          }
+        }
+      }
     }
   },
   "libraries": {
+    "Microsoft.NET.ILLink.Analyzers/7.0.100-1.23211.1": {
+      "sha512": "0GvbEgDGcUQA9KuWcQU1WwYHXt1tBzNr1Nls/M57rM7NA/AndFwCaCEoJpJkmxRY7xLlPDBnmGp8h5+FNqUngg==",
+      "type": "package",
+      "path": "microsoft.net.illink.analyzers/7.0.100-1.23211.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "analyzers/dotnet/cs/ILLink.CodeFixProvider.dll",
+        "analyzers/dotnet/cs/ILLink.RoslynAnalyzer.dll",
+        "build/Microsoft.NET.ILLink.Analyzers.props",
+        "microsoft.net.illink.analyzers.7.0.100-1.23211.1.nupkg.sha512",
+        "microsoft.net.illink.analyzers.nuspec"
+      ]
+    },
+    "Microsoft.NET.ILLink.Tasks/7.0.100-1.23211.1": {
+      "sha512": "tvG8XZYLjT0o3WicCyKBZysVWo1jC9HdCFmNRmddx3WbAz0UCsd0qKZqpiEo99VLA8Re+FzWK51OcRldQPbt2Q==",
+      "type": "package",
+      "path": "microsoft.net.illink.tasks/7.0.100-1.23211.1",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "Sdk/Sdk.props",
+        "build/6.0_suppressions.xml",
+        "build/Microsoft.NET.ILLink.Tasks.props",
+        "build/Microsoft.NET.ILLink.targets",
+        "microsoft.net.illink.tasks.7.0.100-1.23211.1.nupkg.sha512",
+        "microsoft.net.illink.tasks.nuspec",
+        "tools/net472/ILLink.Tasks.dll",
+        "tools/net472/Mono.Cecil.dll",
+        "tools/net472/System.Buffers.dll",
+        "tools/net472/System.Collections.Immutable.dll",
+        "tools/net472/System.Memory.dll",
+        "tools/net472/System.Numerics.Vectors.dll",
+        "tools/net472/System.Reflection.Metadata.dll",
+        "tools/net472/System.Runtime.CompilerServices.Unsafe.dll",
+        "tools/net7.0/ILLink.Tasks.deps.json",
+        "tools/net7.0/ILLink.Tasks.dll",
+        "tools/net7.0/Mono.Cecil.Pdb.dll",
+        "tools/net7.0/Mono.Cecil.dll",
+        "tools/net7.0/illink.deps.json",
+        "tools/net7.0/illink.dll",
+        "tools/net7.0/illink.runtimeconfig.json"
+      ]
+    },
     "OpenTK/5.0.0-pre.8": {
       "sha512": "jbKsrfkS0Y5nANb/F4/iityL47Ym97YWBX/Po+tqReVEhWUH6DHIKmiVuP+Wz9gyRAzJQlhK2BJDtAXHcq3iIw==",
       "type": "package",
@@ -673,6 +993,8 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
+      "Microsoft.NET.ILLink.Analyzers >= 7.0.100-1.23211.1",
+      "Microsoft.NET.ILLink.Tasks >= 7.0.100-1.23211.1",
       "OpenTK >= 5.0.0-pre.8",
       "SharpFont.Dependencies >= 2.6.0",
       "SkiaSharp >= 2.88.1",
@@ -725,6 +1047,18 @@
       "net6.0": {
         "targetAlias": "net6.0",
         "dependencies": {
+          "Microsoft.NET.ILLink.Analyzers": {
+            "suppressParent": "All",
+            "target": "Package",
+            "version": "[7.0.100-1.23211.1, )",
+            "autoReferenced": true
+          },
+          "Microsoft.NET.ILLink.Tasks": {
+            "suppressParent": "All",
+            "target": "Package",
+            "version": "[7.0.100-1.23211.1, )",
+            "autoReferenced": true
+          },
           "OpenTK": {
             "target": "Package",
             "version": "[5.0.0-pre.8, )"
@@ -764,6 +1098,11 @@
         },
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
       }
+    },
+    "runtimes": {
+      "win-x64": {
+        "#import": []
+      }
     }
   },
   "logs": [
@@ -774,7 +1113,8 @@
       "message": "Package 'SkiaSharp' 2.88.1 has a known high severity vulnerability, https://github.com/advisories/GHSA-j7hp-h8jx-5ppr",
       "libraryId": "SkiaSharp",
       "targetGraphs": [
-        "net6.0"
+        "net6.0",
+        "net6.0/win-x64"
       ]
     }
   ]
