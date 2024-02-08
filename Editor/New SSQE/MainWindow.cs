@@ -148,10 +148,15 @@ namespace New_SSQE
             SwitchWindow(new GuiWindowMenu());
         }
 
-        public void SetVSync(VSyncMode mode)
+        public void UpdateFPS(VSyncMode mode)
         {
             if (Context.IsCurrent)
                 VSync = mode;
+
+            var fps = Settings.settings["fpsLimit"].Value;
+            var max = Settings.settings["fpsLimit"].Max;
+
+            RenderFrequency = Math.Round(fps) == Math.Round(max) ? 0f : fps + 60f;
         }
 
         protected override void OnLoad()
@@ -938,7 +943,7 @@ namespace New_SSQE
                 pattern = pattern[1..];
 
             if (CurrentWindow is GuiWindowEditor editor)
-                editor.ShowToast($"BOUND PATTERN TO KEY {index}", Settings.settings["color1"]);
+                editor.ShowToast($"BOUND PATTERN {index}", Settings.settings["color1"]);
 
             Settings.settings["patterns"][index] = pattern;
         }
@@ -962,7 +967,7 @@ namespace New_SSQE
             var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
             culture.NumberFormat.NumberDecimalSeparator = ".";
 
-            string[] patternSplit = pattern.split(',');
+            string[] patternSplit = pattern.Split(',');
             var toAdd = new List<Note>();
 
             foreach (var note in patternSplit)
@@ -1517,6 +1522,8 @@ namespace New_SSQE
 
             for (int i = 0; i < bookmarks.Length; i++)
             {
+                bookmarks[i] = bookmarks[i].Trim();
+
                 var split = bookmarks[i].Split(" ~ ");
                 if (split.Length != 2)
                     continue;
@@ -1956,88 +1963,6 @@ namespace New_SSQE
             return ((float)x, (float)y);
         }
 
-        public float CheckClones(int threshold)
-        {
-            List<Vector2> locations = new();
-            int score = 0;
-
-            for (int i = 0; i < Notes.Count; i++)
-            {
-                var note = Notes[i];
-                if (!locations.Contains(VecFromNote(note)))
-                    locations.Add(VecFromNote(note));
-            }
-
-            for (int i = 0; i < locations.Count; i++)
-            {
-                Vector2 currentLocation = locations[i];
-                List<int> indexes = new();
-
-                for (int j = 0; j < Notes.Count; j++)
-                {
-                    var note = Notes[j];
-                    Vector2 location = VecFromNote(note);
-
-                    if (location == currentLocation)
-                        indexes.Add(j);
-                }
-
-                for (int j = 0; j < indexes.Count; j++)
-                {
-                    List<int> tempIndexes = new(indexes);
-                    tempIndexes.RemoveAt(j);
-
-                    int index = indexes[j];
-                    int offset = 0;
-
-                    while (tempIndexes.Count > 0)
-                    {
-                        offset++;
-
-                        if (index + offset >= Notes.Count)
-                            break;
-
-                        var compareNote = Notes[index + offset];
-                        currentLocation = VecFromNote(compareNote);
-
-                        for (int k = 0; k < tempIndexes.Count; k++)
-                        {
-                            int checkIndex = tempIndexes[k];
-
-                            if (checkIndex + offset >= Notes.Count || index >= checkIndex)
-                            {
-                                tempIndexes.RemoveAt(k);
-                                k--;
-                                continue;
-                            }
-
-                            if (k + 1 < tempIndexes.Count && checkIndex + offset >= tempIndexes[k + 1])
-                            {
-                                tempIndexes.RemoveAt(k + 1);
-                                k--;
-                                continue;
-                            }
-
-                            var checkNote = Notes[checkIndex + offset];
-                            Vector2 checkLocation = VecFromNote(checkNote);
-
-                            if (currentLocation != checkLocation)
-                            {
-                                tempIndexes.RemoveAt(k);
-                                k--;
-                                continue;
-                            }
-
-                            if (offset >= threshold)
-                                score++;
-                        }
-                    }
-                }
-            }
-
-            return (float)score / Notes.Count;
-        }
-
 
 
 
@@ -2073,7 +1998,7 @@ namespace New_SSQE
                 var dialog = new SaveFileDialog()
                 {
                     Title = "Export SSPM",
-                    Filter = "Sound Space Plus Maps (*.sspm)|*.sspm"
+                    Filter = "Rhythia Maps (*.sspm)|*.sspm"
                 };
 
                 if (Settings.settings["exportPath"] != "")

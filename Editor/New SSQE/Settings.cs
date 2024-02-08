@@ -46,6 +46,7 @@ namespace New_SSQE
             {"gridGuides", false },
             {"applyOnPaste", false },
             {"jumpPaste", false },
+            {"limitPlayerFPS", false },
 
             {"editorBGOpacity", 255 },
             {"gridOpacity", 255 },
@@ -62,7 +63,7 @@ namespace New_SSQE
             {"fov", 70 },
             {"noteScale", 1 },
             {"cursorScale", 1 },
-
+            
             {"autosavedFile", "" },
             {"autosavedProperties", "" },
             {"lastFile", "" },
@@ -88,6 +89,7 @@ namespace New_SSQE
             {"playerApproachRate", new SliderSetting(9, 29, 1) },
             {"masterVolume", new SliderSetting(0.05f, 1, 0.01f) },
             {"sfxVolume", new SliderSetting(0.1f, 1, 0.01f) },
+            {"fpsLimit", new SliderSetting(60f, 305f, 5f) },
 
             {"currentTime", new SliderSetting(0f, 0f, 0f) },
             {"beatDivisor", new SliderSetting(3f, 31f, 0.5f) },
@@ -95,7 +97,7 @@ namespace New_SSQE
             {"quantumSnapping", new SliderSetting(0f, 57f, 1f) },
 
             {"changelogPosition", new SliderSetting(0f, 0f, 1f) },
-
+            
             {"selectAll", new Keybind(Keys.A, true, false, false) },
             {"save", new Keybind(Keys.S, true, false, false) },
             {"saveAs", new Keybind(Keys.S, true, false, true) },
@@ -261,7 +263,7 @@ namespace New_SSQE
                 Reset();
             }
 
-            MainWindow.Instance.SetVSync(settings["useVSync"] ? VSyncMode.On : VSyncMode.Off);
+            MainWindow.Instance.UpdateFPS(settings["useVSync"] ? VSyncMode.On : VSyncMode.Off);
 
             MainWindow.Instance.MusicPlayer.Volume = settings["masterVolume"].Value;
             MainWindow.Instance.SoundPlayer.Volume = settings["sfxVolume"].Value;

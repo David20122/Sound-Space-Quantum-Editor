@@ -42,9 +42,10 @@ namespace New_SSQE.GUI
         private readonly GuiCheckbox CorrectOnCopyCheckbox = new(1350, 155, 55, 55, "correctOnCopy", "Correct Errors on Copy", 28);
         private readonly GuiCheckbox SkipDownloadCheckbox = new(1350, 230, 55, 55, "skipDownload", "Skip Download from Roblox", 28);
         private readonly GuiCheckbox ReverseScrollCheckbox = new(1350, 305, 55, 55, "reverseScroll", "Reverse Scroll Direction", 28);
-        private readonly GuiCheckbox UseVSyncCheckbox = new(1350, 380, 55, 55, "useVSync", "Enable VSync", 28);
-        private readonly GuiCheckbox CheckForUpdatesCheckbox = new(1350, 455, 55, 55, "checkUpdates", "Check For Updates", 28);
-        private readonly GuiCheckbox FullscreenPlayerCheckbox = new(1350, 530, 55, 55, "fullscreenPlayer", "Open Player in Fullscreen", 28);
+        private readonly GuiCheckbox CheckForUpdatesCheckbox = new(1350, 380, 55, 55, "checkUpdates", "Check For Updates", 28);
+        private readonly GuiCheckbox UseVSyncCheckbox = new(1350, 455, 55, 55, "useVSync", "Enable VSync", 28);
+        private readonly GuiCheckbox LimitPlayerFPSCheckbox = new(1350, 605, 55, 55, "limitPlayerFPS", "Limit Player FPS", 28);
+        private readonly GuiCheckbox FullscreenPlayerCheckbox = new(1350, 680, 55, 55, "fullscreenPlayer", "Open Player in Fullscreen", 28);
 
         private readonly GuiTextbox EditorBGOpacityTextbox = new(560, 160, 200, 50, "", 28, true, false, false, "editorBGOpacity");
         private readonly GuiLabel EditorBGOpacityLabel = new(560, 134, 200, 26, "Editor BG Opacity:", 24, false, false, "main", false);
@@ -63,6 +64,9 @@ namespace New_SSQE.GUI
 
         private readonly GuiTextbox WaveformDetailTextbox = new(950, 556, 200, 50, "", 28, true, false, false, "waveformDetail", "main", false, true, true);
         private readonly GuiLabel WaveformDetailLabel = new(950, 530, 200, 26, "Waveform Level of Detail:", 24, false, false, "main", false);
+
+        private readonly GuiSlider FPSLimitSlider = new(1350, 500, 400, 55, "fpsLimit", false);
+        private readonly GuiLabel FPSLimitLabel = new(1350, 555, 400, 55, "FPS Limit: ", 28, false, false, "main", false);
 
         private readonly List<GuiSquare> ColorPickerSquares = new();
         private readonly List<GuiSquare> OpacitySquares = new();
@@ -84,12 +88,14 @@ namespace New_SSQE.GUI
                 BackButton, ResetButton, OpenDirectoryButton, KeybindsButton, Color1Picker, Color2Picker, Color3Picker, Color4Picker, NoteColorPicker,
                 // Checkboxes
                 WaveformCheckbox, ClassicWaveformCheckbox, AutosaveCheckbox, CorrectOnCopyCheckbox, SkipDownloadCheckbox, ReverseScrollCheckbox, UseVSyncCheckbox,
-                CheckForUpdatesCheckbox, FullscreenPlayerCheckbox,
+                CheckForUpdatesCheckbox, FullscreenPlayerCheckbox, LimitPlayerFPSCheckbox,
+                // Sliders
+                FPSLimitSlider,
                 // Boxes
                 EditorBGOpacityTextbox, GridOpacityTextbox, TrackOpacityTextbox, AutosaveIntervalTextbox, WaveformDetailTextbox,
                 // Labels
                 Color1Label, Color2Label, Color3Label, Color4Label, NoteColorLabel, NoteColorInfo, EditorBGOpacityLabel, GridOpacityLabel, TrackOpacityLabel, AutosaveIntervalLabel,
-                WaveformDetailLabel
+                WaveformDetailLabel, FPSLimitLabel
             };
 
             BackgroundSquare = new(0, 0, 1920, 1080, Color.FromArgb(255, 30, 30, 30), false, "background_menu.png", "menubg");
@@ -150,6 +156,11 @@ namespace New_SSQE.GUI
                     Opacities[i].Update();
                 }
             }
+
+            var fps = Settings.settings["fpsLimit"].Value;
+            var max = Settings.settings["fpsLimit"].Max;
+
+            FPSLimitLabel.Text = $"FPS Limit: {(Math.Round(fps) == Math.Round(max) ? "Unlimited" : Math.Round(fps + 60f))}";
 
             base.Render(mousex, mousey, frametime);
         }

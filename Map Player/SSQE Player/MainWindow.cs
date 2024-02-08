@@ -51,6 +51,20 @@ namespace SSQE_Player
 
             VSync = VSyncMode.Off;
 
+            if (Settings.settings["limitPlayerFPS"])
+            {
+                if (Settings.settings["useVSync"])
+                    VSync = VSyncMode.On;
+                else
+                {
+                    var fps = Settings.settings["fpsLimit"].Value;
+                    var max = Settings.settings["fpsLimit"].Max;
+
+                    RenderFrequency = Math.Round(fps) == Math.Round(max) ? 0f : fps + 60f;
+                    UpdateFrequency = RenderFrequency;
+                }
+            }
+
             CursorState = CursorState.Grabbed;
             SetInputMode();
 
@@ -82,6 +96,13 @@ namespace SSQE_Player
             CurrentWindow = new(startIndex);
         }
 
+        private Vector2 MouseDelta = new();
+
+        protected override void OnUpdateFrame(FrameEventArgs args)
+        {
+            MouseDelta += MouseState.Delta;
+        }
+
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -89,10 +110,10 @@ namespace SSQE_Player
             if (MusicPlayer.IsPlaying)
                 Settings.settings["currentTime"].Value = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
 
-            var pos = MouseState.Delta;
-
-            Camera.Update(pos.X, pos.Y);
+            Camera.Update(MouseDelta.X, MouseDelta.Y);
             CurrentWindow?.Render((float)args.Time);
+
+            MouseDelta = new();
 
             SwapBuffers();
         }

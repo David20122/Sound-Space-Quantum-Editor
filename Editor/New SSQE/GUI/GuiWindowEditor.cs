@@ -65,9 +65,7 @@ namespace New_SSQE.GUI
         private readonly GuiButton OpenBookmarks = new(10, 310, 256, 40, 7, "EDIT BOOKMARKS", 21, false, true);
         private readonly GuiButton CopyBookmarks = new(10, 360, 256, 40, 20, "COPY BOOKMARKS", 21, false, true);
         private readonly GuiButton PasteBookmarks = new(10, 410, 256, 40, 21, "PASTE BOOKMARKS", 21, false, true);
-        private readonly GuiButton ScanClonedNotes = new(10, 460, 288, 40, 22, "SCAN FOR COPIED NOTES [WIP]", 21, false, true);
-        private readonly GuiTextbox CloneThreshold = new(10, 535, 128, 40, "5", 25, true, false, true);
-        private readonly GuiButton ExportSSPMButton = new(10, 585, 256, 40, 23, "EXPORT SSPM", 21, false, true);
+        private readonly GuiButton ExportSSPMButton = new(10, 460, 256, 40, 23, "EXPORT SSPM", 21, false, true);
 
         private readonly GuiButton PlayerNav = new(10, 300, 400, 50, 17, "PLAYER >", 25, false, true);
         private readonly GuiButtonList CameraMode = new(10, 395, 148, 40, "cameraMode", 21, false, true);
@@ -115,9 +113,6 @@ namespace New_SSQE.GUI
         private readonly GuiLabel RotateLabel = new(10, 580, 158, 30, "Rotate by Degrees:", 24, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel ScaleLabel = new(10, 655, 158, 30, "Scale by Percent:", 24, false, true, "main", false, Settings.settings["color1"]);
 
-        private readonly GuiLabel ClonePercentLabel = new(302, 467, 100, 30, "", 25, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel CloneThresholdLabel = new(10, 508, 158, 30, "Copied Streak Threshold:", 24, false, true, "main", false, Settings.settings["color1"]);
-
         private readonly GuiLabel CameraModeLabel = new(10, 368, 128, 30, "Camera Mode:", 24, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel NoteScaleLabel = new(168, 368, 128, 30, "Note Size:", 24, false, true, "main", false, Settings.settings["color1"]);
         private readonly GuiLabel CursorScaleLabel = new(285, 368, 128, 30, "Cursor Size:", 24, false, true, "main", false, Settings.settings["color1"]);
@@ -138,18 +133,18 @@ namespace New_SSQE.GUI
             {
                 // Buttons
                 CopyButton, BackButton, SaveButton, PlayPause, OptionsNav, TimingNav, UseCurrentMs, OpenTimings, ImportIni, PatternsNav, HFlip, VFlip, StoreNodes, ClearNodes,
-                BezierButton, RotateButton, ScaleButton, ReviewNav, OpenBookmarks, CopyBookmarks, PasteBookmarks, ScanClonedNotes, PlayerNav, CameraMode, PlayMap, ExportSSPMButton,
+                BezierButton, RotateButton, ScaleButton, ReviewNav, OpenBookmarks, CopyBookmarks, PasteBookmarks, PlayerNav, CameraMode, PlayMap, ExportSSPMButton,
                 // Checkboxes
                 AutoAdvance, Autoplay, ApproachSquares, GridNumbers, GridLetters, Quantum, Numpad, QuantumGridLines, QuantumGridSnap, Metronome, SeparateClickTools, JumpOnPaste,
                 CurveBezier, ApplyOnPaste, LockCursor, ApproachFade, FromStart, GridGuides,
                 // Sliders
                 Tempo, MasterVolume, SfxVolume, BeatSnapDivisor, QuantumSnapDivisor, Timeline, TrackHeight, TrackCursorPos, ApproachRate, PlayerApproachRate,
                 // Boxes
-                ExportOffset, SfxOffset, BezierBox, RotateBox, ScaleBox, CloneThreshold, NoteScale, CursorScale, Sensitivity, Parallax, FieldOfView, ApproachDistance, HitWindow,
+                ExportOffset, SfxOffset, BezierBox, RotateBox, ScaleBox, NoteScale, CursorScale, Sensitivity, Parallax, FieldOfView, ApproachDistance, HitWindow,
                 // Labels
                 ZoomLabel, ZoomValueLabel, ClickModeLabel, BeatDivisorLabel, SnappingLabel, TempoLabel, MusicLabel, MusicValueLabel, SfxLabel, SfxValueLabel, CurrentTimeLabel,
                 CurrentMsLabel, TotalTimeLabel, NotesLabel, TrackHeightLabel, CursorPosLabel, ApproachRateLabel, ExportOffsetLabel, SfxOffsetLabel, DrawBezierLabel, RotateLabel,
-                ScaleLabel, ClonePercentLabel, CloneThresholdLabel, CameraModeLabel, NoteScaleLabel, CursorScaleLabel, SensitivityLabel, ParallaxLabel, FieldOfViewLabel,
+                ScaleLabel, CameraModeLabel, NoteScaleLabel, CursorScaleLabel, SensitivityLabel, ParallaxLabel, FieldOfViewLabel,
                 ApproachDistanceLabel, PlayerApproachRateLabel, HitWindowLabel, ToastLabel
             };
 
@@ -548,24 +543,6 @@ namespace New_SSQE.GUI
 
                     break;
 
-                case 22:
-                    if (!int.TryParse(CloneThreshold.Text, out var threshold))
-                        return;
-
-                    var score = editor.CheckClones(threshold);
-                    var rating = "";
-
-                    if (score > 4)
-                        rating = ":(";
-                    else if (score > 2)
-                        rating = ":|";
-                    else
-                        rating = ":)";
-
-                    ClonePercentLabel.Text = $"Score: {Math.Round(score, 2)} {rating}";
-
-                    break;
-
                 case 23:
                     ExportSSPM.ShowWindow();
 
@@ -657,10 +634,6 @@ namespace New_SSQE.GUI
             OpenBookmarks.Visible = reviewNav;
             CopyBookmarks.Visible = reviewNav;
             PasteBookmarks.Visible = reviewNav;
-            ScanClonedNotes.Visible = reviewNav;
-            ClonePercentLabel.Visible = reviewNav;
-            CloneThreshold.Visible = reviewNav;
-            CloneThresholdLabel.Visible = reviewNav;
             ExportSSPMButton.Visible = reviewNav;
 
             CameraMode.Visible = playerNav;

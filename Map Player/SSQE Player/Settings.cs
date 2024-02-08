@@ -23,6 +23,8 @@ namespace SSQE_Player
             {"fullscreenPlayer", true },
             {"approachFade", false },
             {"gridGuides", false },
+            {"useVSync", false },
+            {"limitPlayerFPS", false },
 
             {"currentTime", new SliderSetting(0f, 0f, 0f) },
             {"tempo", new SliderSetting(0.9f, 1.4f, 0.05f) },
@@ -30,6 +32,7 @@ namespace SSQE_Player
 
             {"masterVolume", new SliderSetting(0.05f, 1, 0.01f) },
             {"sfxVolume", new SliderSetting(0.1f, 1, 0.01f) },
+            {"fpsLimit", new SliderSetting(60f, 305f, 5f) },
 
             {"color1", Color.FromArgb(0, 255, 200) },
             {"color2", Color.FromArgb(255, 0, 255) },
