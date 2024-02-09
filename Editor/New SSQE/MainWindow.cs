@@ -167,7 +167,7 @@ namespace New_SSQE
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         }
 
-        private void UpdateFrame(FrameEventArgs args)
+        private new void UpdateFrame(FrameEventArgs args)
         {
             if (discordEnabled)
                 try { discord.RunCallbacks(); } catch { }
@@ -195,11 +195,10 @@ namespace New_SSQE
             if (MusicPlayer.IsPlaying && CurrentWindow is GuiWindowEditor)
                 Settings.settings["currentTime"].Value = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
 
-            var mouse = MouseState;
-            if (mouse.Delta.Length != 0)
+            if ((MouseState.Position - (Mouse.X, Mouse.Y)).Length != 0)
                 CurrentWindow?.OnMouseMove(Mouse);
-            Mouse.X = (int)mouse.X;
-            Mouse.Y = (int)mouse.Y;
+            Mouse.X = (int)MouseState.X;
+            Mouse.Y = (int)MouseState.Y;
 
             try
             {
