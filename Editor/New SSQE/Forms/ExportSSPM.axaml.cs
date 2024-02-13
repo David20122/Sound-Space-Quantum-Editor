@@ -1,8 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
 
 namespace New_SSQE
 {
@@ -32,9 +35,19 @@ namespace New_SSQE
             CreateID();
         }
 
+        private static readonly char[] invalidChars = { '/', '\\', ':', '*', '?', '"', '<', '>', '|' };
+
         private static string FixString(string input)
         {
-            return input.ToLower().Replace(" ", "_");
+            string str = input.ToLower().Replace(" ", "_");
+
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (Array.IndexOf(invalidChars, str[i]) > -1)
+                    str = str.Remove(i, 1).Insert(i, "_");
+            }
+
+            return str;
         }
 
         private string GetSongName()

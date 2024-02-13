@@ -27,6 +27,7 @@ using BigInteger = System.Numerics.BigInteger;
 using System.IO.Compression;
 using OpenTK.Graphics;
 using New_SSQE.Types;
+using AvaloniaEdit;
 
 namespace New_SSQE
 {
@@ -2169,6 +2170,8 @@ namespace New_SSQE
             }
         }
 
+        private static readonly char[] invalidChars = { '/', '\\', ':', '*', '?', '"', '<', '>', '|' };
+
         private static string? ProcessSSPM(MemoryStream data)
         {
             data.Seek(0, SeekOrigin.Begin);
@@ -2216,6 +2219,12 @@ namespace New_SSQE
                 string mapID = GetNextVariableString();
                 string mapName = GetNextVariableString();
                 string mappers = GetNextVariableString();
+
+                for (int i = 0; i < mapID.Length; i++)
+                {
+                    if (Array.IndexOf(invalidChars, mapID[i]) > -1)
+                        mapID = mapID.Remove(i, 1).Insert(i, "_");
+                }
 
                 Settings.settings["songName"] = mapName;
                 Settings.settings["mappers"] = mappers;
@@ -2390,6 +2399,12 @@ namespace New_SSQE
                 string mapID = GetNextVariableString();
                 string mapName = GetNextVariableString();
                 string songName = GetNextVariableString();
+
+                for (int i = 0; i < mapID.Length; i++)
+                {
+                    if (Array.IndexOf(invalidChars, mapID[i]) > -1)
+                        mapID = mapID.Remove(i, 1).Insert(i, "_");
+                }
 
                 Settings.settings["songName"] = mapName;
 
