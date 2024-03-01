@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using OpenTK.Mathematics;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace New_SSQE.GUI
 {
@@ -47,6 +48,10 @@ namespace New_SSQE.GUI
         private readonly GuiCheckbox LimitPlayerFPSCheckbox = new(1350, 605, 55, 55, "limitPlayerFPS", "Limit Player FPS", 28);
         private readonly GuiCheckbox FullscreenPlayerCheckbox = new(1350, 680, 55, 55, "fullscreenPlayer", "Open Player in Fullscreen", 28);
 
+        private readonly GuiCheckbox UseRhythia = new(1350, 800, 55, 55, "useRhythia", "Use Rhythia as Player", 28);
+        private readonly GuiLabel RhythiaPathLabel = new(1350, 880, 200, 26, "", 24, false, false, "main", false);
+        private readonly GuiButton RhythiaPath = new(1350, 910, 200, 50, 9, "CHANGE PATH", 24);
+
         private readonly GuiTextbox EditorBGOpacityTextbox = new(560, 160, 200, 50, "", 28, true, false, false, "editorBGOpacity");
         private readonly GuiLabel EditorBGOpacityLabel = new(560, 134, 200, 26, "Editor BG Opacity:", 24, false, false, "main", false);
         private readonly GuiSquare EditorBGOpacitySquare = new(770, 145, 75, 75, Color.FromArgb(255, 255, 255, 255));
@@ -85,17 +90,17 @@ namespace New_SSQE.GUI
                 // Squares
                 Color1Square, Color2Square, Color3Square, Color4Square, NoteColorHoverSquare, EditorBGOpacitySquare, GridOpacitySquare, TrackOpacitySquare,
                 // Buttons
-                BackButton, ResetButton, OpenDirectoryButton, KeybindsButton, Color1Picker, Color2Picker, Color3Picker, Color4Picker, NoteColorPicker,
+                BackButton, ResetButton, OpenDirectoryButton, KeybindsButton, Color1Picker, Color2Picker, Color3Picker, Color4Picker, NoteColorPicker, RhythiaPath,
                 // Checkboxes
                 WaveformCheckbox, ClassicWaveformCheckbox, AutosaveCheckbox, CorrectOnCopyCheckbox, SkipDownloadCheckbox, ReverseScrollCheckbox, UseVSyncCheckbox,
-                CheckForUpdatesCheckbox, FullscreenPlayerCheckbox, LimitPlayerFPSCheckbox,
+                CheckForUpdatesCheckbox, FullscreenPlayerCheckbox, LimitPlayerFPSCheckbox, UseRhythia,
                 // Sliders
                 FPSLimitSlider,
                 // Boxes
                 EditorBGOpacityTextbox, GridOpacityTextbox, TrackOpacityTextbox, AutosaveIntervalTextbox, WaveformDetailTextbox,
                 // Labels
                 Color1Label, Color2Label, Color3Label, Color4Label, NoteColorLabel, NoteColorInfo, EditorBGOpacityLabel, GridOpacityLabel, TrackOpacityLabel, AutosaveIntervalLabel,
-                WaveformDetailLabel, FPSLimitLabel
+                WaveformDetailLabel, FPSLimitLabel, RhythiaPathLabel,
             };
 
             BackgroundSquare = new(0, 0, 1920, 1080, Color.FromArgb(255, 30, 30, 30), false, "background_menu.png", "menubg");
@@ -119,6 +124,7 @@ namespace New_SSQE.GUI
             TrackOpacityTextbox.Text = Settings.settings["trackOpacity"].ToString();
 
             RefreshNoteColors();
+            RefreshRhythiaPath();
         }
 
         public override void Render(float mousex, float mousey, float frametime)
@@ -251,6 +257,29 @@ namespace New_SSQE.GUI
             OnMouseMove(MainWindow.Instance.Mouse);
         }
 
+        private void RefreshRhythiaPath()
+        {
+            string path = Settings.settings["rhythiaPath"];
+            int length = 15;
+
+            int startLength = Math.Min(path.Length, length);
+            int endLength = Math.Min(length, Math.Max(path.Length - length, 0));
+
+            string start = path[..startLength];
+            string end = path[(path.Length - endLength)..];
+            string final = start;
+
+            if (!string.IsNullOrWhiteSpace(end))
+                final += $"{(path.Length > length * 2 ? "..." : "")}{end}";
+
+            if (string.IsNullOrWhiteSpace(path))
+                RhythiaPathLabel.Text = "Rhythia Path: NONE";
+            else if (!File.Exists(path))
+                RhythiaPathLabel.Text = "Rhythia Path: INVALID";
+            else
+                RhythiaPathLabel.Text = $"Rhythia Path: {final}";
+        }
+
         public override void OnButtonClicked(int id)
         {
             switch (id)
@@ -366,6 +395,26 @@ namespace New_SSQE.GUI
                             RefreshNoteColors();
                             Settings.RefreshColors();
                         }
+                    }
+
+                    break;
+
+                case 9:
+                    var dialog = new OpenFileDialog()
+                    {
+                        Title = "Select Rhythia Executable",
+                        Filter = "Executable Files (*.exe)|*.exe",
+                    };
+
+                    if (Settings.settings["rhythiaFolderPath"] != "")
+                        dialog.InitialDirectory = Settings.settings["rhythiaFolderPath"];
+
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        Settings.settings["rhythiaFolderPath"] = Path.GetDirectoryName(dialog.FileName) ?? "";
+                        Settings.settings["rhythiaPath"] = dialog.FileName;
+
+                        RefreshRhythiaPath();
                     }
 
                     break;

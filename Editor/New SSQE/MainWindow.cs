@@ -1259,7 +1259,7 @@ namespace New_SSQE
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Failed to load map data", "Warning", "OK");
+                MessageBox.Show("Failed to load map data, exit and check '*\\logs.txt' for more info", "Warning", "OK");
                 ActionLogging.Register($"Failed to load map data - {ex.Message}\n\n{ex.StackTrace}\n\n", "WARN");
                 Console.WriteLine(ex);
 

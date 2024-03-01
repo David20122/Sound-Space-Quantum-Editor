@@ -127,8 +127,25 @@ namespace New_SSQE.GUI
         private string navEnabled = "";
         private bool started = false;
 
+        private bool rhythia = false;
+
         public GuiWindowEditor() : base(0, 0, MainWindow.Instance.ClientSize.X, MainWindow.Instance.ClientSize.Y)
         {
+            rhythia = Settings.settings["useRhythia"];
+            if (rhythia)
+            {
+                if (Settings.settings["rhythiaPath"] == "")
+                {
+                    PlayerNav.OriginTextSize = 18;
+                    PlayerNav.Text = "INVALID RHYTHIA PATH - CHECK SETTINGS";
+
+                    PlayerNav.Update();
+                }
+                else
+                    PlayerNav.Text = "PLAY IN RHYTHIA";
+
+            }
+
             Controls = new List<WindowControl>
             {
                 // Buttons
@@ -497,8 +514,41 @@ namespace New_SSQE.GUI
                     break;
 
                 case 17:
-                    navEnabled = navEnabled == "Player" ? "" : "Player";
-                    UpdateNav();
+                    if (rhythia)
+                    {
+                        if (!File.Exists(Settings.settings["rhythiaPath"]))
+                            ShowToast("INVALID RHYTHIA PATH - CHECK SETTINGS", Settings.settings["color1"]);
+                        else
+                        {
+                            try
+                            {
+                                if (!Directory.Exists("assets/temp"))
+                                    Directory.CreateDirectory("assets/temp");
+
+                                Settings.Save();
+
+                                File.WriteAllText($"assets/temp/tempmap.txt", Map.Save(editor.SoundID, editor.Notes, false, false));
+
+                                string[] args =
+                                {
+                                    $"--t=\"{Path.GetFullPath("assets/temp/tempmap.txt").Replace("\\", "/")}\"",
+                                    $"--a=\"{Path.GetFullPath($"cached/{editor.SoundID}.asset").Replace("\\", "/")}\""
+                                };
+
+                                Process.Start(Settings.settings["rhythiaPath"], string.Join(" ", args));
+                            }
+                            catch (Exception ex)
+                            {
+                                ActionLogging.Register($"Failed to start Rhythia - {ex.GetType().Name}\n{ex.StackTrace}", "WARN");
+                                ShowToast("FAILED TO START RHYTHIA", Settings.settings["color1"]);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        navEnabled = navEnabled == "Player" ? "" : "Player";
+                        UpdateNav();
+                    }
 
                     break;
 
@@ -587,7 +637,8 @@ namespace New_SSQE.GUI
             TimingNav.Text = $"TIMING {(timingNav ? "<" : ">")}";
             PatternsNav.Text = $"PATTERNS {(patternsNav ? "<" : ">")}";
             ReviewNav.Text = $"REVIEW {(reviewNav ? "<" : ">")}";
-            PlayerNav.Text = $"PLAYER {(playerNav ? "<" : ">")}";
+            if (!rhythia)
+                PlayerNav.Text = $"PLAYER {(playerNav ? "<" : ">")}";
 
             Autoplay.Visible = optionsNav;
             ApproachSquares.Visible = optionsNav;
@@ -669,7 +720,7 @@ namespace New_SSQE.GUI
 
             base.OnResize(size);
 
-            PlayerNav.Visible = File.Exists("SSQE Player.exe");
+            PlayerNav.Visible = File.Exists("SSQE Player.exe") || Settings.settings["useRhythia"];
 
             var heightdiff = size.Y / 1080f;
 

@@ -47,6 +47,7 @@ namespace New_SSQE
             {"applyOnPaste", false },
             {"jumpPaste", false },
             {"limitPlayerFPS", false },
+            {"useRhythia", true },
 
             {"editorBGOpacity", 255 },
             {"gridOpacity", 255 },
@@ -74,6 +75,8 @@ namespace New_SSQE
             {"exportPath" , "" },
             {"coverPath", "" },
             {"importPath", "" },
+            {"rhythiaPath", "" },
+            {"rhythiaFolderPath", "" },
             {"cameraMode", new ListSetting("half lock", "half lock", "full lock", "spin") },
 
             {"color1", Color.FromArgb(0, 255, 200) },
