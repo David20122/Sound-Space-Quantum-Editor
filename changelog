@@ -1,4 +1,10 @@
 ----------------------------------
+     -- 2.1.4.3 - 3/2/2024 --
+
+- added optional rhythia integration (enabled by default)
+NOTE: to use this, you will need to provide the path to Rhythia via the Settings menu, or you can disable this option to use the provided player instead
+
+----------------------------------
      -- 2.1.4.2 - 2/12/2024 --
 
 - fixed importing and exporting sspm files with invalid characters in their ID
