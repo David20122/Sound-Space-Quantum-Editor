@@ -40,7 +40,7 @@ namespace New_SSQE
                     if (item.Ms == offset && item.EndMs == endOffset)
                         return;
 
-                MainWindow.Instance.Bookmarks.Add(new Bookmark(BookmarkTextBox.Text, offset, endOffset));
+                MainWindow.Instance.Bookmarks.Add(new Bookmark(BookmarkTextBox.Text ?? "", offset, endOffset));
 
                 MainWindow.Instance.SortBookmarks();
             }
