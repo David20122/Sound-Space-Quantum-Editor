@@ -1,4 +1,11 @@
 ----------------------------------
+     -- 2.1.4.4 - 3/9/2024 --
+
+- fixed rendering and saving bookmarks with blank text
+- added support for loading .osu files with 'LOAD MAP' on the menu
+NOTE: sliders and spinners are discarded, convert them to regular circles before importing if you wish to use them
+
+----------------------------------
      -- 2.1.4.3 - 3/2/2024 --
 
 - added optional rhythia integration (enabled by default)
