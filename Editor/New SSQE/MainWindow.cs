@@ -2619,9 +2619,10 @@ namespace New_SSQE
 
             for (int i = 0; i < split.Length; i++)
             {
+                string line = split[i].Trim();
+
                 try
                 {
-                    string line = split[i].Trim();
                     string[] subsplit = line.Split(":");
                     string[] set = line.Split(",");
 
@@ -2633,7 +2634,7 @@ namespace New_SSQE
                         File.Copy($"{Path.GetDirectoryName(path)}\\{idPath}", $"cached/{id}.asset", true);
                     }
 
-                    if (timing && !string.IsNullOrWhiteSpace(line) && set.Length > 1)
+                    if (timing && !string.IsNullOrWhiteSpace(line))
                     {
                         bool canParse = double.TryParse(set[0], NumberStyles.Any, culture, out double time);
                         canParse &= float.TryParse(set[1], NumberStyles.Any, culture, out float bpm);
@@ -2649,7 +2650,7 @@ namespace New_SSQE
                         }
                     }
 
-                    if (hitObj && !string.IsNullOrWhiteSpace(line) && set.Length > 3)
+                    if (hitObj && !string.IsNullOrWhiteSpace(line))
                     {
                         bool canParse = float.TryParse(set[0], NumberStyles.Any, culture, out float x);
                         canParse &= float.TryParse(set[1], NumberStyles.Any, culture, out float y);
@@ -2665,11 +2666,11 @@ namespace New_SSQE
                                 mapData += $",{Math.Round(x, 2)}|{Math.Round(y, 2)}|{(long)time}";
                         }
                     }
-
-                    timing = line != "[HitObjects]" && (timing || line == "[TimingPoints]");
-                    hitObj = line != "[TimingPoints]" && (hitObj || line == "[HitObjects]");
                 }
                 catch { }
+
+                timing = line != "[HitObjects]" && (timing || line == "[TimingPoints]");
+                hitObj = line != "[TimingPoints]" && (hitObj || line == "[HitObjects]");
             }
 
             return id + mapData;
