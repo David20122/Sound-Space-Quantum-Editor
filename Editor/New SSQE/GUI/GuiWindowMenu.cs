@@ -210,7 +210,7 @@ namespace New_SSQE.GUI
                     var dialog = new OpenFileDialog()
                     {
                         Title = "Select Map File",
-                        Filter = "Text Documents (*.txt;*.sspm)|*.txt;*.sspm",
+                        Filter = "Beatmap Files (*.txt;*.sspm;*.osu)|*.txt;*.sspm;*.osu",
                     };
 
                     if (Settings.settings["defaultPath"] != "")

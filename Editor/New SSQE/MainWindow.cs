@@ -1205,6 +1205,12 @@ namespace New_SSQE
                 file = false;
                 FileName = null;
             }
+            else if (file && Path.GetExtension(pathOrData) == ".osu")
+            {
+                pathOrData = RunOSUImport(pathOrData);
+                file = false;
+                FileName = null;
+            }
             if (pathOrData == "")
                 return false;
 
@@ -2595,6 +2601,78 @@ namespace New_SSQE
                 MessageBox.Show("File version not recognized or supported\nCurrently supported: SSPM v1/v2", "Warning", "OK");
 
             return mapData;
+        }
+
+        public string RunOSUImport(string path)
+        {
+            var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+            culture.NumberFormat.NumberDecimalSeparator = ".";
+
+            string data = File.ReadAllText(path);
+            string id = "";
+            string mapData = "";
+
+            string[] split = data.Split("\n");
+
+            bool timing = false;
+            bool hitObj = false;
+
+            for (int i = 0; i < split.Length; i++)
+            {
+                try
+                {
+                    string line = split[i].Trim();
+                    string[] subsplit = line.Split(":");
+                    string[] set = line.Split(",");
+
+                    if (!timing && !hitObj && subsplit.FirstOrDefault() == "AudioFilename")
+                    {
+                        string idPath = subsplit[1].Trim();
+                        id = Path.GetFileNameWithoutExtension(idPath);
+
+                        File.Copy($"{Path.GetDirectoryName(path)}\\{idPath}", $"cached/{id}.asset", true);
+                    }
+
+                    if (timing && !string.IsNullOrWhiteSpace(line) && set.Length > 1)
+                    {
+                        bool canParse = double.TryParse(set[0], NumberStyles.Any, culture, out double time);
+                        canParse &= float.TryParse(set[1], NumberStyles.Any, culture, out float bpm);
+
+                        if (canParse)
+                        {
+                            bool inhereted = set.Length > 6 ? set[6] == "1" : bpm > 0;
+
+                            bpm = (float)Math.Abs(Math.Round(60000 / bpm, 3));
+
+                            if (bpm > 0 && inhereted)
+                                TimingPoints.Add(new(bpm, (long)time));
+                        }
+                    }
+
+                    if (hitObj && !string.IsNullOrWhiteSpace(line) && set.Length > 3)
+                    {
+                        bool canParse = float.TryParse(set[0], NumberStyles.Any, culture, out float x);
+                        canParse &= float.TryParse(set[1], NumberStyles.Any, culture, out float y);
+                        canParse &= double.TryParse(set[2], NumberStyles.Any, culture, out double time);
+                        canParse &= int.TryParse(set[3], NumberStyles.Any, culture, out int type);
+
+                        if (canParse)
+                        {
+                            x = 5 - x / 64;
+                            y = 4 - y / 64;
+
+                            if ((type & 1) != 0)
+                                mapData += $",{Math.Round(x, 2)}|{Math.Round(y, 2)}|{(long)time}";
+                        }
+                    }
+
+                    timing = line != "[HitObjects]" && (timing || line == "[TimingPoints]");
+                    hitObj = line != "[TimingPoints]" && (hitObj || line == "[HitObjects]");
+                }
+                catch { }
+            }
+
+            return id + mapData;
         }
     }
 }
