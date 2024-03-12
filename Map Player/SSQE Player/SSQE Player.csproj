@@ -13,9 +13,8 @@
 
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="5.0.0-pre.8" />
-    <PackageReference Include="SharpFont.Dependencies" Version="2.6.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.1" />
-    <PackageReference Include="SpaceWizards.SharpFont" Version="1.0.1" />
+    <PackageReference Include="StbTrueTypeSharp" Version="1.26.12" />
     <PackageReference Include="System.Json" Version="4.7.1" />
   </ItemGroup>
 

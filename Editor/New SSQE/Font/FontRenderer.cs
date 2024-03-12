@@ -14,11 +14,11 @@ namespace New_SSQE
             {"square", new Tuple<TextureUnit, int>(TextureUnit.Texture14, 14) },
             {"squareo", new Tuple<TextureUnit, int>(TextureUnit.Texture13, 13) }
         };
-        private static readonly Dictionary<string, FtFont> fonts = new()
+        private static readonly Dictionary<string, StbFont> fonts = new()
         {
-            {"main", new FtFont("main", FontIndex["main"].Item1) },
-            {"square", new FtFont("square", FontIndex["square"].Item1) },
-            {"squareo", new FtFont("squareo", FontIndex["squareo"].Item1) }
+            {"main", new StbFont("main", FontIndex["main"].Item1) },
+            {"square", new StbFont("square", FontIndex["square"].Item1) },
+            {"squareo", new StbFont("squareo", FontIndex["squareo"].Item1) }
         };
 
         public static Vector4[] Print(float x, float y, string text, int fontSize, string font)
@@ -42,7 +42,7 @@ namespace New_SSQE
             GL.Uniform1i(location, FontIndex[font].Item2);
 
             location = GL.GetUniformLocation(Shader.FontTexProgram, "TexLookup");
-            GL.Uniform4f(location, FtFont.CharRange, fonts[font].AtlasMetrics);
+            GL.Uniform4f(location, StbFont.CharRange, fonts[font].AtlasMetrics);
 
             location = GL.GetUniformLocation(Shader.FontTexProgram, "CharSize");
             GL.Uniform2f(location, fonts[font].CharSize);

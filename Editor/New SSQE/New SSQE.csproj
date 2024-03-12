@@ -10,6 +10,7 @@
     <Platforms>AnyCPU;x86;x64</Platforms>
     <AssemblyName>Sound Space Quantum Editor</AssemblyName>
     <ApplicationIcon>bin\x64\Release\net6.0\assets\textures\Icon.ico</ApplicationIcon>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <None Remove=".gitignore" />
@@ -27,8 +28,7 @@
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.18" />
     <PackageReference Include="Egorozh.ColorPicker.Avalonia.Dialog" Version="0.10.17" />
     <PackageReference Include="OpenTK" Version="5.0.0-pre.8" />
-    <PackageReference Include="SharpFont.Dependencies" Version="2.6.0" />
-    <PackageReference Include="SpaceWizards.SharpFont" Version="1.0.1" />
+    <PackageReference Include="StbTrueTypeSharp" Version="1.26.12" />
     <PackageReference Include="System.Json" Version="4.7.1" />
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.6.1" />

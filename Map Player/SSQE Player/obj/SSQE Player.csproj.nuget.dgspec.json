@@ -61,17 +61,13 @@
               "target": "Package",
               "version": "[5.0.0-pre.8, )"
             },
-            "SharpFont.Dependencies": {
-              "target": "Package",
-              "version": "[2.6.0, )"
-            },
             "SkiaSharp": {
               "target": "Package",
               "version": "[2.88.1, )"
             },
-            "SpaceWizards.SharpFont": {
+            "StbTrueTypeSharp": {
               "target": "Package",
-              "version": "[1.0.1, )"
+              "version": "[1.26.12, )"
             },
             "System.Json": {
               "target": "Package",

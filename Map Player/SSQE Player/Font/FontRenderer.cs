@@ -6,7 +6,7 @@ namespace SSQE_Player
 {
     internal class FontRenderer
     {
-        private static readonly FtFont main = new("main");
+        private static readonly StbFont main = new("main");
 
         public static Vector4[] Print(float x, float y, string text, int fontSize)
         {
@@ -31,7 +31,7 @@ namespace SSQE_Player
             GL.Uniform1i(location, 15);
 
             location = GL.GetUniformLocation(Shader.FontTexProgram, "TexLookup");
-            GL.Uniform4f(location, FtFont.CharRange, main.AtlasMetrics);
+            GL.Uniform4f(location, StbFont.CharRange, main.AtlasMetrics);
 
             location = GL.GetUniformLocation(Shader.FontTexProgram, "CharSize");
             GL.Uniform2f(location, main.CharSize);

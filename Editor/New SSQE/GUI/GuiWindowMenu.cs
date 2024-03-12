@@ -7,18 +7,18 @@ namespace New_SSQE.GUI
 {
     internal class GuiWindowMenu : GuiWindow
     {
-        private readonly GuiLabel clLabel = new(60, 195, 200, 40, "CHANGELOG", 40, false, false, "square", false);
-        private readonly GuiLabel ssLabel = new(35, 0, 750, 100, "SOUND SPACE", 150, false, false, "square", false);
-        private readonly GuiLabel qeLabel = new(615, 140, 150, 40, "QUANTUM EDITOR", 36, false, false, "square", false);
-        private readonly GuiLabel ChangelogLabel = new(60, 230, 890, 715, "", 18, false, false, "main", false);
+        private readonly GuiLabel clLabel = new(60, 195, 200, 40, "CHANGELOG", 42, false, false, "square", false);
+        private readonly GuiLabel ssLabel = new(35, 0, 750, 100, "SOUND SPACE", 156, false, false, "square", false);
+        private readonly GuiLabel qeLabel = new(615, 140, 150, 40, "QUANTUM EDITOR", 38, false, false, "square", false);
+        private readonly GuiLabel ChangelogLabel = new(60, 230, 890, 715, "", 20, false, false, "main", false);
 
-        private readonly GuiButton CreateButton = new(1190, 180, 600, 100, 0, "CREATE NEW MAP", 52, false, false, "square");
-        private readonly GuiButton LoadButton = new(1190, 295, 600, 100, 1, "LOAD MAP", 52, false, false, "square");
-        private readonly GuiButton ImportButton = new(1190, 410, 600, 100, 2, "IMPORT MAP", 52, false, false, "square");
-        private readonly GuiButton SettingsButton = new(1190, 525, 600, 100, 3, "SETTINGS", 52, false, false, "square");
+        private readonly GuiButton CreateButton = new(1190, 180, 600, 100, 0, "CREATE NEW MAP", 54, false, false, "square");
+        private readonly GuiButton LoadButton = new(1190, 295, 600, 100, 1, "LOAD MAP", 54, false, false, "square");
+        private readonly GuiButton ImportButton = new(1190, 410, 600, 100, 2, "IMPORT MAP", 54, false, false, "square");
+        private readonly GuiButton SettingsButton = new(1190, 525, 600, 100, 3, "SETTINGS", 54, false, false, "square");
 
-        private readonly GuiButton AutosavedButton = new(1190, 640, 600, 100, 4, "AUTOSAVED MAP", 52, false, false, "square");
-        private readonly GuiButton LastMapButton = new(1190, 755, 600, 100, 5, "EDIT LAST MAP", 52, false, false, "square");
+        private readonly GuiButton AutosavedButton = new(1190, 640, 600, 100, 4, "AUTOSAVED MAP", 54, false, false, "square");
+        private readonly GuiButton LastMapButton = new(1190, 755, 600, 100, 5, "EDIT LAST MAP", 54, false, false, "square");
 
         private readonly GuiSlider ChangelogSlider = new(950, 230, 20, 720, "changelogPosition", true);
 
@@ -26,20 +26,20 @@ namespace New_SSQE.GUI
         private readonly GuiSquare ChangelogBackdrop2 = new(55, 230, 900, 715, Color.FromArgb(50, 0, 0, 0));
 
         public readonly GuiSquare MapSelectBackdrop = new(0, 1040, 1920, 40, Color.FromArgb(50, 0, 0, 0));
-        private readonly GuiButton NavLeft = new(0, 1040, 40, 40, 6, "<", 32);
-        private readonly GuiButton NavRight = new(1880, 1040, 40, 40, 7, ">", 32);
+        private readonly GuiButton NavLeft = new(0, 1040, 40, 40, 6, "<", 34);
+        private readonly GuiButton NavRight = new(1880, 1040, 40, 40, 7, ">", 34);
 
-        private readonly GuiButton MapSelect0 = new(40, 1040, 368, 40, 80, "", 18);
-        private readonly GuiButton MapSelect1 = new(408, 1040, 368, 40, 81, "", 18);
-        private readonly GuiButton MapSelect2 = new(776, 1040, 368, 40, 82, "", 18);
-        private readonly GuiButton MapSelect3 = new(1144, 1040, 368, 40, 83, "", 18);
-        private readonly GuiButton MapSelect4 = new(1512, 1040, 368, 40, 84, "", 18);
+        private readonly GuiButton MapSelect0 = new(40, 1040, 368, 40, 80, "", 20);
+        private readonly GuiButton MapSelect1 = new(408, 1040, 368, 40, 81, "", 20);
+        private readonly GuiButton MapSelect2 = new(776, 1040, 368, 40, 82, "", 20);
+        private readonly GuiButton MapSelect3 = new(1144, 1040, 368, 40, 83, "", 20);
+        private readonly GuiButton MapSelect4 = new(1512, 1040, 368, 40, 84, "", 20);
 
-        private readonly GuiButton MapClose0 = new(40, 1040, 40, 40, 90, "X", 24);
-        private readonly GuiButton MapClose1 = new(408, 1040, 40, 40, 91, "X", 24);
-        private readonly GuiButton MapClose2 = new(776, 1040, 40, 40, 92, "X", 24);
-        private readonly GuiButton MapClose3 = new(1144, 1040, 40, 40, 93, "X", 24);
-        private readonly GuiButton MapClose4 = new(1512, 1040, 40, 40, 94, "X", 24);
+        private readonly GuiButton MapClose0 = new(40, 1040, 40, 40, 90, "X", 26);
+        private readonly GuiButton MapClose1 = new(408, 1040, 40, 40, 91, "X", 26);
+        private readonly GuiButton MapClose2 = new(776, 1040, 40, 40, 92, "X", 26);
+        private readonly GuiButton MapClose3 = new(1144, 1040, 40, 40, 93, "X", 26);
+        private readonly GuiButton MapClose4 = new(1512, 1040, 40, 40, 94, "X", 26);
 
         private readonly List<(GuiButton, GuiButton)> mapSelects;
         private readonly string?[] prevTexts = new string?[8];

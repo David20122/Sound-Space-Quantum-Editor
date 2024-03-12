@@ -6,12 +6,12 @@ namespace New_SSQE.GUI
 {
     internal class GuiWindowCreate : GuiWindow
     {
-        private readonly GuiLabel Label = new(832, 478, 256, 20, "Input Audio ID", 24);
-        private readonly GuiTextbox IDBox = new(832, 508, 256, 64, "", 24, false);
+        private readonly GuiLabel Label = new(832, 478, 256, 20, "Input Audio ID", 30);
+        private readonly GuiTextbox IDBox = new(832, 508, 256, 64, "", 30, false);
 
-        private readonly GuiButton CreateButton = new(832, 592, 256, 64, 0, "CREATE", 32);
-        private readonly GuiButton ImportButton = new(832, 666, 256, 64, 1, "IMPORT FILE", 32);
-        private readonly GuiButton BackButton = new(832, 740, 256, 64, 2, "BACK", 32);
+        private readonly GuiButton CreateButton = new(832, 592, 256, 64, 0, "CREATE", 38);
+        private readonly GuiButton ImportButton = new(832, 666, 256, 64, 1, "IMPORT FILE", 38);
+        private readonly GuiButton BackButton = new(832, 740, 256, 64, 2, "BACK", 38);
 
         public GuiWindowCreate() : base(0, 0, MainWindow.Instance.ClientSize.X, MainWindow.Instance.ClientSize.Y)
         {

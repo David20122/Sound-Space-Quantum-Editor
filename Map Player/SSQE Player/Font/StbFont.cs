@@ -1,136 +1,141 @@
 ﻿using System;
-using System.Linq;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using SharpFont;
 using SkiaSharp;
+using System.IO;
+using StbTrueTypeSharp;
+using System.Linq;
 
-namespace New_SSQE
+namespace SSQE_Player
 {
-    internal class FtFont
+    internal unsafe class StbFont
     {
         // Standard ASCII range: 128 (why was the old editor's range 400)
         public static readonly int CharRange = 128;
         // Character size initially rendered to be scaled later
         // Greater values are smoother but take more memory
         private static readonly int OriginSize = 128;
-        // Pixels between each character in rendered layout, needs to be above 0 to ensure no ghost pixels appear while rendering
+        // Pixels between each character in rendered layout
+        // Needs to be above 0 to ensure no ghost pixels appear while rendering
         // Recommended: 4
         private static readonly int CharSpacing = 4;
 
         private readonly int[] Extents;
         private readonly int[] Bearings;
         private readonly int[] YOffsets;
+        private readonly SKBitmap[] Bitmaps;
         private readonly SKBitmap Bitmap;
-        
+
         public Vector2 CharSize;
         public Vector4[] AtlasMetrics;
         public VertexArrayHandle VaO;
         public BufferHandle[] VbOs;
         public BufferHandle StaticVbO;
 
-        private readonly int BmpWidth;
-        private readonly int BmpHeight;
-
         private readonly int _baseline;
+        private readonly int _charSize;
         private readonly TextureHandle _handle;
 
         public TextureHandle Handle => _handle;
 
         // Change unit to store multiple fonts without having to switch between handles while rendering
-        // Otherwise extract the handle via FTFont.Handle and manage switching elsewhere
-        public FtFont(string font, TextureUnit unit = TextureUnit.Texture15)
+        // Otherwise extract the handle via StbFont.Handle and manage switching elsewhere
+        public unsafe StbFont(string font, TextureUnit unit = TextureUnit.Texture15)
         {
-            Library library = new();
-            Face face = new(library, $"assets/fonts/{font}.ttf");
+            // Some font size discrepancies exist between FreeType and stb_truetype but the majority of the loader is the same
 
-            SKBitmap[] Bitmaps;
-
-            face.SetCharSize(OriginSize, OriginSize, 96, 96);
-            face.SetPixelSizes((uint)OriginSize, (uint)OriginSize);
-
-            Bitmaps = new SKBitmap[CharRange];
+            YOffsets = new int[CharRange];
             Extents = new int[CharRange];
             Bearings = new int[CharRange];
-            YOffsets = new int[CharRange];
+            Bitmaps = new SKBitmap[CharRange];
 
-            // Render each character in the given range individually and store its metrics in various arrays
-            for (uint c = 0; c < CharRange; c++)
+            AtlasMetrics = new Vector4[CharRange];
+
+            var fontInfo = StbTrueType.CreateFont(File.ReadAllBytes($"assets/fonts/{font}.ttf"), 0);
+            var scale = StbTrueType.stbtt_ScaleForPixelHeight(fontInfo, OriginSize);
+
+            int ascent, descent, lineGap;
+            StbTrueType.stbtt_GetFontVMetrics(fontInfo, &ascent, &descent, &lineGap);
+
+            // Render each character in the given range individually
+            for (int i = 0; i < CharRange; i++)
             {
-                var index = face.GetCharIndex(c);
+                int width, height, xoffset, yoffset;
+                byte* glyph = StbTrueType.stbtt_GetCodepointBitmap(fontInfo, scale, scale, i, &width, &height, &xoffset, &yoffset);
 
-                face.LoadGlyph(index, LoadFlags.Render | LoadFlags.Default, LoadTarget.Normal);
+                Bitmaps[i] = ConvertToSKBitmap(glyph, width, height);
+                Extents[i] = width + xoffset;
+                Bearings[i] = xoffset;
 
-                FTBitmap glyph = face.Glyph.Bitmap;
-                int size = glyph.Width * glyph.Rows;
-
-                Bitmaps[c] = ConvertToSKBitmap(glyph);
-                Extents[c] = face.Glyph.Bitmap.Width + face.Glyph.BitmapLeft;
-                Bearings[c] = face.Glyph.BitmapLeft;
-
-                if (size <= 0 && c == 32)
-                    Extents[c] = OriginSize / 4;
+                if (width * height <= 0 && i == 32)
+                    Extents[i] = OriginSize / 4;
                 else
-                    YOffsets[c] = face.Glyph.BitmapTop;
+                    YOffsets[i] = yoffset;
             }
 
-            _baseline = (int)(face.Size.Metrics.Ascender - face.Size.Metrics.Descender / 2);
+            _baseline = (int)(scale * ascent);
 
             var maxCharX = Extents.Max();
-            var maxCharY = face.Glyph.Metrics.VerticalAdvance + YOffsets.Max();
-            int px = (int)(maxCharX * maxCharY);
+            var maxCharY = (int)(scale * (ascent - descent)) + YOffsets.Max();
+            int px = maxCharX * maxCharY;
+            CharSize = new(maxCharX, maxCharY);
 
             var texSize = Math.Sqrt(px * CharRange);
             var texX = (int)(texSize / maxCharX + 1) * (maxCharX + CharSpacing);
-            var texY = (int)(texSize / maxCharY + 1) * ((int)maxCharY + CharSpacing);
+            var texY = (int)(texSize / maxCharY + 1) * (maxCharY + CharSpacing);
 
             var info = new SKImageInfo(texX + 1, texY);
             var surface = SKSurface.Create(info);
             var canvas = surface.Canvas;
 
             float currentX = 0;
-            float currentY = YOffsets.Max();
+            float currentY = 0;
 
             // Combine each character's bitmap on a main canvas to later store into memory
+            int charsPerLine = (int)(info.Width / (CharSize.X + CharSpacing));
+            float txW = CharSize.X / info.Width;
+            float txH = CharSize.Y / info.Height;
+
             for (uint c = 0; c < CharRange; c++)
             {
                 if (currentX + maxCharX > texX)
                 {
                     currentX = 0;
-                    currentY += (int)maxCharY + CharSpacing;
+                    currentY += maxCharY + CharSpacing;
                 }
 
                 if (Bitmaps[c].ByteCount > 0)
-                    canvas.DrawBitmap(Bitmaps[c], currentX, currentY - YOffsets[c]);
+                    canvas.DrawBitmap(Bitmaps[c], currentX, currentY + _baseline + YOffsets[c]);
                 currentX += maxCharX + CharSpacing;
 
                 Bitmaps[c].Dispose();
+
+                float txX = c % charsPerLine * (CharSize.X + CharSpacing);
+                float txY = c / charsPerLine * (CharSize.Y + CharSpacing);
+
+                AtlasMetrics[c] = (txX / info.Width, txY / info.Height, txW, txH);
             }
+
+            _baseline -= (int)(scale * descent);
 
             Bitmap = SKBitmap.FromImage(surface.Snapshot());
             GC.KeepAlive(Bitmap);
-            CharSize = new(maxCharX, (int)maxCharY);
 
-            BmpWidth = Bitmap.Width;
-            BmpHeight = Bitmap.Height;
+            fontInfo.Dispose();
 
-            // put font texture metrics into array for uploading to a font shader
-            AtlasMetrics = new Vector4[CharRange];
+            // Store the font texture as a png in the current directory - for debugging
+            /*
+            using (var image = surface.Snapshot())
+            using (var imgData = image.Encode(SKEncodedImageFormat.Png, 80))
+            using (var stream = File.OpenWrite("font_texture.png"))
+                imgData.SaveTo(stream);
+            */
 
-            int charsPerLine = (int)(BmpWidth / (CharSize.X + CharSpacing));
-            float txW = CharSize.X / BmpWidth;
-            float txH = CharSize.Y / BmpHeight;
+            canvas.Dispose();
+            surface.Dispose();
 
-            for (int i = 0; i < CharRange; i++)
-            {
-                float txX = (i % charsPerLine) * (CharSize.X + CharSpacing);
-                float txY = (i / charsPerLine) * (CharSize.Y + CharSpacing);
-
-                AtlasMetrics[i] = (txX / BmpWidth, txY / BmpHeight, txW, txH);
-            }
-
-            // prep instance data in shader
+            // Prep instance data in shader
             VbOs = new BufferHandle[2];
 
             VaO = GL.GenVertexArray();
@@ -169,42 +174,22 @@ namespace New_SSQE
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
             GL.BindVertexArray(VertexArrayHandle.Zero);
 
-
-            // Store the font texture as a png in the current directory - for debugging
-            /*
-            using (var image = surface.Snapshot())
-            using (var data = image.Encode(SKEncodedImageFormat.Png, 80))
-            using (var stream = File.OpenWrite("font_texture.png"))
-                data.SaveTo(stream);
-            */
-
-
-            face.Dispose();
-            library.Dispose();
-
-
             // Load the texture into memory
             _handle = GL.GenTexture();
 
             GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.Texture2d, _handle);
 
-            GL.TexImage2D(TextureTarget.Texture2d, 0, InternalFormat.Rgba, BmpWidth, BmpHeight, 0,
+            GL.TexImage2D(TextureTarget.Texture2d, 0, InternalFormat.Rgba, Bitmap.Width, Bitmap.Height, 0,
                 PixelFormat.Bgra, PixelType.UnsignedByte, Bitmap.GetPixels());
 
             GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
-            canvas.Dispose();
-            surface.Dispose();
         }
 
-        // Converts alpha map to RGBa
-        private static SKBitmap ConvertToSKBitmap(FTBitmap bitmap)
+        // Converts alpha bitmap to RGBa
+        private static SKBitmap ConvertToSKBitmap(byte* bytes, int width, int height)
         {
-            byte[] bytes = bitmap.Buffer != IntPtr.Zero ? bitmap.BufferData : Array.Empty<byte>();
-            int width = bitmap.Pitch, height = bitmap.Rows;
-
             var pixels = new SKColor[width * height];
 
             for (int row = 0; row < height; row++)
@@ -220,7 +205,7 @@ namespace New_SSQE
                 }
             }
 
-            return new SKBitmap(bitmap.Pitch, bitmap.Rows) { Pixels = pixels };
+            return new SKBitmap(width, height) { Pixels = pixels };
         }
 
         // Returns baseline of font scaled depending on font size

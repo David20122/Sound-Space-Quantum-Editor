@@ -29,24 +29,29 @@ namespace New_SSQE
                 ActionLogging.Register("[Error encountered in application]", "ERROR");
                 var logs = string.Join('\n', ActionLogging.Logs);
 
-                var text = @$"// whoops
+                Exception? ex = e;
 
-{e.Message}
+                var emsg = "";
 
-{e.StackTrace ?? "[StackTrace was null]"}
+                while (ex != null)
+                {
+                    emsg += $"\n\n{e.Message}\n\n{e.StackTrace ?? "[StackTrace was null]"}";
+                    ex = ex.InnerException;
+                }
+
+                var text = @$"// whoops{emsg}
 
 |******************|
 |  POSSIBLE FIXES  |
 |******************|
 
-Check if you are running this application in a zipped folder. If so, please extract the entire directory before attempting to run the editor.
+Ensure this application is not running inside a zipped folder. Extract the directory if so.
 
-If you are missing a DLL file from the main directory, copy it from the latest release of the editor into the current directory to ensure all required files are present.
-If a missing DLL error is thrown but the main directory contains said file, try replacing it with the file from the latest release with the same name so all mentioned files are up to date.
+Check if all required DLL files are present and working. If not, add or replace any missing or broken ones with versions from the latest release.
 
-Try updating your graphics driver to the latest version if none of the previous solutions apply to your situation.
+Try updating your graphics driver to the latest version.
 
-If none of these work or this error was thrown while the editor was already running, report the error in the official Sound Space Discord server to attempt to resolve the issue if possible.
+If none of these work or aren't applicable, report the error in the official Sound Space Discord server.
 
 {logs}
                 ";

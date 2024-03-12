@@ -11,67 +11,67 @@ namespace New_SSQE.GUI
 {
     internal class GuiWindowSettings : GuiWindow
     {
-        private readonly GuiButton BackButton = new(655, 930, 600, 100, 0, "SAVE AND RETURN", 48, false, false, "square");
-        private readonly GuiButton ResetButton = new(700, 865, 500, 50, 1, "RESET TO DEFAULT", 24, false, false, "square");
-        private readonly GuiButton OpenDirectoryButton = new(700, 810, 500, 50, 2, "OPEN EDITOR FOLDER", 24, false, false, "square");
-        private readonly GuiButton KeybindsButton = new(700, 755, 500, 50, 3, "CHANGE KEYBINDS", 24, false, false, "square");
+        private readonly GuiButton BackButton = new(655, 930, 600, 100, 0, "SAVE AND RETURN", 54, false, false, "square");
+        private readonly GuiButton ResetButton = new(700, 865, 500, 50, 1, "RESET TO DEFAULT", 30, false, false, "square");
+        private readonly GuiButton OpenDirectoryButton = new(700, 810, 500, 50, 2, "OPEN EDITOR FOLDER", 30, false, false, "square");
+        private readonly GuiButton KeybindsButton = new(700, 755, 500, 50, 3, "CHANGE KEYBINDS", 30, false, false, "square");
 
-        private readonly GuiButton Color1Picker = new(210, 160, 200, 50, 4, "PICK COLOR", 24, false, false, "square");
-        private readonly GuiLabel Color1Label = new(210, 134, 200, 26, "Color 1:", 24, false, false, "main", false);
+        private readonly GuiButton Color1Picker = new(210, 160, 200, 50, 4, "PICK COLOR", 30, false, false, "square");
+        private readonly GuiLabel Color1Label = new(210, 130, 200, 26, "Color 1:", 30, false, false, "main", false);
         private readonly GuiSquare Color1Square = new(420, 145, 75, 75, Settings.settings["color1"]);
 
-        private readonly GuiButton Color2Picker = new(210, 310, 200, 50, 5, "PICK COLOR", 24, false, false, "square");
-        private readonly GuiLabel Color2Label = new(210, 284, 200, 26, "Color 2:", 24, false, false, "main", false);
+        private readonly GuiButton Color2Picker = new(210, 310, 200, 50, 5, "PICK COLOR", 30, false, false, "square");
+        private readonly GuiLabel Color2Label = new(210, 280, 200, 26, "Color 2:", 30, false, false, "main", false);
         private readonly GuiSquare Color2Square = new(420, 295, 75, 75, Settings.settings["color2"]);
 
-        private readonly GuiButton Color3Picker = new(210, 460, 200, 50, 6, "PICK COLOR", 24, false, false, "square");
-        private readonly GuiLabel Color3Label = new(210, 434, 200, 26, "Color 3:", 24, false, false, "main", false);
+        private readonly GuiButton Color3Picker = new(210, 460, 200, 50, 6, "PICK COLOR", 30, false, false, "square");
+        private readonly GuiLabel Color3Label = new(210, 430, 200, 26, "Color 3:", 30, false, false, "main", false);
         private readonly GuiSquare Color3Square = new(420, 445, 75, 75, Settings.settings["color3"]);
 
-        private readonly GuiButton Color4Picker = new(210, 610, 200, 50, 7, "PICK COLOR", 24, false, false, "square");
-        private readonly GuiLabel Color4Label = new(210, 584, 200, 26, "Color 4:", 24, false, false, "main", false);
+        private readonly GuiButton Color4Picker = new(210, 610, 200, 50, 7, "PICK COLOR", 30, false, false, "square");
+        private readonly GuiLabel Color4Label = new(210, 580, 200, 26, "Color 4:", 30, false, false, "main", false);
         private readonly GuiSquare Color4Square = new(420, 595, 75, 75, Settings.settings["color4"]);
 
-        private readonly GuiButton NoteColorPicker = new(210, 760, 200, 50, 8, "ADD COLOR", 24, false, false, "square");
-        private readonly GuiLabel NoteColorLabel = new(210, 734, 200, 26, "Note Colors:", 24, false, false, "main", false);
-        private readonly GuiLabel NoteColorInfo = new(215, 815, 195, 26, "LMB: Remove\nRMB: Move left", 24, false, false, "main", false);
+        private readonly GuiButton NoteColorPicker = new(210, 760, 200, 50, 8, "ADD COLOR", 30, false, false, "square");
+        private readonly GuiLabel NoteColorLabel = new(210, 730, 200, 26, "Note Colors:", 30, false, false, "main", false);
+        private readonly GuiLabel NoteColorInfo = new(215, 815, 195, 26, "LMB: Remove\nRMB: Move left", 30, false, false, "main", false);
         private readonly GuiSquare NoteColorHoverSquare = new(0, 0, 0, 0, Color.FromArgb(255, 0, 127, 255), true);
 
-        private readonly GuiCheckbox WaveformCheckbox = new(950, 380, 55, 55, "waveform", "Enable Waveform", 28);
-        private readonly GuiCheckbox ClassicWaveformCheckbox = new(950, 455, 55, 55, "classicWaveform", "Use Classic Waveform", 28);
-        private readonly GuiCheckbox AutosaveCheckbox = new(950, 155, 55, 55, "enableAutosave", "Enable Autosave", 28);
-        private readonly GuiCheckbox CorrectOnCopyCheckbox = new(1350, 155, 55, 55, "correctOnCopy", "Correct Errors on Copy", 28);
-        private readonly GuiCheckbox SkipDownloadCheckbox = new(1350, 230, 55, 55, "skipDownload", "Skip Download from Roblox", 28);
-        private readonly GuiCheckbox ReverseScrollCheckbox = new(1350, 305, 55, 55, "reverseScroll", "Reverse Scroll Direction", 28);
-        private readonly GuiCheckbox CheckForUpdatesCheckbox = new(1350, 380, 55, 55, "checkUpdates", "Check For Updates", 28);
-        private readonly GuiCheckbox UseVSyncCheckbox = new(1350, 455, 55, 55, "useVSync", "Enable VSync", 28);
-        private readonly GuiCheckbox LimitPlayerFPSCheckbox = new(1350, 605, 55, 55, "limitPlayerFPS", "Limit Player FPS", 28);
-        private readonly GuiCheckbox FullscreenPlayerCheckbox = new(1350, 680, 55, 55, "fullscreenPlayer", "Open Player in Fullscreen", 28);
+        private readonly GuiCheckbox WaveformCheckbox = new(950, 380, 55, 55, "waveform", "Enable Waveform", 34);
+        private readonly GuiCheckbox ClassicWaveformCheckbox = new(950, 455, 55, 55, "classicWaveform", "Use Classic Waveform", 34);
+        private readonly GuiCheckbox AutosaveCheckbox = new(950, 155, 55, 55, "enableAutosave", "Enable Autosave", 34);
+        private readonly GuiCheckbox CorrectOnCopyCheckbox = new(1350, 155, 55, 55, "correctOnCopy", "Correct Errors on Copy", 34);
+        private readonly GuiCheckbox SkipDownloadCheckbox = new(1350, 230, 55, 55, "skipDownload", "Skip Download from Roblox", 34);
+        private readonly GuiCheckbox ReverseScrollCheckbox = new(1350, 305, 55, 55, "reverseScroll", "Reverse Scroll Direction", 34);
+        private readonly GuiCheckbox CheckForUpdatesCheckbox = new(1350, 380, 55, 55, "checkUpdates", "Check For Updates", 34);
+        private readonly GuiCheckbox UseVSyncCheckbox = new(1350, 455, 55, 55, "useVSync", "Enable VSync", 34);
+        private readonly GuiCheckbox LimitPlayerFPSCheckbox = new(1350, 605, 55, 55, "limitPlayerFPS", "Limit Player FPS", 34);
+        private readonly GuiCheckbox FullscreenPlayerCheckbox = new(1350, 680, 55, 55, "fullscreenPlayer", "Open Player in Fullscreen", 34);
 
-        private readonly GuiCheckbox UseRhythia = new(1350, 800, 55, 55, "useRhythia", "Use Rhythia as Player", 28);
-        private readonly GuiLabel RhythiaPathLabel = new(1350, 880, 200, 26, "", 24, false, false, "main", false);
-        private readonly GuiButton RhythiaPath = new(1350, 910, 200, 50, 9, "CHANGE PATH", 24);
+        private readonly GuiCheckbox UseRhythia = new(1350, 800, 55, 55, "useRhythia", "Use Rhythia as Player", 34);
+        private readonly GuiLabel RhythiaPathLabel = new(1350, 876, 200, 26, "", 30, false, false, "main", false);
+        private readonly GuiButton RhythiaPath = new(1350, 910, 200, 50, 9, "CHANGE PATH", 30);
 
-        private readonly GuiTextbox EditorBGOpacityTextbox = new(560, 160, 200, 50, "", 28, true, false, false, "editorBGOpacity");
-        private readonly GuiLabel EditorBGOpacityLabel = new(560, 134, 200, 26, "Editor BG Opacity:", 24, false, false, "main", false);
+        private readonly GuiTextbox EditorBGOpacityTextbox = new(560, 160, 200, 50, "", 34, true, false, false, "editorBGOpacity");
+        private readonly GuiLabel EditorBGOpacityLabel = new(560, 130, 200, 26, "Editor BG Opacity:", 30, false, false, "main", false);
         private readonly GuiSquare EditorBGOpacitySquare = new(770, 145, 75, 75, Color.FromArgb(255, 255, 255, 255));
         
-        private readonly GuiTextbox GridOpacityTextbox = new(560, 310, 200, 50, "", 28, true, false, false, "gridOpacity");
-        private readonly GuiLabel GridOpacityLabel = new(560, 284, 200, 26, "Grid Opacity:", 24, false, false, "main", false);
+        private readonly GuiTextbox GridOpacityTextbox = new(560, 310, 200, 50, "", 34, true, false, false, "gridOpacity");
+        private readonly GuiLabel GridOpacityLabel = new(560, 280, 200, 26, "Grid Opacity:", 30, false, false, "main", false);
         private readonly GuiSquare GridOpacitySquare = new(770, 295, 75, 75, Color.FromArgb(255, 255, 255, 255));
         
-        private readonly GuiTextbox TrackOpacityTextbox = new(560, 460, 200, 50, "", 28, true, false, false, "trackOpacity");
-        private readonly GuiLabel TrackOpacityLabel = new(560, 434, 200, 26, "Track Opacity:", 24, false, false, "main", false);
+        private readonly GuiTextbox TrackOpacityTextbox = new(560, 460, 200, 50, "", 34, true, false, false, "trackOpacity");
+        private readonly GuiLabel TrackOpacityLabel = new(560, 430, 200, 26, "Track Opacity:", 30, false, false, "main", false);
         private readonly GuiSquare TrackOpacitySquare = new(770, 445, 75, 75, Color.FromArgb(255, 255, 255, 255));
 
-        private readonly GuiTextbox AutosaveIntervalTextbox = new(950, 256, 200, 50, "", 28, true, false, false, "autosaveInterval", "main", false, true, true);
-        private readonly GuiLabel AutosaveIntervalLabel = new(950, 230, 200, 26, "Autosave Interval (min):", 24, false, false, "main", false);
+        private readonly GuiTextbox AutosaveIntervalTextbox = new(950, 256, 200, 50, "", 34, true, false, false, "autosaveInterval", "main", false, true, true);
+        private readonly GuiLabel AutosaveIntervalLabel = new(950, 226, 200, 26, "Autosave Interval (min):", 30, false, false, "main", false);
 
-        private readonly GuiTextbox WaveformDetailTextbox = new(950, 556, 200, 50, "", 28, true, false, false, "waveformDetail", "main", false, true, true);
-        private readonly GuiLabel WaveformDetailLabel = new(950, 530, 200, 26, "Waveform Level of Detail:", 24, false, false, "main", false);
+        private readonly GuiTextbox WaveformDetailTextbox = new(950, 556, 200, 50, "", 34, true, false, false, "waveformDetail", "main", false, true, true);
+        private readonly GuiLabel WaveformDetailLabel = new(950, 526, 200, 26, "Waveform Level of Detail:", 30, false, false, "main", false);
 
         private readonly GuiSlider FPSLimitSlider = new(1350, 500, 400, 55, "fpsLimit", false);
-        private readonly GuiLabel FPSLimitLabel = new(1350, 555, 400, 55, "FPS Limit: ", 28, false, false, "main", false);
+        private readonly GuiLabel FPSLimitLabel = new(1350, 551, 400, 55, "FPS Limit: ", 34, false, false, "main", false);
 
         private readonly List<GuiSquare> ColorPickerSquares = new();
         private readonly List<GuiSquare> OpacitySquares = new();

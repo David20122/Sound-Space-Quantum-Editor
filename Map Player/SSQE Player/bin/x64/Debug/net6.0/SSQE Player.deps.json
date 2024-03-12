@@ -9,9 +9,8 @@
       "SSQE Player/1.0.0": {
         "dependencies": {
           "OpenTK": "5.0.0-pre.8",
-          "SharpFont.Dependencies": "2.6.0",
           "SkiaSharp": "2.88.1",
-          "SpaceWizards.SharpFont": "1.0.1",
+          "StbTrueTypeSharp": "1.26.12",
           "System.Json": "4.7.1",
           "Bass.Net": "2.4.17.2"
         },
@@ -158,7 +157,6 @@
           }
         }
       },
-      "SharpFont.Dependencies/2.6.0": {},
       "SkiaSharp/2.88.1": {
         "dependencies": {
           "SkiaSharp.NativeAssets.Win32": "2.88.1",
@@ -199,11 +197,11 @@
           }
         }
       },
-      "SpaceWizards.SharpFont/1.0.1": {
+      "StbTrueTypeSharp/1.26.12": {
         "runtime": {
-          "lib/netcoreapp3.0/SpaceWizards.SharpFont.dll": {
-            "assemblyVersion": "1.0.1.0",
-            "fileVersion": "1.0.1.0"
+          "lib/netstandard2.0/StbTrueTypeSharp.dll": {
+            "assemblyVersion": "1.26.12.0",
+            "fileVersion": "1.26.12.0"
           }
         }
       },
@@ -309,13 +307,6 @@
       "path": "opentk.windowing.graphicslibraryframework/5.0.0-pre.8",
       "hashPath": "opentk.windowing.graphicslibraryframework.5.0.0-pre.8.nupkg.sha512"
     },
-    "SharpFont.Dependencies/2.6.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-MuR0lFIZI1pSw0QAgdzK0teIUkkMjh4Q/3Hm06BQKuOiSmbJCglox5Ny+8XK6VQDkOrw5cuMw85K3HdTEYWk+w==",
-      "path": "sharpfont.dependencies/2.6.0",
-      "hashPath": "sharpfont.dependencies.2.6.0.nupkg.sha512"
-    },
     "SkiaSharp/2.88.1": {
       "type": "package",
       "serviceable": true,
@@ -337,12 +328,12 @@
       "path": "skiasharp.nativeassets.win32/2.88.1",
       "hashPath": "skiasharp.nativeassets.win32.2.88.1.nupkg.sha512"
     },
-    "SpaceWizards.SharpFont/1.0.1": {
+    "StbTrueTypeSharp/1.26.12": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-DfQE9qUNzaUs6ehhS10bkF+dIDtVAzsK70irZ/c3FiZcuwdhaYxPt9g/uqqr7t9P9ynj2CKCv1g/Us7FjujXoA==",
-      "path": "spacewizards.sharpfont/1.0.1",
-      "hashPath": "spacewizards.sharpfont.1.0.1.nupkg.sha512"
+      "sha512": "sha512-hCc6/OsfcPa5VsLECcEU2m78WOshBrKwK42nAodSm9Z5wH68f7n66SoiRLCdGCkDaqbWz2TlX4zYHIjogj1HJA==",
+      "path": "stbtruetypesharp/1.26.12",
+      "hashPath": "stbtruetypesharp.1.26.12.nupkg.sha512"
     },
     "System.Json/4.7.1": {
       "type": "package",

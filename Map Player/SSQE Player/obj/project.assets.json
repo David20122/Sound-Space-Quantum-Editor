@@ -201,12 +201,6 @@
           }
         }
       },
-      "SharpFont.Dependencies/2.6.0": {
-        "type": "package",
-        "build": {
-          "build/SharpFont.Dependencies.props": {}
-        }
-      },
       "SkiaSharp/2.88.1": {
         "type": "package",
         "dependencies": {
@@ -262,13 +256,13 @@
           }
         }
       },
-      "SpaceWizards.SharpFont/1.0.1": {
+      "StbTrueTypeSharp/1.26.12": {
         "type": "package",
         "compile": {
-          "lib/netcoreapp3.0/SpaceWizards.SharpFont.dll": {}
+          "lib/netstandard2.0/StbTrueTypeSharp.dll": {}
         },
         "runtime": {
-          "lib/netcoreapp3.0/SpaceWizards.SharpFont.dll": {}
+          "lib/netstandard2.0/StbTrueTypeSharp.dll": {}
         }
       },
       "System.Json/4.7.1": {
@@ -479,12 +473,6 @@
           }
         }
       },
-      "SharpFont.Dependencies/2.6.0": {
-        "type": "package",
-        "build": {
-          "build/SharpFont.Dependencies.props": {}
-        }
-      },
       "SkiaSharp/2.88.1": {
         "type": "package",
         "dependencies": {
@@ -523,13 +511,13 @@
           "runtimes/win-x64/native/libSkiaSharp.dll": {}
         }
       },
-      "SpaceWizards.SharpFont/1.0.1": {
+      "StbTrueTypeSharp/1.26.12": {
         "type": "package",
         "compile": {
-          "lib/netcoreapp3.0/SpaceWizards.SharpFont.dll": {}
+          "lib/netstandard2.0/StbTrueTypeSharp.dll": {}
         },
         "runtime": {
-          "lib/netcoreapp3.0/SpaceWizards.SharpFont.dll": {}
+          "lib/netstandard2.0/StbTrueTypeSharp.dll": {}
         }
       },
       "System.Json/4.7.1": {
@@ -763,26 +751,6 @@
         "opentk.windowing.graphicslibraryframework.nuspec"
       ]
     },
-    "SharpFont.Dependencies/2.6.0": {
-      "sha512": "MuR0lFIZI1pSw0QAgdzK0teIUkkMjh4Q/3Hm06BQKuOiSmbJCglox5Ny+8XK6VQDkOrw5cuMw85K3HdTEYWk+w==",
-      "type": "package",
-      "path": "sharpfont.dependencies/2.6.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "bin/msvc10/x64/freetype6.dll",
-        "bin/msvc10/x86/freetype6.dll",
-        "bin/msvc11/x64/freetype6.dll",
-        "bin/msvc11/x86/freetype6.dll",
-        "bin/msvc12/x64/freetype6.dll",
-        "bin/msvc12/x86/freetype6.dll",
-        "bin/msvc9/x64/freetype6.dll",
-        "bin/msvc9/x86/freetype6.dll",
-        "build/SharpFont.Dependencies.props",
-        "sharpfont.dependencies.2.6.0.nupkg.sha512",
-        "sharpfont.dependencies.nuspec"
-      ]
-    },
     "SkiaSharp/2.88.1": {
       "sha512": "bEgYq0n0kVb/t/3DgQTILBqlXcNjKmz0t8ur9w41UK+pbufBGcEF8QMJQIhdRYohHqhsBwrCF87WUBkeRAuquA==",
       "type": "package",
@@ -908,20 +876,17 @@
         "skiasharp.nativeassets.win32.nuspec"
       ]
     },
-    "SpaceWizards.SharpFont/1.0.1": {
-      "sha512": "DfQE9qUNzaUs6ehhS10bkF+dIDtVAzsK70irZ/c3FiZcuwdhaYxPt9g/uqqr7t9P9ynj2CKCv1g/Us7FjujXoA==",
+    "StbTrueTypeSharp/1.26.12": {
+      "sha512": "hCc6/OsfcPa5VsLECcEU2m78WOshBrKwK42nAodSm9Z5wH68f7n66SoiRLCdGCkDaqbWz2TlX4zYHIjogj1HJA==",
       "type": "package",
-      "path": "spacewizards.sharpfont/1.0.1",
+      "path": "stbtruetypesharp/1.26.12",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "contentFiles/any/net45/SpaceWizards.SharpFont.dll.config",
-        "contentFiles/any/net472/SpaceWizards.SharpFont.dll.config",
-        "lib/net45/SpaceWizards.SharpFont.dll",
-        "lib/net472/SpaceWizards.SharpFont.dll",
-        "lib/netcoreapp3.0/SpaceWizards.SharpFont.dll",
-        "spacewizards.sharpfont.1.0.1.nupkg.sha512",
-        "spacewizards.sharpfont.nuspec"
+        "lib/net471/StbTrueTypeSharp.dll",
+        "lib/netstandard2.0/StbTrueTypeSharp.dll",
+        "stbtruetypesharp.1.26.12.nupkg.sha512",
+        "stbtruetypesharp.nuspec"
       ]
     },
     "System.Json/4.7.1": {
@@ -996,9 +961,8 @@
       "Microsoft.NET.ILLink.Analyzers >= 7.0.100-1.23211.1",
       "Microsoft.NET.ILLink.Tasks >= 7.0.100-1.23211.1",
       "OpenTK >= 5.0.0-pre.8",
-      "SharpFont.Dependencies >= 2.6.0",
       "SkiaSharp >= 2.88.1",
-      "SpaceWizards.SharpFont >= 1.0.1",
+      "StbTrueTypeSharp >= 1.26.12",
       "System.Json >= 4.7.1"
     ]
   },
@@ -1063,17 +1027,13 @@
             "target": "Package",
             "version": "[5.0.0-pre.8, )"
           },
-          "SharpFont.Dependencies": {
-            "target": "Package",
-            "version": "[2.6.0, )"
-          },
           "SkiaSharp": {
             "target": "Package",
             "version": "[2.88.1, )"
           },
-          "SpaceWizards.SharpFont": {
+          "StbTrueTypeSharp": {
             "target": "Package",
-            "version": "[1.0.1, )"
+            "version": "[1.26.12, )"
           },
           "System.Json": {
             "target": "Package",
