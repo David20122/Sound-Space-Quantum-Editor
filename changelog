@@ -1,4 +1,12 @@
 ----------------------------------
+    -- 2.1.5.0 - 3/11/2024 --
+   -- P-2.1.3.0 - 3/11/2024 --
+
+- removed freetype in favor of stb_truetype which *should* fix many stability issues related to the font renderer
+- crash logs now record exception trees instead of only the highest exception
+- rewrote possible fixes in crash logs
+
+----------------------------------
      -- 2.1.4.4 - 3/9/2024 --
 
 - fixed rendering and saving bookmarks with blank text
