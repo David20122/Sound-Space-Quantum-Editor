@@ -145,11 +145,11 @@ namespace New_SSQE.GUI
                 if (gridNumbers)
                 {
                     var numText = $"{i + 1:##,###}";
-                    var width = FontRenderer.GetWidth(numText, 24, "main");
-                    var height = FontRenderer.GetHeight(24, "main");
+                    var width = FontRenderer.GetWidth(numText, 28, "main");
+                    var height = FontRenderer.GetHeight(28, "main");
 
-                    color2Texts.AddRange(FontRenderer.Print((int)(noteRect.X + noteRect.Width / 2f - width / 2f), (int)(noteRect.Y + noteRect.Height / 2f - height / 2f + 3f),
-                        numText, 24, "main"));
+                    color2Texts.AddRange(FontRenderer.Print((int)(noteRect.X + noteRect.Width / 2f - width / 2f), (int)(noteRect.Y + noteRect.Height / 2f - height / 2f),
+                        numText, 28, "main"));
                     for (int j = 0; j < numText.Length; j++)
                         alphas.Add(1 - progress);
                 }

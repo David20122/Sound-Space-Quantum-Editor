@@ -234,8 +234,8 @@ namespace New_SSQE.GUI
                     var numText = $"Note {i + 1:##,###}";
                     var msText = $"{note.Ms:##,##0}ms";
 
-                    color1Texts.AddRange(FontRenderer.Print((int)x + 3, (int)Rect.Height, numText, 16, "main"));
-                    color2Texts.AddRange(FontRenderer.Print((int)x + 3, (int)Rect.Height + 15, msText, 16, "main"));
+                    color1Texts.AddRange(FontRenderer.Print((int)x + 3, (int)Rect.Height - 2, numText, 20, "main"));
+                    color2Texts.AddRange(FontRenderer.Print((int)x + 3, (int)Rect.Height + 13, msText, 20, "main"));
 
                     lastRendered = x;
                 }
@@ -335,8 +335,8 @@ namespace New_SSQE.GUI
                 var numText = $"{point.BPM:##,###.###} BPM";
                 var msText = $"{point.Ms:##,##0}ms";
 
-                color1Texts.AddRange(FontRenderer.Print((int)lineX + 3, (int)Rect.Height + 28, numText, 16, "main"));
-                color2Texts.AddRange(FontRenderer.Print((int)lineX + 3, (int)Rect.Height + 43, msText, 16, "main"));
+                color1Texts.AddRange(FontRenderer.Print((int)lineX + 3, (int)Rect.Height + 26, numText, 20, "main"));
+                color2Texts.AddRange(FontRenderer.Print((int)lineX + 3, (int)Rect.Height + 41, msText, 20, "main"));
 
                 if (hovering)
                 {

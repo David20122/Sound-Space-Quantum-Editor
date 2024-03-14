@@ -163,7 +163,7 @@ namespace New_SSQE
         protected override void OnLoad()
         {
             GL.ClearColor(0f, 0f, 0f, 1f);
-
+            
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         }
