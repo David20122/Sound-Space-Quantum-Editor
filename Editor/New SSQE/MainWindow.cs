@@ -1018,11 +1018,10 @@ namespace New_SSQE
                 if (dialog.FileName != $"{Directory.GetCurrentDirectory()}\\cached\\{id}.asset")
                     File.Copy(dialog.FileName, $"cached/{id}.asset", true);
 
-                MusicPlayer.Load($"cached/{id}.asset");
                 if (create)
                     SoundID = id;
 
-                return true;
+                return MusicPlayer.Load($"cached/{id}.asset");
             }
 
             return false;
@@ -1047,9 +1046,7 @@ namespace New_SSQE
                         WebClient.DownloadFile($"https://assetdelivery.roblox.com/v1/asset/?id={id}", $"cached/{id}.asset", true);
                 }
 
-                MusicPlayer.Load($"cached/{id}.asset");
-
-                return true;
+                return MusicPlayer.Load($"cached/{id}.asset");
             }
             catch (Exception e)
             {

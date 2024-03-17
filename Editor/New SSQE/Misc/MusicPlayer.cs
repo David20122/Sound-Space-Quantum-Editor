@@ -2,7 +2,6 @@
 using Un4seen.Bass;
 using System.IO;
 using Un4seen.Bass.AddOn.Fx;
-using System.Reactive.Concurrency;
 
 namespace New_SSQE
 {
@@ -64,10 +63,10 @@ namespace New_SSQE
             catch { }
         }
 
-        public void Load(string file)
+        public bool Load(string file)
         {
             if (file == null || !File.Exists(file))
-                return;
+                return true;
             if (lastFile != file)
                 lastFile = file;
 
@@ -87,6 +86,19 @@ namespace New_SSQE
             Waveform.Init(streamFileID);
 
             Reset();
+
+
+            if (TotalTime.TotalMilliseconds < 0)
+            {
+                string id = Path.GetFileNameWithoutExtension(file);
+
+                ActionLogging.Register($"Failed to load audio, error code: {Bass.BASS_ErrorGetCode()}", "WARN");
+                var message = MessageBox.Show($"Audio file with id '{id}' is corrupt.\n\nWould you like to try importing a new file?", "Warning", "OK", "Cancel");
+
+                return message == DialogResult.OK && MainWindow.Instance.PromptImport(id);
+            }
+
+            return true;
         }
 
         private void OnEnded(int handle, int channel, int data, IntPtr user)

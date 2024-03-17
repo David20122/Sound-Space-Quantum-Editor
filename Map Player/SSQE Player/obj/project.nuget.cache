@@ -1,11 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "6a+YgyqTboF3rGckiFPxSW3hQg2IsXy5NmSV2enKSbczsXfzeDV0Nj7tfutGqYHwsxT/GRtqZsmiJAW7d+/A6Q==",
+  "dgSpecHash": "DlE6H/cF359oHolnvWaiqn+dfnKTPsVM5DXPMsmG07YXWuQJ5uGsRq0O4mDxltXiqb8ENYld51JNFGJuQAAL6g==",
   "success": true,
   "projectFilePath": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Owner\\.nuget\\packages\\microsoft.net.illink.analyzers\\7.0.100-1.23211.1\\microsoft.net.illink.analyzers.7.0.100-1.23211.1.nupkg.sha512",
-    "C:\\Users\\Owner\\.nuget\\packages\\microsoft.net.illink.tasks\\7.0.100-1.23211.1\\microsoft.net.illink.tasks.7.0.100-1.23211.1.nupkg.sha512",
     "C:\\Users\\Owner\\.nuget\\packages\\opentk\\5.0.0-pre.8\\opentk.5.0.0-pre.8.nupkg.sha512",
     "C:\\Users\\Owner\\.nuget\\packages\\opentk.compute\\5.0.0-pre.8\\opentk.compute.5.0.0-pre.8.nupkg.sha512",
     "C:\\Users\\Owner\\.nuget\\packages\\opentk.core\\5.0.0-pre.8\\opentk.core.5.0.0-pre.8.nupkg.sha512",
@@ -32,8 +30,7 @@
       "message": "Package 'SkiaSharp' 2.88.1 has a known high severity vulnerability, https://github.com/advisories/GHSA-j7hp-h8jx-5ppr",
       "libraryId": "SkiaSharp",
       "targetGraphs": [
-        "net6.0",
-        "net6.0/win-x64"
+        "net6.0"
       ]
     }
   ]
