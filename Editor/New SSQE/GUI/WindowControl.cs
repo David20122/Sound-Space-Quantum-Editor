@@ -2,7 +2,6 @@
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System;
 using System.Drawing;
 
 namespace New_SSQE.GUI
@@ -34,14 +33,12 @@ namespace New_SSQE.GUI
 
         public bool IsDisposed = false;
 
-        public readonly int TexColorLocation;
+        public static int TexColorLocation;
 
         public WindowControl(float posx, float posy, float sizex, float sizey)
         {
             Rect = new(posx, posy, sizex, sizey);
             OriginRect = new(posx, posy, sizex, sizey);
-
-            TexColorLocation = GL.GetUniformLocation(Shader.FontTexProgram, "TexColor");
         }
 
         // Vertex: X, Y, R, G, B, A (float)

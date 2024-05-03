@@ -1,7 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 
 namespace New_SSQE.GUI
@@ -65,6 +63,8 @@ namespace New_SSQE.GUI
 
         public override void RenderTexture()
         {
+            //FontRenderer.RenderUnicode(Font, Text, TextSize, (textColor.R / 255f, textColor.G / 255f, textColor.B / 255f, textColor.A / 255f));
+
             GL.Uniform4f(TexColorLocation, textColor.R / 255f, textColor.G / 255f, textColor.B / 255f, textColor.A / 255f);
             FontRenderer.RenderData(Font, FontVertices);
         }

@@ -1,29 +1,10 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 
 namespace New_SSQE
 {
     internal class GLU
     {
-        private static float[] FixColor(float[] c)
-        {
-            float[] d = new float[] { 1f, 1f, 1f, 1f };
-
-            for (int i = 0; i < c.Length; i++)
-            {
-                var x = c[i];
-
-                if (x > 1)
-                    x /= 255f;
-
-                d[i] = x;
-            }
-
-            return d;
-        }
-
         public static float[] Rect(float x, float y, float sx, float sy, params float[] c)
         {
             float a = c.Length == 4 ? c[3] : 1f;

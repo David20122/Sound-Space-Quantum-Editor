@@ -89,7 +89,7 @@ namespace SSQE_Player
         {
             Pause();
             CurrentTime = TotalTime;
-            Settings.settings["currentTime"].Value = (float)(CurrentTime.TotalMilliseconds);
+            Settings.settings["currentTime"].Value = (float)(CurrentTime.TotalMilliseconds + 0.03 * (1 + (MainWindow.Instance.Tempo - 1) * 1.5));
 
             MainWindow.Instance.Close();
         }
@@ -195,7 +195,7 @@ namespace SSQE_Player
             {
                 CheckDevice();
 
-                var pos = Bass.BASS_ChannelSeconds2Bytes(streamID, value.TotalSeconds);
+                var pos = Bass.BASS_ChannelSeconds2Bytes(streamID, value.TotalSeconds - 0.03 * (1 + (MainWindow.Instance.Tempo - 1) * 1.5));
 
                 Bass.BASS_ChannelSetPosition(streamID, Math.Max(pos, 0), BASSMode.BASS_POS_BYTE);
             }
@@ -205,7 +205,7 @@ namespace SSQE_Player
 
                 var pos = Bass.BASS_ChannelGetPosition(streamID, BASSMode.BASS_POS_BYTE);
 
-                return TimeSpan.FromSeconds(Bass.BASS_ChannelBytes2Seconds(streamID, pos));
+                return TimeSpan.FromSeconds(Bass.BASS_ChannelBytes2Seconds(streamID, pos) + 0.03 * (1 + (MainWindow.Instance.Tempo - 1) * 1.5));
             }
         }
 

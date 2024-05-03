@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Drawing;
 using OpenTK.Mathematics;
 using New_SSQE.Types;
@@ -11,85 +7,129 @@ namespace New_SSQE.GUI
 {
     internal class GuiWindowEditor : GuiWindow
     {
+        // options nav
+        private readonly GuiButton LNavOptions = new(10, 60, 175, 50, 3, "OPTIONS", 31, false, true);
+        private readonly GuiCheckbox Numpad = new(10, 120, 30, 30, "numpad", "Use Numpad", 26, false, true);
+        private readonly GuiCheckbox SeparateClickTools = new(10, 160, 30, 30, "separateClickTools", "Separate Click Modes", 26, false, true);
+        private readonly GuiButton SwapClickMode = new(10, 200, 200, 40, 27, "Swap Click Mode", 26, false, true);
+        private readonly GuiCheckbox JumpOnPaste = new(10, 250, 30, 30, "jumpPaste", "Jump on Paste", 26, false, true);
+        private readonly GuiCheckbox PauseOnScroll = new(10, 290, 30, 30, "pauseScroll", "Pause on Seek", 26, false, true);
+
+        // timing nav
+        private readonly GuiButton LNavTiming = new(195, 60, 175, 50, 4, "TIMING", 31, false, true);
+        private readonly GuiTextbox ExportOffset = new(10, 160, 130, 40, "0", 31, true, false, true, "exportOffset");
+        private readonly GuiTextbox SfxOffset = new(180, 160, 130, 40, "0", 31, true, false, true, "sfxOffset");
+        private readonly GuiButton OpenTimings = new(10, 220, 210, 40, 6, "OPEN BPM SETUP", 27, false, true);
+        private readonly GuiButton ImportIni = new(10, 270, 210, 40, 16, "IMPORT INI", 27, false, true);
+        private readonly GuiCheckbox Metronome = new(10, 320, 30, 30, "metronome", "Metronome", 26, false, true);
+        private readonly GuiButton OpenBookmarks = new(10, 390, 210, 40, 7, "EDIT BOOKMARKS", 27, false, true);
+        private readonly GuiButton CopyBookmarks = new(10, 440, 210, 40, 20, "COPY BOOKMARKS", 27, false, true);
+        private readonly GuiButton PasteBookmarks = new(10, 490, 210, 40, 21, "PASTE BOOKMARKS", 27, false, true);
+
+        private readonly GuiLabel ExportOffsetLabel = new(10, 130, 100, 30, "Export Offset:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel SfxOffsetLabel = new(180, 130, 100, 30, "SFX Offset:", 30, false, true, "main", false, Settings.settings["color1"]);
+
+        // patterns nav
+        private readonly GuiButton LNavPatterns = new(380, 60, 175, 50, 8, "PATTERNS", 31, false, true);
+        private readonly GuiButton HFlip = new(10, 130, 175, 40, 9, "HORIZONTAL FLIP", 27, false, true);
+        private readonly GuiButton VFlip = new(195, 130, 175, 40, 10, "VERTICAL FLIP", 27, false, true);
+        public readonly GuiTextbox RotateBox = new(10, 220, 100, 40, "90", 31, true, false, true);
+        private readonly GuiButton RotateButton = new(120, 220, 100, 40, 14, "ROTATE", 27, false, true);
+        public readonly GuiTextbox ScaleBox = new(10, 300, 100, 40, "150", 31, true, false, true);
+        private readonly GuiButton ScaleButton = new(120, 300, 100, 40, 15, "SCALE", 27, false, true);
+        private readonly GuiCheckbox ApplyOnPaste = new(10, 360, 30, 30, "applyOnPaste", "Apply Rotate/Scale On Paste", 27, false, true);
+        private readonly GuiCheckbox ClampSR = new(10, 400, 30, 30, "clampSR", "Clamp Rotate/Scale In Bounds", 27, false, true);
+        private readonly GuiButton StoreNodes = new(10, 460, 175, 40, 11, "STORE NODES", 27, false, true);
+        private readonly GuiButton ClearNodes = new(195, 460, 175, 40, 12, "CLEAR NODES", 27, false, true);
+        private readonly GuiCheckbox CurveBezier = new(10, 520, 30, 30, "curveBezier", "Curve Bezier", 27, false, true);
+        private readonly GuiTextbox BezierBox = new(10, 590, 100, 40, "4", 31, true, false, true, "bezierDivisor");
+        private readonly GuiButton BezierButton = new(120, 590, 100, 40, 13, "DRAW", 27, false, true);
+
+        private readonly GuiLabel RotateLabel = new(10, 190, 175, 30, "Rotate by Degrees:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel ScaleLabel = new(10, 270, 100, 30, "Scale by Percent:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel DrawBezierLabel = new(10, 560, 100, 30, "Draw Bezier with Divisor:", 30, false, true, "main", false, Settings.settings["color1"]);
+
+        // player nav
+        private readonly GuiButton LNavPlayer = new(10, 0, 400, 50, 17, "PLAYTEST", 31, false, true);
+        private readonly GuiButtonList CameraMode = new(10, 160, 150, 40, "cameraMode", 27, false, true);
+        private readonly GuiTextbox NoteScale = new(185, 160, 100, 40, "1", 31, true, false, true, "noteScale", "main", false, true);
+        private readonly GuiTextbox CursorScale = new(310, 160, 100, 40, "1", 31, true, false, true, "cursorScale", "main", false, true);
+        private readonly GuiCheckbox LockCursor = new(10, 220, 30, 30, "lockCursor", "Lock Cursor Within Grid", 27, false, true);
+        private readonly GuiCheckbox GridGuides = new(10, 270, 30, 30, "gridGuides", "Grid Guides", 27, false, true);
+        private readonly GuiTextbox Sensitivity = new(10, 350, 115, 40, "1", 31, true, false, true, "sensitivity", "main", false, true);
+        private readonly GuiTextbox Parallax = new(145, 350, 115, 40, "1", 31, true, false, true, "parallax", "main", false, true);
+        private readonly GuiTextbox FieldOfView = new(280, 350, 115, 40, "70", 31, true, false, true, "fov", "main", false, true);
+        private readonly GuiTextbox ApproachDistance = new(10, 435, 150, 40, "1", 31, true, false, true, "approachDistance", "main", false, true);
+        private readonly GuiTextbox HitWindow = new(245, 435, 150, 40, "55", 31, true, false, true, "hitWindow", "main", false, true);
+        private readonly GuiSlider PlayerApproachRate = new(10, 520, 400, 32, "playerApproachRate", false, false, true);
+        private readonly GuiCheckbox ApproachFade = new(10, 570, 30, 30, "approachFade", "Approach Fade", 27, false, true);
+        private readonly GuiButton FromStart = new(10, 630, 200, 40, 18, "PLAY FROM START", 27, false, true);
+        private readonly GuiButton PlayMap = new(220, 630, 200, 40, 22, "PLAY HERE", 27, false, true);
+
+        private readonly GuiLabel CameraModeLabel = new(10, 130, 100, 30, "Camera Mode:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel NoteScaleLabel = new(185, 130, 100, 30, "Note Size:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel CursorScaleLabel = new(310, 130, 100, 30, "Cursor Size:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel SensitivityLabel = new(10, 320, 100, 30, "Sensitivity:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel ParallaxLabel = new(145, 320, 100, 30, "Parallax:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel FieldOfViewLabel = new(280, 320, 100, 30, "FOV:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel ApproachDistanceLabel = new(10, 405, 100, 30, "Approach Distance:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel HitWindowLabel = new(245, 405, 100, 30, "Hit Window:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel PlayerApproachRateLabel = new(10, 490, 400, 32, "", 30, false, true, "main", true, Settings.settings["color1"]);
+        
+        // snapping nav
+        private readonly GuiButton RNavSnapping = new(1365, 60, 175, 50, 26, "SNAPPING", 31, false, true);
+        private readonly GuiCheckbox Quantum = new(1610, 120, 30, 30, "enableQuantum", "Quantum", 27, false, true);
+        private readonly GuiCheckbox QuantumGridSnap = new(1610, 160, 30, 30, "quantumGridSnap", "Snap to Grid", 27, false, true);
+        private readonly GuiCheckbox AutoAdvance = new(1610, 200, 30, 30, "autoAdvance", "Auto-Advance", 27, false, true);
+        private readonly GuiSlider BeatSnapDivisor = new(1610, 280, 250, 32, "beatDivisor", false, false, true);
+        private readonly GuiSlider QuantumSnapDivisor = new(1610, 360, 250, 32, "quantumSnapping", false, false, true);
+
+        private readonly GuiLabel BeatDivisorLabel = new(1610, 250, 250, 32, "", 30, false, true, "main", true, Settings.settings["color1"]);
+        private readonly GuiLabel SnappingLabel = new(1610, 330, 250, 32, "", 30, false, true, "main", true, Settings.settings["color1"]);
+
+        // graphics nav
+        private readonly GuiButton RNavGraphics = new(1550, 60, 175, 50, 28, "GRAPHICS", 31, false, true);
+        private readonly GuiCheckbox Autoplay = new(1610, 120, 30, 30, "autoplay", "Autoplay", 26, false, true);
+        private readonly GuiCheckbox ApproachSquares = new(1610, 160, 30, 30, "approachSquares", "Approach Squares", 26, false, true);
+        private readonly GuiCheckbox GridNumbers = new(1610, 200, 30, 30, "gridNumbers", "Grid Numbers", 26, false, true);
+        private readonly GuiCheckbox GridLetters = new(1610, 240, 30, 30, "gridLetters", "Grid Letters", 26, false, true);
+        private readonly GuiCheckbox QuantumGridLines = new(1610, 280, 30, 30, "quantumGridLines", "Quantum Grid Lines", 26, false, true);
+        private readonly GuiSlider ApproachRate = new(1610, 360, 250, 32, "approachRate", false, false, true);
+        private readonly GuiSlider TrackHeight = new(1610, 440, 250, 32, "trackHeight", false, false, true);
+        private readonly GuiSlider TrackCursorPos = new(1610, 520, 250, 32, "cursorPos", false, false, true);
+
+        private readonly GuiLabel ApproachRateLabel = new(1610, 330, 250, 32, "", 28, false, true, "main", true, Settings.settings["color1"]);
+        private readonly GuiLabel TrackHeightLabel = new(1610, 410, 250, 32, "", 28, false, true, "main", true, Settings.settings["color1"]);
+        private readonly GuiLabel CursorPosLabel = new(1610, 490, 250, 32, "", 28, false, true, "main", true, Settings.settings["color1"]);
+
+        // export nav
+        private readonly GuiButton RNavExport = new(1735, 60, 175, 50, 5, "EXPORT", 31, false, true);
+        private readonly GuiButton SaveButton = new(1610, 130, 100, 40, 24, "SAVE", 27, false, true);
+        private readonly GuiButton SaveAsButton = new(1720, 130, 100, 40, 25, "SAVE AS", 27, false, true);
+        private readonly GuiButton ExportSSPMButton = new(1610, 180, 210, 40, 23, "EXPORT SSPM", 27, false, true);
+        private readonly GuiTextbox ReplaceIDBox = new(1610, 320, 210, 40, "", 27, false, false, true);
+        private readonly GuiButton ReplaceID = new(1610, 370, 210, 40, 29, "REPLACE", 27, false, true);
+
+        private readonly GuiLabel ReplaceIDLabel = new(1610, 290, 100, 30, "Replace Audio ID", 30, false, true, "main", false, Settings.settings["color1"]);
+
+
+
         private readonly GuiButton CopyButton = new(0, 0, 301, 42, 0, "COPY MAP DATA", 27, true);
-        private readonly GuiButton BackButton = new(0, 0, 235, 42, 1, "BACK TO MENU", 27, true);
-        private readonly GuiButton SaveButton = new(0, 0, 61, 42, 24, "SAVE", 27, true);
+        private readonly GuiButton BackButton = new(0, 0, 301, 42, 1, "BACK TO MENU", 27, true);
 
         private readonly GuiSlider Tempo = new(0, 0, 0, 0, "tempo", false);
         private readonly GuiSlider MasterVolume = new(0, 0, 0, 0, "masterVolume", true);
         private readonly GuiSlider SfxVolume = new(0, 0, 0, 0, "sfxVolume", true);
-        private readonly GuiSlider BeatSnapDivisor = new(0, 0, 0, 0, "beatDivisor", false);
-        private readonly GuiSlider QuantumSnapDivisor = new(0, 0, 0, 0, "quantumSnapping", false);
         public readonly GuiSliderTimeline Timeline = new(0, 0, 0, 0, false);
         private readonly GuiButtonPlayPause PlayPause = new(0, 0, 0, 0, 2);
-        private readonly GuiCheckbox AutoAdvance = new(0, 0, 0, 0, "autoAdvance", "Auto-Advance", 31);
 
-        private readonly GuiButton OptionsNav = new(10, 60, 400, 50, 3, "OPTIONS >", 31, false, true);
-        private readonly GuiCheckbox Autoplay = new(10, 130, 30, 30, "autoplay", "Autoplay", 26, false, true);
-        private readonly GuiCheckbox ApproachSquares = new(10, 170, 30, 30, "approachSquares", "Approach Squares", 26, false, true);
-        private readonly GuiCheckbox GridNumbers = new(10, 210, 30, 30, "gridNumbers", "Grid Numbers", 26, false, true);
-        private readonly GuiCheckbox GridLetters = new(10, 250, 30, 30, "gridLetters", "Grid Letters", 26, false, true);
-        private readonly GuiCheckbox Quantum = new(10, 290, 30, 30, "enableQuantum", "Quantum", 26, false, true);
-        private readonly GuiCheckbox Numpad = new(10, 330, 30, 30, "numpad", "Use Numpad", 26, false, true);
-        private readonly GuiCheckbox QuantumGridLines = new(10, 370, 30, 30, "quantumGridLines", "Quantum Grid Lines", 26, false, true);
-        private readonly GuiCheckbox QuantumGridSnap = new(10, 410, 30, 30, "quantumGridSnap", "Snap to Grid", 26, false, true);
-        private readonly GuiCheckbox Metronome = new(10, 450, 30, 30, "metronome", "Metronome", 26, false, true);
-        private readonly GuiCheckbox SeparateClickTools = new(10, 490, 30, 30, "separateClickTools", "Separate Click Tools", 26, false, true);
-        private readonly GuiCheckbox JumpOnPaste = new(10, 530, 30, 30, "jumpPaste", "Jump on Paste", 26, false, true);
-        private readonly GuiSlider TrackHeight = new(378, 384, 32, 224, "trackHeight", false, false, true);
-        private readonly GuiSlider TrackCursorPos = new(10, 596, 400, 32, "cursorPos", false, false, true);
-        private readonly GuiSlider ApproachRate = new(378, 124, 32, 224, "approachRate", true, false, true);
 
-        private readonly GuiButton TimingNav = new(10, 120, 400, 50, 4, "TIMING >", 31, false, true);
-        private readonly GuiTextbox ExportOffset = new(10, 210, 128, 40, "0", 31, true, false, true, "exportOffset");
-        private readonly GuiTextbox SfxOffset = new(10, 285, 128, 40, "0", 31, true, false, true, "sfxOffset");
-        private readonly GuiButton UseCurrentMs = new(143, 210, 192, 40, 5, "USE CURRENT MS", 27, false, true);
-        private readonly GuiButton OpenTimings = new(10, 335, 256, 40, 6, "OPEN BPM SETUP", 27, false, true);
-        private readonly GuiButton ImportIni = new(10, 385, 256, 40, 16, "IMPORT INI", 27, false, true);
-
-        private readonly GuiButton PatternsNav = new(10, 180, 400, 50, 8, "PATTERNS >", 31, false, true);
-        private readonly GuiButton HFlip = new(10, 250, 256, 40, 9, "HORIZONTAL FLIP", 27, false, true);
-        private readonly GuiButton VFlip = new(10, 300, 256, 40, 10, "VERTICAL FLIP", 27, false, true);
-        private readonly GuiButton StoreNodes = new(10, 360, 256, 40, 11, "STORE NODES", 27, false, true);
-        private readonly GuiButton ClearNodes = new(10, 410, 256, 40, 12, "CLEAR NODES", 27, false, true);
-        private readonly GuiCheckbox CurveBezier = new(10, 460, 40, 40, "curveBezier", "Curve Bezier", 31, false, true);
-        private readonly GuiTextbox BezierBox = new(10, 532, 128, 40, "4", 31, true, false, true, "bezierDivisor");
-        private readonly GuiButton BezierButton = new(143, 532, 128, 40, 13, "DRAW", 27, false, true);
-        public readonly GuiTextbox RotateBox = new(10, 607, 128, 40, "90", 31, true, false, true);
-        private readonly GuiButton RotateButton = new(143, 607, 128, 40, 14, "ROTATE", 27, false, true);
-        public readonly GuiTextbox ScaleBox = new(10, 682, 128, 40, "150", 31, true, false, true);
-        private readonly GuiButton ScaleButton = new(143, 682, 128, 40, 15, "SCALE", 27, false, true);
-        private readonly GuiCheckbox ApplyOnPaste = new(10, 732, 40, 40, "applyOnPaste", "Apply Rotate/Scale On Paste", 31, false, true);
-
-        private readonly GuiButton ReviewNav = new(10, 240, 400, 50, 19, "REVIEW >", 31, false, true);
-        private readonly GuiButton OpenBookmarks = new(10, 310, 256, 40, 7, "EDIT BOOKMARKS", 27, false, true);
-        private readonly GuiButton CopyBookmarks = new(10, 360, 256, 40, 20, "COPY BOOKMARKS", 27, false, true);
-        private readonly GuiButton PasteBookmarks = new(10, 410, 256, 40, 21, "PASTE BOOKMARKS", 27, false, true);
-        private readonly GuiButton ExportSSPMButton = new(10, 460, 256, 40, 23, "EXPORT SSPM", 27, false, true);
-
-        private readonly GuiButton PlayerNav = new(10, 300, 400, 50, 17, "PLAYER >", 31, false, true);
-        private readonly GuiButtonList CameraMode = new(10, 395, 148, 40, "cameraMode", 27, false, true);
-        private readonly GuiTextbox NoteScale = new(168, 395, 108, 40, "1", 31, true, false, true, "noteScale", "main", false, true);
-        private readonly GuiTextbox CursorScale = new(285, 395, 108, 40, "1", 31, true, false, true, "cursorScale", "main", false, true);
-        private readonly GuiCheckbox LockCursor = new(10, 445, 40, 40, "lockCursor", "Lock Cursor Within Grid", 31, false, true);
-        private readonly GuiTextbox Sensitivity = new(10, 520, 108, 40, "1", 31, true, false, true, "sensitivity", "main", false, true);
-        private readonly GuiTextbox Parallax = new(128, 520, 108, 40, "1", 31, true, false, true, "parallax", "main", false, true);
-        private readonly GuiTextbox FieldOfView = new(245, 520, 108, 40, "70", 31, true, false, true, "fov", "main", false, true);
-        private readonly GuiTextbox ApproachDistance = new(10, 595, 128, 40, "1", 31, true, false, true, "approachDistance", "main", false, true);
-        private readonly GuiTextbox HitWindow = new(225, 595, 128, 40, "55", 31, true, false, true, "hitWindow", "main", false, true);
-        private readonly GuiSlider PlayerApproachRate = new(10, 670, 400, 32, "playerApproachRate", false, false, true);
-        private readonly GuiCheckbox ApproachFade = new(10, 710, 40, 40, "approachFade", "Enable Approach Fade", 31, false, true);
-        private readonly GuiCheckbox GridGuides = new(10, 760, 40, 40, "gridGuides", "Show Grid Guides", 31, false, true);
-        private readonly GuiCheckbox FromStart = new(10, 810, 40, 40, "fromStart", "Play From Start", 31, false, true);
-        private readonly GuiButton PlayMap = new(10, 860, 256, 40, 18, "PLAY MAP", 27, false, true);
 
         private readonly GuiLabel ToastLabel = new(0, 0, 0, 0, "", 42);
 
-        private readonly GuiLabel ZoomLabel = new(420, 60, 75, 30, "Zoom: ", 30, true, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ZoomValueLabel = new(495, 60, 75, 30, "", 30, true, true, "main", false, Settings.settings["color2"]);
+        private readonly GuiLabel ZoomLabel = new(565, 60, 80, 30, "Zoom: ", 32, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel ZoomValueLabel = new(640, 60, 80, 30, "", 32, false, true, "main", false, Settings.settings["color2"]);
         private readonly GuiLabel ClickModeLabel = new(0, 0, 301, 42, "", 30, true, false, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel BeatDivisorLabel = new(0, 0, 0, 30, "", 30, true, true, "main", true, Settings.settings["color1"]);
-        private readonly GuiLabel SnappingLabel = new(0, 0, 0, 30, "", 30, true, true, "main", true, Settings.settings["color1"]);
 
         private readonly GuiLabel TempoLabel = new(0, 0, 0, 30, "", 30, true, false, "main", true, Settings.settings["color1"]);
         private readonly GuiLabel MusicLabel = new(0, 0, 0, 30, "Music", 24, true, false, "main", true, Settings.settings["color1"]);
@@ -102,29 +142,9 @@ namespace New_SSQE.GUI
         private readonly GuiLabel TotalTimeLabel = new(0, 0, 0, 30, "", 26, true, false, "main", true, Settings.settings["color1"]);
         private readonly GuiLabel NotesLabel = new(0, 0, 0, 30, "", 30, true, false, "main", true, Settings.settings["color1"]);
 
-        private readonly GuiLabel TrackHeightLabel = new(220, 576, 158, 30, "", 28, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel CursorPosLabel = new(10, 576, 158, 30, "", 28, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ApproachRateLabel = new(200, 308, 158, 30, "", 28, false, true, "main", false, Settings.settings["color1"]);
-
-        private readonly GuiLabel ExportOffsetLabel = new(10, 183, 158, 30, "Export Offset[ms]:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel SfxOffsetLabel = new(10, 258, 158, 30, "SFX Offset[ms]:", 30, false, true, "main", false, Settings.settings["color1"]);
-
-        private readonly GuiLabel DrawBezierLabel = new(10, 505, 158, 30, "Draw Bezier with Divisor:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel RotateLabel = new(10, 580, 158, 30, "Rotate by Degrees:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ScaleLabel = new(10, 655, 158, 30, "Scale by Percent:", 30, false, true, "main", false, Settings.settings["color1"]);
-
-        private readonly GuiLabel CameraModeLabel = new(10, 368, 128, 30, "Camera Mode:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel NoteScaleLabel = new(168, 368, 128, 30, "Note Size:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel CursorScaleLabel = new(285, 368, 128, 30, "Cursor Size:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel SensitivityLabel = new(10, 493, 128, 30, "Sensitivity:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ParallaxLabel = new(128, 493, 128, 30, "Parallax:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel FieldOfViewLabel = new(245, 493, 128, 30, "FOV:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ApproachDistanceLabel = new(10, 568, 158, 30, "Approach Distance:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel HitWindowLabel = new(225, 568, 158, 30, "Hit Window[ms]:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel PlayerApproachRateLabel = new(10, 643, 158, 30, "", 30, false, true, "main", false, Settings.settings["color1"]);
-
         private float toastTime = 0f;
-        private string navEnabled = "";
+        private static string leftNav = "Timing";
+        private static string rightNav = "Snapping";
         private bool started = false;
 
         private readonly bool rhythia = false;
@@ -132,36 +152,27 @@ namespace New_SSQE.GUI
         public GuiWindowEditor() : base(0, 0, MainWindow.Instance.ClientSize.X, MainWindow.Instance.ClientSize.Y)
         {
             rhythia = Settings.settings["useRhythia"];
-            if (rhythia)
-            {
-                if (Settings.settings["rhythiaPath"] == "")
-                {
-                    PlayerNav.OriginTextSize = 18;
-                    PlayerNav.Text = "INVALID RHYTHIA PATH - CHECK SETTINGS";
-
-                    PlayerNav.Update();
-                }
-                else
-                    PlayerNav.Text = "PLAY IN RHYTHIA";
-
-            }
+            if (rhythia && leftNav == "Player")
+                leftNav = "Timing";
 
             Controls = new List<WindowControl>
             {
                 // Buttons
-                CopyButton, BackButton, SaveButton, PlayPause, OptionsNav, TimingNav, UseCurrentMs, OpenTimings, ImportIni, PatternsNav, HFlip, VFlip, StoreNodes, ClearNodes,
-                BezierButton, RotateButton, ScaleButton, ReviewNav, OpenBookmarks, CopyBookmarks, PasteBookmarks, PlayerNav, CameraMode, PlayMap, ExportSSPMButton,
+                CopyButton, BackButton, SaveButton, PlayPause, LNavOptions, LNavTiming, OpenTimings, ImportIni, LNavPatterns, HFlip, VFlip, StoreNodes, ClearNodes,
+                BezierButton, RotateButton, ScaleButton, RNavExport, OpenBookmarks, CopyBookmarks, PasteBookmarks, LNavPlayer, CameraMode, PlayMap, ExportSSPMButton,
+                FromStart, RNavGraphics, RNavSnapping, SwapClickMode, SaveAsButton, ReplaceID,
                 // Checkboxes
                 AutoAdvance, Autoplay, ApproachSquares, GridNumbers, GridLetters, Quantum, Numpad, QuantumGridLines, QuantumGridSnap, Metronome, SeparateClickTools, JumpOnPaste,
-                CurveBezier, ApplyOnPaste, LockCursor, ApproachFade, FromStart, GridGuides,
+                CurveBezier, ApplyOnPaste, LockCursor, ApproachFade, GridGuides, PauseOnScroll, ClampSR,
                 // Sliders
                 Tempo, MasterVolume, SfxVolume, BeatSnapDivisor, QuantumSnapDivisor, Timeline, TrackHeight, TrackCursorPos, ApproachRate, PlayerApproachRate,
                 // Boxes
                 ExportOffset, SfxOffset, BezierBox, RotateBox, ScaleBox, NoteScale, CursorScale, Sensitivity, Parallax, FieldOfView, ApproachDistance, HitWindow,
+                ReplaceIDBox,
                 // Labels
                 ZoomLabel, ZoomValueLabel, ClickModeLabel, BeatDivisorLabel, SnappingLabel, TempoLabel, MusicLabel, MusicValueLabel, SfxLabel, SfxValueLabel, CurrentTimeLabel,
                 CurrentMsLabel, TotalTimeLabel, NotesLabel, TrackHeightLabel, CursorPosLabel, ApproachRateLabel, ExportOffsetLabel, SfxOffsetLabel, DrawBezierLabel, RotateLabel,
-                ScaleLabel, CameraModeLabel, NoteScaleLabel, CursorScaleLabel, SensitivityLabel, ParallaxLabel, FieldOfViewLabel,
+                ScaleLabel, CameraModeLabel, NoteScaleLabel, CursorScaleLabel, SensitivityLabel, ParallaxLabel, FieldOfViewLabel, ReplaceIDLabel,
                 ApproachDistanceLabel, PlayerApproachRateLabel, HitWindowLabel, ToastLabel
             };
 
@@ -363,20 +374,20 @@ namespace New_SSQE.GUI
                     break;
 
                 case 3:
-                    navEnabled = navEnabled == "Options" ? "" : "Options";
+                    leftNav = leftNav == "Options" ? "" : "Options";
                     UpdateNav();
 
                     break;
 
                 case 4:
-                    navEnabled = navEnabled == "Timing" ? "" : "Timing";
+                    leftNav = leftNav == "Timing" ? "" : "Timing";
                     UpdateNav();
 
                     break;
 
                 case 5:
-                    ExportOffset.Text = ((long)currentTime.Value).ToString();
-                    Settings.settings["exportOffset"] = currentTime.Value;
+                    rightNav = rightNav == "Export" ? "" : "Export";
+                    UpdateNav();
 
                     break;
 
@@ -391,7 +402,7 @@ namespace New_SSQE.GUI
                     break;
 
                 case 8:
-                    navEnabled = navEnabled == "Patterns" ? "" : "Patterns";
+                    leftNav = leftNav == "Patterns" ? "" : "Patterns";
                     UpdateNav();
 
                     break;
@@ -453,29 +464,42 @@ namespace New_SSQE.GUI
 
                     if (float.TryParse(RotateBox.Text, out var deg) && selectedR.Count > 0)
                     {
-                        var undodeg = 360 - deg;
+                        Dictionary<Note, (float, float)> oldSet = new();
+                        Dictionary<Note, (float, float)> newSet = new();
+
+                        for (int i = 0; i < selectedR.Count; i++)
+                        {
+                            var note = selectedR[i];
+                            var angle = MathHelper.RadiansToDegrees(Math.Atan2(note.Y - 1, note.X - 1));
+                            var distance = Math.Sqrt(Math.Pow(note.X - 1, 2) + Math.Pow(note.Y - 1, 2));
+                            var anglef = MathHelper.DegreesToRadians(angle + deg);
+
+                            var x = (float)(Math.Cos(anglef) * distance + 1);
+                            var y = (float)(Math.Sin(anglef) * distance + 1);
+
+                            if (Settings.settings["clampSR"])
+                            {
+                                x = Math.Clamp(x, -0.85f, 2.85f);
+                                y = Math.Clamp(y, -0.85f, 2.85f);
+                            }
+
+                            oldSet[note] = new(note.X, note.Y);
+                            newSet[note] = new(x, y);
+                        }
 
                         editor.UndoRedoManager.Add($"ROTATE {deg}", () =>
                         {
                             foreach (var note in selectedR)
                             {
-                                var angle = MathHelper.RadiansToDegrees(Math.Atan2(note.Y - 1, note.X - 1));
-                                var distance = Math.Sqrt(Math.Pow(note.X - 1, 2) + Math.Pow(note.Y - 1, 2));
-                                var anglef = MathHelper.DegreesToRadians(angle + undodeg);
-
-                                note.X = (float)(Math.Cos(anglef) * distance + 1);
-                                note.Y = (float)(Math.Sin(anglef) * distance + 1);
+                                note.X = oldSet[note].Item1;
+                                note.Y = oldSet[note].Item2;
                             }
                         }, () =>
                         {
                             foreach (var note in selectedR)
                             {
-                                var angle = MathHelper.RadiansToDegrees(Math.Atan2(note.Y - 1, note.X - 1));
-                                var distance = Math.Sqrt(Math.Pow(note.X - 1, 2) + Math.Pow(note.Y - 1, 2));
-                                var anglef = MathHelper.DegreesToRadians(angle + deg);
-
-                                note.X = (float)(Math.Cos(anglef) * distance + 1);
-                                note.Y = (float)(Math.Sin(anglef) * distance + 1);
+                                note.X = newSet[note].Item1;
+                                note.Y = newSet[note].Item2;
                             }
                         });
                     }
@@ -489,19 +513,39 @@ namespace New_SSQE.GUI
                     {
                         var scalef = scale / 100f;
 
+                        Dictionary<Note, (float, float)> oldSet = new();
+                        Dictionary<Note, (float, float)> newSet = new();
+
+                        for (int i = 0; i < selectedS.Count; i++)
+                        {
+                            var note = selectedS[i];
+
+                            var x = (note.X - 1) * scalef + 1;
+                            var y = (note.Y - 1) * scalef + 1;
+
+                            if (Settings.settings["clampSR"])
+                            {
+                                x = Math.Clamp(x, -0.85f, 2.85f);
+                                y = Math.Clamp(y, -0.85f, 2.85f);
+                            }
+
+                            oldSet[note] = new(note.X, note.Y);
+                            newSet[note] = new(x, y);
+                        }
+
                         editor.UndoRedoManager.Add($"SCALE {scale}%", () =>
                         {
                             foreach (var note in selectedS)
                             {
-                                note.X = (note.X - 1) / scalef + 1;
-                                note.Y = (note.Y - 1) / scalef + 1;
+                                note.X = oldSet[note].Item1;
+                                note.Y = oldSet[note].Item2;
                             }
                         }, () =>
                         {
                             foreach (var note in selectedS)
                             {
-                                note.X = (note.X - 1) * scalef + 1;
-                                note.Y = (note.Y - 1) * scalef + 1;
+                                note.X = newSet[note].Item1;
+                                note.Y = newSet[note].Item2;
                             }
                         });
                     }
@@ -522,6 +566,9 @@ namespace New_SSQE.GUI
                         {
                             try
                             {
+                                if (editor.MusicPlayer.IsPlaying)
+                                    editor.MusicPlayer.Pause();
+
                                 if (!Directory.Exists("assets/temp"))
                                     Directory.CreateDirectory("assets/temp");
 
@@ -546,7 +593,7 @@ namespace New_SSQE.GUI
                     }
                     else
                     {
-                        navEnabled = navEnabled == "Player" ? "" : "Player";
+                        leftNav = leftNav == "Player" ? "" : "Player";
                         UpdateNav();
                     }
 
@@ -556,7 +603,9 @@ namespace New_SSQE.GUI
                     if (editor.MusicPlayer.IsPlaying)
                         editor.MusicPlayer.Pause();
 
-                    if (!playerRunning && File.Exists("SSQE Player.exe"))
+                    string fileT = MainWindow.IsLinux ? "SSQE Player" : "SSQE Player.exe";
+
+                    if (!playerRunning && File.Exists(fileT))
                     {
                         if (!Directory.Exists("assets/temp"))
                             Directory.CreateDirectory("assets/temp");
@@ -565,7 +614,7 @@ namespace New_SSQE.GUI
 
                         File.WriteAllText($"assets/temp/tempmap.txt", Map.Save(editor.SoundID, editor.Notes, false, false));
 
-                        Process process = Process.Start("SSQE Player.exe", Settings.settings["fromStart"].ToString());
+                        Process process = Process.Start(fileT, "true");
                         playerRunning = process != null;
                         
                         if (process != null)
@@ -578,7 +627,7 @@ namespace New_SSQE.GUI
                     break;
 
                 case 19:
-                    navEnabled = navEnabled == "Review" ? "" : "Review";
+                    leftNav = leftNav == "Review" ? "" : "Review";
                     UpdateNav();
 
                     break;
@@ -593,6 +642,33 @@ namespace New_SSQE.GUI
 
                     break;
 
+                case 22:
+                    if (editor.MusicPlayer.IsPlaying)
+                        editor.MusicPlayer.Pause();
+
+                    string fileF = MainWindow.IsLinux ? "SSQE Player" : "SSQE Player.exe";
+
+                    if (!playerRunning && File.Exists(fileF))
+                    {
+                        if (!Directory.Exists("assets/temp"))
+                            Directory.CreateDirectory("assets/temp");
+
+                        Settings.Save();
+
+                        File.WriteAllText($"assets/temp/tempmap.txt", Map.Save(editor.SoundID, editor.Notes, false, false));
+
+                        Process process = Process.Start(fileF, "false");
+                        playerRunning = process != null;
+
+                        if (process != null)
+                        {
+                            process.EnableRaisingEvents = true;
+                            process.Exited += delegate { playerRunning = false; };
+                        }
+                    }
+
+                    break;
+
                 case 23:
                     ExportSSPM.ShowWindow();
 
@@ -602,6 +678,62 @@ namespace New_SSQE.GUI
                     if (editor.SaveMap(true))
                         ShowToast("SAVED", Settings.settings["color1"]);
 
+                    break;
+
+                case 25:
+                    if (editor.SaveMap(true, true))
+                        ShowToast("SAVED", Settings.settings["color1"]);
+
+                    break;
+
+                case 26:
+                    rightNav = rightNav == "Snapping" ? "" : "Snapping";
+                    UpdateNav();
+
+                    break;
+
+                case 27:
+                    Settings.settings["selectTool"] ^= true;
+
+                    break;
+
+                case 28:
+                    rightNav = rightNav == "Graphics" ? "" : "Graphics";
+                    UpdateNav();
+
+                    break;
+
+                case 29:
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(ReplaceIDBox.Text))
+                        {
+                            var result = MessageBox.Show("Are you sure you want to replace this ID?\n\nAny existing asset with this ID will be overwritten, and the current map will be saved.", "Warning", "Yes", "No");
+                            if (result == DialogResult.No)
+                                return;
+
+                            string newID = ReplaceIDBox.Text;
+                            editor.MusicPlayer.Reset();
+
+                            File.Move($"cached/{editor.SoundID}.asset", $"cached/{newID}.asset", true);
+                            editor.SoundID = newID;
+
+                            editor.LoadAudio(newID);
+                            editor.MusicPlayer.Volume = Settings.settings["masterVolume"].Value;
+
+                            if (editor.FileName != null)
+                                editor.SaveMap(true);
+                            else
+                                editor.AttemptAutosave(true);
+                            ShowToast($"REPLACED AUDIO ID WITH: {newID}", Settings.settings["color1"]);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowToast("FAILED TO REPLACE ID", Settings.settings["color1"]);
+                        ActionLogging.Register("Failed to replace audio ID", "WARN", ex);
+                    }
+                    
                     break;
             }
 
@@ -625,67 +757,68 @@ namespace New_SSQE.GUI
             Track?.Update();
         }
 
-        private void UpdateNav()
+        public void UpdateNav()
         {
-            var optionsNav = navEnabled == "Options";
-            var timingNav = navEnabled == "Timing";
-            var patternsNav = navEnabled == "Patterns";
-            var reviewNav = navEnabled == "Review";
-            var playerNav = navEnabled == "Player";
+            var timingNav = leftNav == "Timing";
+            var patternsNav = leftNav == "Patterns";
+            var optionsNav = leftNav == "Options";
+            var playerNav = leftNav == "Player";
 
-            OptionsNav.Text = $"OPTIONS {(optionsNav ? "<" : ">")}";
-            TimingNav.Text = $"TIMING {(timingNav ? "<" : ">")}";
-            PatternsNav.Text = $"PATTERNS {(patternsNav ? "<" : ">")}";
-            ReviewNav.Text = $"REVIEW {(reviewNav ? "<" : ">")}";
+            var snappingNav = rightNav == "Snapping";
+            var exportNav = rightNav == "Export";
+            var graphicsNav = rightNav == "Graphics";
+
+            LNavTiming.Text = timingNav ? "[TIMING]" : "TIMING";
+            LNavOptions.Text = optionsNav ? "[OPTIONS]" : "OPTIONS";
+            LNavPatterns.Text = patternsNav ? "[PATTERNS]" : "PATTERNS";
             if (!rhythia)
-                PlayerNav.Text = $"PLAYER {(playerNav ? "<" : ">")}";
+                LNavPlayer.Text = playerNav ? "[PLAYTEST]" : "PLAYTEST";
 
-            Autoplay.Visible = optionsNav;
-            ApproachSquares.Visible = optionsNav;
-            GridNumbers.Visible = optionsNav;
-            GridLetters.Visible = optionsNav;
-            Quantum.Visible = optionsNav;
-            Numpad.Visible = optionsNav;
-            QuantumGridLines.Visible = optionsNav;
-            QuantumGridSnap.Visible = optionsNav;
-            Metronome.Visible = optionsNav;
-            SeparateClickTools.Visible = optionsNav;
-            JumpOnPaste.Visible = optionsNav;
-            TrackHeight.Visible = optionsNav;
-            TrackCursorPos.Visible = optionsNav;
-            ApproachRate.Visible = optionsNav;
-            TrackHeightLabel.Visible = optionsNav;
-            CursorPosLabel.Visible = optionsNav;
-            ApproachRateLabel.Visible = optionsNav;
+            RNavSnapping.Text = snappingNav ? "[SNAPPING]" : "SNAPPING";
+            RNavExport.Text = exportNav ? "[EXPORT]" : "EXPORT";
+            RNavGraphics.Text = graphicsNav ? "[GRAPHICS]" : "GRAPHICS";
+
 
             ExportOffset.Visible = timingNav;
             SfxOffset.Visible = timingNav;
-            UseCurrentMs.Visible = timingNav;
             OpenTimings.Visible = timingNav;
             ImportIni.Visible = timingNav;
+            Metronome.Visible = timingNav;
+            OpenBookmarks.Visible = timingNav;
+            CopyBookmarks.Visible = timingNav;
+            PasteBookmarks.Visible = timingNav;
+
             ExportOffsetLabel.Visible = timingNav;
             SfxOffsetLabel.Visible = timingNav;
 
+
             HFlip.Visible = patternsNav;
             VFlip.Visible = patternsNav;
+            RotateBox.Visible = patternsNav;
+            RotateButton.Visible = patternsNav;
+            ScaleBox.Visible = patternsNav;
+            ScaleButton.Visible = patternsNav;
+            ApplyOnPaste.Visible = patternsNav;
+            ClampSR.Visible = patternsNav;
             StoreNodes.Visible = patternsNav;
             ClearNodes.Visible = patternsNav;
             CurveBezier.Visible = patternsNav;
             BezierBox.Visible = patternsNav;
             BezierButton.Visible = patternsNav;
-            RotateBox.Visible = patternsNav;
-            RotateButton.Visible = patternsNav;
-            ScaleBox.Visible = patternsNav;
-            ScaleButton.Visible = patternsNav;
-            DrawBezierLabel.Visible = patternsNav;
+
             RotateLabel.Visible = patternsNav;
             ScaleLabel.Visible = patternsNav;
-            ApplyOnPaste.Visible = patternsNav;
+            DrawBezierLabel.Visible = patternsNav;
 
-            OpenBookmarks.Visible = reviewNav;
-            CopyBookmarks.Visible = reviewNav;
-            PasteBookmarks.Visible = reviewNav;
-            ExportSSPMButton.Visible = reviewNav;
+
+            SaveButton.Visible = exportNav;
+            SaveAsButton.Visible = exportNav;
+            ExportSSPMButton.Visible = exportNav;
+            ReplaceIDBox.Visible = exportNav;
+            ReplaceID.Visible = exportNav;
+
+            ReplaceIDLabel.Visible = exportNav;
+
 
             CameraMode.Visible = playerNav;
             NoteScale.Visible = playerNav;
@@ -701,6 +834,7 @@ namespace New_SSQE.GUI
             GridGuides.Visible = playerNav;
             FromStart.Visible = playerNav;
             PlayMap.Visible = playerNav;
+
             CameraModeLabel.Visible = playerNav;
             NoteScaleLabel.Visible = playerNav;
             CursorScaleLabel.Visible = playerNav;
@@ -711,6 +845,38 @@ namespace New_SSQE.GUI
             HitWindowLabel.Visible = playerNav;
             PlayerApproachRateLabel.Visible = playerNav;
 
+
+            Quantum.Visible = snappingNav;
+            QuantumGridSnap.Visible = snappingNav;
+            AutoAdvance.Visible = snappingNav;
+            BeatSnapDivisor.Visible = snappingNav;
+            QuantumSnapDivisor.Visible = snappingNav;
+
+            BeatDivisorLabel.Visible = snappingNav;
+            SnappingLabel.Visible = snappingNav;
+
+
+            Numpad.Visible = optionsNav;
+            SeparateClickTools.Visible = optionsNav;
+            SwapClickMode.Visible = optionsNav;
+            JumpOnPaste.Visible = optionsNav;
+            PauseOnScroll.Visible = optionsNav;
+
+
+            Autoplay.Visible = graphicsNav;
+            ApproachSquares.Visible = graphicsNav;
+            GridNumbers.Visible = graphicsNav;
+            GridLetters.Visible = graphicsNav;
+            QuantumGridLines.Visible = graphicsNav;
+            ApproachRate.Visible = graphicsNav;
+            TrackHeight.Visible = graphicsNav;
+            TrackCursorPos.Visible = graphicsNav;
+
+            ApproachRateLabel.Visible = graphicsNav;
+            TrackHeightLabel.Visible = graphicsNav;
+            CursorPosLabel.Visible = graphicsNav;
+
+
             OnResize(new Vector2i((int)Rect.Width, (int)Rect.Height));
         }
 
@@ -719,55 +885,32 @@ namespace New_SSQE.GUI
             Rect = new RectangleF(0, 0, size.X, size.Y);
 
             base.OnResize(size);
+            string file = MainWindow.IsLinux ? "SSQE Player" : "SSQE Player.exe";
 
-            PlayerNav.Visible = File.Exists("SSQE Player.exe") || Settings.settings["useRhythia"];
+            LNavPlayer.Visible = File.Exists(file) || Settings.settings["useRhythia"];
 
             var heightdiff = size.Y / 1080f;
 
-            switch (navEnabled)
-            {
-                case "Options":
-                    TimingNav.Rect.Y = TrackCursorPos.Rect.Bottom + 20 * heightdiff;
-                    PatternsNav.Rect.Y = TimingNav.Rect.Bottom + 10 * heightdiff;
-                    ReviewNav.Rect.Y = PatternsNav.Rect.Bottom + 10 * heightdiff;
-                    PlayerNav.Rect.Y = ReviewNav.Rect.Bottom + 10 * heightdiff;
-                    break;
+            LNavTiming.Update();
+            LNavPatterns.Update();
+            LNavOptions.Update();
+            LNavPlayer.Update();
 
-                case "Timing":
-                    PatternsNav.Rect.Y = ImportIni.Rect.Bottom + 20 * heightdiff;
-                    ReviewNav.Rect.Y = PatternsNav.Rect.Bottom + 10 * heightdiff;
-                    PlayerNav.Rect.Y = ReviewNav.Rect.Bottom + 10 * heightdiff;
-                    break;
-
-                case "Patterns":
-                    ReviewNav.Rect.Y = ApplyOnPaste.Rect.Bottom + 20 * heightdiff;
-                    PlayerNav.Rect.Y = ReviewNav.Rect.Bottom + 10 * heightdiff;
-                    break;
-
-                case "Review":
-                    PlayerNav.Rect.Y = ExportSSPMButton.Rect.Bottom + 20 * heightdiff;
-                    break;
-            }
-
+            RNavSnapping.Update();
+            RNavExport.Update();
+            RNavGraphics.Update();
 
             CopyButton.Rect.Location = new PointF(Grid.Rect.X, Grid.Rect.Y - 42 - 75 * heightdiff);
             BackButton.Rect.Location = new PointF(Grid.Rect.X, Grid.Rect.Bottom + 84 * heightdiff);
-            SaveButton.Rect.Location = new PointF(BackButton.Rect.Right + 5, BackButton.Rect.Y);
             ClickModeLabel.Rect.Location = new PointF(Grid.Rect.X, BackButton.Rect.Bottom + 10 * heightdiff);
 
             Timeline.Rect = new RectangleF(0, Rect.Height - 64f, Rect.Width - 576f, 64f);
             PlayPause.Rect = new RectangleF(Rect.Width - 576f, Rect.Height - 64f, 64f, 64f);
             Tempo.Rect = new RectangleF(Rect.Width - 512f, Rect.Height - 64f, 512f, 64f);
 
-            AutoAdvance.TextSize = AutoAdvance.OriginTextSize;
-            AutoAdvance.Rect = new RectangleF(Rect.Width - 236f, Grid.Rect.Y - 70f, 40f, 40f);
-            BeatSnapDivisor.Rect = new RectangleF(Rect.Width - 256f, Grid.Rect.Y + 28f, 256f, 40f);
-            QuantumSnapDivisor.Rect = new RectangleF(Rect.Width - 256f, Grid.Rect.Y + 100f, 256f, 40f);
-            MasterVolume.Rect = new RectangleF(Rect.Width - 64f, Rect.Height - 320f, 40f, 256f);
-            SfxVolume.Rect = new RectangleF(Rect.Width - 128f, Rect.Height - 320f, 40f, 256f);
+            MasterVolume.Rect = new RectangleF(Rect.Width - 64f, Rect.Height - 320f * heightdiff, 40f, 256f * heightdiff);
+            SfxVolume.Rect = new RectangleF(Rect.Width - 128f, Rect.Height - 320f * heightdiff, 40f, 256f * heightdiff);
 
-            BeatDivisorLabel.Rect.Location = new PointF(BeatSnapDivisor.Rect.X + BeatSnapDivisor.Rect.Width / 2f, BeatSnapDivisor.Rect.Y - 20f);
-            SnappingLabel.Rect.Location = new PointF(QuantumSnapDivisor.Rect.X + QuantumSnapDivisor.Rect.Width / 2f, QuantumSnapDivisor.Rect.Y - 20f);
             TempoLabel.Rect.Location = new PointF(Tempo.Rect.X + Tempo.Rect.Width / 2f, Tempo.Rect.Bottom - 32f);
             MusicLabel.Rect.Location = new PointF(MasterVolume.Rect.X + MasterVolume.Rect.Width / 2f, MasterVolume.Rect.Y - 10f);
             SfxLabel.Rect.Location = new PointF(SfxVolume.Rect.X + SfxVolume.Rect.Width / 2f, SfxVolume.Rect.Y - 10f);
@@ -782,28 +925,19 @@ namespace New_SSQE.GUI
             TotalTimeLabel.Rect.Location = new PointF(Timeline.Rect.X - Timeline.Rect.Height / 2f + Timeline.Rect.Width, Timeline.Rect.Bottom - 32f);
             NotesLabel.Rect.Location = new PointF(Timeline.Rect.X + Timeline.Rect.Width / 2f, Timeline.Rect.Bottom - 32f);
 
-            TimingNav.Update();
-            PatternsNav.Update();
-            ReviewNav.Update();
-            PlayerNav.Update();
+            LNavPlayer.Rect.Location = new PointF(LNavPlayer.Rect.X, Timeline.Rect.Y - LNavPlayer.Rect.Height - 20f);
 
             CopyButton.Update();
             BackButton.Update();
-            SaveButton.Update();
             ClickModeLabel.Update();
 
             Timeline.Update();
             PlayPause.Update();
             Tempo.Update();
 
-            AutoAdvance.Update();
-            BeatSnapDivisor.Update();
-            QuantumSnapDivisor.Update();
             MasterVolume.Update();
             SfxVolume.Update();
 
-            BeatDivisorLabel.Update();
-            SnappingLabel.Update();
             TempoLabel.Update();
             MusicLabel.Update();
             SfxLabel.Update();
@@ -814,6 +948,8 @@ namespace New_SSQE.GUI
             CurrentMsLabel.Update();
             TotalTimeLabel.Update();
             NotesLabel.Update();
+
+            LNavPlayer.Update();
         }
 
         public void ShowToast(string text, Color color)

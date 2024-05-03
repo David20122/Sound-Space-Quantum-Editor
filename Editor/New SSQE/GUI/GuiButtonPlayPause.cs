@@ -1,5 +1,4 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using System;
 
 namespace New_SSQE.GUI
 {
@@ -35,7 +34,7 @@ namespace New_SSQE.GUI
             GL.BindVertexArray(tVaO);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
 
-            GL.UseProgram(Shader.FontTexProgram);
+            GL.UseProgram(FontRenderer.unicode ? Shader.UnicodeProgram : Shader.FontTexProgram);
             FontRenderer.SetActive("main");
         }
 

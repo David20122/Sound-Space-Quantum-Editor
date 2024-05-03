@@ -5,11 +5,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Json;
 using System.Reflection;
-using System.Collections.Generic;
-using System;
-using System.Linq;
-using System.IO;
-using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Text;
 using System.Drawing;
@@ -32,6 +27,8 @@ namespace New_SSQE
 {
     internal class MainWindow : GameWindow
     {
+        public static bool IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+
         public static MainWindow Instance;
         public MusicPlayer MusicPlayer = new();
         public SoundPlayer SoundPlayer = new();
@@ -122,11 +119,13 @@ namespace New_SSQE
         {
             ActionLogging.Register("Required OpenGL version: 3.3");
             ActionLogging.Register("Current OpenGL version: " + (GL.GetString(StringName.Version) ?? "N/A"));
-
+            
             string version = GL.GetString(StringName.Version) ?? "";
-            string sub = version[..version.IndexOf(" ")];
+            int major = 0, minor = 0;
+            GL.GetInteger(GetPName.MajorVersion, ref major);
+            GL.GetInteger(GetPName.MinorVersion, ref minor);
 
-            if (string.IsNullOrWhiteSpace(version) || Version.Parse(sub) < APIVersion)
+            if (string.IsNullOrWhiteSpace(version) || new Version(major, minor) < APIVersion)
                 throw new Exception("Unsupported OpenGL version (Minimum: 3.3)");
 
             Shader.Init();
@@ -195,9 +194,11 @@ namespace New_SSQE
                 Settings.settings["currentTime"].Value = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
 
             if ((MouseState.Position - (Mouse.X, Mouse.Y)).Length != 0)
+            {
+                Mouse.X = (int)MouseState.X;
+                Mouse.Y = (int)MouseState.Y;
                 CurrentWindow?.OnMouseMove(Mouse);
-            Mouse.X = (int)MouseState.X;
-            Mouse.Y = (int)MouseState.Y;
+            }
 
             try
             {
@@ -240,6 +241,7 @@ namespace New_SSQE
             Shader.UploadOrtho(Shader.InstancedProgram, w, h);
             Shader.UploadOrtho(Shader.GridInstancedProgram, w, h);
             Shader.UploadOrtho(Shader.WaveformProgram, w, h);
+            Shader.UploadOrtho(Shader.UnicodeProgram, w, h);
 
             CurrentWindow?.OnResize(Size);
 
@@ -451,6 +453,12 @@ namespace New_SSQE
 
                                                 note.X = (note.X - 1) * scalef + 1;
                                                 note.Y = (note.Y - 1) * scalef + 1;
+
+                                                if (Settings.settings["clampSR"])
+                                                {
+                                                    note.X = Math.Clamp(note.X, -0.85f, 2.85f);
+                                                    note.Y = Math.Clamp(note.Y, -0.85f, 2.85f);
+                                                }
                                             }
                                         }
                                     }
@@ -647,14 +655,10 @@ namespace New_SSQE
                             break;
 
                         case "openDirectory":
-                            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                                // if mac
-                                Process.Start("open", $"\"{Environment.CurrentDirectory}\"");
-                            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                                // if windows
+                            if (IsLinux)
+                                Process.Start("xdg-open", Environment.CurrentDirectory);
+                            else
                                 Process.Start("explorer.exe", Environment.CurrentDirectory);
-                            else // linux probably
-                                ActionLogging.Register($"Open dir not implemented on platform {RuntimeInformation.OSDescription}", "WARN");
 
                             break;
 
@@ -667,6 +671,35 @@ namespace New_SSQE
             }
 
             CurrentWindow?.OnKeyDown(e.Key, e.Control);
+        }
+
+        private static readonly HashSet<string> acceptedAudios = new()
+        {
+            ".mp3", ".ogg", ".wav", ".flac", ".egg", ".m4a", ".asset"
+        };
+
+        protected override void OnFileDrop(FileDropEventArgs e)
+        {
+            for (int i = 0; i < e.FileNames.Length; i++)
+            {
+                string file = e.FileNames[i];
+
+                if (File.Exists(file))
+                {
+                    if (Path.GetExtension(file) == ".ini" && CurrentWindow is GuiWindowEditor)
+                        ImportProperties(file);
+                    else if (acceptedAudios.Contains(Path.GetExtension(file)))
+                    {
+                        string id = Path.GetFileNameWithoutExtension(file);
+                        if (file != $"{Directory.GetCurrentDirectory()}\\cached\\{id}.asset")
+                            File.Copy(file, $"cached/{id}.asset", true);
+
+                        LoadMap(id);
+                    }
+                    else
+                        LoadMap(file, true);
+                }
+            }
         }
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
@@ -698,26 +731,38 @@ namespace New_SSQE
                 }
                 else
                 {
-                    if (MusicPlayer.IsPlaying)
-                        MusicPlayer.Pause();
-
                     float delta = e.OffsetY * (Settings.settings["reverseScroll"] ? -1 : 1);
 
                     var setting = Settings.settings["currentTime"];
                     var currentTime = setting.Value;
                     var totalTime = setting.Max;
 
-                    var closest = GetClosestBeatScroll(currentTime, delta < 0);
-                    var bpm = GetCurrentBpm(0);
+                    if (MusicPlayer.IsPlaying && !Settings.settings["pauseScroll"])
+                    {
+                        currentTime += delta * 500f * Tempo;
+                        currentTime = MathHelper.Clamp(currentTime, 0f, totalTime);
 
-                    currentTime = closest >= 0 || bpm.BPM > 0 ? closest : currentTime + delta / 10f * 1000f / Zoom * 0.5f;
+                        setting.Value = currentTime;
 
-                    if (GetCurrentBpm(setting.Value).BPM == 0 && GetCurrentBpm(currentTime).BPM != 0)
-                        currentTime = GetCurrentBpm(currentTime).Ms;
+                        MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(currentTime);
+                    }
+                    else
+                    {
+                        if (MusicPlayer.IsPlaying)
+                            MusicPlayer.Pause();
 
-                    currentTime = MathHelper.Clamp(currentTime, 0f, totalTime);
+                        var closest = GetClosestBeatScroll(currentTime, delta < 0);
+                        var bpm = GetCurrentBpm(0);
 
-                    setting.Value = currentTime;
+                        currentTime = closest >= 0 || bpm.BPM > 0 ? closest : currentTime + delta / 10f * 1000f / Zoom * 0.5f;
+
+                        if (GetCurrentBpm(setting.Value).BPM == 0 && GetCurrentBpm(currentTime).BPM != 0)
+                            currentTime = GetCurrentBpm(currentTime).Ms;
+
+                        currentTime = MathHelper.Clamp(currentTime, 0f, totalTime);
+
+                        setting.Value = currentTime;
+                    }
                 }
             }
             else if (CurrentWindow is GuiWindowMenu menu)
@@ -753,7 +798,11 @@ namespace New_SSQE
             }
 
             foreach (Map map in tempSave)
+            {
                 cancel |= !map.Close(false);
+                if (cancel)
+                    break;
+            }
 
             if (!cancel)
             {
@@ -807,7 +856,7 @@ namespace New_SSQE
                 var x = (mousex - rect.X - rect.Width / 2f) / rect.Width * 3f + 1 / increment;
                 var y = (mousey - rect.Y - rect.Width / 2f) / rect.Height * 3f + 1 / increment;
 
-                if (Settings.settings["quantumGridSnap"])
+                if (Settings.settings["quantumGridSnap"] || !quantum)
                 {
                     x = (float)Math.Floor((x + 1 / increment / 2) * increment) / increment;
                     y = (float)Math.Floor((y + 1 / increment / 2) * increment) / increment;
@@ -1146,6 +1195,8 @@ namespace New_SSQE
                             File.WriteAllText(dialog.FileName, data);
                             SaveProperties(dialog.FileName);
                             FileName = dialog.FileName;
+
+                            ActionLogging.Register($"Successfully saved to file: {FileName}");
                         }
                         else
                             return false;
@@ -1154,11 +1205,15 @@ namespace New_SSQE
                     {
                         File.WriteAllText(FileName, data);
                         SaveProperties(FileName);
+
+                        ActionLogging.Register($"Successfully saved to file: {FileName}");
                     }
                 }
                 else if (result == DialogResult.Cancel)
                     return false;
             }
+
+            ActionLogging.Register($"Save returned true with fields: {forced} | {fileForced} | {reload}");
 
             return true;
         }
@@ -1221,6 +1276,8 @@ namespace New_SSQE
                 file = false;
                 FileName = null;
             }
+            else if (file && Path.GetExtension(pathOrData) != ".txt")
+                return false;
             if (pathOrData == "")
                 return false;
 
@@ -1481,29 +1538,35 @@ namespace New_SSQE
             }
         }
 
-        public void ImportProperties()
+        public void ImportProperties(string? file = null)
         {
-            var dialog = new OpenFileDialog()
+            if (file == null)
             {
-                Title = "Select .ini File",
-                Filter = "Map Property Files (*.ini)|*.ini"
-            };
+                var dialog = new OpenFileDialog()
+                {
+                    Title = "Select .ini File",
+                    Filter = "Map Property Files (*.ini)|*.ini"
+                };
 
-            if (Settings.settings["defaultPath"] != "")
-                dialog.InitialDirectory = Settings.settings["defaultPath"];
+                if (Settings.settings["defaultPath"] != "")
+                    dialog.InitialDirectory = Settings.settings["defaultPath"];
 
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                TimingPoints.Clear();
-                Bookmarks.Clear();
-
-                Settings.settings["defaultPath"] = Path.GetDirectoryName(dialog.FileName) ?? "";
-
-                LoadProperties(File.ReadAllText(dialog.FileName));
-
-                if (CurrentWindow is GuiWindowEditor editor)
-                    editor.Timeline.GenerateOffsets();
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    Settings.settings["defaultPath"] = Path.GetDirectoryName(dialog.FileName) ?? "";
+                    file = dialog.FileName;
+                }
+                else
+                    return;
             }
+
+            TimingPoints.Clear();
+            Bookmarks.Clear();
+
+            LoadProperties(File.ReadAllText(file));
+
+            if (CurrentWindow is GuiWindowEditor editor)
+                editor.Timeline.GenerateOffsets();
         }
 
         public void CopyBookmarks()
@@ -1515,9 +1578,9 @@ namespace New_SSQE
                 var bookmark = Bookmarks[i];
 
                 if (bookmark.Ms != bookmark.EndMs)
-                    data[i] = $"{bookmark.Ms}-{bookmark.EndMs} ~ {bookmark.Text}";
+                    data[i] = $"{bookmark.Ms}-{bookmark.EndMs} ~ {bookmark.Text.Replace(" ~", "_~")}";
                 else
-                    data[i] = $"{bookmark.Ms} ~ {bookmark.Text}";
+                    data[i] = $"{bookmark.Ms} ~ {bookmark.Text.Replace(" ~", "_~")}";
             }
 
             if (data.Length == 0)
@@ -1540,20 +1603,37 @@ namespace New_SSQE
             {
                 bookmarks[i] = bookmarks[i].Trim();
 
-                var split = bookmarks[i].Split(" ~ ");
+                var split = bookmarks[i].Split(" ~");
                 if (split.Length != 2)
                     continue;
 
                 var subsplit = split[0].Split("-");
 
                 if (subsplit.Length == 1 && long.TryParse(subsplit[0], out var ms))
-                    tempBookmarks.Add(new Bookmark(split[1], ms, ms));
+                    tempBookmarks.Add(new Bookmark(split[1].Trim().Replace("_~", " ~"), ms, ms));
                 else if (subsplit.Length == 2 && long.TryParse(subsplit[0], out var startMs) && long.TryParse(subsplit[1], out var endMs))
-                    tempBookmarks.Add(new Bookmark(split[1], startMs, endMs));
+                    tempBookmarks.Add(new Bookmark(split[1].Trim().Replace("_~", " ~"), startMs, endMs));
             }
 
             if (tempBookmarks.Count > 0)
-                Bookmarks = tempBookmarks.ToList();
+            {
+                List<Bookmark> old = Bookmarks.ToList();
+
+                UndoRedoManager.Add($"PASTE BOOKMARK{(tempBookmarks.Count > 1 ? "S" : "")}", () =>
+                {
+                    Bookmarks.Clear();
+
+                    foreach (var bookmark in old)
+                        Bookmarks.Add(bookmark);
+                }, () =>
+                {
+                    old = Bookmarks.ToList();
+                    Bookmarks.Clear();
+
+                    foreach (var bookmark in tempBookmarks)
+                        Bookmarks.Add(bookmark);
+                });
+            }
         }
 
         private int currentAutosave;
@@ -1572,9 +1652,9 @@ namespace New_SSQE
             });
         }
 
-        private void AttemptAutosave()
+        public void AttemptAutosave(bool overrideNoteCheck = false)
         {
-            if (CurrentWindow is GuiWindowEditor editor && Notes.Count > 0)
+            if (CurrentWindow is GuiWindowEditor editor && (overrideNoteCheck || Notes.Count > 0))
             {
                 if (FileName == null)
                 {
@@ -1827,6 +1907,10 @@ namespace New_SSQE
             TimingsWindow.Instance?.Close();
             BookmarksWindow.Instance?.Close();
 
+            FontRenderer.unicode = Settings.settings["japanese"];
+            foreach (var control in window.Controls)
+                control.Update();
+
             CurrentWindow?.Dispose();
             CurrentWindow = window;
 
@@ -1836,6 +1920,24 @@ namespace New_SSQE
 
 
 
+        private static readonly Dictionary<string, string> windowsLinks = new()
+        {
+            {"SSQE Player Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/player_version" },
+            {"SSQE Player Zip", "https://github.com/David20122/Sound-Space-Quantum-Editor/raw/2.0%2B_rewrite/SSQE%20Player.zip" },
+            {"SSQE Updater Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_version" },
+            {"SSQE Updater Zip", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/SSQE%20Updater.zip" },
+            {"Editor Redirect", "https://github.com/David20122/Sound-Space-Quantum-Editor/releases/latest" }
+        };
+
+        private static readonly Dictionary<string, string> linuxLinks = new()
+        {
+            {"SSQE Player Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/player_version" },
+            {"SSQE Player Zip", "https://github.com/David20122/Sound-Space-Quantum-Editor/raw/2.0%2B_rewrite/SSQE%20Player-linux.zip" },
+            {"SSQE Updater Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_version" },
+            {"SSQE Updater Zip", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/SSQE%20Updater-linux.zip" },
+            {"Editor Redirect", "https://github.com/David20122/Sound-Space-Quantum-Editor/releases/latest" }
+        };
+
         public static void CheckForUpdates()
         {
             if (!Settings.settings["checkUpdates"])
@@ -1844,14 +1946,8 @@ namespace New_SSQE
             var versionInfo = FileVersionInfo.GetVersionInfo(Process.GetCurrentProcess().MainModule?.FileName ?? "");
             var currentVersion = versionInfo.FileVersion;
 
-            Dictionary<string, string> links = new()
-            {
-                {"SSQE Player Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/player_version" },
-                {"SSQE Player Zip", "https://github.com/David20122/Sound-Space-Quantum-Editor/raw/2.0%2B_rewrite/SSQE%20Player.zip" },
-                {"SSQE Updater Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_version" },
-                {"SSQE Updater Zip", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/SSQE%20Updater.zip" },
-                {"Editor Redirect", "https://github.com/David20122/Sound-Space-Quantum-Editor/releases/latest" }
-            };
+            var links = IsLinux ? linuxLinks : windowsLinks;
+            var ext = IsLinux ? "" : ".exe";
 
             static void ExtractFile(string path)
             {
@@ -1863,7 +1959,7 @@ namespace New_SSQE
                         {
                             entry.ExtractToFile(entry.FullName, true);
                         }
-                        catch { ActionLogging.Register($"Failed to extract file: {entry.FullName}", "WARN"); }
+                        catch (Exception ex) { ActionLogging.Register($"Failed to extract file: {entry.FullName}", "WARN", ex); }
                     }
                 }
 
@@ -1880,9 +1976,9 @@ namespace New_SSQE
             void Run(string file, string tag)
             {
                 ActionLogging.Register($"Searching for file '{file}'");
-                if (File.Exists($"{file}.exe"))
+                if (File.Exists($"{file}{ext}"))
                 {
-                    string current = FileVersionInfo.GetVersionInfo($"{file}.exe").FileVersion ?? "";
+                    string current = FileVersionInfo.GetVersionInfo($"{file}{ext}").FileVersion ?? "";
                     string version = WebClient.DownloadString(links[$"{file} Version"]).Trim();
 
                     if (current != version)
@@ -1909,7 +2005,7 @@ namespace New_SSQE
 
                 var redirect = WebClient.GetRedirect(links["Editor Redirect"]);
 
-                if (File.Exists("SSQE Updater.exe") && redirect != "")
+                if (File.Exists($"SSQE Updater{ext}") && redirect != "")
                 {
                     var version = redirect[(redirect.LastIndexOf("/") + 1)..];
 
@@ -1921,7 +2017,7 @@ namespace New_SSQE
                         if (diag == DialogResult.Yes)
                         {
                             ActionLogging.Register("Attempting to run updater");
-                            Process.Start("SSQE Updater.exe");
+                            Process.Start($"SSQE Updater{ext}");
                         }
                     }
                 }
@@ -1934,9 +2030,6 @@ namespace New_SSQE
 
         private void DiscordInit()
         {
-            if (!discordEnabled)
-                return;
-
             try
             {
                 discord = new("1067849747710345346", -1)
@@ -2010,12 +2103,6 @@ namespace New_SSQE
         {
             if (CurrentWindow is GuiWindowEditor editor)
             {
-                if (!Settings.settings["exportWarningShown"])
-                {
-                    MessageBox.Show("It's recommended to put this file directly into your SS+ maps folder or have it open so it's easier to import or replace later!", "Warning", "OK");
-                    Settings.settings["exportWarningShown"] = true;
-                }
-
                 var dialog = new SaveFileDialog()
                 {
                     Title = "Export SSPM",
@@ -2152,8 +2239,17 @@ namespace New_SSQE
             var markerOffset = BitConverter.GetBytes((ulong)offset);
             var markerLength = BitConverter.GetBytes((ulong)markers.Count);
 
-            var pointers = customDataOffset.Concat(customDataLength).Concat(audioOffset).Concat(audioLength).Concat(coverOffset).Concat(coverLength).ToArray(); // pointers
-            pointers = pointers.Concat(markerDefinitionsOffset).Concat(markerDefinitionsLength).Concat(markerOffset).Concat(markerLength).ToArray();
+            var pointers = new List<byte>(); // pointers
+            pointers.AddRange(customDataOffset);
+            pointers.AddRange(customDataLength);
+            pointers.AddRange(audioOffset);
+            pointers.AddRange(audioLength);
+            pointers.AddRange(coverOffset);
+            pointers.AddRange(coverLength);
+            pointers.AddRange(markerDefinitionsOffset);
+            pointers.AddRange(markerDefinitionsLength);
+            pointers.AddRange(markerOffset);
+            pointers.AddRange(markerLength);
 
             var markerSet = markerDefinitions.Concat(markers).ToArray();
             using SHA1 sHash = SHA1.Create();
@@ -2237,7 +2333,7 @@ namespace New_SSQE
                 data.Read(reservedSpace, 0, 2);
 
                 // metadata
-                string mapID = GetNextVariableString();
+                string mapID = GetNextVariableString().Replace(",", "");
                 string mapName = GetNextVariableString();
                 string mappers = GetNextVariableString();
 
@@ -2417,7 +2513,7 @@ namespace New_SSQE
                 data.Read(markerLength, 0, 8);
 
                 // get song name stuff and mappers
-                string mapID = GetNextVariableString();
+                string mapID = GetNextVariableString().Replace(",", "");
                 string mapName = GetNextVariableString();
                 string songName = GetNextVariableString();
 

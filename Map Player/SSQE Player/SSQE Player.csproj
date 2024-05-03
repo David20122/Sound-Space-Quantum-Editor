@@ -13,7 +13,8 @@
 
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="5.0.0-pre.8" />
-    <PackageReference Include="SkiaSharp" Version="2.88.1" />
+    <PackageReference Include="SkiaSharp" Version="2.88.7" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.7" />
     <PackageReference Include="StbTrueTypeSharp" Version="1.26.12" />
     <PackageReference Include="System.Json" Version="4.7.1" />
   </ItemGroup>

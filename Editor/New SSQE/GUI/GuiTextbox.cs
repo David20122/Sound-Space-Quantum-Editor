@@ -1,10 +1,8 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
-using System.Collections.Generic;
 
 namespace New_SSQE.GUI
 {

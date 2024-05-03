@@ -1,5 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System.Collections.Generic;
 using System.Drawing;
 
 namespace New_SSQE.GUI

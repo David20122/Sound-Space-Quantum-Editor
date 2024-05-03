@@ -1,6 +1,4 @@
 ﻿using Avalonia;
-using System;
-using System.IO;
 
 namespace New_SSQE
 {
@@ -24,14 +22,14 @@ namespace New_SSQE
                     MainWindow.Instance.CurrentMap?.Save();
                     MainWindow.Instance.CacheMaps();
                 }
-                catch { }
+                catch (Exception ex) { ActionLogging.Register("Map(s) failed to save on abort", "WARN", ex); }
 
                 ActionLogging.Register("[Error encountered in application]", "ERROR");
                 var logs = string.Join('\n', ActionLogging.Logs);
 
                 var text = @$"// whoops
 
-{ActionLogging.ExtractExceptionInfo(e)}
+{e}
 
 |******************|
 |  POSSIBLE FIXES  |
@@ -50,10 +48,7 @@ If none of these work or aren't applicable, report the error in the official Sou
 
                 File.WriteAllText("crash-report.txt", text);
 
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
-                
-                MessageBox.Show("A fatal error has occurred while attempting to run this application.\n\nA crash report has been created at '*\\crash-report.txt'", "Error", "OK");
+                MessageBox.Show("Fatal error encountered while running this application\n\nA crash report has been created at '*\\crash-report.txt'", "Error", "OK");
             }
         }
 
@@ -73,7 +68,7 @@ If none of these work or aren't applicable, report the error in the official Sou
         
         static void Main()
         {
-
+            
         }
     }
 }

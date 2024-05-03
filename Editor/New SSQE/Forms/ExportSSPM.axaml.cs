@@ -1,11 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
 
 namespace New_SSQE
 {
@@ -47,7 +42,7 @@ namespace New_SSQE
                     str = str.Remove(i, 1).Insert(i, "_");
             }
 
-            return str;
+            return str.Replace(",", "");
         }
 
         private string GetSongName()

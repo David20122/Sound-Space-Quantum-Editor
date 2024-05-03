@@ -1,8 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using System.Drawing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using OpenTK.Graphics;
 using System.Buffers;
 using OpenTK.Mathematics;
@@ -22,6 +19,7 @@ namespace New_SSQE.GUI
         private RectangleF prevRect;
 
         private readonly ArrayPool<Vector4> Pool = ArrayPool<Vector4>.Shared;
+        public bool WasPlaying;
 
         public GuiSliderTimeline(float posx, float posy, float sizex, float sizey, bool reverse, bool lockSize = false) : base(posx, posy, sizex, sizey, "currentTime", reverse, lockSize)
         {
@@ -211,6 +209,7 @@ namespace New_SSQE.GUI
 
         public override void OnMouseClick(Point pos, bool right)
         {
+            WasPlaying = MainWindow.Instance.MusicPlayer.IsPlaying && !Settings.settings["pauseScroll"];
             if (MainWindow.Instance.MusicPlayer.IsPlaying)
                 MainWindow.Instance.MusicPlayer.Pause();
 

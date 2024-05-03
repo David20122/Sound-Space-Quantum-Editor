@@ -8,6 +8,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.ComponentModel;
 using SSQE_Player.Models;
 using OpenTK.Graphics;
+using System.Runtime.InteropServices;
 
 namespace SSQE_Player
 {
@@ -155,13 +156,18 @@ namespace SSQE_Player
         {
             isFullscreen ^= true;
 
-            WindowState = isFullscreen ? WindowState.Normal : WindowState.Maximized;
-            WindowBorder = isFullscreen ? WindowBorder.Hidden : WindowBorder.Resizable;
-
-            if (isFullscreen)
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                WindowState = isFullscreen ? WindowState.Fullscreen : WindowState.Maximized;
+            else
             {
-                Size = startSize;
-                Location = (0, 0);
+                WindowState = isFullscreen ? WindowState.Normal : WindowState.Maximized;
+                WindowBorder = isFullscreen ? WindowBorder.Hidden : WindowBorder.Resizable;
+
+                if (isFullscreen)
+                {
+                    Size = startSize;
+                    Location = Monitors.GetPrimaryMonitor().ClientArea.Location;
+                }
             }
         }
 

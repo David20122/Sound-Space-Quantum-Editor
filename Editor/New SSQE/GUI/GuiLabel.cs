@@ -1,5 +1,4 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using System;
 using System.Drawing;
 
 namespace New_SSQE.GUI

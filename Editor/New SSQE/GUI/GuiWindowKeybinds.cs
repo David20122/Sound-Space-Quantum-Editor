@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
@@ -9,60 +8,63 @@ namespace New_SSQE.GUI
     {
         private readonly GuiButton BackButton = new(655, 930, 600, 100, 0, "RETURN TO SETTINGS", 52, false, false, "square");
 
-        private readonly GuiLabel HFlipLabel = new(150, 49, 128, 26, "Horizontal Flip", 28, false, false, "main", false);
-        private readonly GuiLabel HFlipCAS = new(426, 83, 256, 40, "", 28, false, false, "main", false);
-        private readonly GuiTextbox HFlipBox = new(150, 75, 128, 40, "", 28, false, false, false, "hFlip", "main", true);
-        private readonly GuiButton HFlipReset = new(288, 75, 128, 40, 1, "RESET", 28);
+        private readonly GuiLabel HFlipLabel = new(1366, 520, 128, 26, "Horizontal Flip", 28, false, false, "main", false);
+        private readonly GuiLabel HFlipCAS = new(1642, 550, 256, 40, "", 28, false, false, "main", false);
+        private readonly GuiTextbox HFlipBox = new(1366, 550, 128, 40, "", 28, false, false, false, "hFlip", "main", true);
+        private readonly GuiButton HFlipReset = new(1504, 550, 128, 40, 1, "RESET", 28);
 
-        private readonly GuiLabel VFlipLabel = new(150, 119, 128, 26, "Vertical Flip", 28, false, false, "main", false);
-        private readonly GuiLabel VFlipCAS = new(426, 153, 256, 40, "", 28, false, false, "main", false);
-        private readonly GuiTextbox VFlipBox = new(150, 145, 128, 40, "", 28, false, false, false, "vFlip", "main", true);
-        private readonly GuiButton VFlipReset = new(288, 145, 128, 40, 2, "RESET", 28);
+        private readonly GuiLabel VFlipLabel = new(1366, 600, 128, 26, "Vertical Flip", 28, false, false, "main", false);
+        private readonly GuiLabel VFlipCAS = new(1642, 630, 256, 40, "", 28, false, false, "main", false);
+        private readonly GuiTextbox VFlipBox = new(1366, 630, 128, 40, "", 28, false, false, false, "vFlip", "main", true);
+        private readonly GuiButton VFlipReset = new(1504, 630, 128, 40, 2, "RESET", 28);
 
-        private readonly GuiLabel SwitchClickLabel = new(150, 189, 128, 26, "Switch Click Function", 28, false, false, "main", false);
-        private readonly GuiLabel SwitchClickCAS = new(426, 223, 256, 40, "", 28, false, false, "main", false);
-        private readonly GuiTextbox SwitchClickBox = new(150, 215, 128, 40, "", 28, false, false, false, "switchClickTool", "main", true);
-        private readonly GuiButton SwitchClickReset = new(288, 215, 128, 40, 3, "RESET", 28);
+        private readonly GuiLabel StoreNodesLabel = new(1366, 680, 128, 26, "Store Bezier Nodes", 28, false, false, "main", false);
+        private readonly GuiLabel StoreNodesCAS = new(1642, 710, 256, 40, "", 28, false, false, "main", false);
+        private readonly GuiTextbox StoreNodesBox = new(1366, 710, 128, 40, "", 28, false, false, false, "storeNodes", "main", true);
+        private readonly GuiButton StoreNodesReset = new(1504, 710, 128, 40, 7, "RESET", 28);
 
-        private readonly GuiLabel ToggleQuantumLabel = new(150, 259, 128, 26, "Toggle Quantum", 28, false, false, "main", false);
-        private readonly GuiLabel ToggleQuantumCAS = new(426, 293, 256, 40, "", 28, false, false, "main", false);
-        private readonly GuiTextbox ToggleQuantumBox = new(150, 285, 128, 40, "", 28, false, false, false, "quantum", "main", true);
-        private readonly GuiButton ToggleQuantumReset = new(288, 285, 128, 40, 4, "RESET", 28);
+        private readonly GuiLabel AnchorNodeLabel = new(1366, 760, 128, 26, "Anchor Bezier Node", 28, false, false, "main", false);
+        private readonly GuiLabel AnchorNodeCAS = new(1642, 790, 256, 40, "", 28, false, false, "main", false);
+        private readonly GuiTextbox AnchorNodeBox = new(1366, 790, 128, 40, "", 28, false, false, false, "anchorNode", "main", true);
+        private readonly GuiButton AnchorNodeReset = new(1504, 790, 128, 40, 9, "RESET", 28);
 
-        private readonly GuiLabel OpenTimingsLabel = new(150, 329, 128, 26, "Open Timings", 28, false, false, "main", false);
-        private readonly GuiLabel OpenTimingsCAS = new(426, 363, 256, 40, "", 28, false, false, "main", false);
-        private readonly GuiTextbox OpenTimingsBox = new(150, 355, 128, 40, "", 28, false, false, false, "openTimings", "main", true);
-        private readonly GuiButton OpenTimingsReset = new(288, 355, 128, 40, 5, "RESET", 28);
+        private readonly GuiLabel DrawBezierLabel = new(1366, 840, 128, 26, "Draw Bezier Curve", 28, false, false, "main", false);
+        private readonly GuiLabel DrawBezierCAS = new(1642, 870, 256, 40, "", 28, false, false, "main", false);
+        private readonly GuiTextbox DrawBezierBox = new(1366, 870, 128, 40, "", 28, false, false, false, "drawBezier", "main", true);
+        private readonly GuiButton DrawBezierReset = new(1504, 870, 128, 40, 8, "RESET", 28);
 
-        private readonly GuiLabel OpenBookmarksLabel = new(150, 399, 128, 26, "Open Bookmarks", 28, false, false, "main", false);
-        private readonly GuiLabel OpenBookmarksCAS = new(426, 433, 256, 40, "", 28, false, false, "main", false);
-        private readonly GuiTextbox OpenBookmarksBox = new(150, 425, 128, 40, "", 28, false, false, false, "openBookmarks", "main", true);
-        private readonly GuiButton OpenBookmarksReset = new(288, 425, 128, 40, 6, "RESET", 28);
 
-        private readonly GuiLabel StoreNodesLabel = new(150, 469, 128, 26, "Store Bezier Nodes", 28, false, false, "main", false);
-        private readonly GuiLabel StoreNodesCAS = new(426, 503, 256, 40, "", 28, false, false, "main", false);
-        private readonly GuiTextbox StoreNodesBox = new(150, 495, 128, 40, "", 28, false, false, false, "storeNodes", "main", true);
-        private readonly GuiButton StoreNodesReset = new(288, 495, 128, 40, 7, "RESET", 28);
+        private readonly GuiLabel SwitchClickLabel = new(150, 100, 128, 26, "Switch Click Function", 28, false, false, "main", false);
+        private readonly GuiLabel SwitchClickCAS = new(426, 130, 256, 40, "", 28, false, false, "main", false);
+        private readonly GuiTextbox SwitchClickBox = new(150, 130, 128, 40, "", 28, false, false, false, "switchClickTool", "main", true);
+        private readonly GuiButton SwitchClickReset = new(288, 130, 128, 40, 3, "RESET", 28);
 
-        private readonly GuiLabel DrawBezierLabel = new(150, 539, 128, 26, "Draw Bezier Curve", 28, false, false, "main", false);
-        private readonly GuiLabel DrawBezierCAS = new(426, 573, 256, 40, "", 28, false, false, "main", false);
-        private readonly GuiTextbox DrawBezierBox = new(150, 565, 128, 40, "", 28, false, false, false, "drawBezier", "main", true);
-        private readonly GuiButton DrawBezierReset = new(288, 565, 128, 40, 8, "RESET", 28);
+        private readonly GuiLabel ToggleQuantumLabel = new(150, 180, 128, 26, "Toggle Quantum", 28, false, false, "main", false);
+        private readonly GuiLabel ToggleQuantumCAS = new(426, 210, 256, 40, "", 28, false, false, "main", false);
+        private readonly GuiTextbox ToggleQuantumBox = new(150, 210, 128, 40, "", 28, false, false, false, "quantum", "main", true);
+        private readonly GuiButton ToggleQuantumReset = new(288, 210, 128, 40, 4, "RESET", 28);
 
-        private readonly GuiLabel AnchorNodeLabel = new(150, 609, 128, 26, "Anchor Bezier Node", 28, false, false, "main", false);
-        private readonly GuiLabel AnchorNodeCAS = new(426, 643, 256, 40, "", 28, false, false, "main", false);
-        private readonly GuiTextbox AnchorNodeBox = new(150, 635, 128, 40, "", 28, false, false, false, "anchorNode", "main", true);
-        private readonly GuiButton AnchorNodeReset = new(288, 635, 128, 40, 9, "RESET", 28);
+        
+        private readonly GuiLabel OpenTimingsLabel = new(150, 300, 128, 26, "Open Timings", 28, false, false, "main", false);
+        private readonly GuiLabel OpenTimingsCAS = new(426, 330, 256, 40, "", 28, false, false, "main", false);
+        private readonly GuiTextbox OpenTimingsBox = new(150, 330, 128, 40, "", 28, false, false, false, "openTimings", "main", true);
+        private readonly GuiButton OpenTimingsReset = new(288, 330, 128, 40, 5, "RESET", 28);
 
-        private readonly GuiLabel OpenDirectoryLabel = new(150, 679, 128, 26, "Open Directory", 28, false, false, "main", false);
-        private readonly GuiLabel OpenDirectoryCAS = new(426, 713, 256, 40, "", 28, false, false, "main", false);
-        private readonly GuiTextbox OpenDirectoryBox = new(150, 705, 128, 40, "", 28, false, false, false, "openDirectory", "main", true);
-        private readonly GuiButton OpenDirectoryReset = new(288, 705, 128, 40, 10, "RESET", 28);
+        private readonly GuiLabel OpenBookmarksLabel = new(150, 380, 128, 26, "Open Bookmarks", 28, false, false, "main", false);
+        private readonly GuiLabel OpenBookmarksCAS = new(426, 410, 256, 40, "", 28, false, false, "main", false);
+        private readonly GuiTextbox OpenBookmarksBox = new(150, 410, 128, 40, "", 28, false, false, false, "openBookmarks", "main", true);
+        private readonly GuiButton OpenBookmarksReset = new(288, 410, 128, 40, 6, "RESET", 28);
 
-        private readonly GuiLabel ExportSSPMLabel = new(150, 749, 128, 26, "Export SSPM", 28, false, false, "main", false);
-        private readonly GuiLabel ExportSSPMCAS = new(426, 783, 256, 40, "", 28, false, false, "main", false);
-        private readonly GuiTextbox ExportSSPMBox = new(150, 775, 128, 40, "", 28, false, false, false, "exportSSPM", "main", true);
-        private readonly GuiButton ExportSSPMReset = new(288, 775, 128, 40, 11, "RESET", 28);
+        private readonly GuiLabel OpenDirectoryLabel = new(150, 460, 128, 26, "Open Directory", 28, false, false, "main", false);
+        private readonly GuiLabel OpenDirectoryCAS = new(426, 490, 256, 40, "", 28, false, false, "main", false);
+        private readonly GuiTextbox OpenDirectoryBox = new(150, 490, 128, 40, "", 28, false, false, false, "openDirectory", "main", true);
+        private readonly GuiButton OpenDirectoryReset = new(288, 490, 128, 40, 10, "RESET", 28);
+
+        private readonly GuiLabel ExportSSPMLabel = new(150, 540, 128, 26, "Export SSPM", 28, false, false, "main", false);
+        private readonly GuiLabel ExportSSPMCAS = new(426, 570, 256, 40, "", 28, false, false, "main", false);
+        private readonly GuiTextbox ExportSSPMBox = new(150, 570, 128, 40, "", 28, false, false, false, "exportSSPM", "main", true);
+        private readonly GuiButton ExportSSPMReset = new(288, 570, 128, 40, 11, "RESET", 28);
+
 
         private readonly GuiLabel GridLabel = new(1366, 49, 128, 26, "Grid", 28, false, false, "main", false);
         private readonly GuiTextbox GridTLBox = new(1366, 75, 128, 62, "", 28, false, false, false, "gridKey0", "main", true);
@@ -84,11 +86,12 @@ namespace New_SSQE.GUI
         private readonly GuiTextbox GridBRBox = new(1642, 351, 128, 62, "", 28, false, false, false, "gridKey8", "main", true);
         private readonly GuiButton GridBRReset = new(1642, 417, 128, 62, 98, "RESET", 36);
 
+
         private readonly GuiCheckbox CtrlIndicator = new(64, 828, 64, 64, "", "CTRL Held", 36);
         private readonly GuiCheckbox AltIndicator = new(64, 912, 64, 64, "", "ALT Held", 36);
         private readonly GuiCheckbox ShiftIndicator = new(64, 996, 64, 64, "", "SHIFT Held", 36);
 
-        private readonly GuiLabel StaticKeysLabel = new(480, 150, 960, 40, "", 28);
+        private readonly GuiLabel StaticKeysLabel = new(480, 100, 960, 40, "", 28);
 
         public GuiWindowKeybinds() : base(0, 0, MainWindow.Instance.ClientSize.X, MainWindow.Instance.ClientSize.Y)
         {
@@ -118,26 +121,28 @@ namespace New_SSQE.GUI
                 "> Zoom: CTRL + SCROLL",
                 "",
                 "> Beat Divisor: SHIFT + SCROLL",
-                ">> CTRL + SHIFT + SCROLL to increment by 0.5",
+                ">> Hold CTRL to increment by 0.5",
                 "",
-                "> Scroll through song: SCROLL/LEFT/RIGHT",
+                "> Seek: SCROLL/LEFT/RIGHT",
+                "> Play/Pause: SPACE",
+                "",
+                "> Select all: CTRL + A",
+                "> Deselect all: ESCAPE",
+                "",
+                "> Delete: DELETE/BACKSPACE",
+                "> Copy: CTRL + C",
+                "> Paste: CTRL + V",
+                "> Cut: CTRL + X",
+                "> Undo: CTRL + Z",
+                "> Redo: CTRL + Y",
+                "",
+                "> Fullscreen: F11",
+                "> Save: CTRL + S",
+                "> Save as: CTRL + SHIFT + S",
                 "",
                 "> Place stored patterns: 0-9",
                 ">> Hold SHIFT to store selected notes as the key's pattern",
                 ">> Hold CTRL to clear the key's pattern",
-                "",
-                "> Select all: CTRL + A",
-                "> Save: CTRL + S",
-                "> Save as: CTRL + SHIFT + S",
-                "> Undo: CTRL + Z",
-                "> Redo: CTRL + Y",
-                "> Copy: CTRL + C",
-                "> Paste: CTRL + V",
-                "> Cut: CTRL + X",
-                "> Fullscreen: F11",
-                "> Delete: DELETE/BACKSPACE",
-                "> Play/Pause: SPACE",
-                "> Deselect all: ESCAPE"
             };
             StaticKeysLabel.Text = string.Join("\n", staticList);
 

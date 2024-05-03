@@ -74,3 +74,7 @@ F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE Player.genruntim
 F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\ref\SSQE Player.dll
 F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE Player.sourcelink.json
 F:\GitHub\SSQE\Map Player\SSQE Player\bin\x64\Debug\net6.0\StbTrueTypeSharp.dll
+F:\GitHub\SSQE\Map Player\SSQE Player\bin\x64\Debug\net6.0\runtimes\linux-arm\native\libSkiaSharp.so
+F:\GitHub\SSQE\Map Player\SSQE Player\bin\x64\Debug\net6.0\runtimes\linux-arm64\native\libSkiaSharp.so
+F:\GitHub\SSQE\Map Player\SSQE Player\bin\x64\Debug\net6.0\runtimes\linux-musl-x64\native\libSkiaSharp.so
+F:\GitHub\SSQE\Map Player\SSQE Player\bin\x64\Debug\net6.0\runtimes\linux-x64\native\libSkiaSharp.so

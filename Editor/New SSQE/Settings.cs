@@ -1,9 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Json;
-using System;
-using System.IO;
-using System.Linq;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Common;
 using New_SSQE.GUI;
@@ -34,10 +30,8 @@ namespace New_SSQE
             {"selectTool", false },
             {"curveBezier", true },
             {"gridLetters", true },
-            {"exportWarningShown", false },
-            {"skipDownload", false },
+            {"skipDownload", true },
             {"lockCursor", true },
-            {"fromStart", false },
             {"reverseScroll", false },
             {"useVSync", false },
             {"checkUpdates", true },
@@ -48,6 +42,9 @@ namespace New_SSQE
             {"jumpPaste", false },
             {"limitPlayerFPS", false },
             {"useRhythia", true },
+            {"pauseScroll", true },
+            {"japanese", false },
+            {"clampSR", true },
 
             {"editorBGOpacity", 255 },
             {"gridOpacity", 255 },

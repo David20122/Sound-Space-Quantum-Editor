@@ -1,7 +1,8 @@
-﻿using System;
+﻿using System.Runtime.InteropServices;
+using System.Threading.Channels;
 using Un4seen.Bass;
-using System.IO;
 using Un4seen.Bass.AddOn.Fx;
+using Un4seen.Bass.Misc;
 
 namespace New_SSQE
 {
@@ -74,6 +75,24 @@ namespace New_SSQE
             Bass.BASS_StreamFree(streamFileID);
 
             var stream = Bass.BASS_StreamCreateFile(file, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_STREAM_PRESCAN | BASSFlag.BASS_FX_FREESOURCE);
+
+            if (Bass.BASS_ChannelGetInfo(stream).ctype == BASSChannelType.BASS_CTYPE_STREAM_MF && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                try
+                {
+                    EncoderLAME encoder = new(0);
+                    BaseEncoder.EncodeFile(file, "assets/temp/tempaudio.mp3", encoder, null, true, true);
+                    File.Move("assets/temp/tempaudio.mp3", file);
+
+                    stream = Bass.BASS_StreamCreateFile(file, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_STREAM_PRESCAN | BASSFlag.BASS_FX_FREESOURCE);
+                }
+                catch (Exception ex)
+                {
+                    ActionLogging.Register($"Failed to encode file to mp3: {file}", "WARN", ex);
+                    MessageBox.Show($"Failed to fix encoding for file '{file}'\n\nRhythia playtesting will not be possible with this asset.", "Warning", "OK");
+                }
+            }
+
             var tempo = Tempo;
 
             streamFileID = stream;
@@ -84,7 +103,7 @@ namespace New_SSQE
             Bass.BASS_ChannelGetAttribute(streamID, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, ref originVal);
             Bass.BASS_ChannelSetSync(streamID, BASSSync.BASS_SYNC_END, 0, Sync, IntPtr.Zero);
             Waveform.Init(streamFileID);
-
+            
             Reset();
 
 
@@ -105,7 +124,7 @@ namespace New_SSQE
         {
             Pause();
             CurrentTime = TotalTime;
-            Settings.settings["currentTime"].Value = (float)(CurrentTime.TotalMilliseconds + 0.03 * MainWindow.Instance.Tempo);
+            Settings.settings["currentTime"].Value = (float)(CurrentTime.TotalMilliseconds + 0.03 * (1 + (MainWindow.Instance.Tempo - 1) * 1.5));
         }
 
         public void Play()
@@ -209,7 +228,7 @@ namespace New_SSQE
             {
                 CheckDevice();
 
-                var pos = Bass.BASS_ChannelSeconds2Bytes(streamID, value.TotalSeconds - 0.03 * MainWindow.Instance.Tempo);
+                var pos = Bass.BASS_ChannelSeconds2Bytes(streamID, value.TotalSeconds - 0.03 * (1 + (MainWindow.Instance.Tempo - 1) * 1.5));
 
                 Bass.BASS_ChannelSetPosition(streamID, Math.Max(pos, 0), BASSMode.BASS_POS_BYTE);
             }
@@ -219,7 +238,7 @@ namespace New_SSQE
 
                 var pos = Bass.BASS_ChannelGetPosition(streamID, BASSMode.BASS_POS_BYTE);
 
-                return TimeSpan.FromSeconds(Bass.BASS_ChannelBytes2Seconds(streamID, pos) + 0.03 * MainWindow.Instance.Tempo);
+                return TimeSpan.FromSeconds(Bass.BASS_ChannelBytes2Seconds(streamID, pos) + 0.03 * (1 + (MainWindow.Instance.Tempo - 1) * 1.5));
             }
         }
 

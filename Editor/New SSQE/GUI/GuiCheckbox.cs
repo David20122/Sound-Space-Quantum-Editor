@@ -1,7 +1,5 @@
-﻿using System;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using System.Drawing;
-using System.Collections.Generic;
 
 namespace New_SSQE.GUI
 {
@@ -62,7 +60,7 @@ namespace New_SSQE.GUI
             var colored = MainWindow.Instance.CurrentWindow is GuiWindowEditor || MainWindow.Instance.CurrentWindow is GuiWindowKeybinds;
 
             var color1 = colored ? Settings.settings["color1"] : Color.FromArgb(255, 255, 255);
-            var color2 = colored ? Settings.settings["color2"] : Color.FromArgb(50, 50, 50);
+            var color2 = colored ? Settings.settings["color2"] : Color.FromArgb(75, 75, 75);
 
             float[] fill = GLU.Rect(Rect, 0.05f, 0.05f, 0.05f);
             float[] outline = GLU.Outline(Rect, 2, 0.2f, 0.2f, 0.2f);

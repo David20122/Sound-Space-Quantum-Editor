@@ -4,6 +4,7 @@ using OpenTK.Mathematics;
 using SSQE_Player.Models;
 using SSQE_Player.Types;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace SSQE_Player.GUI
 {
@@ -60,6 +61,9 @@ namespace SSQE_Player.GUI
         private int startIndex;
 
         public int Offset;
+
+        private Cube prevPlayed;
+        private Cube lastHit;
 
         public GuiWindowMain(int startIndex) : base(0, 0, MainWindow.Instance.Size.X, MainWindow.Instance.Size.Y)
         {
@@ -157,7 +161,13 @@ namespace SSQE_Player.GUI
                 frames = 0;
                 time = 0;
             }
-            
+
+            if (lastHit != prevPlayed)
+            {
+                MainWindow.Instance.SoundPlayer.Play(Settings.settings["hitSound"]);
+                prevPlayed = lastHit;
+            }
+
             base.Render(frametime);
         }
 
@@ -212,7 +222,7 @@ namespace SSQE_Player.GUI
                     var passed = hovering || note.Z < -zHitbox;
 
                     if (hovering)
-                        HitNote();
+                        HitNote(i);
                     if (passed)
                     {
                         if (!hovering)
@@ -230,6 +240,10 @@ namespace SSQE_Player.GUI
             var sizeZ = (new Vector4(CubeModel.Size) * noteScale).Z;
             var fade = Settings.settings["approachFade"];
 
+            Vector3[] positions = new Vector3[cubes.Count];
+            Vector4[] colors = new Vector4[cubes.Count];
+            Shader.SetTransform(noteScale);
+
             for (int i = 0; i < cubes.Count; i++)
             {
                 var note = cubes[i];
@@ -238,21 +252,17 @@ namespace SSQE_Player.GUI
                 var y = note.Y - 1;
                 var z = note.Z - sizeZ / 2f;
 
-                Vector4 color = (note.Color.R / 255f, note.Color.G / 255f, note.Color.B / 255f, 1);
-                if (fade)
-                    color.W = Math.Min(1, (spawnZ - z) / 10);
-
-                Shader.SetTransform(noteScale * Matrix4.CreateTranslation(x, y, z));
-                Shader.SetColor(color);
-                CubeModel.Render();
+                positions[i] = (x, y, z);
+                colors[i] = (note.Color.R / 255f, note.Color.G / 255f, note.Color.B / 255f, fade ? Math.Min(1, (spawnZ - z) / 10) : 1f);
             }
+
+            MainWindow.Instance.ModelManager.Render(positions, colors, cubes.Count, "note");
         }
 
         private void RenderCursor()
         {
             var pos = MainWindow.Instance.CursorPos - Vector3.UnitZ * 0.01f;
             var color2 = Settings.settings["color2"];
-            Vector4 c = (color2.R / 255f, color2.G / 255f, color2.B / 255f, 1);
 
             var cursorSize = MainWindow.CursorSize;
 
@@ -260,20 +270,18 @@ namespace SSQE_Player.GUI
             var s = Matrix4.CreateScale(scale);
 
             CursorModel.Bind();
-            Shader.SetTransform(s * Matrix4.CreateTranslation(pos));
-            Shader.SetColor(c);
-            CursorModel.Render();
+            Shader.SetTransform(s);
+            MainWindow.Instance.ModelManager.Render(new Vector3[] { (pos.X, pos.Y, pos.Z) }, new Vector4[] { (color2.R / 255f, color2.G / 255f, color2.B / 255f, 1f) }, 1, "cursor");
+            
 
             if (!Settings.settings["lockCursor"] && Settings.settings["cameraMode"].Current != "spin")
             {
                 var actualPos = MainWindow.Instance.Camera.LockedPos;
                 pos = (actualPos.X, actualPos.Y, 0);
                 s = Matrix4.CreateScale(scale * 0.95f);
-                c = (0.5f, 0.5f, 0.5f, 0.5f);
 
-                Shader.SetTransform(s * Matrix4.CreateTranslation(pos));
-                Shader.SetColor(c);
-                CursorModel.Render();
+                Shader.SetTransform(s);
+                MainWindow.Instance.ModelManager.Render(new Vector3[] { (pos.X, pos.Y, pos.Z) }, new Vector4[] { (0.5f, 0.5f, 0.5f, 0.5f) }, 1, "cursor");
             }
         }
 
@@ -340,11 +348,11 @@ namespace SSQE_Player.GUI
             return $"FPS: {frames / time:##0}";
         }
 
-        private void HitNote()
+        private void HitNote(int index)
         {
             health = MathHelper.Clamp(health + healthRegen, 0, 100);
 
-            MainWindow.Instance.SoundPlayer.Play(Settings.settings["hitSound"]);
+            lastHit = cubes[index];
 
             hits++;
             combo++;
@@ -392,62 +400,41 @@ namespace SSQE_Player.GUI
             var v1 = prevVec + (vec - prevVec) * start;
             var v2 = prevVec + (vec - prevVec) * end;
 
-            if ((v1.X < min.X && v2.X < min.X) ||
-                (v1.X > max.X && v2.X > max.X) ||
-                (v1.Y < min.Y && v2.Y < min.Y) ||
-                (v1.Y > max.Y && v2.Y < max.Y))
+            Vector2 m1 = (Math.Min(v1.X, v2.X), Math.Min(v1.Y, v2.Y));
+            Vector2 m2 = (Math.Max(v1.X, v2.X), Math.Max(v1.Y, v2.Y));
+
+            if (m2.X < min.X || max.X < m1.X)
+                return false;
+            if (m2.Y < min.Y || max.Y < m1.Y)
                 return false;
 
-            float m1 = (v2.Y - v1.Y) / (v2.X - v1.X);
-            float m2 = 1 / m1;
+            if ((v2 - v1).Length <= 0)
+                return true;
 
-            // vec 1 clamping
-            if (v1.X < min.X)
-            {
-                v1.X = min.X;
-                v1.Y += m1 * (min.X - v1.X);
-            }
-            else if (v1.X > max.X)
-            {
-                v1.X = max.X;
-                v1.Y += m1 * (max.X - v1.X);
-            }
+            Vector2 s = (-(v2.Y - v1.Y), v2.X - v1.X);
 
-            if (v1.Y < min.Y)
-            {
-                v1.X += m2 * (min.Y - v1.X);
-                v1.Y = min.Y;
-            }
-            else if (v1.Y > max.Y)
-            {
-                v1.X += m2 * (max.Y - v1.X);
-                v1.Y = max.Y;
-            }
+            Vector2 proj1 = Vector2.Dot((v1.X, v1.Y), s) * s;
+            float dist1 = proj1.Length * (Vector2.Dot(proj1, s) < 0 ? -1 : 1);
+            Vector2 proj2 = Vector2.Dot((v2.X, v2.Y), s) * s;
+            float dist2 = proj2.Length * (Vector2.Dot(proj2, s) < 0 ? -1 : 1);
 
-            // vec 2 clamping
-            if (v2.X < min.X)
+            Vector2[] projBox =
             {
-                v2.X = min.X;
-                v2.Y = v1.Y + m1 * (min.X - v1.X);
-            }
-            else if (v2.X > max.X)
-            {
-                v2.X = max.X;
-                v2.Y = v1.Y + m1 * (max.X - v1.X);
-            }
+                Vector2.Dot((min.X, min.Y), s) * s,
+                Vector2.Dot((min.X, max.Y), s) * s,
+                Vector2.Dot((max.X, min.Y), s) * s,
+                Vector2.Dot((max.X, max.Y), s) * s,
+            };
 
-            if (v2.Y < min.Y)
+            float[] distBox =
             {
-                v2.X = v1.X + m2 * (min.Y - v1.X);
-                v2.Y = min.Y;
-            }
-            else if (v2.Y > max.Y)
-            {
-                v2.X = v1.X + m2 * (max.Y - v1.X);
-                v2.Y = max.Y;
-            }
+                projBox[0].Length * (Vector2.Dot(projBox[0], s) < 0 ? -1 : 1),
+                projBox[1].Length * (Vector2.Dot(projBox[1], s) < 0 ? -1 : 1),
+                projBox[2].Length * (Vector2.Dot(projBox[2], s) < 0 ? -1 : 1),
+                projBox[3].Length * (Vector2.Dot(projBox[3], s) < 0 ? -1 : 1),
+            };
 
-            return v1.X >= min.X && v2.X >= min.X && v1.X <= max.X && v2.X <= max.X;
+            return Math.Max(dist1, dist2) >= distBox.Min() && distBox.Max() >= Math.Min(dist1, dist2);
         }
 
         public void Reset()

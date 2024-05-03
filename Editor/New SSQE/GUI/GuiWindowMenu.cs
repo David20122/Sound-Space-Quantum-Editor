@@ -1,7 +1,5 @@
 ﻿using OpenTK.Mathematics;
-using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 
 namespace New_SSQE.GUI
 {
@@ -164,7 +162,7 @@ namespace New_SSQE.GUI
             ChangelogSlider.Visible = setting.Max > 0;
 
             for (int i = 0; i < lines.Count; i++)
-                if (i >= setting.Max - setting.Value && i < setting.Max - setting.Value + 715f * heightdiff / ChangelogLabel.TextSize - 1)
+                if (i >= setting.Max - setting.Value && i < setting.Max - setting.Value + 715f * heightdiff / ChangelogLabel.TextSize / (FontRenderer.unicode ? StbFont.UnicodeMult : 1) - 1)
                     result += $"{lines[i]}\n";
 
             ChangelogLabel.Text = result;
@@ -226,14 +224,10 @@ namespace New_SSQE.GUI
                     break;
 
                 case 2:
-                    try
-                    {
-                        var clipboard = Clipboard.GetText();
+                    var clipboard = Clipboard.GetText();
 
-                        if (!string.IsNullOrWhiteSpace(clipboard))
-                            editor.LoadMap(clipboard);
-                    }
-                    catch { MessageBox.Show("Failed to load map data - is it valid?", "Warning", "OK"); }
+                    if (!string.IsNullOrWhiteSpace(clipboard))
+                        editor.LoadMap(clipboard);
 
                     break;
 

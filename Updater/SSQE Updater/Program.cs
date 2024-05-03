@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
+using System.Runtime.InteropServices;
 
 namespace SSQE_Updater
 {
@@ -7,13 +8,17 @@ namespace SSQE_Updater
     {
         static void Main(string[] args)
         {
+            var linux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+            var ssqeProcess = $"Sound Space Quantum Editor{(linux ? "" : ".exe")}";
+
             var currentPath = Directory.GetCurrentDirectory();
             string currentVersion = "";
-            if (File.Exists("Sound Space Quantum Editor.exe"))
-                currentVersion = FileVersionInfo.GetVersionInfo("Sound Space Quantum Editor.exe").FileVersion ?? "";
+
+            if (File.Exists(ssqeProcess))
+                currentVersion = FileVersionInfo.GetVersionInfo(ssqeProcess).FileVersion ?? "";
 
             var newVersion = CheckVersion();
-            var file = $"SSQE{newVersion}.zip";
+            var file = linux ? $"SSQE{newVersion}-linux.zip" : $"SSQE{newVersion}.zip";
 
             if (newVersion != "")
             {
@@ -157,7 +162,7 @@ namespace SSQE_Updater
                 Console.WriteLine("Completed, launching...");
 
                 File.Delete(file);
-                Process.Start("Sound Space Quantum Editor");
+                Process.Start(ssqeProcess);
 
                 Quit();
             }

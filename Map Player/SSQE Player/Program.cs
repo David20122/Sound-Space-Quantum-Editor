@@ -7,23 +7,26 @@ namespace SSQE_Player
         [STAThread]
         static void Main(string[] args)
         {
-            // uncomment if debugging
-            //args = new string[1] { "true" };
+            try
+            {
+                if (args.Length == 0) { args = new string[1] { "true" }; }
+                if (!File.Exists("assets/temp/tempmap.txt")) { return; }
 
+                var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+                culture.NumberFormat.NumberDecimalSeparator = ".";
 
-            if (args.Length == 0) { return; }
-            if (!File.Exists("assets/temp/tempmap.txt")) { return; }
+                CultureInfo.DefaultThreadCurrentCulture = culture;
+                CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-            var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-            culture.NumberFormat.NumberDecimalSeparator = ".";
+                MainWindow window = new(bool.Parse(args[0]));
 
-            CultureInfo.DefaultThreadCurrentCulture = culture;
-            CultureInfo.DefaultThreadCurrentUICulture = culture;
-
-            MainWindow window = new(bool.Parse(args[0]));
-
-            using (window)
-                window.Run();
+                using (window)
+                    window.Run();
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("player-crash-report.txt", ex.ToString());
+            }
         }
     }
 }

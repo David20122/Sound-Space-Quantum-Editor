@@ -1,11 +1,8 @@
-﻿using System;
-using OpenTK.Graphics;
+﻿using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using SkiaSharp;
-using System.IO;
 using StbTrueTypeSharp;
-using System.Linq;
 
 namespace New_SSQE
 {
@@ -34,13 +31,17 @@ namespace New_SSQE
         public BufferHandle StaticVbO;
 
         private readonly int _baseline;
-        private readonly int _charSize;
         private readonly TextureHandle _handle;
 
         public TextureHandle Handle => _handle;
 
+        private readonly StbTrueType.stbtt_fontinfo fontInfo;
+        private readonly float scale;
+
         // Change unit to store multiple fonts without having to switch between handles while rendering
         // Otherwise extract the handle via StbFont.Handle and manage switching elsewhere
+        // TODO: bake the font instead of making a whole skbitmap thing for it, cache the metrics
+        // for unicode, check test/archives for link
         public unsafe StbFont(string font, TextureUnit unit = TextureUnit.Texture15)
         {
             // Some font size discrepancies exist between FreeType and stb_truetype but the majority of the loader is the same
@@ -52,8 +53,8 @@ namespace New_SSQE
 
             AtlasMetrics = new Vector4[CharRange];
 
-            var fontInfo = StbTrueType.CreateFont(File.ReadAllBytes($"assets/fonts/{font}.ttf"), 0);
-            var scale = StbTrueType.stbtt_ScaleForPixelHeight(fontInfo, OriginSize);
+            fontInfo = StbTrueType.CreateFont(File.ReadAllBytes($"assets/fonts/{font}.ttf"), 0);
+            scale = StbTrueType.stbtt_ScaleForPixelHeight(fontInfo, OriginSize);
 
             int ascent, descent, lineGap;
             StbTrueType.stbtt_GetFontVMetrics(fontInfo, &ascent, &descent, &lineGap);
@@ -122,8 +123,6 @@ namespace New_SSQE
             Bitmap = SKBitmap.FromImage(surface.Snapshot());
             GC.KeepAlive(Bitmap);
 
-            fontInfo.Dispose();
-
             // Store the font texture as a png in the current directory - for debugging
             /*
             using (var image = surface.Snapshot())
@@ -134,8 +133,7 @@ namespace New_SSQE
 
             canvas.Dispose();
             surface.Dispose();
-            
-            // Prep instance data in shader
+
             VbOs = new BufferHandle[2];
 
             VaO = GL.GenVertexArray();
@@ -143,7 +141,8 @@ namespace New_SSQE
             VbOs[1] = GL.GenBuffer();
             StaticVbO = GL.GenBuffer();
 
-            float[] data = new float[12] {
+            float[] data = new float[12]
+            {
                 0, 0,
                 CharSize.X, 0,
                 0, CharSize.Y,
@@ -171,9 +170,6 @@ namespace New_SSQE
             GL.EnableVertexAttribArray(2);
             GL.VertexAttribDivisor(2, 1);
 
-            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
-            GL.BindVertexArray(VertexArrayHandle.Zero);
-
             // Load the texture into memory
             _handle = GL.GenTexture();
 
@@ -185,6 +181,125 @@ namespace New_SSQE
 
             GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
+            GL.BindVertexArray(VertexArrayHandle.Zero);
+        }
+
+        private static SKBitmap UnicodeBitmap;
+        private static int[] UnicodeExtents;
+
+        public static bool InitUnicode(string path, TextureUnit unit)
+        {
+            var info = new SKImageInfo(256 * UnicodeWidth, 256 * UnicodeWidth);
+            var surface = SKSurface.Create(info);
+            var canvas = surface.Canvas;
+
+            var bmp = SKBitmap.Decode(path);
+            var pixels = bmp.Pixels;
+            
+            for (int i = 0; i < pixels.Length; i++)
+                pixels[i] = pixels[i] == SKColors.White ? SKColors.Transparent : SKColors.White;
+
+            bmp.Pixels = pixels;
+
+            canvas.DrawBitmap(bmp, -2 * UnicodeWidth, -4 * UnicodeWidth);
+
+            // Store the font texture as a png in the current directory - for debugging
+            /*
+            using (var image = surface.Snapshot())
+            using (var imgData = image.Encode(SKEncodedImageFormat.Png, 80))
+            using (var stream = File.OpenWrite("font_texture.png"))
+                imgData.SaveTo(stream);
+            */
+
+            UnicodeBitmap = SKBitmap.FromImage(surface.Snapshot());
+            pixels = UnicodeBitmap.Pixels;
+
+            UnicodeExtents = new int[UnicodeCharRange];
+
+            for (int i = 0; i < UnicodeCharRange; i++)
+            {
+                int x = i % 256 * UnicodeWidth;
+                int y = i / 256 * UnicodeWidth;
+
+                for (int j = UnicodeWidth; j > 0; j--)
+                {
+                    for (int k = 0; k < UnicodeWidth; k++)
+                    {
+                        int subX = x + j - 1;
+                        int subY = (y + k) * 256 * UnicodeWidth;
+
+                        SKColor pixel = pixels[subX + subY];
+
+                        if (pixel != SKColors.Empty)
+                        {
+                            UnicodeExtents[i] = j;
+                            goto Cancel;
+                        }
+                    }
+                }
+
+            Cancel:
+                continue;
+            }
+
+            UnicodeExtents[32] = UnicodeWidth / 4;
+
+            GC.KeepAlive(UnicodeBitmap);
+
+            canvas.Dispose();
+            surface.Dispose();
+
+            FontRenderer.UnicodeVaO = GL.GenVertexArray();
+            FontRenderer.UnicodeVbO0 = GL.GenBuffer();
+            FontRenderer.UnicodeVbO1 = GL.GenBuffer();
+            FontRenderer.UnicodeStaticVbO = GL.GenBuffer();
+
+            float[] data = new float[12]
+            {
+                0, 0,
+                1, 0,
+                0, 1,
+
+                1, 1,
+                0, 1,
+                1, 0
+            };
+
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, FontRenderer.UnicodeStaticVbO);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, data, BufferUsageARB.StaticDraw);
+
+            GL.BindVertexArray(FontRenderer.UnicodeVaO);
+
+            GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(0);
+
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, FontRenderer.UnicodeVbO0);
+            GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, 4 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(1);
+            GL.VertexAttribDivisor(1, 1);
+
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, FontRenderer.UnicodeVbO1);
+            GL.VertexAttribPointer(2, 1, VertexAttribPointerType.Float, false, 1 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(2);
+            GL.VertexAttribDivisor(2, 1);
+
+            TextureHandle handle = GL.GenTexture();
+
+            GL.ActiveTexture(unit);
+            GL.BindTexture(TextureTarget.Texture2d, handle);
+
+            GL.TexImage2D(TextureTarget.Texture2d, 0, InternalFormat.Rgba, UnicodeBitmap.Width, UnicodeBitmap.Height, 0,
+                PixelFormat.Bgra, PixelType.UnsignedByte, UnicodeBitmap.GetPixels());
+
+            GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+
+            GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
+            GL.BindVertexArray(VertexArrayHandle.Zero);
+
+            return true;
         }
 
         // Converts alpha bitmap to RGBa
@@ -209,77 +324,138 @@ namespace New_SSQE
         }
 
         // Returns baseline of font scaled depending on font size
-        public int Baseline(int fontSize)
+        public int Baseline(int fontSize, bool unicode = false)
         {
-            float scale = fontSize / (float)OriginSize;
+            if (unicode)
+                return (int)(fontSize * UnicodeMult);
+            else
+            {
+                float scale = fontSize / (float)OriginSize;
 
-            return (int)(_baseline * scale);
+                return (int)(_baseline * scale);
+            }
         }
 
         // Returns width of string scaled depending on the font size
-        public int Extent(string text, int fontSize)
+        public int Extent(string text, int fontSize, bool unicode = false)
         {
-            float scale = fontSize / (float)OriginSize;
-            string[] split = text.Split('\n');
-
-            float maxX = 0;
-
-            foreach (var line in split)
+            if (unicode)
             {
-                float currentX = 0;
+                string[] split = text.Split('\n');
+                int max = 0;
 
-                for (int i = 0; i < line.Length; i++)
+                foreach (var line in split)
                 {
-                    char c = line[i];
-                    if (c < 0 || c > CharRange)
-                        continue;
+                    int cur = 0;
 
-                    if (currentX != 0)
-                        currentX += Bearings[c];
+                    for (int i = 0; i < line.Length; i++)
+                    {
+                        if (line[i] < UnicodeCharRange)
+                            cur += UnicodeExtents[line[i]] + 1;
+                    }
 
-                    currentX += Extents[c];
+                    max = Math.Max(cur, max);
                 }
 
-                maxX = Math.Max(maxX, currentX);
+                return (int)(max * fontSize * UnicodeMult / UnicodeWidth);
             }
+            else
+            {
+                float scale = fontSize / (float)OriginSize;
+                string[] split = text.Split('\n');
 
-            return (int)(maxX * scale);
+                float maxX = 0;
+
+                foreach (var line in split)
+                {
+                    float currentX = 0;
+
+                    for (int i = 0; i < line.Length; i++)
+                    {
+                        char c = line[i];
+                        if (c < 0 || c > CharRange)
+                            continue;
+
+                        if (currentX != 0)
+                            currentX += Bearings[c];
+
+                        currentX += Extents[c];
+                    }
+
+                    maxX = Math.Max(maxX, currentX);
+                }
+
+                return (int)(maxX * scale);
+            }
         }
 
         // Returns one vector4 per character with the necessary data to be passed to a corresponding shader for rendering
         // Formatted as x/y/scale/char
-        public Vector4[] Print(float x, float y, string text, int fontSize)
+        public Vector4[] Print(float x, float y, string text, int fontSize, bool unicode = false)
         {
             Vector4[] verts = new Vector4[text.Replace("\n", "").Length];
 
-            float scale = fontSize / (float)OriginSize;
-            float cx = x;
-            int vi = 0;
-
-            for (int i = 0; i < text.Length; i++)
+            if (unicode)
             {
-                if (text[i] == '\n')
+                float scale = fontSize * UnicodeMult;
+
+                float cx = x;
+                int vi = 0;
+
+                for (int i = 0; i < text.Length; i++)
                 {
-                    cx = x;
-                    y += fontSize;
-                    vi++;
+                    if (text[i] == '\n')
+                    {
+                        cx = x;
+                        y += scale;
+                        vi++;
+                    }
+                    else
+                    {
+                        char c = text[i];
+                        if (c < 0 || c > UnicodeCharRange - 1)
+                            continue;
+
+                        verts[i - vi] = (cx, y, scale, c);
+                        cx += (UnicodeExtents[c] + 1) * scale / UnicodeWidth;
+                    }
                 }
-                else
+            }
+            else
+            {
+                float scale = fontSize / (float)OriginSize;
+                float cx = x;
+                int vi = 0;
+
+                for (int i = 0; i < text.Length; i++)
                 {
-                    char c = text[i];
-                    if (c < 0 || c > CharRange)
-                        continue;
+                    if (text[i] == '\n')
+                    {
+                        cx = x;
+                        y += fontSize;
+                        vi++;
+                    }
+                    else
+                    {
+                        char c = text[i];
+                        if (c < 0 || c > CharRange - 1)
+                            continue;
 
-                    if (cx != x)
-                        cx += Bearings[c] * scale;
+                        if (cx != x)
+                            cx += Bearings[c] * scale;
 
-                    verts[i - vi] = (cx, y, scale, c);
+                        verts[i - vi] = (cx, y, scale, c);
 
-                    cx += Extents[c] * scale;
+                        cx += Extents[c] * scale;
+                    }
                 }
             }
 
             return verts;
         }
+
+        private static readonly int UnicodeCharRange = 256 * 256;
+        public static readonly float UnicodeMult = 0.85f;
+        public static readonly int UnicodeWidth = 16;
     }
 }

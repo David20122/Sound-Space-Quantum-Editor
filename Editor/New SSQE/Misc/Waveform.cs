@@ -2,8 +2,6 @@
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using System;
-using System.Drawing;
 using Un4seen.Bass;
 
 namespace New_SSQE

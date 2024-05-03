@@ -1,8 +1,5 @@
 ﻿using SkiaSharp;
-using System;
-using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
-using System.IO;
 using New_SSQE.GUI;
 using OpenTK.Graphics;
 

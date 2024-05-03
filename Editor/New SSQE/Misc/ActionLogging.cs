@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-
-namespace New_SSQE
+﻿namespace New_SSQE
 {
     // for debugging purposes
     internal class ActionLogging
@@ -12,7 +8,7 @@ namespace New_SSQE
         public static void Register(string log, string tag = "INFO", Exception? ex = null)
         {
             if (ex != null)
-                log += $"\n\n{ExtractExceptionInfo(ex)}";
+                log += $"\n{ex}";
 
             var timestamp = DateTime.Now;
             var logF = $"[{timestamp} - {tag.ToUpper()}] {log}";
@@ -21,24 +17,13 @@ namespace New_SSQE
 
             if (Settings.settings["debugMode"])
             {
-                var logs = string.Join('\n', Logs);
-                File.WriteAllText("logs-debug.txt", logs);
+                try
+                {
+                    var logs = string.Join('\n', Logs);
+                    File.WriteAllText("logs-debug.txt", logs);
+                }
+                catch { }
             }
-        }
-
-        public static string ExtractExceptionInfo(Exception e)
-        {
-            Exception? ex = e;
-
-            List<string> msg = new();
-
-            while (ex != null)
-            {
-                msg.Add($"{e.Message}\n\n{e.StackTrace ?? "[StackTrace was null]"}");
-                ex = ex.InnerException;
-            }
-
-            return string.Join("\n\n", msg);
         }
     }
 }

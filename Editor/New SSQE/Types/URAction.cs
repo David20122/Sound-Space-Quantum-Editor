@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace New_SSQE
+﻿namespace New_SSQE
 {
     [Serializable]
     internal class URAction

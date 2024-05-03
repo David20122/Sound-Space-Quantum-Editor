@@ -6,7 +6,7 @@ namespace SSQE_Player.Models
 {
     internal class Model
     {
-        private readonly int vertexCount;
+        public readonly int vertexCount;
         private readonly VertexArrayHandle VaO;
 
         public Vector3 Size;

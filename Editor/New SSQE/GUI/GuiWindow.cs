@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using System.Drawing;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -69,8 +67,9 @@ namespace New_SSQE.GUI
             Grid?.Render(mousex, mousey, frametime);
             Track?.Render(mousex, mousey, frametime);
 
-
-            GL.UseProgram(Shader.FontTexProgram);
+            var prog = FontRenderer.unicode ? Shader.UnicodeProgram : Shader.FontTexProgram;
+            GL.UseProgram(prog);
+            WindowControl.TexColorLocation = GL.GetUniformLocation(prog, "TexColor");
 
             FontRenderer.SetActive("main");
             foreach (var control in subcontrolsCopied["main"])

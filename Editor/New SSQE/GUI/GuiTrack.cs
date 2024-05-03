@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using OpenTK.Mathematics;
 using OpenTK.Graphics;
@@ -38,8 +35,6 @@ namespace New_SSQE.GUI
         public float StartPos = 0f;
         public float EndPos = 1f;
 
-        private float StartX = 0f;
-        private float EndX = 0f;
         private Vector4 PosSet = new();
 
         private readonly Dictionary<string, int> Indices = new()
@@ -141,8 +136,8 @@ namespace New_SSQE.GUI
 
         public override void GenerateOffsets()
         {
-            color1Texts.Clear();
-            color2Texts.Clear();
+            color1Texts = new();
+            color2Texts = new();
 
             var editor = MainWindow.Instance;
             var currentTime = Settings.settings["currentTime"].Value;

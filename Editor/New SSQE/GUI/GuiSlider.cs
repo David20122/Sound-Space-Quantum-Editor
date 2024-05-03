@@ -1,8 +1,6 @@
-﻿using System;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using OpenTK.Mathematics;
-using System.Collections.Generic;
 
 namespace New_SSQE.GUI
 {
@@ -104,7 +102,7 @@ namespace New_SSQE.GUI
 
             if (Setting == "currentTime")
             {
-                GL.DrawArrays(PrimitiveType.Triangles, 6, 6);
+                GL.DrawArrays(PrimitiveType.Triangles, current, 6);
                 current += 6;
             }
 
@@ -126,7 +124,7 @@ namespace New_SSQE.GUI
             var sc1 = colored ? Settings.settings["color1"] : Color.FromArgb(255, 255, 255);
             var color1 = new float[] { sc1.R / 255f, sc1.G / 255f, sc1.B / 255f };
 
-            var sc2 = colored ? Settings.settings["color2"] : Color.FromArgb(50, 50, 50);
+            var sc2 = colored ? Settings.settings["color2"] : Color.FromArgb(75, 75, 75);
             var color2 = new float[] { sc2.R / 255f, sc2.G / 255f, sc2.B / 255f };
 
             var sc3 = Settings.settings["color3"];
@@ -210,6 +208,12 @@ namespace New_SSQE.GUI
 
         public override void OnMouseUp(Point pos)
         {
+            if (Dragging && this is GuiSliderTimeline timeline && timeline.WasPlaying)
+            {
+                MainWindow.Instance.MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(Settings.settings[Setting].Value);
+                MainWindow.Instance.MusicPlayer.Play();
+            }
+
             Dragging = false;
         }
 

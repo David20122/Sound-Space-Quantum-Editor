@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using New_SSQE.GUI;
+﻿using New_SSQE.GUI;
 using System.Drawing;
 
 namespace New_SSQE

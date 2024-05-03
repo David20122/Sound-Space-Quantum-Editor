@@ -1,9 +1,5 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 
 namespace New_SSQE.Types
 {
@@ -282,7 +278,7 @@ namespace New_SSQE.Types
             var offset = (long)Settings.settings["exportOffset"];
 
             var final = new string[notes.Count + 1];
-            final[0] = id;
+            final[0] = id.Replace(",", "");
 
             var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
             culture.NumberFormat.NumberDecimalSeparator = ".";
