@@ -1,4 +1,45 @@
 ----------------------------------
+    -- 2.2.0.0 - 5/4/2024 --
+
+better (partly experimental) editor layout no way
+
+- now with linux support!
+
+- added an option to clamp scale/rotate to the grid bounds (enabled by default)
+- added a button in the 'OPTIONS' tab to swap click modes
+- added a setting in the 'OPTIONS' tab to disable pausing the song on seek (scrolling/clicking the timeline)
+- added an option to replace the current map's audio ID with a new one in the 'EXPORT' tab
+- added support for dragging and dropping files onto any editor window
+  > .ini's will be applied to the current map and other files will open as a new map
+
+- fixed undoing/redoing scaling by 0%
+- fixed grid place/move ignoring quantum setting when snap to grid is disabled
+- fixed pasting bookmarks with blank text and spaced tildes
+- fixed song offset being weird with different tempos
+- fixed the track being a frame behind when dragging
+- fixed a crash during version checking
+
+- pasting bookmarks can now be undone
+- switching maps now keeps the previous nav tabs selected
+- pressing cancel on any save prompt on close now stops further ones from showing up
+- spoofed mp3 files (the ones from those shady yt to mp3 sites) are now re-encoded in mp3 the first time theyre loaded so they work in rhythia
+  > (not yet implemented on linux); encoding an invalid file takes a while, so loading times for new files *may* be increased
+- having an editor background is no longer forced on update
+  > the provided background was moved to the 'background' directory with a README if you wish to use it
+
+- removed the export recommendation that only appears once
+
+   -- P-2.1.4.0 - 5/4/2024 --
+
+- fixed song offset to match editor
+- fixed vertical hitboxes
+- heavily optimized rendering and sounds
+
+   -- U-2.0.2.0 - 5/4/2024 --
+
+- added linux support
+
+----------------------------------
    -- P-2.1.3.2 - 3/30/2024 --
 
 - fixed applying fps limit
