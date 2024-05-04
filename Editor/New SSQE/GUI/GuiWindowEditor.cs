@@ -708,7 +708,7 @@ namespace New_SSQE.GUI
                     {
                         if (!string.IsNullOrWhiteSpace(ReplaceIDBox.Text))
                         {
-                            var result = MessageBox.Show("Are you sure you want to replace this ID?\n\nAny existing asset with this ID will be overwritten, and the current map will be saved.", "Warning", "Yes", "No");
+                            var result = MessageBox.Show("Are you sure you want to replace this ID?\n\nAny existing asset with this ID will be overwritten and the current map will be saved.", "Warning", "Yes", "No");
                             if (result == DialogResult.No)
                                 return;
 

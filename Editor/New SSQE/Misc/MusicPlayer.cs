@@ -76,7 +76,7 @@ namespace New_SSQE
 
             var stream = Bass.BASS_StreamCreateFile(file, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_STREAM_PRESCAN | BASSFlag.BASS_FX_FREESOURCE);
 
-            if (Bass.BASS_ChannelGetInfo(stream).ctype == BASSChannelType.BASS_CTYPE_STREAM_MF && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (Bass.BASS_ChannelGetInfo(stream).ctype == BASSChannelType.BASS_CTYPE_STREAM_MF && !MainWindow.IsLinux)
             {
                 try
                 {

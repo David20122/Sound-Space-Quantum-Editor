@@ -47,18 +47,11 @@ namespace New_SSQE.GUI
             var controlsCopied = Controls.ToList();
             var subcontrolsCopied = new Dictionary<string, List<WindowControl>>(FontSet);
 
-            GL.UseProgram(Shader.TexProgram);
-
-            BackgroundSquare?.RenderTexture();
-
-            foreach (var control in subcontrolsCopied["other"])
-                if (control.Visible && !control.IsDisposed)
-                    control.RenderTexture();
-
-
             GL.UseProgram(Shader.Program);
-
             BackgroundSquare?.Render(mousex, mousey, frametime);
+            GL.UseProgram(Shader.TexProgram);
+            BackgroundSquare?.RenderTexture();
+            GL.UseProgram(Shader.Program);
 
             foreach (var control in controlsCopied)
                 if (control.Visible && !control.IsDisposed)
@@ -86,6 +79,12 @@ namespace New_SSQE.GUI
 
             FontRenderer.SetActive("squareo");
             foreach (var control in subcontrolsCopied["squareo"])
+                if (control.Visible && !control.IsDisposed)
+                    control.RenderTexture();
+
+            GL.UseProgram(Shader.TexProgram);
+
+            foreach (var control in subcontrolsCopied["other"])
                 if (control.Visible && !control.IsDisposed)
                     control.RenderTexture();
         }

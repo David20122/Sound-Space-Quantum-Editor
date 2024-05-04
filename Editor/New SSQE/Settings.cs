@@ -43,7 +43,6 @@ namespace New_SSQE
             {"limitPlayerFPS", false },
             {"useRhythia", true },
             {"pauseScroll", true },
-            {"japanese", false },
             {"clampSR", true },
 
             {"editorBGOpacity", 255 },
@@ -61,7 +60,8 @@ namespace New_SSQE
             {"fov", 70 },
             {"noteScale", 1 },
             {"cursorScale", 1 },
-            
+
+            {"language", "english" },
             {"autosavedFile", "" },
             {"autosavedProperties", "" },
             {"lastFile", "" },

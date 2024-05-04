@@ -1907,7 +1907,7 @@ namespace New_SSQE
             TimingsWindow.Instance?.Close();
             BookmarksWindow.Instance?.Close();
 
-            FontRenderer.unicode = Settings.settings["japanese"];
+            FontRenderer.unicode = Settings.settings["language"] != "english" || window is GuiWindowLanguage;
             foreach (var control in window.Controls)
                 control.Update();
 
@@ -1943,8 +1943,7 @@ namespace New_SSQE
             if (!Settings.settings["checkUpdates"])
                 return;
 
-            var versionInfo = FileVersionInfo.GetVersionInfo(Process.GetCurrentProcess().MainModule?.FileName ?? "");
-            var currentVersion = versionInfo.FileVersion;
+            var currentVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
             var links = IsLinux ? linuxLinks : windowsLinks;
             var ext = IsLinux ? "" : ".exe";

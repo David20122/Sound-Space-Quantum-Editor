@@ -73,8 +73,8 @@ namespace New_SSQE.GUI
         private readonly GuiCheckbox ReverseScrollCheckbox = new(1420, 260, 45, 45, "reverseScroll", "Reverse Scroll Direction", 34);
 
 
-        // probably not going to use
-        private readonly GuiCheckbox JapaneseCheckbox = new(1420, 755, 45, 45, "japanese", "日本語に切り替える", 34);
+        private readonly GuiButton LanguageButton = new(0, 0, 0, 0, 10, "", 0);
+        private readonly GuiSquare LanguageIcon = new(0, 0, 0, 0, Color.FromArgb(255, 0, 0, 0), false, "assets/textures/Translate.png", "translate");
 
 
         private readonly List<GuiSquare> ColorPickerSquares = new();
@@ -180,6 +180,14 @@ namespace New_SSQE.GUI
             Rect = new RectangleF(0, 0, size.X, size.Y);
 
             base.OnResize(size);
+
+            var widthdiff = size.X / 1920f;
+
+            LanguageButton.Rect = new(BackButton.Rect.Right + 10f * widthdiff, BackButton.Rect.Y, BackButton.Rect.Height, BackButton.Rect.Height);
+            LanguageIcon.Rect = LanguageButton.Rect;
+
+            LanguageButton.Update();
+            LanguageIcon.Update();
         }
 
         public override void OnMouseClick(Point pos, bool right = false)
@@ -416,6 +424,11 @@ namespace New_SSQE.GUI
 
                         RefreshRhythiaPath();
                     }
+
+                    break;
+
+                case 10:
+                    MainWindow.Instance.SwitchWindow(new GuiWindowLanguage());
 
                     break;
             }
