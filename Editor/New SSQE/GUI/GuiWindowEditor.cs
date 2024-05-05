@@ -17,8 +17,8 @@ namespace New_SSQE.GUI
 
         // timing nav
         private readonly GuiButton LNavTiming = new(195, 60, 175, 50, 4, "TIMING", 31, false, true);
-        private readonly GuiTextbox ExportOffset = new(10, 160, 130, 40, "0", 31, true, false, true, "exportOffset");
-        private readonly GuiTextbox SfxOffset = new(180, 160, 130, 40, "0", 31, true, false, true, "sfxOffset");
+        private readonly GuiTextbox ExportOffset = new(10, 160, 130, 40, 31, "exportOffset", false, false, true);
+        private readonly GuiTextbox SfxOffset = new(180, 160, 130, 40, 31, "sfxOffset", false, false, true);
         private readonly GuiButton OpenTimings = new(10, 220, 210, 40, 6, "OPEN BPM SETUP", 27, false, true);
         private readonly GuiButton ImportIni = new(10, 270, 210, 40, 16, "IMPORT INI", 27, false, true);
         private readonly GuiCheckbox Metronome = new(10, 320, 30, 30, "metronome", "Metronome", 26, false, true);
@@ -26,55 +26,55 @@ namespace New_SSQE.GUI
         private readonly GuiButton CopyBookmarks = new(10, 440, 210, 40, 20, "COPY BOOKMARKS", 27, false, true);
         private readonly GuiButton PasteBookmarks = new(10, 490, 210, 40, 21, "PASTE BOOKMARKS", 27, false, true);
 
-        private readonly GuiLabel ExportOffsetLabel = new(10, 130, 100, 30, "Export Offset:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel SfxOffsetLabel = new(180, 130, 100, 30, "SFX Offset:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel ExportOffsetLabel = new(10, 130, 100, 30, "Export Offset:", 30, false, true, "main", false, "color1");
+        private readonly GuiLabel SfxOffsetLabel = new(180, 130, 100, 30, "SFX Offset:", 30, false, true, "main", false, "color1");
 
         // patterns nav
         private readonly GuiButton LNavPatterns = new(380, 60, 175, 50, 8, "PATTERNS", 31, false, true);
         private readonly GuiButton HFlip = new(10, 130, 175, 40, 9, "HORIZONTAL FLIP", 27, false, true);
         private readonly GuiButton VFlip = new(195, 130, 175, 40, 10, "VERTICAL FLIP", 27, false, true);
-        public readonly GuiTextbox RotateBox = new(10, 220, 100, 40, "90", 31, true, false, true);
+        public readonly GuiTextbox RotateBox = new(10, 220, 100, 40, "90", 31, true);
         private readonly GuiButton RotateButton = new(120, 220, 100, 40, 14, "ROTATE", 27, false, true);
-        public readonly GuiTextbox ScaleBox = new(10, 300, 100, 40, "150", 31, true, false, true);
+        public readonly GuiTextbox ScaleBox = new(10, 300, 100, 40, "150", 31, true);
         private readonly GuiButton ScaleButton = new(120, 300, 100, 40, 15, "SCALE", 27, false, true);
         private readonly GuiCheckbox ApplyOnPaste = new(10, 360, 30, 30, "applyOnPaste", "Apply Rotate/Scale On Paste", 27, false, true);
         private readonly GuiCheckbox ClampSR = new(10, 400, 30, 30, "clampSR", "Clamp Rotate/Scale In Bounds", 27, false, true);
         private readonly GuiButton StoreNodes = new(10, 460, 175, 40, 11, "STORE NODES", 27, false, true);
         private readonly GuiButton ClearNodes = new(195, 460, 175, 40, 12, "CLEAR NODES", 27, false, true);
         private readonly GuiCheckbox CurveBezier = new(10, 520, 30, 30, "curveBezier", "Curve Bezier", 27, false, true);
-        private readonly GuiTextbox BezierBox = new(10, 590, 100, 40, "4", 31, true, false, true, "bezierDivisor");
+        private readonly GuiTextbox BezierBox = new(10, 590, 100, 40, 31, "bezierDivisor", false, true, true);
         private readonly GuiButton BezierButton = new(120, 590, 100, 40, 13, "DRAW", 27, false, true);
 
-        private readonly GuiLabel RotateLabel = new(10, 190, 175, 30, "Rotate by Degrees:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ScaleLabel = new(10, 270, 100, 30, "Scale by Percent:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel DrawBezierLabel = new(10, 560, 100, 30, "Draw Bezier with Divisor:", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel RotateLabel = new(10, 190, 175, 30, "Rotate by Degrees:", 30, false, true, "main", false, "color1");
+        private readonly GuiLabel ScaleLabel = new(10, 270, 100, 30, "Scale by Percent:", 30, false, true, "main", false, "color1");
+        private readonly GuiLabel DrawBezierLabel = new(10, 560, 100, 30, "Draw Bezier with Divisor:", 30, false, true, "main", false, "color1");
 
         // player nav
         private readonly GuiButton LNavPlayer = new(10, 0, 400, 50, 17, "PLAYTEST", 31, false, true);
         private readonly GuiButtonList CameraMode = new(10, 160, 150, 40, "cameraMode", 27, false, true);
-        private readonly GuiTextbox NoteScale = new(185, 160, 100, 40, "1", 31, true, false, true, "noteScale", "main", false, true);
-        private readonly GuiTextbox CursorScale = new(310, 160, 100, 40, "1", 31, true, false, true, "cursorScale", "main", false, true);
+        private readonly GuiTextbox NoteScale = new(185, 160, 100, 40, 31, "noteScale", true, false, true);
+        private readonly GuiTextbox CursorScale = new(310, 160, 100, 40, 31, "cursorScale", true, false, true);
         private readonly GuiCheckbox LockCursor = new(10, 220, 30, 30, "lockCursor", "Lock Cursor Within Grid", 27, false, true);
         private readonly GuiCheckbox GridGuides = new(10, 270, 30, 30, "gridGuides", "Grid Guides", 27, false, true);
-        private readonly GuiTextbox Sensitivity = new(10, 350, 115, 40, "1", 31, true, false, true, "sensitivity", "main", false, true);
-        private readonly GuiTextbox Parallax = new(145, 350, 115, 40, "1", 31, true, false, true, "parallax", "main", false, true);
-        private readonly GuiTextbox FieldOfView = new(280, 350, 115, 40, "70", 31, true, false, true, "fov", "main", false, true);
-        private readonly GuiTextbox ApproachDistance = new(10, 435, 150, 40, "1", 31, true, false, true, "approachDistance", "main", false, true);
-        private readonly GuiTextbox HitWindow = new(245, 435, 150, 40, "55", 31, true, false, true, "hitWindow", "main", false, true);
+        private readonly GuiTextbox Sensitivity = new(10, 350, 115, 40, 31, "sensitivity", true, false, true);
+        private readonly GuiTextbox Parallax = new(145, 350, 115, 40, 31, "parallax", true, false, true);
+        private readonly GuiTextbox FieldOfView = new(280, 350, 115, 40, 31, "fov", true, false, true);
+        private readonly GuiTextbox ApproachDistance = new(10, 435, 150, 40, 31, "approachDistance", true, false, true);
+        private readonly GuiTextbox HitWindow = new(245, 435, 150, 40, 31, "hitWindow", true, false, true);
         private readonly GuiSlider PlayerApproachRate = new(10, 520, 400, 32, "playerApproachRate", false, false, true);
         private readonly GuiCheckbox ApproachFade = new(10, 570, 30, 30, "approachFade", "Approach Fade", 27, false, true);
         private readonly GuiButton FromStart = new(10, 630, 200, 40, 18, "PLAY FROM START", 27, false, true);
         private readonly GuiButton PlayMap = new(220, 630, 200, 40, 22, "PLAY HERE", 27, false, true);
 
-        private readonly GuiLabel CameraModeLabel = new(10, 130, 100, 30, "Camera Mode:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel NoteScaleLabel = new(185, 130, 100, 30, "Note Size:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel CursorScaleLabel = new(310, 130, 100, 30, "Cursor Size:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel SensitivityLabel = new(10, 320, 100, 30, "Sensitivity:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ParallaxLabel = new(145, 320, 100, 30, "Parallax:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel FieldOfViewLabel = new(280, 320, 100, 30, "FOV:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ApproachDistanceLabel = new(10, 405, 100, 30, "Approach Distance:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel HitWindowLabel = new(245, 405, 100, 30, "Hit Window:", 30, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel PlayerApproachRateLabel = new(10, 490, 400, 32, "", 30, false, true, "main", true, Settings.settings["color1"]);
+        private readonly GuiLabel CameraModeLabel = new(10, 130, 100, 30, "Camera Mode:", 30, false, true, "main", false, "color1");
+        private readonly GuiLabel NoteScaleLabel = new(185, 130, 100, 30, "Note Size:", 30, false, true, "main", false, "color1");
+        private readonly GuiLabel CursorScaleLabel = new(310, 130, 100, 30, "Cursor Size:", 30, false, true, "main", false, "color1");
+        private readonly GuiLabel SensitivityLabel = new(10, 320, 100, 30, "Sensitivity:", 30, false, true, "main", false, "color1");
+        private readonly GuiLabel ParallaxLabel = new(145, 320, 100, 30, "Parallax:", 30, false, true, "main", false, "color1");
+        private readonly GuiLabel FieldOfViewLabel = new(280, 320, 100, 30, "FOV:", 30, false, true, "main", false, "color1");
+        private readonly GuiLabel ApproachDistanceLabel = new(10, 405, 100, 30, "Approach Distance:", 30, false, true, "main", false, "color1");
+        private readonly GuiLabel HitWindowLabel = new(245, 405, 100, 30, "Hit Window:", 30, false, true, "main", false, "color1");
+        private readonly GuiLabel PlayerApproachRateLabel = new(10, 490, 400, 32, "", 30, false, true, "main", true, "color1");
         
         // snapping nav
         private readonly GuiButton RNavSnapping = new(1365, 60, 175, 50, 26, "SNAPPING", 31, false, true);
@@ -84,8 +84,8 @@ namespace New_SSQE.GUI
         private readonly GuiSlider BeatSnapDivisor = new(1610, 280, 250, 32, "beatDivisor", false, false, true);
         private readonly GuiSlider QuantumSnapDivisor = new(1610, 360, 250, 32, "quantumSnapping", false, false, true);
 
-        private readonly GuiLabel BeatDivisorLabel = new(1610, 250, 250, 32, "", 30, false, true, "main", true, Settings.settings["color1"]);
-        private readonly GuiLabel SnappingLabel = new(1610, 330, 250, 32, "", 30, false, true, "main", true, Settings.settings["color1"]);
+        private readonly GuiLabel BeatDivisorLabel = new(1610, 250, 250, 32, "", 30, false, true, "main", true, "color1");
+        private readonly GuiLabel SnappingLabel = new(1610, 330, 250, 32, "", 30, false, true, "main", true, "color1");
 
         // graphics nav
         private readonly GuiButton RNavGraphics = new(1550, 60, 175, 50, 28, "GRAPHICS", 31, false, true);
@@ -98,49 +98,49 @@ namespace New_SSQE.GUI
         private readonly GuiSlider TrackHeight = new(1610, 440, 250, 32, "trackHeight", false, false, true);
         private readonly GuiSlider TrackCursorPos = new(1610, 520, 250, 32, "cursorPos", false, false, true);
 
-        private readonly GuiLabel ApproachRateLabel = new(1610, 330, 250, 32, "", 28, false, true, "main", true, Settings.settings["color1"]);
-        private readonly GuiLabel TrackHeightLabel = new(1610, 410, 250, 32, "", 28, false, true, "main", true, Settings.settings["color1"]);
-        private readonly GuiLabel CursorPosLabel = new(1610, 490, 250, 32, "", 28, false, true, "main", true, Settings.settings["color1"]);
+        private readonly GuiLabel ApproachRateLabel = new(1610, 330, 250, 32, "", 28, false, true, "main", true, "color1");
+        private readonly GuiLabel TrackHeightLabel = new(1610, 410, 250, 32, "", 28, false, true, "main", true, "color1");
+        private readonly GuiLabel CursorPosLabel = new(1610, 490, 250, 32, "", 28, false, true, "main", true, "color1");
 
         // export nav
         private readonly GuiButton RNavExport = new(1735, 60, 175, 50, 5, "EXPORT", 31, false, true);
         private readonly GuiButton SaveButton = new(1610, 130, 100, 40, 24, "SAVE", 27, false, true);
         private readonly GuiButton SaveAsButton = new(1720, 130, 100, 40, 25, "SAVE AS", 27, false, true);
         private readonly GuiButton ExportSSPMButton = new(1610, 180, 210, 40, 23, "EXPORT SSPM", 27, false, true);
-        private readonly GuiTextbox ReplaceIDBox = new(1610, 320, 210, 40, "", 27, false, false, true);
+        private readonly GuiTextbox ReplaceIDBox = new(1610, 320, 210, 40, 27, true);
         private readonly GuiButton ReplaceID = new(1610, 370, 210, 40, 29, "REPLACE", 27, false, true);
 
-        private readonly GuiLabel ReplaceIDLabel = new(1610, 290, 100, 30, "Replace Audio ID", 30, false, true, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel ReplaceIDLabel = new(1610, 290, 100, 30, "Replace Audio ID", 30, false, true, "main", false, "color1");
 
 
 
         private readonly GuiButton CopyButton = new(0, 0, 301, 42, 0, "COPY MAP DATA", 27, true);
         private readonly GuiButton BackButton = new(0, 0, 301, 42, 1, "BACK TO MENU", 27, true);
 
-        private readonly GuiSlider Tempo = new(0, 0, 0, 0, "tempo", false);
-        private readonly GuiSlider MasterVolume = new(0, 0, 0, 0, "masterVolume", true);
-        private readonly GuiSlider SfxVolume = new(0, 0, 0, 0, "sfxVolume", true);
-        public readonly GuiSliderTimeline Timeline = new(0, 0, 0, 0, false);
-        private readonly GuiButtonPlayPause PlayPause = new(0, 0, 0, 0, 2);
+        private readonly GuiSlider Tempo = new("tempo", false);
+        private readonly GuiSlider MasterVolume = new("masterVolume", true);
+        private readonly GuiSlider SfxVolume = new("sfxVolume", true);
+        public readonly GuiSliderTimeline Timeline = new();
+        private readonly GuiButtonPlayPause PlayPause = new(2);
 
 
 
-        private readonly GuiLabel ToastLabel = new(0, 0, 0, 0, "", 42);
+        private readonly GuiLabel ToastLabel = new(42);
 
-        private readonly GuiLabel ZoomLabel = new(565, 60, 80, 30, "Zoom: ", 32, false, true, "main", false, Settings.settings["color1"]);
-        private readonly GuiLabel ZoomValueLabel = new(640, 60, 80, 30, "", 32, false, true, "main", false, Settings.settings["color2"]);
-        private readonly GuiLabel ClickModeLabel = new(0, 0, 301, 42, "", 30, true, false, "main", false, Settings.settings["color1"]);
+        private readonly GuiLabel ZoomLabel = new(565, 60, 80, 30, "Zoom: ", 32, false, true, "main", false, "color1");
+        private readonly GuiLabel ZoomValueLabel = new(640, 60, 80, 30, "", 32, false, true, "main", false, "color2");
+        private readonly GuiLabel ClickModeLabel = new(0, 0, 301, 42, "", 30, true, false, "main", false, "color1");
 
-        private readonly GuiLabel TempoLabel = new(0, 0, 0, 30, "", 30, true, false, "main", true, Settings.settings["color1"]);
-        private readonly GuiLabel MusicLabel = new(0, 0, 0, 30, "Music", 24, true, false, "main", true, Settings.settings["color1"]);
-        private readonly GuiLabel MusicValueLabel = new(0, 0, 0, 30, "", 24, true, false, "main", true, Settings.settings["color1"]);
-        private readonly GuiLabel SfxLabel = new(0, 0, 0, 30, "SFX", 24, true, false, "main", true, Settings.settings["color1"]);
-        private readonly GuiLabel SfxValueLabel = new(0, 0, 0, 30, "", 24, true, false, "main", true, Settings.settings["color1"]);
+        private readonly GuiLabel TempoLabel = new(0, 0, 0, 30, "", 30, true, false, "main", true, "color1");
+        private readonly GuiLabel MusicLabel = new(0, 0, 0, 30, "Music", 24, true, false, "main", true, "color1");
+        private readonly GuiLabel MusicValueLabel = new(0, 0, 0, 30, "", 24, true, false, "main", true, "color1");
+        private readonly GuiLabel SfxLabel = new(0, 0, 0, 30, "SFX", 24, true, false, "main", true, "color1");
+        private readonly GuiLabel SfxValueLabel = new(0, 0, 0, 30, "", 24, true, false, "main", true, "color1");
 
-        private readonly GuiLabel CurrentTimeLabel = new(0, 0, 0, 30, "", 26, true, false, "main", true, Settings.settings["color1"]);
-        private readonly GuiLabel CurrentMsLabel = new(0, 0, 0, 30, "", 26, true, false, "main", true, Settings.settings["color1"]);
-        private readonly GuiLabel TotalTimeLabel = new(0, 0, 0, 30, "", 26, true, false, "main", true, Settings.settings["color1"]);
-        private readonly GuiLabel NotesLabel = new(0, 0, 0, 30, "", 30, true, false, "main", true, Settings.settings["color1"]);
+        private readonly GuiLabel CurrentTimeLabel = new(0, 0, 0, 30, "", 26, true, false, "main", true, "color1");
+        private readonly GuiLabel CurrentMsLabel = new(0, 0, 0, 30, "", 26, true, false, "main", true, "color1");
+        private readonly GuiLabel TotalTimeLabel = new(0, 0, 0, 30, "", 26, true, false, "main", true, "color1");
+        private readonly GuiLabel NotesLabel = new(0, 0, 0, 30, "", 30, true, false, "main", true, "color1");
 
         private float toastTime = 0f;
         private static string leftNav = "Timing";
@@ -176,7 +176,7 @@ namespace New_SSQE.GUI
                 ApproachDistanceLabel, PlayerApproachRateLabel, HitWindowLabel, ToastLabel
             };
 
-            BackgroundSquare = new(0, 0, 1920, 1080, Color.FromArgb(Settings.settings["editorBGOpacity"], 30, 30, 30), false, "background_editor.png", "editorbg");
+            BackgroundSquare = new(Color.FromArgb(Settings.settings["editorBGOpacity"], 30, 30, 30), "background_editor.png", "editorbg");
             Track = new();
             Grid = new(300, 300);
 
@@ -882,8 +882,6 @@ namespace New_SSQE.GUI
 
         public override void OnResize(Vector2i size)
         {
-            Rect = new RectangleF(0, 0, size.X, size.Y);
-
             base.OnResize(size);
             string file = MainWindow.IsLinux ? "SSQE Player" : "SSQE Player.exe";
 

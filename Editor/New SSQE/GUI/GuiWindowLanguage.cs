@@ -5,7 +5,7 @@ namespace New_SSQE.GUI
 {
     internal class GuiWindowLanguage : GuiWindow
     {
-        private readonly GuiButton BackButton = new(655, 930, 600, 100, 99, "RETURN TO SETTINGS", 52, false, false, "square");
+        private readonly GuiButton BackButton = new(655, 930, 600, 100, 99, "RETURN TO SETTINGS", 52);
 
         private readonly GuiLabel SelectLabel = new(860, 350, 200, 40, "Select Language", 40);
 
@@ -29,7 +29,7 @@ namespace New_SSQE.GUI
 
             for (int i = 0; i < languages.Count; i++)
             {
-                GuiCheckbox checkbox = new(770, 450 + i * 50 + 5, 30, 30, "", "", 0);
+                GuiCheckbox checkbox = new(770, 450 + i * 50 + 5, 30, 30);
                 GuiButton button = new(810, 450 + i * 50, 300, 40, i, languages[i].ToUpper(), 30);
 
                 languageCheckboxes.Add(checkbox);
@@ -38,7 +38,7 @@ namespace New_SSQE.GUI
                 Controls.Add(button);
             }
 
-            BackgroundSquare = new(0, 0, 1920, 1080, Color.FromArgb(255, 30, 30, 30), false, "background_menu.png", "menubg");
+            BackgroundSquare = new(Color.FromArgb(255, 30, 30, 30), "background_menu.png", "menubg");
             Init();
 
             OnResize(MainWindow.Instance.ClientSize);
@@ -50,13 +50,6 @@ namespace New_SSQE.GUI
                 languageCheckboxes[i].Toggle = Settings.settings["language"] == languages[i];
 
             base.Render(mousex, mousey, frametime);
-        }
-
-        public override void OnResize(Vector2i size)
-        {
-            Rect = new RectangleF(0, 0, size.X, size.Y);
-
-            base.OnResize(size);
         }
 
         public override void OnButtonClicked(int id)

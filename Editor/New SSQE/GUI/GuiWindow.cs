@@ -10,7 +10,7 @@ namespace New_SSQE.GUI
         public RectangleF Rect;
 
         public List<WindowControl> Controls = new();
-        public Dictionary<string, List<WindowControl>> FontSet = new()
+        private readonly Dictionary<string, List<WindowControl>> FontSet = new()
         {
             {"main", new List<WindowControl>() },
             {"square", new List<WindowControl>() },
@@ -20,15 +20,15 @@ namespace New_SSQE.GUI
 
         public GuiTrack? Track;
         public GuiGrid? Grid;
-        public GuiSquare? BackgroundSquare;
+        public GuiSquareBackground? BackgroundSquare;
 
         public float YOffset = 80;
 
         private bool buttonClicked = false;
 
-        protected GuiWindow(float posx, float posy, float sizex, float sizey)
+        protected GuiWindow(float x, float y, float w, float h)
         {
-            Rect = new RectangleF(posx, posy, sizex, sizey);
+            Rect = new RectangleF(x, y, w, h);
         }
 
         protected void Init()
@@ -192,6 +192,8 @@ namespace New_SSQE.GUI
 
         public virtual void OnResize(Vector2i size)
         {
+            Rect = new(0, 0, size.X, size.Y);
+
             var widthdiff = size.X / 1920f;
             var heightdiff = size.Y / 1080f;
 

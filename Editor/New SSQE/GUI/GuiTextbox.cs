@@ -24,7 +24,7 @@ namespace New_SSQE.GUI
         private Color textColor;
         private Color prevColor = Color.White;
 
-        public GuiTextbox(float posx, float posy, float sizex, float sizey, string text, int textSize, bool numeric, bool lockSize = false, bool moveWithOffset = false, string setting = "", string font = "main", bool isKeybind = false, bool isFloat = false, bool isPositive = false) : base(posx, posy, sizex, sizey)
+        public GuiTextbox(float x, float y, float w, float h, string text, int textSize, bool numeric, bool lockSize = false, bool moveWithOffset = false, string setting = "", string font = "main", bool isKeybind = false, bool isFloat = false, bool isPositive = false) : base(x, y, w, h)
         {
             Text = text;
             prevText = Text;
@@ -55,6 +55,23 @@ namespace New_SSQE.GUI
 
             Init();
         }
+
+        /// <summary>
+        /// Numeric setting constructor
+        /// </summary>
+        public GuiTextbox(float x, float y, float w, float h, int textSize, string setting, bool isFloat, bool isPositive = false, bool moveWithOffset = false) : this(x, y, w, h, "", textSize, true, false, moveWithOffset, setting, "main", false, isFloat, isPositive) { }
+        /// <summary>
+        /// Blank universal constructor
+        /// </summary>
+        public GuiTextbox(float x, float y, float w, float h, int textSize, bool moveWithOffset = false) : this(x, y, w, h, "", textSize, false, false, moveWithOffset, "", "main", false, false, false) { }
+        /// <summary>
+        /// Blank numeric constructor
+        /// </summary>
+        public GuiTextbox(float x, float y, float w, float h, string text, int textSize, bool moveWithOffset = false) : this(x, y, w, h, text, textSize, true, false, moveWithOffset, "", "main", false, false, false) { }
+        /// <summary>
+        /// Keybind setting constructor
+        /// </summary>
+        public GuiTextbox(float x, float y, float w, float h, int textSize, string keybind) : this(x, y, w, h, "", textSize, false, false, false, keybind, "main", true, false, false) { }
 
         public override void Render(float mousex, float mousey, float frametime)
         {
@@ -290,7 +307,7 @@ namespace New_SSQE.GUI
             Update();
         }
 
-        private void SetSetting()
+        public void SetSetting()
         {
             if (Setting != "" && (IsFloat ? float.TryParse(Text, out _) : int.TryParse(Text, out _)))
             {

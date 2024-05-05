@@ -13,9 +13,9 @@ namespace New_SSQE.GUI
         public Color Color;
         private Color prevColor = Color.White;
 
-        public GuiLabel(float posx, float posy, float sizex, float sizey, string text, int textSize, bool lockSize = false, bool moveWithOffset = false, string font = "main", bool centered = true, Color? color = null) : base(posx, posy, sizex, sizey)
+        public GuiLabel(float x, float y, float w, float h, string text, int textSize, bool lockSize = false, bool moveWithOffset = false, string font = "main", bool centered = true, string? color = null) : base(x, y, w, h)
         {
-            Color = color ?? Color.White;
+            Color = color == null ? Color.White : Settings.settings[color];
 
             Text = text;
             prevText = text;
@@ -31,6 +31,10 @@ namespace New_SSQE.GUI
 
             Init();
         }
+
+        public GuiLabel(float x, float y, float w, float h, string text, int textSize, string font, bool centered = true, string? color = null) : this(x, y, w, h, text, textSize, false, false, font, centered, color) { }
+        public GuiLabel(float x, float y, float w, float h, int textSize) : this(x, y, w, h, "", textSize, false, false, "main", true, null) { }
+        public GuiLabel(int textSize) : this(0, 0, 0, 0, "", textSize, false, false, "main", true, null) { }
 
         public override void Render(float mousex, float mousey, float frametime)
         {

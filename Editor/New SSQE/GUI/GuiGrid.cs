@@ -29,7 +29,7 @@ namespace New_SSQE.GUI
             {"lineLength", 0 },
         };
 
-        public GuiGrid(float sizex, float sizey) : base(0f, 0f, sizex, sizey)
+        public GuiGrid(float w, float h) : base(0, 0, w, h)
         {
             Dynamic = true;
             prevRect = Rect;

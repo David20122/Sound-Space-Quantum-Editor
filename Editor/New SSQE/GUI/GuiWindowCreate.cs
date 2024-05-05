@@ -1,12 +1,11 @@
-﻿using OpenTK.Mathematics;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace New_SSQE.GUI
 {
     internal class GuiWindowCreate : GuiWindow
     {
         private readonly GuiLabel Label = new(832, 478, 256, 20, "Input Audio ID", 30);
-        private readonly GuiTextbox IDBox = new(832, 508, 256, 64, "", 30, false);
+        private readonly GuiTextbox IDBox = new(832, 508, 256, 64, 30);
 
         private readonly GuiButton CreateButton = new(832, 592, 256, 64, 0, "CREATE", 38);
         private readonly GuiButton ImportButton = new(832, 666, 256, 64, 1, "IMPORT FILE", 38);
@@ -24,17 +23,10 @@ namespace New_SSQE.GUI
                 Label
             };
 
-            BackgroundSquare = new(0, 0, 1920, 1080, Color.FromArgb(255, 30, 30, 30), false, "background_menu.png", "menubg");
+            BackgroundSquare = new(Color.FromArgb(255, 30, 30, 30), "background_menu.png", "menubg");
             Init();
 
             OnResize(MainWindow.Instance.ClientSize);
-        }
-
-        public override void OnResize(Vector2i size)
-        {
-            Rect = new RectangleF(0, 0, size.X, size.Y);
-
-            base.OnResize(size);
         }
 
         public override void OnButtonClicked(int id)

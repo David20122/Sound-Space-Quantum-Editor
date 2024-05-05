@@ -5,18 +5,18 @@ namespace New_SSQE.GUI
 {
     internal class GuiWindowMenu : GuiWindow
     {
-        private readonly GuiLabel clLabel = new(60, 195, 200, 40, "CHANGELOG", 42, false, false, "square", false);
-        private readonly GuiLabel ssLabel = new(35, 0, 750, 100, "SOUND SPACE", 156, false, false, "square", false);
-        private readonly GuiLabel qeLabel = new(615, 140, 150, 40, "QUANTUM EDITOR", 38, false, false, "square", false);
-        private readonly GuiLabel ChangelogLabel = new(60, 230, 890, 715, "", 20, false, false, "main", false);
+        private readonly GuiLabel clLabel = new(60, 195, 200, 40, "CHANGELOG", 42, "square", false);
+        private readonly GuiLabel ssLabel = new(35, 0, 750, 100, "SOUND SPACE", 156, "square", false);
+        private readonly GuiLabel qeLabel = new(615, 140, 150, 40, "QUANTUM EDITOR", 38, "square", false);
+        private readonly GuiLabel ChangelogLabel = new(60, 230, 890, 715, "", 20, "main", false);
 
-        private readonly GuiButton CreateButton = new(1190, 180, 600, 100, 0, "CREATE NEW MAP", 54, false, false, "square");
-        private readonly GuiButton LoadButton = new(1190, 295, 600, 100, 1, "LOAD MAP", 54, false, false, "square");
-        private readonly GuiButton ImportButton = new(1190, 410, 600, 100, 2, "IMPORT MAP", 54, false, false, "square");
-        private readonly GuiButton SettingsButton = new(1190, 525, 600, 100, 3, "SETTINGS", 54, false, false, "square");
+        private readonly GuiButton CreateButton = new(1190, 180, 600, 100, 0, "CREATE NEW MAP", 54, "square");
+        private readonly GuiButton LoadButton = new(1190, 295, 600, 100, 1, "LOAD MAP", 54, "square");
+        private readonly GuiButton ImportButton = new(1190, 410, 600, 100, 2, "IMPORT MAP", 54, "square");
+        private readonly GuiButton SettingsButton = new(1190, 525, 600, 100, 3, "SETTINGS", 54, "square");
 
-        private readonly GuiButton AutosavedButton = new(1190, 640, 600, 100, 4, "AUTOSAVED MAP", 54, false, false, "square");
-        private readonly GuiButton LastMapButton = new(1190, 755, 600, 100, 5, "EDIT LAST MAP", 54, false, false, "square");
+        private readonly GuiButton AutosavedButton = new(1190, 640, 600, 100, 4, "AUTOSAVED MAP", 54, "square");
+        private readonly GuiButton LastMapButton = new(1190, 755, 600, 100, 5, "EDIT LAST MAP", 54, "square");
 
         private readonly GuiSlider ChangelogSlider = new(950, 230, 20, 720, "changelogPosition", true);
 
@@ -71,7 +71,7 @@ namespace New_SSQE.GUI
                 (MapSelect4, MapClose4),
             };
             
-            BackgroundSquare = new(0, 0, 1920, 1080, Color.FromArgb(255, 30, 30, 30), false, "background_menu.png", "menubg");
+            BackgroundSquare = new(Color.FromArgb(255, 30, 30, 30), "background_menu.png", "menubg");
             Init();
 
             if (File.Exists("background_menu.png"))
@@ -117,8 +117,6 @@ namespace New_SSQE.GUI
 
         public override void OnResize(Vector2i size)
         {
-            Rect = new RectangleF(0, 0, size.X, size.Y);
-
             base.OnResize(size);
 
             LastMapButton.Rect.Y = Settings.settings["autosavedFile"] == "" ? AutosavedButton.Rect.Y : LastMapButton.Rect.Y;

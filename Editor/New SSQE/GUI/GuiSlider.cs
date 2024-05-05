@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using OpenTK.Mathematics;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace New_SSQE.GUI
 {
@@ -18,7 +19,7 @@ namespace New_SSQE.GUI
 
         private readonly float defaultValue;
 
-        public GuiSlider(float posx, float posy, float sizex, float sizey, string setting, bool reverse, bool lockSize = false, bool moveWithOffset = false) : base(posx, posy, sizex, sizey)
+        public GuiSlider(float x, float y, float w, float h, string setting, bool reverse, bool lockSize = false, bool moveWithOffset = false) : base(x, y, w, h)
         {
             Setting = setting;
 
@@ -30,6 +31,8 @@ namespace New_SSQE.GUI
 
             Init();
         }
+
+        public GuiSlider(string setting, bool reverse, bool lockSize = false, bool moveWithOffset = false) : this(0, 0, 0, 0, setting, reverse, lockSize, moveWithOffset) { }
 
         public override void Render(float mousex, float mousey, float frametime)
         {

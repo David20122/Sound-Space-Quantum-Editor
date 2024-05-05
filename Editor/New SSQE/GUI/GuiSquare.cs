@@ -15,7 +15,7 @@ namespace New_SSQE.GUI
 
         private readonly bool Outline;
 
-        public GuiSquare(float posx, float posy, float sizex, float sizey, Color color, bool outline = false, string fileName = "", string textureName = "") : base(posx, posy, sizex, sizey)
+        public GuiSquare(float x, float y, float w, float h, Color color, bool outline = false, string fileName = "", string textureName = "") : base(x, y, w, h)
         {
             Color = color;
             prevColor = Color;
@@ -36,6 +36,8 @@ namespace New_SSQE.GUI
 
             Init();
         }
+
+        public GuiSquare(Color color, bool outline = false, string fileName = "", string textureName = "") : this(0, 0, 0, 0, color, outline, fileName, textureName) { }
 
         public override void Render(float mousex, float mousey, float frametime)
         {

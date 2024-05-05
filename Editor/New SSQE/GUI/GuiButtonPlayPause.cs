@@ -6,7 +6,7 @@ namespace New_SSQE.GUI
     {
         private bool wasPlaying = false;
 
-        public GuiButtonPlayPause(float posx, float posy, float sizex, float sizey, int id) : base(posx, posy, sizex, sizey, id, "", 0, true)
+        public GuiButtonPlayPause(int id) : base(0, 0, 0, 0, id, "", 0, true)
         {
             HasSubTexture = true;
             tHandle = TextureManager.GetOrRegister("widgets", null, false, TextureUnit.Texture1);

@@ -35,10 +35,10 @@ namespace New_SSQE.GUI
 
         public static int TexColorLocation;
 
-        public WindowControl(float posx, float posy, float sizex, float sizey)
+        public WindowControl(float x, float y, float w, float h)
         {
-            Rect = new(posx, posy, sizex, sizey);
-            OriginRect = new(posx, posy, sizex, sizey);
+            Rect = new(x, y, w, h);
+            OriginRect = new(x, y, w, h);
         }
 
         // Vertex: X, Y, R, G, B, A (float)

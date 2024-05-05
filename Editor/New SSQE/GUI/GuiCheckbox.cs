@@ -15,7 +15,7 @@ namespace New_SSQE.GUI
         private Color textColor;
         private Color prevColor = Color.White;
 
-        public GuiCheckbox(float posx, float posy, float sizex, float sizey, string Setting, string text, int textSize, bool lockSize = false, bool moveWithOffset = false, string font = "main") : base(posx, posy, sizex, sizey)
+        public GuiCheckbox(float x, float y, float w, float h, string Setting, string text, int textSize, bool lockSize = false, bool moveWithOffset = false, string font = "main") : base(x, y, w, h)
         {
             setting = Setting;
 
@@ -30,6 +30,10 @@ namespace New_SSQE.GUI
 
             Init();
         }
+
+        public GuiCheckbox(float x, float y, float w, float h, string Setting, string text, int textSize) : this(x, y, w, h, Setting, text, textSize, false, false, "main") { }
+        public GuiCheckbox(float x, float y, float w, float h) : this(x, y, w, h, "", "", 0, false, false, "main") { }
+        public GuiCheckbox(float x, float y, float w, float h, string text, int textSize) : this(x, y, w, h, "", text, textSize, false, false, "main") { }
 
         public override void Render(float mousex, float mousey, float frametime)
         {

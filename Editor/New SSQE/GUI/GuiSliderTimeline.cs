@@ -21,7 +21,7 @@ namespace New_SSQE.GUI
         private readonly ArrayPool<Vector4> Pool = ArrayPool<Vector4>.Shared;
         public bool WasPlaying;
 
-        public GuiSliderTimeline(float posx, float posy, float sizex, float sizey, bool reverse, bool lockSize = false) : base(posx, posy, sizex, sizey, "currentTime", reverse, lockSize)
+        public GuiSliderTimeline() : base(0, 0, 0, 0, "currentTime", false)
         {
             Font = "main";
             Dynamic = true;

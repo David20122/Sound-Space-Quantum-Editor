@@ -19,7 +19,7 @@ namespace New_SSQE.GUI
 
         public bool HasSubTexture = false;
 
-        public GuiButton(float posx, float posy, float sizex, float sizey, int id, string text, int textSize, bool lockSize = false, bool moveWithOffset = false, string font = "main") : base(posx, posy, sizex, sizey)
+        public GuiButton(float x, float y, float w, float h, int id, string text, int textSize, bool lockSize = false, bool moveWithOffset = false, string font = "main") : base(x, y, w, h)
         {
             ID = id;
 
@@ -38,6 +38,12 @@ namespace New_SSQE.GUI
 
             Init();
         }
+
+        public GuiButton(float x, float y, float w, float h, int id, string text, int textSize) : this(x, y, w, h, id, text, textSize, false, false, "main") { }
+        public GuiButton(float x, float y, float w, float h, int id, string text, int textSize, string font = "main") : this(x, y, w, h, id, text, textSize, false, false, font) { }
+        public GuiButton(int id, string text, int textSize, string font = "main") : this(0, 0, 0, 0, id, text, textSize, false, false, font) { }
+        public GuiButton(float x, float y, float w, float h, int id) : this(x, y, w, h, id, "", 0, false, false, "main") { }
+        public GuiButton(int id) : this(0, 0, 0, 0, id, "", 0, false, false, "main") { }
 
         public override void Render(float mousex, float mousey, float frametime)
         {
