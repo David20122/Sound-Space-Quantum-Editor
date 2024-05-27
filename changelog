@@ -1,4 +1,19 @@
 ----------------------------------
+    -- 2.2.1.0 - 5/27/2024 --
+
+- fixed rendering the timing/bookmark/export windows on linux
+- fixed the not responding notification when closing with an unsaved map on linux
+
+- unsaved maps are now opened before prompting to save when closing the editor
+- fixed being able to open multiple instances of the same file if one isnt saved
+  > these should improve save reliability
+- fixed opacity boxes showing a clamped value without actually clamping the setting
+- fixed drag/drop still applying a dropped txt to the current map if a required audio file is not present and importing one is cancelled
+- fixed autosave recursion
+- renamed 'IMPORT MAP' to 'PASTE MAP'
+- added a feedback button in the main menu that links to a google form for bugs or feature requests
+
+----------------------------------
     -- 2.2.0.0 - 5/4/2024 --
 
 better (partly experimental) editor layout no way
