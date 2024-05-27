@@ -10,7 +10,6 @@
 - fixed opacity boxes showing a clamped value without actually clamping the setting
 - fixed drag/drop still applying a dropped txt to the current map if a required audio file is not present and importing one is cancelled
 - fixed autosave recursion
-- renamed 'IMPORT MAP' to 'PASTE MAP'
 - added a feedback button in the main menu that links to a google form for bugs or feature requests
 
 ----------------------------------
