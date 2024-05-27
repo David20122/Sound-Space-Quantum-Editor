@@ -8,6 +8,11 @@ namespace New_SSQE
         {
             try
             {
+                TaskScheduler.UnobservedTaskException += (s, e) =>
+                {
+                    ActionLogging.Register("Unobserved task exception occurred", "ERROR", e.Exception);
+                };
+
                 Start();
 
                 ActionLogging.Register("[Normal application exit]");

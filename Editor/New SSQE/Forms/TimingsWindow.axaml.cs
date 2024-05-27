@@ -2,6 +2,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
+using DiscordRPC;
 using System.Collections.ObjectModel;
 using System.Globalization;
 
@@ -24,13 +26,17 @@ namespace New_SSQE
 
             culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
             culture.NumberFormat.NumberDecimalSeparator = ".";
+
         }
+
+        private static TaskCompletionSource<bool>? tcs = new();
 
         public static void ShowWindow()
         {
             Instance?.Close();
 
-            new TimingsWindow().Show();
+            var window = new TimingsWindow();
+
             Instance?.ResetList();
 
             if (Dataset.Count > 0)
@@ -42,6 +48,14 @@ namespace New_SSQE
                     if (item.Ms == point.Ms && item.BPM == point.BPM && Instance?.PointList.SelectedItems.Count == 0)
                         Instance?.PointList.SelectedItems.Add(item);
                 }
+            }
+
+            window.Show();
+
+            if (MainWindow.IsLinux)
+            {
+                window.Topmost = true;
+                BackgroundWindow.YieldWindow(window);
             }
         }
 

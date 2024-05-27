@@ -3,6 +3,7 @@ using Egorozh.ColorPicker.Dialog;
 using Avalonia.Threading;
 using Avalonia.Controls;
 using Bitmap = Avalonia.Media.Imaging.Bitmap;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace New_SSQE
 {
@@ -41,24 +42,7 @@ namespace New_SSQE
             };
 
             dialog.Show();
-
-            using var source = new CancellationTokenSource();
-
-            var task = Task.Run(async () =>
-            {
-                dialog.Closed += (s, e) => tcs.TrySetResult(true);
-
-                return await tcs.Task;
-            }).ContinueWith(t =>
-            {
-                source.Cancel();
-
-                return true;
-            });
-
-            Dispatcher.UIThread.MainLoop(source.Token);
-
-            var final = task.Result;
+            BackgroundWindow.YieldWindow(dialog);
 
             Color = Color.FromArgb(dialog.Color.R, dialog.Color.G, dialog.Color.B);
 

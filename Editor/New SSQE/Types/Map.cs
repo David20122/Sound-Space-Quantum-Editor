@@ -68,6 +68,7 @@ namespace New_SSQE.Types
             if (loadAudio)
             {
                 editor.LoadAudio(soundID);
+                editor.MusicPlayer.Volume = Settings.settings["masterVolume"].Value;
                 Settings.settings["currentTime"].Max = (float)editor.MusicPlayer.TotalTime.TotalMilliseconds;
                 Settings.settings["currentTime"].Step = (float)editor.MusicPlayer.TotalTime.TotalMilliseconds / 2000f;
             }

@@ -319,7 +319,8 @@ namespace New_SSQE.GUI
                 double halfStep = stepMs / 2;
                 double stepSmall = stepMs / divisor;
                 double curStep = stepSmall;
-                float lineX = cursorX - posX + point.Ms / 1000f * noteStep;
+                double lineXD = cursorX - posX + point.Ms / 1000f * noteStep;
+                float lineX = (float)lineXD;
                 startBpmOffsets[i] = (lineX, 0, 1, 8);
                 double x;
 
@@ -343,13 +344,13 @@ namespace New_SSQE.GUI
 
                 for (int j = 0; j < pointMetrics.X; j++)
                 {
-                    x = lineX + stepMs * (j + 1) / 1000f * noteStep;
+                    x = lineXD + stepMs * (j + 1) / 1000f * noteStep;
                     fullBpmOffsets[current.X + j] = ((float)x, 0, 1, 1);
                 }
 
                 for (int j = 0; j < pointMetrics.Y; j++)
                 {
-                    x = lineX + (stepMs * j + halfStep) / 1000f * noteStep;
+                    x = lineXD + (stepMs * j + halfStep) / 1000f * noteStep;
                     halfBpmOffsets[current.Y + j] = ((float)x, 0, 1, 2);
                 }
 
@@ -362,7 +363,7 @@ namespace New_SSQE.GUI
                     else if (cur + 1 == divisor / 2 && doubleDiv)
                         curStep += stepSmall;
 
-                    x = lineX + (stepSmall * j + curStep) / 1000f * noteStep;
+                    x = lineXD + (stepSmall * j + curStep) / 1000f * noteStep;
                     subBpmOffsets[current.Z + j] = ((float)x, 0, 1, 0);
                 }
 

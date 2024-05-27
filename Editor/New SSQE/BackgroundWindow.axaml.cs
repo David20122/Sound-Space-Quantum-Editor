@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Threading;
 
 namespace New_SSQE
 {
@@ -7,6 +8,31 @@ namespace New_SSQE
         public BackgroundWindow()
         {
             InitializeComponent();
+        }
+
+        private static TaskCompletionSource<bool>? tcs = new();
+
+        public static void YieldWindow(Window window)
+        {
+            using var source = new CancellationTokenSource();
+
+            var task = Task.Run(async () =>
+            {
+                tcs = new();
+                window.Closed += (s, e) => tcs.TrySetResult(true);
+
+                return await tcs.Task;
+            }).ContinueWith(t =>
+            {
+                source.Cancel();
+
+                return true;
+            });
+
+            Dispatcher.UIThread.MainLoop(source.Token);
+
+            var final = task.Result;
+            return;
         }
     }
 }

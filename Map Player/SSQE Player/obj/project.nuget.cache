@@ -1,11 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "9ju9mKHSXhEtmNsflWtZVOVnGOphtnUjMuBNKNDVijiFk7OdG2gX5j+uES+E/rbCR8dXypwH2BKPLv1E8rs78Q==",
+  "dgSpecHash": "jFRErpH9wc9wDYG06Yqe+AwZwMKzbsE+eRIMicGXGpOp2icQT4ZVoM9x27OjKMiipNa/sx+v23ipkNqZoSxo4A==",
   "success": true,
   "projectFilePath": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Owner\\.nuget\\packages\\microsoft.net.illink.analyzers\\7.0.100-1.23211.1\\microsoft.net.illink.analyzers.7.0.100-1.23211.1.nupkg.sha512",
-    "C:\\Users\\Owner\\.nuget\\packages\\microsoft.net.illink.tasks\\7.0.100-1.23211.1\\microsoft.net.illink.tasks.7.0.100-1.23211.1.nupkg.sha512",
     "C:\\Users\\Owner\\.nuget\\packages\\opentk\\5.0.0-pre.8\\opentk.5.0.0-pre.8.nupkg.sha512",
     "C:\\Users\\Owner\\.nuget\\packages\\opentk.compute\\5.0.0-pre.8\\opentk.compute.5.0.0-pre.8.nupkg.sha512",
     "C:\\Users\\Owner\\.nuget\\packages\\opentk.core\\5.0.0-pre.8\\opentk.core.5.0.0-pre.8.nupkg.sha512",
@@ -23,8 +21,7 @@
     "C:\\Users\\Owner\\.nuget\\packages\\skiasharp.nativeassets.win32\\2.88.7\\skiasharp.nativeassets.win32.2.88.7.nupkg.sha512",
     "C:\\Users\\Owner\\.nuget\\packages\\stbtruetypesharp\\1.26.12\\stbtruetypesharp.1.26.12.nupkg.sha512",
     "C:\\Users\\Owner\\.nuget\\packages\\system.json\\4.7.1\\system.json.4.7.1.nupkg.sha512",
-    "C:\\Users\\Owner\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512",
-    "C:\\Users\\Owner\\.nuget\\packages\\microsoft.netcore.app.host.linux-x64\\6.0.25\\microsoft.netcore.app.host.linux-x64.6.0.25.nupkg.sha512"
+    "C:\\Users\\Owner\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
   ],
   "logs": []
 }

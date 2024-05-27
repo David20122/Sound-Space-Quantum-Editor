@@ -46,7 +46,6 @@ namespace New_SSQE
         }
 
         private static DialogResult Result;
-        private static TaskCompletionSource<bool>? tcs = new();
 
         public static DialogResult Show(string message, string icon, params string[] buttons)
         {
@@ -62,25 +61,8 @@ namespace New_SSQE
                 box.GetControl<Button>($"{buttons[i]}{buttons.Length - i}").IsVisible = true;
 
             box.Show();
+            BackgroundWindow.YieldWindow(box);
 
-            using var source = new CancellationTokenSource();
-
-            var task = Task.Run(async () =>
-            {
-                tcs = new();
-                box.Closed += (s, e) => tcs.TrySetResult(true);
-
-                return await tcs.Task;
-            }).ContinueWith(t =>
-            {
-                source.Cancel();
-
-                return true;
-            });
-
-            Dispatcher.UIThread.MainLoop(source.Token);
-
-            var final = task.Result;
             return Result;
         }
     }

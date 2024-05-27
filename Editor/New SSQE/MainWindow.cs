@@ -22,6 +22,7 @@ using OpenTK.Graphics;
 using New_SSQE.Types;
 using DiscordRPC;
 using DiscordRPC.Logging;
+using Un4seen.Bass;
 
 namespace New_SSQE
 {
@@ -37,7 +38,7 @@ namespace New_SSQE
         public GuiWindow CurrentWindow;
 
         public List<Map> Maps = new();
-        public Map CurrentMap;
+        public Map? CurrentMap;
         private Map prevMap;
 
         public List<Note> Notes = new();
@@ -71,8 +72,6 @@ namespace New_SSQE
         private bool discordEnabled = true;
 
 
-
-        private bool closing = false;
 
         // hacky workaround for fullscreen being awful
         private bool isFullscreen = false;
@@ -165,26 +164,20 @@ namespace New_SSQE
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         }
 
-        private new void UpdateFrame()
-        {
-            if (discordEnabled)
-                try { discord.Invoke(); } catch { }
-
-            ExportSSPM.UpdateID();
-        }
-
         private double frameTime;
         private const double updateFrequency = 1 / 10.0;
 
         protected override void OnRenderFrame(FrameEventArgs args)
         {
-            if (closing)
+            if (attemptClose)
+                RunClose();
+            if (closed)
                 return;
 
             frameTime += args.Time;
             if (frameTime > updateFrequency)
             {
-                UpdateFrame();
+                ExportSSPM.UpdateID();
                 frameTime = 0;
             }
 
@@ -686,6 +679,9 @@ namespace New_SSQE
 
                 if (File.Exists(file))
                 {
+                    bool loaded = true;
+                    Map? prev = CurrentMap;
+
                     if (Path.GetExtension(file) == ".ini" && CurrentWindow is GuiWindowEditor)
                         ImportProperties(file);
                     else if (acceptedAudios.Contains(Path.GetExtension(file)))
@@ -694,10 +690,18 @@ namespace New_SSQE
                         if (file != $"{Directory.GetCurrentDirectory()}\\cached\\{id}.asset")
                             File.Copy(file, $"cached/{id}.asset", true);
 
-                        LoadMap(id);
+                        loaded = LoadMap(id);
                     }
                     else
-                        LoadMap(file, true);
+                        loaded = LoadMap(file, true);
+
+                    if (!loaded && prev != null)
+                    {
+                        prev.MakeCurrent();
+
+                        if (CurrentWindow is GuiWindowEditor editor)
+                            editor.Timeline.GenerateOffsets();
+                    }
                 }
             }
         }
@@ -778,13 +782,17 @@ namespace New_SSQE
             }
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        private bool forceClose = false;
+        private bool attemptClose = false;
+        private bool closed = false;
+
+        private void RunClose()
         {
-            closing = true;
+            attemptClose = false;
 
             bool cancel = false;
 
-            Map temp = CurrentMap;
+            Map? temp = CurrentMap;
 
             List<Map> tempSave = new();
             List<Map> tempKeep = new();
@@ -799,6 +807,10 @@ namespace New_SSQE
 
             foreach (Map map in tempSave)
             {
+                map.MakeCurrent();
+                SwitchWindow(new GuiWindowEditor());
+                OnRenderFrame(new FrameEventArgs());
+
                 cancel |= !map.Close(false);
                 if (cancel)
                     break;
@@ -812,26 +824,37 @@ namespace New_SSQE
             else
                 temp?.MakeCurrent();
 
-            e.Cancel = cancel;
+            forceClose = !cancel;
 
-            if (CurrentWindow is GuiWindowMenu menu)
-                menu.AssembleMapList();
+            if (!cancel)
+                Close();
+        }
 
-            Settings.Save();
-
-            TimingsWindow.Instance?.Close();
-            BookmarksWindow.Instance?.Close();
-
-            if (!e.Cancel)
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (!forceClose)
             {
+                attemptClose = true;
+                e.Cancel = true;
+            }
+            else
+            {
+                closed = true;
+
+                if (CurrentWindow is GuiWindowMenu menu)
+                    menu.AssembleMapList();
+
+                Settings.Save();
+
+                TimingsWindow.Instance?.Close();
+                BookmarksWindow.Instance?.Close();
+
                 MusicPlayer.Dispose();
                 CurrentWindow?.Dispose();
 
                 if (discordEnabled)
                     try { discord.Dispose(); } catch { }
             }
-
-            closing = !e.Cancel;
         }
 
 
@@ -1166,6 +1189,9 @@ namespace New_SSQE
                 Settings.settings["lastFile"] = FileName;
             Settings.Save(reload);
 
+            string tempSID = SoundID;
+            string tempFN = FileName;
+
             var data = Map.Save(SoundID, Notes);
 
             if (forced || (FileName == null && (Notes.Count > 0 || TimingPoints.Count > 0)) || (FileName != null && data != File.ReadAllText(FileName)))
@@ -1213,7 +1239,7 @@ namespace New_SSQE
                     return false;
             }
 
-            ActionLogging.Register($"Save returned true with fields: {forced} | {fileForced} | {reload}");
+            ActionLogging.Register($"Save returned true with fields: {forced} | {fileForced} | {reload}\n{tempSID} | {tempFN}");
 
             return true;
         }
@@ -1232,7 +1258,7 @@ namespace New_SSQE
             
             foreach (Map map in Maps)
             {
-                if (file && pathOrData == map.RawFileName && map.IsSaved())
+                if (file && pathOrData == map.RawFileName)
                 {
                     map.MakeCurrent();
                     SwitchWindow(new GuiWindowEditor());
@@ -1329,12 +1355,18 @@ namespace New_SSQE
 
                     SwitchWindow(new GuiWindowEditor());
                 }
+                else
+                    CurrentMap = null;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Failed to load map data, exit and check '*\\logs.txt' for more info", "Warning", "OK");
                 ActionLogging.Register($"Failed to load map data", "WARN", ex);
                 Console.WriteLine(ex);
+
+                if (CurrentMap != null)
+                    Maps.Remove(CurrentMap);
+                CurrentMap = null;
 
                 return false;
             }
@@ -1476,12 +1508,8 @@ namespace New_SSQE
                             break;
 
                         case "currentTime":
-                            Settings.settings["currentTime"].Value = key.Value;
-
-                            break;
-
                         case "beatDivisor":
-                            Settings.settings["beatDivisor"].Value = key.Value;
+                            Settings.settings[key.Key].Value = key.Value;
 
                             break;
 
@@ -1497,32 +1525,12 @@ namespace New_SSQE
                             break;
 
                         case "mappers":
-                            Settings.settings["mappers"] = key.Value;
-
-                            break;
-
                         case "songName":
-                            Settings.settings["songName"] = key.Value;
-
-                            break;
-
                         case "difficulty":
-                            Settings.settings["difficulty"] = key.Value;
-
-                            break;
-
                         case "useCover":
-                            Settings.settings["useCover"] = key.Value;
-
-                            break;
-
                         case "cover":
-                            Settings.settings["cover"] = key.Value;
-
-                            break;
-
                         case "customDifficulty":
-                            Settings.settings["customDifficulty"] = key.Value;
+                            Settings.settings[key.Key] = key.Value;
 
                             break;
                     }
@@ -1636,18 +1644,19 @@ namespace New_SSQE
             }
         }
 
-        private int currentAutosave;
+        private long currentAutosave;
 
-        private void RunAutosave(int time)
+        private void RunAutosave(long time)
         {
             currentAutosave = time;
 
-            var delay = Task.Delay((int)(Settings.settings["autosaveInterval"] * 60000f)).ContinueWith(_ =>
+            Task.Run(() =>
             {
-                if (currentAutosave == time)
+                while (currentAutosave == time)
                 {
-                    RunAutosave(time);
-                    AttemptAutosave();
+                    Thread.Sleep((int)(Settings.settings["autosaveInterval"] * 60000f));
+                    if (currentAutosave == time)
+                        AttemptAutosave();
                 }
             });
         }
@@ -1897,7 +1906,7 @@ namespace New_SSQE
             if (window is GuiWindowEditor)
             {
                 SetActivity("Editing a map");
-                RunAutosave(DateTime.Now.Millisecond);
+                RunAutosave(DateTime.Now.Ticks);
             }
             else if (window is GuiWindowMenu)
                 SetActivity("Sitting in the menu");
@@ -2266,7 +2275,7 @@ namespace New_SSQE
             data.AddRange(markerDefinitions);
             data.AddRange(markers);
 
-            // man the documentation for this stuff really isnt great ngl, some examples would be nice
+            // the documentation for this stuff really isnt great, some examples would be nice
             // https://github.com/basils-garden/types/blob/main/sspm/v2.md
 
             return data.ToArray();

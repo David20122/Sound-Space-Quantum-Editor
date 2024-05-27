@@ -142,8 +142,6 @@ namespace New_SSQE
             if (isUploaded)
                 Dispose();
             Upload();
-
-            Console.WriteLine("Waveform rendered");
         }
 
         private static Level GetLevel(short[] buffer, int startIndex, int length)

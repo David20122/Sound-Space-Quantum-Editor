@@ -1,26 +1,24 @@
-﻿using Avalonia.Input.Platform;
-using System.Globalization;
-using Avalonia;
+﻿using System.Globalization;
+using TextCopy;
 
 namespace New_SSQE
 {
     internal class Clipboard
     {
-        private static IClipboard clipboard;
-
-        private static void AssignClipboard()
-        {
-            clipboard = Application.Current.Clipboard;
-        }
-
         public static void SetText(string text)
         {
-            AssignClipboard();
-
-            var result = Task.Run(async () =>
+            try
             {
-                await clipboard.SetTextAsync(text);
-            });
+                var result = Task.Run(async () =>
+                {
+                    await ClipboardService.SetTextAsync(text);
+                });
+            }
+            catch (AggregateException ex) when (MainWindow.IsLinux)
+            {
+                ActionLogging.Register("Failed to set text of clipboard", "WARN", ex);
+                MessageBox.Show("Clipboard functions require 'xsel' to be installed and accessible\nhttps://github.com/kfish/xsel", "Warning", "OK");
+            }
         }
 
         public static void SetData(List<Note> notes)
@@ -40,14 +38,22 @@ namespace New_SSQE
 
         public static string GetText()
         {
-            AssignClipboard();
-
-            var result = Task.Run(async () =>
+            try
             {
-                return await clipboard.GetTextAsync();
-            });
+                var result = Task.Run(async () =>
+                {
+                    return await ClipboardService.GetTextAsync();
+                });
 
-            return result.Result ?? "";
+                return result.Result ?? "";
+            }
+            catch (AggregateException ex) when (MainWindow.IsLinux)
+            {
+                ActionLogging.Register("Failed to get text of clipboard", "WARN", ex);
+                MessageBox.Show("Clipboard functions require 'xsel' to be installed and accessible\nhttps://github.com/kfish/xsel", "Warning", "OK");
+            }
+
+            return "";
         }
 
         public static List<Note> GetData()

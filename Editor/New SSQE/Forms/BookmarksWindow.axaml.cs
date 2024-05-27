@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using System.Collections.ObjectModel;
 
 namespace New_SSQE
@@ -19,12 +20,23 @@ namespace New_SSQE
             BookmarkList.Items = Dataset;
         }
 
+        private static TaskCompletionSource<bool>? tcs = new();
+
         public static void ShowWindow()
         {
             Instance?.Close();
 
-            new BookmarksWindow().Show();
+            var window = new BookmarksWindow();
+
             Instance?.ResetList();
+
+            window.Show();
+
+            if (MainWindow.IsLinux)
+            {
+                window.Topmost = true;
+                BackgroundWindow.YieldWindow(window);
+            }
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)

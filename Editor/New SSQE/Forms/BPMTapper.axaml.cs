@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 
 namespace New_SSQE
 {
@@ -23,11 +24,21 @@ namespace New_SSQE
             InitializeComponent();
         }
 
+        private static TaskCompletionSource<bool>? tcs = new();
+
         public static void ShowWindow()
         {
             Instance?.Close();
 
-            new BPMTapper().Show();
+            var window = new BPMTapper();
+
+            window.Show();
+
+            if (MainWindow.IsLinux)
+            {
+                window.Topmost = true;
+                BackgroundWindow.YieldWindow(window);
+            }
         }
 
         private bool ButtonsFocused()

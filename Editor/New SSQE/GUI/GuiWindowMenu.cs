@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace New_SSQE.GUI
@@ -14,6 +15,8 @@ namespace New_SSQE.GUI
         private readonly GuiButton LoadButton = new(1190, 295, 600, 100, 1, "LOAD MAP", 54, "square");
         private readonly GuiButton ImportButton = new(1190, 410, 600, 100, 2, "IMPORT MAP", 54, "square");
         private readonly GuiButton SettingsButton = new(1190, 525, 600, 100, 3, "SETTINGS", 54, "square");
+
+        private readonly GuiButton FeedbackButton = new(35, 140, 100, 40, 8, "Feedback?", 20);
 
         private readonly GuiButton AutosavedButton = new(1190, 640, 600, 100, 4, "AUTOSAVED MAP", 54, "square");
         private readonly GuiButton LastMapButton = new(1190, 755, 600, 100, 5, "EDIT LAST MAP", 54, "square");
@@ -54,7 +57,7 @@ namespace New_SSQE.GUI
                 ChangelogBackdrop1, ChangelogBackdrop2, MapSelectBackdrop,
                 // Buttons
                 CreateButton, LoadButton, ImportButton, SettingsButton, AutosavedButton, LastMapButton, NavLeft, NavRight,
-                MapSelect0, MapSelect1, MapSelect2, MapSelect3, MapSelect4,
+                MapSelect0, MapSelect1, MapSelect2, MapSelect3, MapSelect4, FeedbackButton,
                 MapClose0, MapClose1, MapClose2, MapClose3, MapClose4,
                 // Sliders
                 ChangelogSlider,
@@ -265,6 +268,17 @@ namespace New_SSQE.GUI
                         mapOffset++;
                         AssembleMapList();
                     }
+
+                    break;
+
+                case 8:
+                    var ps = new ProcessStartInfo("https://forms.gle/Rh4RXKT9KyttJ9Dc6")
+                    {
+                        UseShellExecute = true,
+                        Verb = "open"
+                    };
+
+                    Process.Start(ps);
 
                     break;
 
