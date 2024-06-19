@@ -1,5 +1,5 @@
 ----------------------------------
-    -- 2.2.1.0 - 5/27/2024 --                                  o7, dyamo
+    -- 2.2.1.0 - 5/27/2024 --                                  fly high, dyamo      o7
 
 - fixed rendering the timing/bookmark/export windows on linux
 - fixed the not responding notification when closing with an unsaved map on linux
