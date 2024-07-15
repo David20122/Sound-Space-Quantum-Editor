@@ -1,4 +1,40 @@
 ----------------------------------                                             fly high, dyamo      o7
+    -- 2.2.2.0 - 7/15/2024 --
+
+- fixed sticky ctrl/alt/shift keys on linux
+- (hopefully) fixed update notifications not always closing on linux
+- fixed version checking of the player/updater on linux
+  > this is now recorded in settings.txt, so if it falls out of sync it should fix itself after letting the editor redownload the update(s)
+
+- added a 'Paste Reversed' option which reverses the order of note positions while preserving timestamp offsets before pasting
+
+- changed 'IMPORT MAP' to 'PASTE MAP' in the menu
+- removed formatting of settings.txt to improve performance and stability
+- removed 'ssqe_export' watermark on exported SSPM maps
+- 'use cover' is no longer checked by default when exporting SSPM maps
+- centered the 'Replace Audio ID' text
+- right clicking on list buttons now navigates through them in reverse
+
+- fixed export offset allowing notes to be placed outside the song boundaries when Correct Errors on Copy is enabled
+- fixed failing to load audio files with commas in their name
+- fixed left/right arrows not working when no bpm is present
+- fixed attempting horizontal/vertical flips when no notes are selected
+- fixed negative bpms attempting to render
+- fixed exporting and importing .sspm files with non-ascii characters
+- fixed autosave not respecting the 'Enable Autosave' setting
+- fixed texture caching
+- fixed grid letter position
+- fixed debug version checking
+
+- heavily optimized importing .sspm and .osu files
+- optimized exporting .sspm files
+- slightly optimized the autoplay cursor and timeline
+
+   -- P-2.1.4.1 - 7/15/2024 --
+
+- fixed the note color order being offset from the editor
+
+----------------------------------
     -- 2.2.1.0 - 5/27/2024 --
 
 - fixed rendering the timing/bookmark/export windows on linux
