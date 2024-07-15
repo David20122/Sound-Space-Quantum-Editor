@@ -6,7 +6,7 @@
 - fixed version checking of the player/updater on linux
   > this is now recorded in settings.txt, so if it falls out of sync it should fix itself after letting the editor redownload the update(s)
 
-- added a 'Paste Reversed' option which reverses the order of note positions while preserving timestamp offsets before pasting
+- added a 'Paste Reversed' option in the 'PATTERNS' tab which reverses the order of note positions while preserving timestamp offsets before pasting
 
 - changed 'IMPORT MAP' to 'PASTE MAP' in the menu
 - removed formatting of settings.txt to improve performance and stability
