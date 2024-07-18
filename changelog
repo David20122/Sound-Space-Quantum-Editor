@@ -1,4 +1,10 @@
 ----------------------------------                                             fly high, dyamo      o7
+    -- 2.2.2.3 - 7/17/2024 --
+
+- fixed visual artifacting on some gpus due to a buffer over-read
+- fixed bpm tapper not resetting when the panel is closed
+
+----------------------------------
     -- 2.2.2.2 - 7/17/2024 --
 
 - fixed note locations no longer being rounded in map data
