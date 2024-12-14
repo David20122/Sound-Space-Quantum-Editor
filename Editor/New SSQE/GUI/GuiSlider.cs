@@ -1,7 +1,9 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using OpenTK.Mathematics;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using New_SSQE.Audio;
+using New_SSQE.Preferences;
+using New_SSQE.Maps;
 
 namespace New_SSQE.GUI
 {
@@ -9,8 +11,10 @@ namespace New_SSQE.GUI
     {
         public bool Hovering;
         public bool Dragging;
+        public bool Locked;
 
-        public string Setting;
+        public string? Setting;
+        public Setting<SliderSetting> Slider;
         public bool Reverse;
 
         private float alpha;
@@ -19,40 +23,41 @@ namespace New_SSQE.GUI
 
         private readonly float defaultValue;
 
-        public GuiSlider(float x, float y, float w, float h, string setting, bool reverse, bool lockSize = false, bool moveWithOffset = false) : base(x, y, w, h)
+        public GuiSlider(float x, float y, float w, float h, Setting<SliderSetting> setting, bool reverse, bool lockSize = false, bool moveWithOffset = false) : base(x, y, w, h)
         {
-            Setting = setting;
+            Setting = setting.Name ?? "";
+            Slider = setting;
 
             Reverse = reverse;
             LockSize = lockSize;
             MoveWithOffset = moveWithOffset;
 
-            defaultValue = Settings.settings[setting].Default;
+            defaultValue = Slider.Value.Default;
 
             Init();
         }
 
-        public GuiSlider(string setting, bool reverse, bool lockSize = false, bool moveWithOffset = false) : this(0, 0, 0, 0, setting, reverse, lockSize, moveWithOffset) { }
+        public GuiSlider(Setting<SliderSetting> setting, bool reverse, bool lockSize = false, bool moveWithOffset = false) : this(0, 0, 0, 0, setting, reverse, lockSize, moveWithOffset) { }
 
         public override void Render(float mousex, float mousey, float frametime)
         {
-            var editor = MainWindow.Instance.CurrentWindow;
+            GuiWindow editor = MainWindow.Instance.CurrentWindow;
 
-            var setting = Settings.settings[Setting];
+            SliderSetting setting = Slider.Value;
 
-            var horizontal = Rect.Width > Rect.Height;
-            var width = horizontal ? Rect.Width - Rect.Height : Rect.Height - Rect.Width;
+            bool horizontal = Rect.Width > Rect.Height;
+            float width = horizontal ? Rect.Width - Rect.Height : Rect.Height - Rect.Width;
 
-            if (Dragging)
+            if (Dragging && !Locked)
             {
                 float stepf = setting.Step / setting.Max;
                 if (Setting == "beatDivisor" && !MainWindow.Instance.ShiftHeld)
                     stepf *= 2;
 
-                var pos = horizontal ? Rect.X + Rect.Height / 2f : Rect.Y + Rect.Width / 2f;
-                var mouse = horizontal ? mousex : mousey;
+                float pos = horizontal ? Rect.X + Rect.Height / 2f : Rect.Y + Rect.Width / 2f;
+                float mouse = horizontal ? mousex : mousey;
 
-                var prog = (float)Math.Round((horizontal ? mouse - pos : Reverse ? (width - mouse + pos) : mouse - pos) / width / stepf) * stepf;
+                float prog = (float)Math.Round((horizontal ? mouse - pos : Reverse ? (width - mouse + pos) : mouse - pos) / width / stepf) * stepf;
 
                 setting.Value = MathHelper.Clamp(setting.Max * prog, 0, setting.Max);
 
@@ -65,26 +70,28 @@ namespace New_SSQE.GUI
                         break;
 
                     case "sfxVolume":
-                        MainWindow.Instance.SoundPlayer.Volume = setting.Value;
+                        SoundPlayer.Volume = setting.Value;
 
                         break;
 
                     case "masterVolume":
-                        MainWindow.Instance.MusicPlayer.Volume = setting.Value;
+                        MusicPlayer.Volume = setting.Value;
 
                         break;
 
                     case "tempo":
-                        MainWindow.Instance.SetTempo(setting.Value);
+                        CurrentMap.SetTempo(setting.Value);
 
                         break;
                 }
             }
 
-            var progress = setting.Value / setting.Max;
+            float progress = setting.Value / setting.Max;
+            if (setting.Max == 0)
+                progress = 0.5f;
 
-            var pos1 = new Vector2(horizontal ? Rect.X + Rect.Height / 2f + width * progress : Rect.X + Rect.Width / 2f, horizontal ? Rect.Y + Rect.Height / 2f : Rect.Y + Rect.Width / 2f + width * (Reverse ? (1f - progress) : progress));
-            var pos2 = new Vector2(mousex, mousey);
+            Vector2 pos1 = (horizontal ? Rect.X + Rect.Height / 2f + width * progress : Rect.X + Rect.Width / 2f, horizontal ? Rect.Y + Rect.Height / 2f : Rect.Y + Rect.Width / 2f + width * (Reverse ? (1f - progress) : progress));
+            Vector2 pos2 = (mousex, mousey);
 
             Hovering = (pos1 - pos2).Length <= 12f;
 
@@ -120,35 +127,37 @@ namespace New_SSQE.GUI
 
         public override Tuple<float[], float[]> GetVertices()
         {
-            var editor = MainWindow.Instance.CurrentWindow;
-            var colored = editor is GuiWindowEditor;
-            var setting = Settings.settings[Setting];
+            GuiWindow editor = MainWindow.Instance.CurrentWindow;
+            bool colored = editor is GuiWindowEditor;
+            SliderSetting setting = Slider.Value;
 
-            var sc1 = colored ? Settings.settings["color1"] : Color.FromArgb(255, 255, 255);
-            var color1 = new float[] { sc1.R / 255f, sc1.G / 255f, sc1.B / 255f };
+            Color sc1 = colored ? Settings.color1.Value : Color.FromArgb(255, 255, 255);
+            float[] color1 = new float[] { sc1.R / 255f, sc1.G / 255f, sc1.B / 255f };
 
-            var sc2 = colored ? Settings.settings["color2"] : Color.FromArgb(75, 75, 75);
-            var color2 = new float[] { sc2.R / 255f, sc2.G / 255f, sc2.B / 255f };
+            Color sc2 = colored ? Settings.color2.Value : Color.FromArgb(75, 75, 75);
+            float[] color2 = new float[] { sc2.R / 255f, sc2.G / 255f, sc2.B / 255f };
 
-            var sc3 = Settings.settings["color3"];
-            var color3 = new float[] { sc3.R / 255f, sc3.G / 255f, sc3.B / 255f };
+            Color sc3 = Settings.color3.Value;
+            float[] color3 = new float[] { sc3.R / 255f, sc3.G / 255f, sc3.B / 255f };
 
             bool horizontal = Rect.Width > Rect.Height;
             float progress = setting.Value / setting.Max;
+            if (setting.Max == 0)
+                progress = 0.5f;
             if (Reverse)
                 progress = 1f - progress;
 
-            var lineRect = horizontal ? new RectangleF(Rect.X + Rect.Height / 2f, Rect.Y + Rect.Height / 2f - 1.5f, Rect.Width - Rect.Height, 3f)
-                : new RectangleF(Rect.X + Rect.Width / 2f - 1.5f, Rect.Y + Rect.Width / 2f, 3f, Rect.Height - Rect.Width);
-            var circlePos = new PointF(lineRect.X + lineRect.Width * (horizontal ? progress : 0.5f), lineRect.Y + lineRect.Height * (horizontal ? 0.5f : progress));
+            RectangleF lineRect = horizontal ? new(Rect.X + Rect.Height / 2f, Rect.Y + Rect.Height / 2f - 1.5f, Rect.Width - Rect.Height, 3f)
+                : new(Rect.X + Rect.Width / 2f - 1.5f, Rect.Y + Rect.Width / 2f, 3f, Rect.Height - Rect.Width);
+            PointF circlePos = new(lineRect.X + lineRect.Width * (horizontal ? progress : 0.5f), lineRect.Y + lineRect.Height * (horizontal ? 0.5f : progress));
 
             List<float> line = new(GLU.Rect(lineRect, color2));
 
             if (Setting == "currentTime" && editor.Track != null)
             {
-                var track = editor.Track;
-                var start = track.StartPos;
-                var end = track.EndPos;
+                GuiTrack track = editor.Track;
+                float start = track.StartPos;
+                float end = track.EndPos;
 
                 float[] spLine = GLU.Rect(lineRect.X + lineRect.Width * start, lineRect.Y, lineRect.Width * (end - start), lineRect.Height, color3);
 
@@ -167,17 +176,17 @@ namespace New_SSQE.GUI
                 final.AddRange(hoverCircle);
             }
 
-            return new Tuple<float[], float[]>(final.ToArray(), Array.Empty<float>());
+            return new(final.ToArray(), Array.Empty<float>());
         }
 
         public override void OnMouseClick(Point pos, bool right)
         {
-            MainWindow.Instance.SoundPlayer.Play(Settings.settings["clickSound"]);
+            SoundPlayer.Play(Settings.clickSound.Value);
+            GuiWindow window = MainWindow.Instance.CurrentWindow;
 
-            if (right)
+            if (right && window is GuiWindowEditor editor)
             {
-                var editor = MainWindow.Instance.CurrentWindow as GuiWindowEditor;
-                Settings.settings[Setting].Value = defaultValue;
+                Slider.Value.Value = defaultValue;
 
                 switch (Setting)
                 {
@@ -188,33 +197,33 @@ namespace New_SSQE.GUI
                         break;
 
                     case "sfxVolume":
-                        MainWindow.Instance.SoundPlayer.Volume = defaultValue;
+                        SoundPlayer.Volume = defaultValue;
 
                         break;
 
                     case "masterVolume":
-                        MainWindow.Instance.MusicPlayer.Volume = defaultValue;
+                        MusicPlayer.Volume = defaultValue;
 
                         break;
 
                     case "tempo":
-                        MainWindow.Instance.SetTempo(defaultValue);
+                        CurrentMap.SetTempo(defaultValue);
 
                         break;
                 }
             }
-            else
+            else if (!right)
                 Dragging = true;
 
-            MainWindow.Instance.CurrentWindow?.OnButtonClicked(-1);
+            window?.OnButtonClicked(-1);
         }
 
         public override void OnMouseUp(Point pos)
         {
             if (Dragging && this is GuiSliderTimeline timeline && timeline.WasPlaying)
             {
-                MainWindow.Instance.MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(Settings.settings[Setting].Value);
-                MainWindow.Instance.MusicPlayer.Play();
+                MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(Slider.Value.Value);
+                MusicPlayer.Play();
             }
 
             Dragging = false;

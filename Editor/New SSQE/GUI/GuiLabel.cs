@@ -1,4 +1,6 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using New_SSQE.GUI.Font;
+using New_SSQE.Preferences;
+using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 
 namespace New_SSQE.GUI
@@ -10,12 +12,13 @@ namespace New_SSQE.GUI
         public bool Centered;
 
         private string prevText = "";
-        public Color Color;
+        public Color Color = Color.White;
         private Color prevColor = Color.White;
 
-        public GuiLabel(float x, float y, float w, float h, string text, int textSize, bool lockSize = false, bool moveWithOffset = false, string font = "main", bool centered = true, string? color = null) : base(x, y, w, h)
+        public GuiLabel(float x, float y, float w, float h, string text, int textSize, bool lockSize = false, bool moveWithOffset = false, string font = "main", bool centered = true, Setting<Color>? color = null) : base(x, y, w, h)
         {
-            Color = color == null ? Color.White : Settings.settings[color];
+            if (color != null)
+                Color = color.Value;
 
             Text = text;
             prevText = text;
@@ -32,7 +35,7 @@ namespace New_SSQE.GUI
             Init();
         }
 
-        public GuiLabel(float x, float y, float w, float h, string text, int textSize, string font, bool centered = true, string? color = null) : this(x, y, w, h, text, textSize, false, false, font, centered, color) { }
+        public GuiLabel(float x, float y, float w, float h, string text, int textSize, string font, bool centered = true, Setting<Color>? color = null) : this(x, y, w, h, text, textSize, false, false, font, centered, color) { }
         public GuiLabel(float x, float y, float w, float h, int textSize) : this(x, y, w, h, "", textSize, false, false, "main", true, null) { }
         public GuiLabel(int textSize) : this(0, 0, 0, 0, "", textSize, false, false, "main", true, null) { }
 
@@ -62,8 +65,8 @@ namespace New_SSQE.GUI
 
             if (Centered)
             {
-                var width = FontRenderer.GetWidth(Text, TextSize, Font);
-                var height = FontRenderer.GetHeight(TextSize, Font);
+                int width = FontRenderer.GetWidth(Text, TextSize, Font);
+                int height = FontRenderer.GetHeight(TextSize, Font);
 
                 txX += txW / 2f - width / 2f;
                 txY += txH / 2f - height / 2f;
@@ -71,7 +74,7 @@ namespace New_SSQE.GUI
 
             FontVertices = FontRenderer.Print(txX, txY, Text, TextSize, Font);
 
-            return new Tuple<float[], float[]>(Array.Empty<float>(), Array.Empty<float>());
+            return new(Array.Empty<float>(), Array.Empty<float>());
         }
     }
 }

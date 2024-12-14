@@ -1,4 +1,7 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using New_SSQE.Audio;
+using New_SSQE.GUI.Font;
+using New_SSQE.Preferences;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System.Drawing;
 
@@ -91,14 +94,14 @@ namespace New_SSQE.GUI
 
             FontVertices = FontRenderer.Print(txX, txY, Text, TextSize, Font);
 
-            return new Tuple<float[], float[]>(vertices.ToArray(), Array.Empty<float>());
+            return new(vertices.ToArray(), Array.Empty<float>());
         }
 
         public override void OnMouseClick(Point pos, bool right)
         {
             if (Hovering)
             {
-                MainWindow.Instance.SoundPlayer.Play(Settings.settings["clickSound"]);
+                SoundPlayer.Play(Settings.clickSound.Value);
                 OnButtonClicked(ID);
             }
         }

@@ -14,7 +14,7 @@ namespace SSQE_Player.Models
 
         public void RegisterModel(string name, float[] vertices, float scale)
         {
-            var model = LoadModelToVao(vertices, scale);
+            Model model = LoadModelToVao(vertices, scale);
 
             models.Add(name, model);
             instancedHandles.Add(name, (VbOs[^2], VbOs[^1]));
@@ -22,9 +22,7 @@ namespace SSQE_Player.Models
 
         public Model GetModel(string name)
         {
-            models.TryGetValue(name, out var model);
-
-            return model;
+            return models[name];
         }
 
         public static Model LoadModelToVao(float[] vertices, float scale)

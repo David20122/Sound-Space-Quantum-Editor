@@ -15,7 +15,7 @@ namespace New_SSQE.GUI
 
         private readonly bool Outline;
 
-        public GuiSquare(float x, float y, float w, float h, Color color, bool outline = false, string fileName = "", string textureName = "") : base(x, y, w, h)
+        public GuiSquare(float x, float y, float w, float h, Color color, bool outline = false, string fileName = "", string textureName = "", bool moveWithOffset = false) : base(x, y, w, h)
         {
             Color = color;
             prevColor = Color;
@@ -27,21 +27,30 @@ namespace New_SSQE.GUI
                 FileName = fileName;
                 TextureName = textureName;
 
-                using var fs = File.OpenRead(FileName);
+                using FileStream fs = File.OpenRead(FileName);
                 tHandle = TextureManager.GetOrRegister(TextureName, SKBitmap.Decode(fs), false);
 
                 GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.Texture2d, tHandle);
             }
+            else if (fileName == "" && textureName != "")
+            {
+                IsTextured = true;
+                TextureName = textureName;
+
+                tHandle = TextureManager.GetOrRegister(TextureName);
+            }
+
+            MoveWithOffset = moveWithOffset;
 
             Init();
         }
 
-        public GuiSquare(Color color, bool outline = false, string fileName = "", string textureName = "") : this(0, 0, 0, 0, color, outline, fileName, textureName) { }
+        public GuiSquare(Color color, bool outline = false, string fileName = "", string textureName = "") : this(0, 0, 0, 0, color, outline, fileName, textureName, false) { }
 
         public override void Render(float mousex, float mousey, float frametime)
         {
-            if (!IsTextured)
+            if (!IsTextured && Visible)
             {
                 if (prevColor != Color)
                 {
@@ -50,8 +59,8 @@ namespace New_SSQE.GUI
                     prevColor = Color;
                 }
 
-                var type = Outline ? PrimitiveType.TriangleStrip : PrimitiveType.Triangles;
-                var indexCount = Outline ? 10 : 6;
+                PrimitiveType type = Outline ? PrimitiveType.TriangleStrip : PrimitiveType.Triangles;
+                int indexCount = Outline ? 10 : 6;
 
                 GL.BindVertexArray(VaO);
                 GL.DrawArrays(type, 0, indexCount);
@@ -60,7 +69,7 @@ namespace New_SSQE.GUI
 
         public override void RenderTexture()
         {
-            if (IsTextured)
+            if (IsTextured && Visible)
             {
                 TextureManager.SetActive(0);
                 GL.BindTexture(TextureTarget.Texture2d, tHandle);
@@ -72,7 +81,7 @@ namespace New_SSQE.GUI
 
         public override Tuple<float[], float[]> GetVertices()
         {
-            var c = new float[] { Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f };
+            float[] c = new float[] { Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f };
 
             float[] fill = Outline ? GLU.Outline(Rect, 2, c) : GLU.Rect(Rect, c);
             float[] texture = Array.Empty<float>();
@@ -80,7 +89,7 @@ namespace New_SSQE.GUI
             if (IsTextured)
                 texture = GLU.TexturedRect(Rect, Color.A / 255f);
 
-            return new Tuple<float[], float[]>(fill, texture);
+            return new(fill, texture);
         }
     }
 }

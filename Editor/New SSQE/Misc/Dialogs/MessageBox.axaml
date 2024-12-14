@@ -1,0 +1,102 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:clr="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:New_SSQE.Misc.Dialogs"
+        x:Class="New_SSQE.MessageBox"
+        Width="450" Height="150" CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        Topmost="True">
+
+  <Window.Resources>
+    <local:PathToBitmap x:Key="pathToBitmap"/>
+  </Window.Resources>
+
+  <StackPanel>
+    <!-- Main panel -->
+    <Panel Width="450" Height="150">
+
+      <!-- Image panel -->
+      <Panel Width="65" Height="80"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top">
+        <Image Width="40" Height="40"
+               Source="{Binding Source={StaticResource iconPath}, Converter={StaticResource pathToBitmap}}"></Image>
+      </Panel>
+
+      <!-- Text panel -->
+      <Panel Width="390" Height="110"
+             HorizontalAlignment="Right"
+             VerticalAlignment="Top">
+        <Label Width="380" Height="105"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"
+               VerticalContentAlignment="Center"
+               FontSize="11.5">
+          <TextBlock TextWrapping="Wrap" x:Name="Text">
+
+          </TextBlock>
+        </Label>
+      </Panel>
+
+      <!-- Button panels -->
+      <Panel Width="260" Height="40"
+             HorizontalAlignment="Right"
+             VerticalAlignment="Bottom">
+
+        <!-- Rightmost panel for buttons -->
+        <Panel Width="90" Height="40"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom">
+
+          <Button IsVisible="False" x:Name="Cancel1" Click="CancelButton_Click">Cancel</Button>
+          <Button IsVisible="False" x:Name="OK1" Click="OKButton_Click">OK</Button>
+          <Button IsVisible="False" x:Name="No1" Click="NoButton_Click">No</Button>
+          <Button IsVisible="False" x:Name="Yes1" Click="YesButton_Click">Yes</Button>
+        </Panel>
+
+        <!-- Middle panel for buttons -->
+        <Panel Width="90" Height="40"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom">
+
+          <Button IsVisible="False" x:Name="Cancel2" Click="CancelButton_Click">Cancel</Button>
+          <Button IsVisible="False" x:Name="OK2" Click="OKButton_Click">OK</Button>
+          <Button IsVisible="False" x:Name="No2" Click="NoButton_Click">No</Button>
+          <Button IsVisible="False" x:Name="Yes2" Click="YesButton_Click">Yes</Button>
+        </Panel>
+
+        <!-- Left panel for buttons -->
+        <Panel Width="90" Height="40"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom">
+
+          <Button IsVisible="False" x:Name="Cancel3" Click="CancelButton_Click">Cancel</Button>
+          <Button IsVisible="False" x:Name="OK3" Click="OKButton_Click">OK</Button>
+          <Button IsVisible="False" x:Name="No3" Click="NoButton_Click">No</Button>
+          <Button IsVisible="False" x:Name="Yes3" Click="YesButton_Click">Yes</Button>
+        </Panel>
+      </Panel>
+    </Panel>
+
+    <StackPanel.Styles>
+      <!-- Button -->
+      <Style Selector="Button">
+        <Setter Property="Width" Value="75"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="Background" Value="#f5f5f5"/>
+        <Setter Property="BorderBrush" Value="#aaaaaa"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="TextBlock.FontSize" Value="12"/>
+      </Style>
+
+      <!-- Button hover -->
+      <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="BorderBrush" Value="Black"/>
+      </Style>
+    </StackPanel.Styles>
+  </StackPanel>
+</Window>

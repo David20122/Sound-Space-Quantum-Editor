@@ -13,7 +13,7 @@ namespace SSQE_Player
 
         private float originVal;
 
-        private SYNCPROC Sync;
+        private readonly SYNCPROC Sync;
 
         public MusicPlayer()
         {
@@ -25,16 +25,16 @@ namespace SSQE_Player
         {
             try
             {
-                var device = Bass.BASS_ChannelGetDevice(streamID);
-                var info = Bass.BASS_GetDeviceInfo(device);
+                int device = Bass.BASS_ChannelGetDevice(streamID);
+                BASS_DEVICEINFO? info = Bass.BASS_GetDeviceInfo(device);
 
                 if (info != null && (!info.IsDefault || !info.IsEnabled))
                 {
-                    var pos = Bass.BASS_ChannelGetPosition(streamID, BASSMode.BASS_POS_BYTE);
-                    var secs = TimeSpan.FromSeconds(Bass.BASS_ChannelBytes2Seconds(streamID, pos));
+                    long pos = Bass.BASS_ChannelGetPosition(streamID, BASSMode.BASS_POS_BYTE);
+                    TimeSpan secs = TimeSpan.FromSeconds(Bass.BASS_ChannelBytes2Seconds(streamID, pos));
 
-                    var state = Bass.BASS_ChannelIsActive(streamID);
-                    var volume = 0.2f;
+                    BASSActive state = Bass.BASS_ChannelIsActive(streamID);
+                    float volume = 0.2f;
 
                     Bass.BASS_ChannelGetAttribute(streamID, BASSAttribute.BASS_ATTRIB_VOL, ref volume);
 
@@ -71,8 +71,8 @@ namespace SSQE_Player
             Bass.BASS_StreamFree(streamID);
             Bass.BASS_StreamFree(streamFileID);
 
-            var stream = Bass.BASS_StreamCreateFile(file, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_STREAM_PRESCAN | BASSFlag.BASS_FX_FREESOURCE);
-            var tempo = Tempo;
+            int stream = Bass.BASS_StreamCreateFile(file, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_STREAM_PRESCAN | BASSFlag.BASS_FX_FREESOURCE);
+            float tempo = Tempo;
 
             streamFileID = stream;
             streamID = BassFx.BASS_FX_TempoCreate(streamFileID, BASSFlag.BASS_STREAM_PRESCAN);
@@ -89,14 +89,14 @@ namespace SSQE_Player
         {
             Pause();
             CurrentTime = TotalTime;
-            Settings.settings["currentTime"].Value = (float)(CurrentTime.TotalMilliseconds + 0.03 * (1 + (MainWindow.Instance.Tempo - 1) * 1.5));
+            Settings.currentTime.Value.Value = (float)(CurrentTime.TotalMilliseconds + 0.03 * (1 + (MainWindow.Instance.Tempo - 1) * 1.5));
 
             MainWindow.Instance.Close();
         }
 
         public void Play()
         {
-            CurrentTime = TimeSpan.FromMilliseconds(Settings.settings["currentTime"].Value);
+            CurrentTime = TimeSpan.FromMilliseconds(Settings.currentTime.Value.Value);
             CheckDevice();
 
             Bass.BASS_ChannelPlay(streamID, false);
@@ -106,11 +106,11 @@ namespace SSQE_Player
         {
             CheckDevice();
 
-            var pos = Bass.BASS_ChannelGetPosition(streamID, BASSMode.BASS_POS_BYTE);
+            long pos = Bass.BASS_ChannelGetPosition(streamID, BASSMode.BASS_POS_BYTE);
 
             Bass.BASS_ChannelPause(streamID);
             Bass.BASS_ChannelSetPosition(streamID, pos, BASSMode.BASS_POS_BYTE);
-            Settings.settings["currentTime"].Value = (float)CurrentTime.TotalMilliseconds;
+            Settings.currentTime.Value.Value = (float)CurrentTime.TotalMilliseconds;
         }
 
         public void Stop()
@@ -195,7 +195,7 @@ namespace SSQE_Player
             {
                 CheckDevice();
 
-                var pos = Bass.BASS_ChannelSeconds2Bytes(streamID, value.TotalSeconds - 0.03 * (1 + (MainWindow.Instance.Tempo - 1) * 1.5));
+                long pos = Bass.BASS_ChannelSeconds2Bytes(streamID, value.TotalSeconds - 0.03 * (1 + (MainWindow.Instance.Tempo - 1) * 1.5));
 
                 Bass.BASS_ChannelSetPosition(streamID, Math.Max(pos, 0), BASSMode.BASS_POS_BYTE);
             }
@@ -203,7 +203,7 @@ namespace SSQE_Player
             {
                 CheckDevice();
 
-                var pos = Bass.BASS_ChannelGetPosition(streamID, BASSMode.BASS_POS_BYTE);
+                long pos = Bass.BASS_ChannelGetPosition(streamID, BASSMode.BASS_POS_BYTE);
 
                 return TimeSpan.FromSeconds(Bass.BASS_ChannelBytes2Seconds(streamID, pos) + 0.03 * (1 + (MainWindow.Instance.Tempo - 1) * 1.5));
             }

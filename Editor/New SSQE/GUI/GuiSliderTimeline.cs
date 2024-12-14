@@ -3,6 +3,13 @@ using System.Drawing;
 using OpenTK.Graphics;
 using System.Buffers;
 using OpenTK.Mathematics;
+using New_SSQE.Objects;
+using New_SSQE.GUI.Font;
+using New_SSQE.Audio;
+using New_SSQE.GUI.Shaders;
+using New_SSQE.Objects.Other;
+using New_SSQE.Preferences;
+using New_SSQE.Maps;
 
 namespace New_SSQE.GUI
 {
@@ -21,7 +28,9 @@ namespace New_SSQE.GUI
         private readonly ArrayPool<Vector4> Pool = ArrayPool<Vector4>.Shared;
         public bool WasPlaying;
 
-        public GuiSliderTimeline() : base(0, 0, 0, 0, "currentTime", false)
+        public bool ShouldUpdate;
+
+        public GuiSliderTimeline() : base(0, 0, 0, 0, Settings.currentTime, false)
         {
             Font = "main";
             Dynamic = true;
@@ -33,61 +42,96 @@ namespace New_SSQE.GUI
         {
             ClearBuffers();
 
-            VaOs = new VertexArrayHandle[2];
-            VbOs = new BufferHandle[4];
-            VertexCounts = new int[2];
+            VaOs = new VertexArrayHandle[3];
+            VbOs = new BufferHandle[6];
+            VertexCounts = new int[3];
 
-            var y = lineRect.Y + lineRect.Height / 2f;
+            float y = lineRect.Y + lineRect.Height / 2f;
 
-            var noteVerts = GLU.Line(0, y + 5f, 0, y + lineRect.Height, 1, 1f, 1f, 1f, 1f);
-            var pointVerts = GLU.Line(0, y - 10f, 0, y - lineRect.Height * 2f, 2, 1f, 1f, 1f, 1f);
+            float[] noteVerts = GLU.Line(0, y + 5f, 0, y + 3f, 1, 1f, 1f, 1f, 1f);
+            float[] pointVerts = GLU.Line(0, y - 10f, 0, y - 6f, 2, 1f, 1f, 1f, 1f);
+            float[] objVerts = GLU.Line(0, y + 9f, 0, y + 7f, 2, 1f, 1f, 1f, 1f);
 
             AddToBuffers(noteVerts, 0);
             AddToBuffers(pointVerts, 1);
+            AddToBuffers(objVerts, 2);
         }
 
-        private int NoteLen, PointLen;
+        private int NoteLen, PointLen, ObjLen;
 
         // stuff here doesnt need to be updated every frame
         public override void GenerateOffsets()
         {
-            var editor = MainWindow.Instance;
+            ShouldUpdate = false;
 
-            var setting = Settings.settings[Setting];
+            SliderSetting setting = Slider.Value;
+            int plen = CurrentMap.TimingPoints.Count;
+            int mlen = CurrentMap.VfxObjects.Count + CurrentMap.SpecialObjects.Count;
 
-            var noteOffsets = Pool.Rent(editor.Notes.Count);
-            var pointOffsets = Pool.Rent(editor.TimingPoints.Count);
+            List<Vector4> noteOffsets = new();
+            Vector4[] pointOffsets = Pool.Rent(plen);
+            Vector4[] objOffsets = Pool.Rent(mlen);
+
+            int lastRendered = -1;
 
             // notes
-            for (int i = 0; i < editor.Notes.Count; i++)
+            for (int i = 0; i < CurrentMap.Notes.Count; i++)
             {
-                var note = editor.Notes[i];
+                Note note = CurrentMap.Notes[i];
 
-                var progress = note.Ms / setting.Max;
-                var x = lineRect.X + progress * lineRect.Width;
+                float progress = note.Ms / setting.Max;
+                float x = lineRect.X + progress * lineRect.Width;
 
-                noteOffsets[i] = (x, 0, 1, 0);
+                if ((int)x > lastRendered)
+                {
+                    noteOffsets.Add((x, 0, 1, 0));
+                    lastRendered = (int)x;
+                }
             }
 
             // points
-            for (int i = 0; i < editor.TimingPoints.Count; i++)
+            for (int i = 0; i < CurrentMap.TimingPoints.Count; i++)
             {
-                var point = editor.TimingPoints[i];
+                TimingPoint point = CurrentMap.TimingPoints[i];
 
-                var progress = point.Ms / setting.Max;
-                var x = lineRect.X + progress * lineRect.Width - 1f;
+                float progress = point.Ms / setting.Max;
+                float x = lineRect.X + progress * lineRect.Width - 1f;
 
                 pointOffsets[i] = (x, 0, 1, 0);
             }
 
-            RegisterData(0, noteOffsets);
-            RegisterData(1, pointOffsets);
+            // vfx objects
+            for (int i = 0; i < CurrentMap.VfxObjects.Count; i++)
+            {
+                MapObject obj = CurrentMap.VfxObjects[i];
 
-            NoteLen = noteOffsets.Length;
-            PointLen = pointOffsets.Length;
+                float progress = obj.Ms / setting.Max;
+                float x = lineRect.X + progress * lineRect.Width - 1f;
 
-            Pool.Return(noteOffsets);
+                objOffsets[i] = (x, 0, 1, 0);
+            }
+
+            // special objects
+            for (int i = 0; i < CurrentMap.SpecialObjects.Count; i++)
+            {
+                MapObject obj = CurrentMap.SpecialObjects[i];
+
+                float progress = obj.Ms / setting.Max;
+                float x = lineRect.X + progress * lineRect.Width - 1f;
+
+                objOffsets[i + CurrentMap.VfxObjects.Count] = (x, 0, 1, 0);
+            }
+
+            RegisterData(0, noteOffsets.ToArray());
+            RegisterData(1, pointOffsets, plen);
+            RegisterData(2, objOffsets, mlen);
+
+            NoteLen = noteOffsets.Count;
+            PointLen = plen;
+            ObjLen = mlen;
+
             Pool.Return(pointOffsets);
+            Pool.Return(objOffsets);
         }
 
         private void RenderOffsets()
@@ -98,15 +142,18 @@ namespace New_SSQE.GUI
             GL.BindVertexArray(VaOs[1]);
             if (PointLen > 0)
                 GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[1], PointLen);
+            GL.BindVertexArray(VaOs[2]);
+            if (ObjLen > 0)
+                GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[2], ObjLen);
         }
 
         public override void Render(float mousex, float mousey, float frametime)
         {
             lineRect = new RectangleF(Rect.X + Rect.Height / 2f, Rect.Y + Rect.Height / 2f - 1.5f, Rect.Width - Rect.Height, 3f);
 
-            GL.UseProgram(Shader.InstancedProgram);
+            GL.UseProgram(Shader.TimelineProgram);
 
-            if (prevRect != lineRect || prevHover != HoveringBookmark)
+            if (ShouldUpdate || prevRect != lineRect || prevHover != HoveringBookmark)
             {
                 InstanceSetup();
                 GenerateOffsets();
@@ -135,35 +182,35 @@ namespace New_SSQE.GUI
 
         public override Tuple<float[], float[]> GetVertices()
         {
-            var baseVerts = base.GetVertices();
-            var editor = MainWindow.Instance;
-            var mouse = editor.Mouse;
+            Tuple<float[], float[]> baseVerts = base.GetVertices();
+            MainWindow editor = MainWindow.Instance;
+            Point mouse = editor.Mouse;
 
-            var setting = Settings.settings[Setting];
+            SliderSetting setting = Slider.Value;
 
-            var color2 = Settings.settings["color2"];
-            var c2 = new float[] { color2.R / 255f, color2.G / 255f, color2.B / 255f };
-            var color3 = Settings.settings["color3"];
-            var c3 = new float[] { color3.R / 255f, color3.G / 255f, color3.B / 255f };
+            Color color2 = Settings.color2.Value;
+            float[] c2 = new float[] { color2.R / 255f, color2.G / 255f, color2.B / 255f };
+            Color color3 = Settings.color3.Value;
+            float[] c3 = new float[] { color3.R / 255f, color3.G / 255f, color3.B / 255f };
 
             List<float> bookmarkVerts = new();
 
             // bookmarks
-            var isHovering = false;
+            bool isHovering = false;
             int hoveringIndex = 0;
 
-            for (int i = 0; i < editor.Bookmarks.Count; i++)
+            for (int i = 0; i < CurrentMap.Bookmarks.Count; i++)
             {
-                var bookmark = editor.Bookmarks[i];
+                Bookmark bookmark = CurrentMap.Bookmarks[i];
 
-                var progress = bookmark.Ms / setting.Max;
-                var endProgress = bookmark.EndMs / setting.Max;
-                var x = lineRect.X + progress * lineRect.Width;
-                var endX = lineRect.X + endProgress * lineRect.Width;
-                var y = lineRect.Y + lineRect.Height;
+                float progress = bookmark.Ms / setting.Max;
+                float endProgress = bookmark.EndMs / setting.Max;
+                float x = lineRect.X + progress * lineRect.Width;
+                float endX = lineRect.X + endProgress * lineRect.Width;
+                float y = lineRect.Y + lineRect.Height;
 
-                var bRect = new RectangleF(x - 4f, y - 40f, 8f + (endX - x), 8f);
-                var hovering = bRect.Contains(mouse.X, mouse.Y);
+                RectangleF bRect = new(x - 4f, y - 40f, 8f + (endX - x), 8f);
+                bool hovering = bRect.Contains(mouse.X, mouse.Y);
 
                 bookmarkVerts.AddRange(GLU.Rect(bRect, c3[0], c3[1], c3[2], 0.75f));
 
@@ -180,16 +227,16 @@ namespace New_SSQE.GUI
 
             if (HoveringBookmark != null)
             {
-                var progress = HoveringBookmark.Ms / setting.Max;
-                var x = lineRect.X + progress * lineRect.Width;
-                var y = lineRect.Y + lineRect.Height;
+                float progress = HoveringBookmark.Ms / setting.Max;
+                float x = lineRect.X + progress * lineRect.Width;
+                float y = lineRect.Y + lineRect.Height;
 
                 float height = FontRenderer.GetHeight(16, "main");
 
                 FontVertices = FontRenderer.Print(x - 4f, y - 40f - height, HoveringBookmark.Text, 16, "main");
-                textColor = Settings.settings["color2"];
+                textColor = Settings.color2.Value;
 
-                var index = hoveringIndex * 6 * 6 + 2;
+                int index = hoveringIndex * 6 * 6 + 2;
 
                 for (int i = 0; i < 6; i++)
                 {
@@ -204,14 +251,14 @@ namespace New_SSQE.GUI
             offsetCount = baseVerts.Item1.Length / 6;
             vertexCount = bookmarkVerts.Count / 6;
 
-            return new Tuple<float[], float[]>(baseVerts.Item1.Concat(bookmarkVerts).ToArray(), Array.Empty<float>());
+            return new(baseVerts.Item1.Concat(bookmarkVerts).ToArray(), Array.Empty<float>());
         }
 
         public override void OnMouseClick(Point pos, bool right)
         {
-            WasPlaying = MainWindow.Instance.MusicPlayer.IsPlaying && !Settings.settings["pauseScroll"];
-            if (MainWindow.Instance.MusicPlayer.IsPlaying)
-                MainWindow.Instance.MusicPlayer.Pause();
+            WasPlaying = MusicPlayer.IsPlaying && !Settings.pauseScroll.Value;
+            if (MusicPlayer.IsPlaying)
+                MusicPlayer.Pause();
 
             if (HoveringBookmark == null)
                 base.OnMouseClick(pos, right);

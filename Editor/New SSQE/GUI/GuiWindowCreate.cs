@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using New_SSQE.FileParsing;
+using New_SSQE.Maps;
+using System.Drawing;
 
 namespace New_SSQE.GUI
 {
@@ -31,23 +33,24 @@ namespace New_SSQE.GUI
 
         public override void OnButtonClicked(int id)
         {
-            var audioId = IDBox.Text.Trim();
-            var editor = MainWindow.Instance;
+            string audioId = IDBox.Text.Trim();
+            audioId = Exporting.FixID(audioId);
+            MainWindow editor = MainWindow.Instance;
 
             switch (id)
             {
                 case 0:
                     if (!string.IsNullOrWhiteSpace(audioId))
-                        editor.LoadMap(audioId);
+                        MapManager.Load(audioId);
 
                     break;
 
                 case 1:
-                    editor.CurrentMap?.Save();
-                    editor.CurrentMap = null;
+                    CurrentMap.LoadedMap?.Save();
+                    CurrentMap.LoadedMap = null;
 
-                    if (editor.PromptImport(audioId, true))
-                        editor.LoadMap(MainWindow.Instance.SoundID);
+                    if (MapManager.ImportAudio(audioId, true))
+                        MapManager.Load(CurrentMap.SoundID);
 
                     break;
 

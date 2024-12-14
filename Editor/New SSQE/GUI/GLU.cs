@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using System.Drawing;
 
-namespace New_SSQE
+namespace New_SSQE.GUI
 {
     internal class GLU
     {
@@ -24,6 +24,25 @@ namespace New_SSQE
         public static float[] Rect(RectangleF rect, params float[] c)
         {
             return Rect(rect.X, rect.Y, rect.Width, rect.Height, c);
+        }
+
+        public static float[] TexturedRectNoAlpha(float x, float y, float w, float h, float tx = 0f, float ty = 0f, float tw = 1f, float th = 1f)
+        {
+            return new float[]
+            {
+                x, y, tx, ty,
+                x + w, y, tx + tw, ty,
+                x, y + h, tx, ty + th,
+
+                x + w, y + h, tx + tw, ty + th,
+                x, y + h, tx, ty + th,
+                x + w, y, tx + tw, ty
+            };
+        }
+
+        public static float[] TexturedRectNoAlpha(RectangleF rect, float tx = 0f, float ty = 0f, float tw = 1f, float th = 1f)
+        {
+            return TexturedRectNoAlpha(rect.X, rect.Y, rect.Width, rect.Height, tx, ty, tw, th);
         }
 
         public static float[] TexturedRect(float x, float y, float w, float h, float a, float tx = 0f, float ty = 0f, float tw = 1f, float th = 1f)
@@ -128,7 +147,7 @@ namespace New_SSQE
         public static float[] Line(float x1, float y1, float x2, float y2, float lw, params float[] c)
         {
             float a = c.Length == 4 ? c[3] : 1f;
-            var horizontal = x1 != x2;
+            bool horizontal = x1 != x2;
 
             if (horizontal)
             {
@@ -157,24 +176,146 @@ namespace New_SSQE
         {
             float alpha = c.Length == 4 ? c[3] : 1f;
 
-            var vertices = new float[sides * 6];
+            float[] vertices = new float[sides * 6];
+            double rad = MathHelper.DegreesToRadians(angle);
+
+            int index = 0;
 
             for (int i = 0; i < sides; i++)
             {
-                var a = MathHelper.DegreesToRadians(angle) + i / (float)sides * Math.PI * 2;
-                var vx = Math.Cos(a) * radius;
-                var vy = -Math.Sin(a) * radius;
+                double a = rad + i / (float)sides * Math.PI * 2;
+                double vx = Math.Cos(a) * radius;
+                double vy = -Math.Sin(a) * radius;
 
-                var index = i * 6;
-                vertices[index] = (float)vx + x;
-                vertices[index + 1] = (float)vy + y;
-                vertices[index + 2] = c[0];
-                vertices[index + 3] = c[1];
-                vertices[index + 4] = c[2];
-                vertices[index + 5] = alpha;
+                vertices[index++] = (float)vx + x;
+                vertices[index++] = (float)vy + y;
+                vertices[index++] = c[0];
+                vertices[index++] = c[1];
+                vertices[index++] = c[2];
+                vertices[index++] = alpha;
             }
 
             return vertices;
+        }
+
+        public static float[] CircleAsTriangles(float x, float y, float radius, int sides, float angle, params float[] c)
+        {
+            float alpha = c.Length == 4 ? c[3] : 1f;
+
+            Vector2[] vertices = new Vector2[sides];
+            double rad = MathHelper.DegreesToRadians(angle);
+
+            for (int i = 0; i < sides; i++)
+            {
+                double a = rad + i / (float)sides * Math.PI * 2;
+                double vx = Math.Cos(a) * radius;
+                double vy = -Math.Sin(a) * radius;
+
+                vertices[i] = ((float)vx + x, (float)vy + y);
+            }
+
+            float[] final = new float[sides * 18];
+            int index = 0;
+
+            for (int i = 0; i < sides; i++)
+            {
+                int next = i + 1 == sides ? 0 : i + 1;
+
+                final[index++] = vertices[i].X;
+                final[index++] = vertices[i].Y;
+                final[index++] = c[0];
+                final[index++] = c[1];
+                final[index++] = c[2];
+                final[index++] = alpha;
+
+                final[index++] = x;
+                final[index++] = y;
+                final[index++] = c[0];
+                final[index++] = c[1];
+                final[index++] = c[2];
+                final[index++] = alpha;
+
+                final[index++] = vertices[next].X;
+                final[index++] = vertices[next].Y;
+                final[index++] = c[0];
+                final[index++] = c[1];
+                final[index++] = c[2];
+                final[index++] = alpha;
+            }
+
+            return final;
+        }
+
+        public static float[] CircleOutline(float x, float y, float radius, float width, int sides, float angle, params float[] c)
+        {
+            float alpha = c.Length == 4 ? c[3] : 1f;
+
+            Vector4[] vertices = new Vector4[sides];
+            double rad = MathHelper.DegreesToRadians(angle);
+
+            for (int i = 0; i < sides; i++)
+            {
+                double a = rad + i / (float)sides * Math.PI * 2;
+                float vx1 = (float)Math.Cos(a) * (radius + width / 2);
+                float vy1 = (float)-Math.Sin(a) * (radius + width / 2);
+
+                float vx2 = (float)Math.Cos(a) * (radius - width / 2);
+                float vy2 = (float)-Math.Sin(a) * (radius - width / 2);
+
+                vertices[i] = (vx1 + x, vy1 + y, vx2 + x, vy2 + y);
+            }
+
+            float[] final = new float[sides * 36];
+            int index = 0;
+
+            for (int i = 0; i < sides; i++)
+            {
+                int next = i + 1 == sides ? 0 : i + 1;
+
+                final[index++] = vertices[i].X;
+                final[index++] = vertices[i].Y;
+                final[index++] = c[0];
+                final[index++] = c[1];
+                final[index++] = c[2];
+                final[index++] = alpha;
+
+                final[index++] = vertices[i].Z;
+                final[index++] = vertices[i].W;
+                final[index++] = c[0];
+                final[index++] = c[1];
+                final[index++] = c[2];
+                final[index++] = alpha;
+
+                final[index++] = vertices[next].X;
+                final[index++] = vertices[next].Y;
+                final[index++] = c[0];
+                final[index++] = c[1];
+                final[index++] = c[2];
+                final[index++] = alpha;
+
+                final[index++] = vertices[next].X;
+                final[index++] = vertices[next].Y;
+                final[index++] = c[0];
+                final[index++] = c[1];
+                final[index++] = c[2];
+                final[index++] = alpha;
+
+                final[index++] = vertices[next].Z;
+                final[index++] = vertices[next].W;
+                final[index++] = c[0];
+                final[index++] = c[1];
+                final[index++] = c[2];
+                final[index++] = alpha;
+
+                final[index++] = vertices[i].Z;
+                final[index++] = vertices[i].W;
+                final[index++] = c[0];
+                final[index++] = c[1];
+                final[index++] = c[2];
+                final[index++] = alpha;
+            }
+
+            return final;
         }
     }
 }

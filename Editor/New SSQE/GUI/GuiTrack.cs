@@ -3,19 +3,40 @@ using System.Drawing;
 using OpenTK.Mathematics;
 using OpenTK.Graphics;
 using System.Buffers;
+using New_SSQE.Objects;
+using System;
+using New_SSQE.GUI.Font;
+using New_SSQE.Audio;
+using New_SSQE.GUI.Shaders;
+using New_SSQE.Preferences;
+using New_SSQE.Objects.Managers;
+using System.Linq;
+using New_SSQE.Maps;
 
 namespace New_SSQE.GUI
 {
     internal class GuiTrack : WindowControl
     {
+        public static bool RenderMapObjects = false;
+        public static bool VFXObjects = true;
+
         private float lastPlayedTick;
 
-        public Note? LastPlayed;
+        public MapObject? LastPlayed;
         public Note? HoveringNote;
-        public Note? DraggingNote;
+        public Note? DraggingNote; 
 
         public TimingPoint? HoveringPoint;
         public TimingPoint? DraggingPoint;
+
+        public MapObject? HoveringVfx;
+        public MapObject? DraggingVfx;
+
+        public MapObject? HoveringSpec;
+        public MapObject? DraggingSpec;
+
+        public MapObject? HoveringObjDuration;
+        public MapObject? DraggingObjDuration;
         
         public bool Hovering;
 
@@ -37,6 +58,8 @@ namespace New_SSQE.GUI
 
         private Vector4 PosSet = new();
 
+        private TextureHandle spriteSheet;
+
         private readonly Dictionary<string, int> Indices = new()
         {
             {"rectLength", 0 },
@@ -52,7 +75,7 @@ namespace New_SSQE.GUI
 
         public GuiTrack() : base(0, 0, MainWindow.Instance.ClientSize.X, 0)
         {
-            var yoffset = MainWindow.Instance.CurrentWindow?.YOffset ?? 0f;
+            float yoffset = MainWindow.Instance.CurrentWindow?.YOffset ?? 0f;
 
             Rect.Height = yoffset - 32;
             OriginRect = new RectangleF(0, 0, Rect.Width, yoffset - 32);
@@ -67,28 +90,28 @@ namespace New_SSQE.GUI
         {
             ClearBuffers();
 
-            VaOs = new VertexArrayHandle[15];
-            VbOs = new BufferHandle[30];
-            VertexCounts = new int[15];
+            VaOs = new VertexArrayHandle[20];
+            VbOs = new BufferHandle[40];
+            VertexCounts = new int[20];
 
             // notes
-            var noteRect = new RectangleF(0, cellGap, noteSize, noteSize);
+            RectangleF noteRect = new(0, cellGap, noteSize, noteSize);
 
             // normal
-            var noteVerts = new List<float>();
+            List<float> noteVerts = new();
             noteVerts.AddRange(GLU.Rect(noteRect, 1f, 1f, 1f, 1f / 20f));
             noteVerts.AddRange(GLU.OutlineAsTriangles(noteRect, 1, 1f, 1f, 1f, 1f));
-            var noteLocationVerts = GLU.Rect(0, 0, 9, 9, 1f, 1f, 1f, 1f);
+            float[] noteLocationVerts = GLU.Rect(0, 0, 9, 9, 1f, 1f, 1f, 1f);
             // text line
-            var textLineVerts = GLU.Line(0.5f, Rect.Height + 3, 0.5f, Rect.Height + 28, 1, 1f, 1f, 1f, 1f);
+            float[] textLineVerts = GLU.Line(0.5f, Rect.Height + 3, 0.5f, Rect.Height + 28, 1, 1f, 1f, 1f, 1f);
 
             for (int j = 0; j < 9; j++)
             {
-                var indexX = 2 - j % 3;
-                var indexY = j / 3;
+                int indexX = 2 - j % 3;
+                int indexY = j / 3;
 
-                var gridX = indexX * 12 + 4.5f;
-                var gridY = cellGap + indexY * 12 + 4.5f;
+                float gridX = indexX * 12 + 4.5f;
+                float gridY = cellGap + indexY * 12 + 4.5f;
 
                 noteVerts.AddRange(GLU.OutlineAsTriangles(gridX, gridY, 9, 9, 1, 1f, 1f, 1f, 1f * 0.45f));
             }
@@ -98,172 +121,568 @@ namespace New_SSQE.GUI
             AddToBuffers(textLineVerts, 13);
 
             // note select box
-            var noteSelectVerts = GLU.OutlineAsTriangles(-4, cellGap - 4, noteSize + 8, noteSize + 8, 1, 1f, 1f, 1f, 1f);
+            float[] noteSelectVerts = GLU.OutlineAsTriangles(-4, cellGap - 4, noteSize + 8, noteSize + 8, 1, 1f, 1f, 1f, 1f);
             AddToBuffers(noteSelectVerts, 4);
 
             // note hover box
-            var noteHoverVerts = GLU.OutlineAsTriangles(-4, cellGap - 4, noteSize + 8, noteSize + 8, 1, 1f, 1f, 1f, 1f);
+            float[] noteHoverVerts = GLU.OutlineAsTriangles(-4, cellGap - 4, noteSize + 8, noteSize + 8, 1, 1f, 1f, 1f, 1f);
             AddToBuffers(noteHoverVerts, 5);
 
             // drag line
-            var dragVerts = GLU.Line(0, 0, 0, Rect.Height, 1, 1f, 1f, 1f, 1f);
+            float[] dragVerts = GLU.Line(0, 0, 0, Rect.Height, 1, 1f, 1f, 1f, 1f);
             AddToBuffers(dragVerts, 6);
 
             // start bpm
-            var startBpmVerts = GLU.Line(0, 0, 0, Rect.Height + 58, 1, 1f, 1f, 1f, 1f);
+            float[] startBpmVerts = GLU.Line(0, 0, 0, Rect.Height + 58, 1, 1f, 1f, 1f, 1f);
             AddToBuffers(startBpmVerts, 7);
 
             // full bpm
-            var fullBpmVerts = GLU.Line(0, Rect.Height, 0, Rect.Height - GapF, 1, 1f, 1f, 1f, 1f);
+            float[] fullBpmVerts = GLU.Line(0, Rect.Height, 0, Rect.Height - GapF, 1, 1f, 1f, 1f, 1f);
             AddToBuffers(fullBpmVerts, 8);
 
             // half bpm
-            var halfBpmVerts = GLU.Line(0, Rect.Height - 3 * GapF / 5, 0, Rect.Height, 1, 1f, 1f, 1f, 1f);
+            float[] halfBpmVerts = GLU.Line(0, Rect.Height - 3 * GapF / 5, 0, Rect.Height, 1, 1f, 1f, 1f, 1f);
             AddToBuffers(halfBpmVerts, 9);
 
             // sub bpm
-            var subBpmVerts = GLU.Line(0, Rect.Height - 3 * GapF / 10, 0, Rect.Height, 1, 1f, 1f, 1f, 1f);
+            float[] subBpmVerts = GLU.Line(0, Rect.Height - 3 * GapF / 10, 0, Rect.Height, 1, 1f, 1f, 1f, 1f);
             AddToBuffers(subBpmVerts, 10);
 
             // point hover box
-            var pointHoverVerts = GLU.OutlineAsTriangles(-4, Rect.Height, 80, 60, 1, 1f, 1f, 1f, 1f);
+            float[] pointHoverVerts = GLU.OutlineAsTriangles(-4, Rect.Height, 80, 60, 1, 1f, 1f, 1f, 1f);
             AddToBuffers(pointHoverVerts, 11);
 
             // point select box
-            var pointSelectVerts = GLU.OutlineAsTriangles(-4, Rect.Height, 80, 60, 1, 1f, 1f, 1f, 1f);
+            float[] pointSelectVerts = GLU.OutlineAsTriangles(-4, Rect.Height, 80, 60, 1, 1f, 1f, 1f, 1f);
             AddToBuffers(pointSelectVerts, 12);
+
+            // map object outline
+            List<float> mapObjectVerts = new();
+            mapObjectVerts.AddRange(GLU.CircleOutline(noteSize / 2, noteSize / 2 + cellGap, noteSize / 2, 2, 20, 0, 1f, 1f, 1f, 1f));
+            mapObjectVerts.AddRange(GLU.CircleAsTriangles(noteSize / 2, noteSize / 2 + cellGap, noteSize / 2, 20, 0, 1f, 1f, 1f, 1f / 20f));
+            AddToBuffers(mapObjectVerts.ToArray(), 14);
+
+            // map object select box
+            float[] objSelectVerts = GLU.CircleOutline(noteSize / 2, noteSize / 2 + cellGap, noteSize / 2 + 4, 1, 20, 0, 1f, 1f, 1f, 1f);
+            AddToBuffers(objSelectVerts, 2);
+
+            // map object hover box
+            float[] objHoverVerts = GLU.CircleOutline(noteSize / 2, noteSize / 2 + cellGap, noteSize / 2 + 4, 1, 20, 0, 1f, 1f, 1f, 1f);
+            AddToBuffers(objHoverVerts, 3);
+
+            // map object duration diamond
+            float[] objDiamondVerts = GLU.CircleAsTriangles(0, noteSize / 2 + cellGap, noteSize / 4, 4, 0, 1f, 1f, 1f, 1f);
+            AddToBuffers(objDiamondVerts, 15);
+
+            // map object duration line
+            float[] objDurationVerts = GLU.Line(0, noteSize / 2 + cellGap, 1, noteSize / 2 + cellGap, 4, 1f, 1f, 1f, 1f);
+            AddToBuffers(objDurationVerts, 16);
+
+            // map object duration select verts
+            float[] objDurationSelectVerts = GLU.CircleOutline(0, noteSize / 2 + cellGap, noteSize / 4 + 4, 1, 4, 0, 1f, 1f, 1f, 1f);
+            AddToBuffers(objDurationSelectVerts, 17);
+
+            // map object duration hover verts
+            float[] objDurationHoverVerts = GLU.CircleOutline(0, noteSize / 2 + cellGap, noteSize / 4 + 4, 1, 4, 0, 1f, 1f, 1f, 1f);
+            AddToBuffers(objDurationHoverVerts, 18);
+
+            // map object icon verts
+            float x = noteSize / 8;
+            float y = noteSize / 8 + cellGap;
+            float w = noteSize * 3 / 4f;
+            float h = noteSize * 3 / 4f;
+
+            float[] iconVerts = new float[]
+            {
+                x, y, 0f, 0f, 0, 0,
+                x + w, y, 1f, 0f, 0, 0,
+                x, y + h, 0f, 1f, 0, 0,
+
+                x + w, y + h, 1f, 1f, 0, 0,
+                x, y + h, 0f, 1f, 0, 0,
+                x + w, y, 1f, 0f, 0, 0
+            };
+            AddToBuffers(iconVerts, 19);
+
+            // set up spritesheet for icons
+            GL.ActiveTexture(TextureUnit.Texture2);
+            spriteSheet = TextureManager.GetOrRegister("sprites", null, true, TextureUnit.Texture2);
+
+            GL.UseProgram(Shader.IconTexProgram);
+            int location = GL.GetUniformLocation(Shader.IconTexProgram, "SpriteSize");
+            GL.Uniform2f(location, 1f / MainWindow.SpriteSize.X, 1f / MainWindow.SpriteSize.Y);
+            location = GL.GetUniformLocation(Shader.IconTexProgram, "texture0");
+            GL.Uniform1i(location, 2);
+        }
+
+        private bool SelectIntersecting(float x)
+        {
+            return selectHitbox.X < x + noteSize && selectHitbox.Right > x && selectHitbox.Y < cellGap + noteSize && selectHitbox.Bottom > cellGap;
+        }
+
+        private bool HoverIntersecting(float mx, float my, float x)
+        {
+            return mx > x && mx < x + noteSize && my > cellGap && my < cellGap + noteSize;
+        }
+
+        private Vector4[] RenderC1Array(string[] set, int len, int[] x, int nCount)
+        {
+            int i;
+            int pos = 0;
+
+            Vector4[] c1 = new Vector4[len];
+
+            for (i = 0; i < nCount; i++)
+            {
+                FontRenderer.PrintInto(c1, pos, x[i], (int)Rect.Height - 2, set[i], 20, "main");
+                pos += set[i].Length;
+            }
+
+            for (; i < set.Length; i++)
+            {
+                FontRenderer.PrintInto(c1, pos, x[i], (int)Rect.Height + 26, set[i], 20, "main");
+                pos += set[i].Length;
+            }
+
+            return c1;
+        }
+
+        private Vector4[] RenderC2Array(string[] set, int len, int[] x, int nCount)
+        {
+            int i;
+            int pos = 0;
+
+            Vector4[] c2 = new Vector4[len];
+
+            for (i = 0; i < nCount; i++)
+            {
+                FontRenderer.PrintInto(c2, pos, x[i], (int)Rect.Height + 13, set[i], 20, "main");
+                pos += set[i].Length;
+            }
+
+            for (; i < set.Length; i++)
+            {
+                FontRenderer.PrintInto(c2, pos, x[i], (int)Rect.Height + 41, set[i], 20, "main");
+                pos += set[i].Length;
+            }
+
+            return c2;
         }
 
         public override void GenerateOffsets()
         {
-            color1Texts = new();
-            color2Texts = new();
+            string[] c1Set;
+            string[] c2Set;
+            int[] xSet;
 
-            var editor = MainWindow.Instance;
-            var currentTime = Settings.settings["currentTime"].Value;
+            int c1Len = 0;
+            int c2Len = 0;
+            int nCount = 0;
 
-            var mouse = editor.Mouse;
-            var noteStep = editor.NoteStep;
+            MainWindow editor = MainWindow.Instance;
+            float currentTime = Settings.currentTime.Value.Value;
 
-            var totalTime = Settings.settings["currentTime"].Max;
-            var sfxOffset = Settings.settings["sfxOffset"];
-            var beatDivisor = Settings.settings["beatDivisor"].Value + 1f;
+            Point mouse = editor.Mouse;
+            float noteStep = CurrentMap.NoteStep;
 
-            var posX = currentTime / 1000f * noteStep;
-            var cursorX = Rect.Width * Settings.settings["cursorPos"].Value / 100f;
+            float totalTime = Settings.currentTime.Value.Max;
+            float sfxOffset = Settings.sfxOffset.Value;
+            float beatDivisor = Settings.beatDivisor.Value.Value + 1f;
 
-            var noteColors = Settings.settings["noteColors"];
-            var colorCount = noteColors.Count;
-            
-            var noteOffsets = Pool.Rent(editor.Notes.Count);
-            var textLineOffsets = Pool.Rent(editor.Notes.Count);
-            var noteLocationOffsets = Pool.Rent(editor.Notes.Count);
+            float posX = currentTime / 1000f * noteStep;
+            float cursorX = Rect.Width * Settings.cursorPos.Value.Value / 100f;
 
-            var noteHoverOffset = new Vector4(-1920, 0, 0, 0);
-            var noteSelectOffsets = new List<Vector4>();
-            var noteDragOffsets = new List<Vector4>();
+            int colorCount = Settings.noteColors.Value.Count;
 
             selecting = editor.RightHeld && RightDraggingTrack;
-            var selected = selecting ? new List<Note>() : editor.SelectedNotes;
 
-            var minMs = (-cursorX - noteSize) * 1000f / noteStep + currentTime;
-            var maxMs = (Rect.Width - cursorX) * 1000f / noteStep + currentTime;
+            float minMs = (-cursorX - noteSize) * 1000f / noteStep + currentTime;
+            float maxMs = (Rect.Width - cursorX) * 1000f / noteStep + currentTime;
+
+            float? lastRendered = null;
 
             HoveringNote = null;
             HoveringPoint = null;
-            Note? closest = null;
-            float? lastRendered = null;
+            HoveringVfx = null;
+            HoveringSpec = null;
+            HoveringObjDuration = null;
 
-            // notes
-            for (int i = 0; i < editor.Notes.Count; i++)
+            if (!RenderMapObjects)
             {
-                var note = editor.Notes[i];
-                var a = note.Ms < currentTime - 1 ? 0.35f : 1f;
+                List<Note> selected = selecting ? new() : CurrentMap.Notes.Selected;
+                MapObject? closest = null;
 
-                var x = cursorX - posX + note.Ms / 1000f * noteStep;
-                var gridX = x + note.X * 12 + 4.5f;
-                var gridY = cellGap + note.Y * 12 + 4.5f;
+                (int low, int high) = CurrentMap.Notes.SearchRange(minMs, maxMs);
+                if (CurrentMap.Notes.Count > 0 && CurrentMap.Notes[high].Ms <= (long)maxMs && CurrentMap.Notes[low].Ms >= (long)minMs)
+                    high++;
+                int range = high - low;
 
-                int c = i % colorCount;
+                c1Set = new string[range + CurrentMap.TimingPoints.Count];
+                c2Set = new string[c1Set.Length];
+                xSet = new int[c1Set.Length];
+                nCount = range;
 
-                noteOffsets[i] = (x, 0, a, c);
-                noteLocationOffsets[i] = (gridX, gridY, a, c);
-                textLineOffsets[i] = (x, 0, a, 4);
+                Vector4[] noteOffsets = Pool.Rent(range);
+                Vector4[] textLineOffsets = Pool.Rent(range);
+                Vector4[] noteLocationOffsets = Pool.Rent(range);
 
-                var noteRect = new RectangleF(x, cellGap, noteSize, noteSize);
-                var hovering = HoveringNote == null && DraggingNote == null && noteRect.Contains(mouse.X, mouse.Y);
+                Vector4 noteHoverOffset = (-1920, 0, 0, 0);
+                List<Vector4> noteSelectOffsets = new();
+                List<Vector4> noteDragOffsets = new();
 
-                bool noteSelected = selecting && selectHitbox.IntersectsWith(noteRect);
-                if (noteSelected)
-                    selected.Add(note);
-
-                if (note.Ms <= currentTime - sfxOffset)
-                    closest = note;
-
-                if (selecting)
-                    note.Selected = noteSelected;
-                noteSelected |= note.Selected;
-
-                if (hovering)
+                // notes
+                for (int i = 0; i < CurrentMap.Notes.Count; i++)
                 {
-                    noteHoverOffset = (x, 0, 1, 5);
-                    HoveringNote = note;
-                }
-                else if (noteSelected)
-                {
-                    if (DraggingNote == null)
-                        noteSelectOffsets.Add((x, 0, 1, 6));
-                    else
+                    Note note = CurrentMap.Notes[i];
+                    float x = cursorX - posX + note.Ms / 1000f * noteStep;
+
+                    bool noteSelected = selecting && SelectIntersecting(x);
+                    if (noteSelected)
+                        selected.Add(note);
+
+                    if (i >= low && i < high)
                     {
-                        var dragX = cursorX - posX + note.DragStartMs / 1000f * noteStep;
-                        noteDragOffsets.Add((dragX, 0, 1, 7));
+                        float gridX = x + (2 - note.X) * 12 + 4.5f;
+                        float gridY = cellGap + (2 - note.Y) * 12 + 4.5f;
+
+                        int c = i % colorCount;
+                        float a = note.Ms < currentTime - 1 ? 0.35f : 1f;
+                        int index = i - low;
+
+                        bool hovering = HoveringNote == null && DraggingNote == null && HoverIntersecting(mouse.X, mouse.Y, x);
+
+                        noteOffsets[index] = (x, 0, a, c);
+                        noteLocationOffsets[index] = (gridX, gridY, a, c);
+                        textLineOffsets[index] = (x, 0, a, 4);
+
+                        if (note.Ms <= currentTime - sfxOffset)
+                            closest = note;
+
+                        if (selecting)
+                            note.Selected = noteSelected;
+                        noteSelected |= note.Selected;
+
+                        if (hovering)
+                        {
+                            noteHoverOffset = (x, 0, 1, 5);
+                            HoveringNote = note;
+                        }
+                        else if (noteSelected)
+                        {
+                            if (DraggingNote == null)
+                                noteSelectOffsets.Add((x, 0, 1, 6));
+                            else
+                            {
+                                float dragX = cursorX - posX + note.DragStartMs / 1000f * noteStep;
+                                noteDragOffsets.Add((dragX, 0, 1, 7));
+                            }
+                        }
+
+                        if (lastRendered == null || x - 8 > lastRendered)
+                        {
+                            c1Set[index] = $"Note {i + 1:##,###}";
+                            c2Set[index] = $"{note.Ms:##,##0}ms";
+                            xSet[index] = (int)x + 3;
+
+                            c1Len += c1Set[index].Length;
+                            c2Len += c2Set[index].Length;
+
+                            lastRendered = x;
+                        }
+                        else
+                        {
+                            c1Set[index] = "";
+                            c2Set[index] = "";
+                        }
                     }
                 }
 
+                GL.UseProgram(Shader.TrackProgram);
+                RegisterData(1, noteLocationOffsets, range);
+                RegisterData(0, noteOffsets, range);
 
-                if (note.Ms < minMs || note.Ms > maxMs)
-                    continue;
+                Pool.Return(noteOffsets);
+                Pool.Return(noteLocationOffsets);
 
-                if (lastRendered == null || x - 8 > lastRendered)
+                GL.UseProgram(Shader.TimelineProgram);
+                RegisterData(13, textLineOffsets, range);
+
+                Pool.Return(textLineOffsets);
+
+                RegisterData(4, noteSelectOffsets.ToArray());
+                RegisterData(5, new Vector4[1] { noteHoverOffset });
+                RegisterData(6, noteDragOffsets.ToArray());
+
+                if (selecting)
+                    CurrentMap.Notes.Selected = new(selected);
+
+                //play hit sound
+                if (LastPlayed != closest)
                 {
-                    var numText = $"Note {i + 1:##,###}";
-                    var msText = $"{note.Ms:##,##0}ms";
+                    LastPlayed = closest;
 
-                    color1Texts.AddRange(FontRenderer.Print((int)x + 3, (int)Rect.Height - 2, numText, 20, "main"));
-                    color2Texts.AddRange(FontRenderer.Print((int)x + 3, (int)Rect.Height + 13, msText, 20, "main"));
-
-                    lastRendered = x;
+                    if (closest != null && MusicPlayer.IsPlaying && MainWindow.Focused)
+                        SoundPlayer.Play("hit");
                 }
             }
-
-            GL.UseProgram(Shader.NoteInstancedProgram);
-            RegisterData(1, noteLocationOffsets);
-            RegisterData(0, noteOffsets);
-
-            Pool.Return(noteOffsets, true);
-            Pool.Return(noteLocationOffsets, true);
-
-            GL.UseProgram(Shader.InstancedProgram);
-            RegisterData(13, textLineOffsets);
-
-            Pool.Return(textLineOffsets, true);
-
-            RegisterData(4, noteSelectOffsets.ToArray());
-            RegisterData(5, new Vector4[1] { noteHoverOffset });
-            RegisterData(6, noteDragOffsets.ToArray());
-
-            if (selecting)
-                editor.SelectedNotes = selected;
-
-            //play hit sound
-            if (LastPlayed != closest)
+            else if (VFXObjects)
             {
-                LastPlayed = closest;
+                List<MapObject> selected = selecting ? new() : CurrentMap.VfxObjects.Selected;
+                int count = CurrentMap.VfxObjects.Count;
 
-                if (closest != null && editor.MusicPlayer.IsPlaying)
-                    editor.SoundPlayer.Play("hit");
+                c1Set = new string[count + CurrentMap.TimingPoints.Count];
+                c2Set = new string[c1Set.Length];
+                xSet = new int[c1Set.Length];
+                nCount = count;
+
+                Vector4[] iconOffsets = Pool.Rent(count);
+                Vector4[] objOffsets = Pool.Rent(count);
+                Vector4[] objDurations = Pool.Rent(count);
+                Vector4[] objDiamonds = Pool.Rent(count);
+                Vector4[] textLineOffsets = Pool.Rent(count);
+
+                Vector4 objHoverOffset = (-1920, 0, 0, 0);
+                List<Vector4> objSelectOffsets = new();
+                List<Vector4> objDragOffsets = new();
+
+                Vector4 objDurationHoverOffset = (-1920, 0, 0, 0);
+                Vector4 objDurationSelectOffset = (-1920, 0, 0, 0);
+
+                List<int> indices = new() { 0, 0 };
+
+                // map objects
+                for (int i = 0; i < count; i++)
+                {
+                    MapObject obj = CurrentMap.VfxObjects[i];
+                    float a = obj.Ms < currentTime - 1 ? 0.35f : 1f;
+
+                    float x = cursorX - posX + obj.Ms / 1000f * noteStep;
+
+                    int c = i % colorCount;
+
+                    iconOffsets[i] = (x, c, obj.ID, a);
+                    objOffsets[i] = (x, 0, a, c);
+                    textLineOffsets[i] = (x, 0, a, 4);
+
+                    if (indices.Count <= obj.ID)
+                    {
+                        for (int j = indices.Count - 1; j < obj.ID; j++)
+                            indices.Add(0);
+                    }
+
+                    indices[obj.ID]++;
+
+                    if (obj.ID != 10)
+                    {
+                        float w = obj.Duration / 1000f * noteStep;
+
+                        objDurations[i] = (x + noteSize, 0, a + Math.Max(2 * (int)(w - noteSize), 0), c);
+                        objDiamonds[i] = (x + w, 0, a, c);
+
+                        bool diamondHovering = mouse.X > x + w - noteSize / 4 && mouse.X < x + w + noteSize / 4 && mouse.Y > cellGap + noteSize / 4 && mouse.Y < cellGap + 3 * noteSize / 4;
+
+                        if (diamondHovering)
+                        {
+                            objDurationHoverOffset = (x + w, 0, 1, 5);
+                            HoveringObjDuration = obj;
+                        }
+                        else if (DraggingObjDuration == obj)
+                            objDurationSelectOffset = (x + w, 0, 1, 6);
+                    }
+
+                    bool hovering = HoveringObjDuration == null && DraggingObjDuration == null && HoveringVfx == null && DraggingVfx == null && HoverIntersecting(mouse.X, mouse.Y, x);
+
+                    bool objSelected = selecting && SelectIntersecting(x);
+                    if (objSelected)
+                        selected.Add(obj);
+
+                    if (selecting)
+                        obj.Selected = objSelected;
+                    objSelected |= obj.Selected;
+
+                    if (hovering)
+                    {
+                        objHoverOffset = (x, 0, 1, 5);
+                        HoveringVfx = obj;
+                    }
+                    else if (objSelected)
+                    {
+                        if (DraggingVfx == null)
+                            objSelectOffsets.Add((x, 0, 1, 6));
+                        else
+                        {
+                            float dragX = cursorX - posX + obj.DragStartMs / 1000f * noteStep;
+                            objDragOffsets.Add((dragX, 0, 1, 7));
+                        }
+                    }
+
+                    c1Set[i] = $"{obj.Name ?? "null"} {indices[obj.ID]:##,###}";
+                    c2Set[i] = $"{obj.Ms:##,##0}ms";
+                    xSet[i] = (int)x + 3;
+
+                    c1Len += c1Set[i].Length;
+                    c2Len += c2Set[i].Length;
+                }
+
+                GL.UseProgram(Shader.TrackProgram);
+                RegisterData(15, objDiamonds, count);
+
+                Pool.Return(objDiamonds);
+
+                GL.UseProgram(Shader.XScalingProgram);
+                RegisterData(16, objDurations, count);
+
+                Pool.Return(objDurations);
+
+                GL.UseProgram(Shader.TrackProgram);
+                RegisterData(14, objOffsets, count);
+
+                Pool.Return(objOffsets);
+
+                GL.ActiveTexture(TextureUnit.Texture3);
+                GL.BindTexture(TextureTarget.Texture2d, spriteSheet);
+                GL.UseProgram(Shader.IconTexProgram);
+                RegisterData(19, iconOffsets, count);
+
+                Pool.Return(iconOffsets);
+
+                GL.UseProgram(Shader.TimelineProgram);
+                RegisterData(13, textLineOffsets, count);
+
+                Pool.Return(textLineOffsets);
+
+                RegisterData(2, objSelectOffsets.ToArray());
+                RegisterData(3, new Vector4[1] { objHoverOffset });
+                RegisterData(6, objDragOffsets.ToArray());
+
+                RegisterData(17, new Vector4[1] { objDurationSelectOffset });
+                RegisterData(18, new Vector4[1] { objDurationHoverOffset });
+
+                if (selecting)
+                    CurrentMap.VfxObjects.Selected = new(selected);
             }
+            else
+            {
+                List<MapObject> selected = selecting ? new() : CurrentMap.SpecialObjects.Selected;
+                int count = CurrentMap.SpecialObjects.Count;
 
+                c1Set = new string[count + CurrentMap.TimingPoints.Count];
+                c2Set = new string[c1Set.Length];
+                xSet = new int[c1Set.Length];
+                nCount = count;
+
+                Vector4[] iconOffsets = Pool.Rent(count);
+                Vector4[] objOffsets = Pool.Rent(count);
+                Vector4[] textLineOffsets = Pool.Rent(count);
+
+                Vector4 objHoverOffset = (-1920, 0, 0, 0);
+                List<Vector4> objSelectOffsets = new();
+                List<Vector4> objDragOffsets = new();
+
+                List<float?> lastRenderedSet = new() { 0, 0 };
+                List<int> indices = new() { 0, 0 };
+
+                MapObject? closest = null;
+
+                // map objects
+                for (int i = 0; i < count; i++)
+                {
+                    MapObject obj = CurrentMap.SpecialObjects[i];
+                    float a = obj.Ms < currentTime - 1 ? 0.35f : 1f;
+
+                    float x = cursorX - posX + obj.Ms / 1000f * noteStep;
+
+                    int c = i % colorCount;
+
+                    iconOffsets[i] = (x, c, obj.ID, a);
+                    objOffsets[i] = (x, 0, a, c);
+                    textLineOffsets[i] = (x, 0, a, 4);
+
+                    if (indices.Count <= obj.ID)
+                    {
+                        for (int j = indices.Count - 1; j < obj.ID; j++)
+                        {
+                            lastRenderedSet.Add(null);
+                            indices.Add(0);
+                        }
+                    }
+
+                    indices[obj.ID]++;
+
+                    bool hovering = HoveringObjDuration == null && DraggingObjDuration == null && HoveringSpec == null && DraggingSpec == null && HoverIntersecting(mouse.X, mouse.Y, x);
+
+                    bool objSelected = selecting && SelectIntersecting(x);
+                    if (objSelected)
+                        selected.Add(obj);
+
+                    if (obj.Ms <= currentTime - sfxOffset)
+                        closest = obj;
+
+                    if (selecting)
+                        obj.Selected = objSelected;
+                    objSelected |= obj.Selected;
+
+                    if (hovering)
+                    {
+                        objHoverOffset = (x, 0, 1, 5);
+                        HoveringSpec = obj;
+                    }
+                    else if (objSelected)
+                    {
+                        if (DraggingSpec == null)
+                            objSelectOffsets.Add((x, 0, 1, 6));
+                        else
+                        {
+                            float dragX = cursorX - posX + obj.DragStartMs / 1000f * noteStep;
+                            objDragOffsets.Add((dragX, 0, 1, 7));
+                        }
+                    }
+
+
+                    if (obj.Ms < minMs || obj.Ms > maxMs)
+                        continue;
+
+                    c1Set[i] = $"{obj.Name ?? "null"} {indices[obj.ID]:##,###}";
+                    c2Set[i] = $"{obj.Ms:##,##0}ms";
+                    xSet[i] = (int)x + 3;
+
+                    c1Len += c1Set[i].Length;
+                    c2Len += c2Set[i].Length;
+                }
+
+                GL.UseProgram(Shader.TrackProgram);
+                RegisterData(14, objOffsets, count);
+
+                Pool.Return(objOffsets);
+
+                GL.ActiveTexture(TextureUnit.Texture3);
+                GL.BindTexture(TextureTarget.Texture2d, spriteSheet);
+                GL.UseProgram(Shader.IconTexProgram);
+                RegisterData(19, iconOffsets, count);
+
+                Pool.Return(iconOffsets);
+
+                GL.UseProgram(Shader.TimelineProgram);
+                RegisterData(13, textLineOffsets, count);
+
+                Pool.Return(textLineOffsets);
+
+                RegisterData(2, objSelectOffsets.ToArray());
+                RegisterData(3, new Vector4[1] { objHoverOffset });
+                RegisterData(6, objDragOffsets.ToArray());
+
+                if (selecting)
+                    CurrentMap.SpecialObjects.Selected = new(selected);
+
+                //play hit sound
+                if (LastPlayed != closest)
+                {
+                    LastPlayed = closest;
+
+                    if (closest != null && MusicPlayer.IsPlaying && MainWindow.Focused)
+                        SoundPlayer.Play("hit");
+                }
+            }
 
             // bpm lines
             double multiplier = beatDivisor % 1 == 0 ? 1f : 1f / (beatDivisor % 1);
@@ -271,7 +690,7 @@ namespace New_SSQE.GUI
             bool doubleDiv = divisor % 2 == 0;
             int divOff = divisor - 1 - (doubleDiv ? 1 : 0);
 
-            int numPoints = editor.TimingPoints.Count;
+            int numPoints = CurrentMap.TimingPoints.Count;
             int numFull = 0, numHalf = 0, numSub = 0;
 
             Vector3i[] metrics = new Vector3i[numPoints];
@@ -279,11 +698,11 @@ namespace New_SSQE.GUI
 
             for (int i = 0; i < numPoints; i++)
             {
-                var point = editor.TimingPoints[i];
-                if (point.BPM == 0 || point.Ms > totalTime)
+                TimingPoint point = CurrentMap.TimingPoints[i];
+                if (point.BPM <= 0 || point.Ms > totalTime)
                     continue;
 
-                double nextMs = i + 1 < numPoints ? Math.Min(editor.TimingPoints[i + 1].Ms, totalTime) : totalTime;
+                double nextMs = i + 1 < numPoints ? Math.Min(CurrentMap.TimingPoints[i + 1].Ms, totalTime) : totalTime;
                 double totalMs = nextMs - point.Ms;
 
                 double stepMs = 60000 / point.BPM * multiplier;
@@ -299,21 +718,27 @@ namespace New_SSQE.GUI
                 numSub += sub;
             }
 
-            var startBpmOffsets = Pool.Rent(numPoints);
-            var fullBpmOffsets = Pool.Rent(numFull);
-            var halfBpmOffsets = Pool.Rent(numHalf);
-            var subBpmOffsets = Pool.Rent(numSub);
+            Vector4[] startBpmOffsets = Pool.Rent(numPoints);
+            Vector4[] fullBpmOffsets = Pool.Rent(numFull);
+            Vector4[] halfBpmOffsets = Pool.Rent(numHalf);
+            Vector4[] subBpmOffsets = Pool.Rent(numSub);
 
-            var pointHoverOffset = new Vector4(-1920, 0, 0, 0);
-            var pointSelectOffset = new Vector4(-1920, 0, 0, 0);
+            Vector4 pointHoverOffset = (-1920, 0, 0, 0);
+            Vector4 pointSelectOffset = (-1920, 0, 0, 0);
 
             for (int i = 0; i < numPoints; i++)
             {
-                var point = editor.TimingPoints[i];
-                if (point.BPM == 0)
-                    continue;
+                TimingPoint point = CurrentMap.TimingPoints[i];
+                int index = c1Set.Length - numPoints + i;
 
-                var pointMetrics = metrics[i];
+                if (point.BPM == 0)
+                {
+                    c1Set[index] = "";
+                    c2Set[index] = "";
+                    continue;
+                }
+
+                Vector3i pointMetrics = metrics[i];
 
                 double stepMs = 60000 / point.BPM * multiplier;
                 double halfStep = stepMs / 2;
@@ -324,15 +749,15 @@ namespace New_SSQE.GUI
                 startBpmOffsets[i] = (lineX, 0, 1, 8);
                 double x;
 
-                var pointRect = new RectangleF(lineX, Rect.Height, 72, 52);
-                var hovering = HoveringPoint == null && DraggingPoint == null && pointRect.Contains(mouse);
-                var pointSelected = editor.SelectedPoint == point;
+                bool hovering = !RenderMapObjects && HoveringPoint == null && DraggingPoint == null && mouse.X > lineX && mouse.X < lineX + 72 && mouse.Y > Rect.Height && mouse.Y < Rect.Height + 52;
+                bool pointSelected = CurrentMap.SelectedPoint == point;
 
-                var numText = $"{point.BPM:##,###.###} BPM";
-                var msText = $"{point.Ms:##,##0}ms";
+                c1Set[index] = $"{point.BPM:##,###.###} BPM";
+                c2Set[index] = $"{point.Ms:##,##0}ms";
+                xSet[index] = (int)lineX + 3;
 
-                color1Texts.AddRange(FontRenderer.Print((int)lineX + 3, (int)Rect.Height + 26, numText, 20, "main"));
-                color2Texts.AddRange(FontRenderer.Print((int)lineX + 3, (int)Rect.Height + 41, msText, 20, "main"));
+                c1Len += c1Set[index].Length;
+                c2Len += c2Set[index].Length;
 
                 if (hovering)
                 {
@@ -370,17 +795,20 @@ namespace New_SSQE.GUI
                 current += pointMetrics;
             }
 
-            RegisterData(7, startBpmOffsets);
-            RegisterData(8, fullBpmOffsets);
-            RegisterData(9, halfBpmOffsets);
-            RegisterData(10, subBpmOffsets);
+            RegisterData(7, startBpmOffsets, numPoints);
+            RegisterData(8, fullBpmOffsets, numFull);
+            RegisterData(9, halfBpmOffsets, numHalf);
+            RegisterData(10, subBpmOffsets, numSub);
             RegisterData(11, new Vector4[1] { pointHoverOffset });
             RegisterData(12, new Vector4[1] { pointSelectOffset });
 
-            Pool.Return(startBpmOffsets, true);
-            Pool.Return(fullBpmOffsets, true);
-            Pool.Return(halfBpmOffsets, true);
-            Pool.Return(subBpmOffsets, true);
+            Pool.Return(startBpmOffsets);
+            Pool.Return(fullBpmOffsets);
+            Pool.Return(halfBpmOffsets);
+            Pool.Return(subBpmOffsets);
+
+            color1Texts = RenderC1Array(c1Set, c1Len, xSet, nCount);
+            color2Texts = RenderC2Array(c2Set, c2Len, xSet, nCount);
         }
 
         private float prevHeight = 0;
@@ -401,11 +829,11 @@ namespace New_SSQE.GUI
             GL.UseProgram(Shader.Program);
 
             GL.BindVertexArray(VaO);
-            var offset = 30;
+            int offset = 30;
             GL.DrawArrays(PrimitiveType.Triangles, 0, offset);
 
             // render waveform
-            if (Settings.settings["waveform"])
+            if (Settings.waveform.Value)
                 Waveform.Render(PosSet, Rect.Height);
 
             // render dynamic elements
@@ -415,42 +843,36 @@ namespace New_SSQE.GUI
             GL.UseProgram(Shader.Program);
 
             GL.BindVertexArray(VaO);
-            var length = Indices["rectLength"] + Indices["loopLength"] + Indices["lineLength"] - 30;
+            int length = Indices["rectLength"] + Indices["loopLength"] + Indices["lineLength"] - 30;
             GL.DrawArrays(PrimitiveType.Triangles, offset, length);
 
-            var editor = MainWindow.Instance;
-
-            var currentTime = Settings.settings["currentTime"].Value;
-            var sfxOffset = Settings.settings["sfxOffset"];
-            var beatDivisor = Settings.settings["beatDivisor"].Value + 1f;
+            float currentTime = Settings.currentTime.Value.Value;
+            float sfxOffset = Settings.sfxOffset.Value;
 
             //play metronome
-            if (Settings.settings["metronome"])
+            if (Settings.metronome.Value && MainWindow.Focused)
             {
-                var ms = currentTime - sfxOffset;
-                var bpm = editor.GetCurrentBpm(currentTime);
-                var interval = 60000f / bpm.BPM / beatDivisor;
-                var remainder = (ms - bpm.Ms) % interval;
-                var closestMs = ms - remainder;
+                float ms = currentTime - sfxOffset;
+                float beat = Timing.GetClosestBeat(ms);
 
-                if (lastPlayedTick != closestMs && remainder >= 0 && editor.MusicPlayer.IsPlaying)
+                if (lastPlayedTick != beat && beat <= ms && beat > 0 && MusicPlayer.IsPlaying)
                 {
-                    lastPlayedTick = closestMs;
+                    lastPlayedTick = beat;
 
-                    editor.SoundPlayer.Play("metronome");
+                    SoundPlayer.Play("metronome");
                 }
             }
         }
 
         public override void RenderTexture()
         {
-            var color1 = Settings.settings["color1"];
-            var color2 = Settings.settings["color2"];
+            Color color1 = Settings.color1.Value;
+            Color color2 = Settings.color2.Value;
 
             GL.Uniform4f(TexColorLocation, color1.R / 255f, color1.G / 255f, color1.B / 255f, color1.A / 255f);
-            FontRenderer.RenderData("main", color1Texts.ToArray());
+            FontRenderer.RenderData("main", color1Texts);
             GL.Uniform4f(TexColorLocation, color2.R / 255f, color2.G / 255f, color2.B / 255f, color2.A / 255f);
-            FontRenderer.RenderData("main", color2Texts.ToArray());
+            FontRenderer.RenderData("main", color2Texts);
         }
 
         private List<float> vertices = new();
@@ -458,31 +880,31 @@ namespace New_SSQE.GUI
         private List<float> loops = new();
         private List<float> lines = new();
 
-        private List<Vector4> color1Texts = new();
-        private List<Vector4> color2Texts = new();
+        private Vector4[] color1Texts;
+        private Vector4[] color2Texts;
 
         public override Tuple<float[], float[]> GetVertices()
         {
             loops = new();
             lines = new();
 
-            vertices = new(GLU.Rect(Rect, 0.15f, 0.15f, 0.15f, Settings.settings["trackOpacity"] / 255f));
+            vertices = new(GLU.Rect(Rect, 0.15f, 0.15f, 0.15f, Settings.trackOpacity.Value / 255f));
             loops.AddRange(GLU.OutlineAsTriangles(Rect, 1, 0.2f, 0.2f, 0.2f));
 
-            var editor = MainWindow.Instance;
-            var mouse = editor.Mouse;
-            var noteStep = editor.NoteStep;
+            MainWindow editor = MainWindow.Instance;
+            Point mouse = editor.Mouse;
+            float noteStep = CurrentMap.NoteStep;
 
-            var sc2 = Settings.settings["color2"];
-            var color2 = new float[] { sc2.R / 255f, sc2.G / 255f, sc2.B / 255f };
+            Color sc2 = Settings.color2.Value;
+            float[] color2 = new float[] { sc2.R / 255f, sc2.G / 255f, sc2.B / 255f };
 
-            var currentTime = Settings.settings["currentTime"].Value;
-            var totalTime = Settings.settings["currentTime"].Max;
+            float currentTime = Settings.currentTime.Value.Value;
+            float totalTime = Settings.currentTime.Value.Max;
 
-            var posX = currentTime / 1000f * noteStep;
-            var maxX = totalTime / 1000f * noteStep;
-            var cursorX = Rect.Width * Settings.settings["cursorPos"].Value / 100f;
-            var endX = cursorX - posX + maxX + 1;
+            float posX = currentTime / 1000f * noteStep;
+            float maxX = totalTime / 1000f * noteStep;
+            float cursorX = Rect.Width * Settings.cursorPos.Value.Value / 100f;
+            float endX = cursorX - posX + maxX + 1;
 
             StartPos = Math.Max(0, (-cursorX * 1000f / noteStep + currentTime) / totalTime);
             EndPos = Math.Min(1, ((Rect.Width - cursorX) * 1000f / noteStep + currentTime) / totalTime);
@@ -491,16 +913,19 @@ namespace New_SSQE.GUI
 
             HoveringNote = null;
             HoveringPoint = null;
+            HoveringVfx = null;
+            HoveringSpec = null;
+            HoveringObjDuration = null;
 
             selecting = editor.RightHeld && RightDraggingTrack;
             selectHitbox = new RectangleF();
 
             if (selecting)
             {
-                var offsetMs = DragStartMs - currentTime;
-                var startX = DragStartPoint.X + offsetMs / 1000f * noteStep;
+                float offsetMs = DragStartMs - currentTime;
+                float startX = DragStartPoint.X + offsetMs / 1000f * noteStep;
 
-                var my = MathHelper.Clamp(mouse.Y, 0f, Rect.Height);
+                float my = MathHelper.Clamp(mouse.Y, 0f, Rect.Height);
                 float x = Math.Min(mouse.X, startX);
                 float y = Math.Min(my, DragStartPoint.Y);
                 float w = Math.Max(mouse.X, startX) - x;
@@ -524,7 +949,7 @@ namespace New_SSQE.GUI
             vertices.AddRange(loops);
             vertices.AddRange(lines);
 
-            return new Tuple<float[], float[]>(vertices.ToArray(), Array.Empty<float>());
+            return new(vertices.ToArray(), Array.Empty<float>());
         }
 
         public override void OnMouseClick(Point pos, bool right = false)
@@ -532,14 +957,14 @@ namespace New_SSQE.GUI
             if (right)
                 OnMouseUp(pos);
 
-            var startMs = (long)Settings.settings["currentTime"].Value;
-            var editor = MainWindow.Instance;
+            long startMs = (long)Settings.currentTime.Value.Value;
+            MainWindow editor = MainWindow.Instance;
 
-            var replayf = editor.MusicPlayer.IsPlaying && !right;
+            bool replayf = MusicPlayer.IsPlaying && !right;
             replay = false;
 
             if (replayf)
-                editor.MusicPlayer.Pause();
+                MusicPlayer.Pause();
 
             if (HoveringNote != null && !right)
             {
@@ -548,35 +973,32 @@ namespace New_SSQE.GUI
                 DragStartPoint = pos;
                 DragStartMs = startMs;
 
-                var selected = editor.SelectedNotes.ToList();
+                List<Note> selected = CurrentMap.Notes.Selected;
 
                 if (editor.ShiftHeld && selected.Count > 0)
                 {
-                    selected = new List<Note> { selected[0] };
+                    selected = new() { selected[0] };
 
-                    var first = selected[0];
-                    var last = HoveringNote;
-                    var min = Math.Min(first.Ms, last.Ms);
-                    var max = Math.Max(first.Ms, last.Ms);
+                    Note first = selected[0];
+                    Note last = HoveringNote;
+                    long min = Math.Min(first.Ms, last.Ms);
+                    long max = Math.Max(first.Ms, last.Ms);
 
-                    foreach (var note in editor.Notes)
+                    foreach (Note note in CurrentMap.Notes)
                         if (note.Ms >= min && note.Ms <= max && !selected.Contains(note))
                             selected.Add(note);
                 }
                 else if (editor.CtrlHeld)
                 {
-                    if (selected.Contains(HoveringNote))
-                        selected.Remove(HoveringNote);
-                    else
+                    if (!selected.Remove(HoveringNote))
                         selected.Add(HoveringNote);
                 }
                 else if (!selected.Contains(HoveringNote))
                     selected = new List<Note>() { HoveringNote };
 
-                editor.SelectedNotes = selected.ToList();
-                editor.UpdateSelection();
+                CurrentMap.Notes.Selected = new(selected);
 
-                foreach (var note in editor.SelectedNotes)
+                foreach (Note note in CurrentMap.Notes.Selected)
                     note.DragStartMs = note.Ms;
             }
             else if (HoveringPoint != null && !right)
@@ -586,9 +1008,106 @@ namespace New_SSQE.GUI
                 DragStartPoint = pos;
                 DragStartMs = startMs;
 
-                editor.SelectedPoint = HoveringPoint;
+                CurrentMap.SelectedPoint = HoveringPoint;
 
                 DraggingPoint.DragStartMs = DraggingPoint.Ms;
+            }
+            else if (HoveringObjDuration != null && !right)
+            {
+                DraggingObjDuration = HoveringObjDuration;
+
+                DragStartPoint = pos;
+                DragStartMs = startMs;
+
+                CurrentMap.SelectedObjDuration = HoveringObjDuration;
+
+                DraggingObjDuration.DragStartMs = DraggingObjDuration.Duration;
+            }
+            else if (HoveringVfx != null && !right)
+            {
+                DraggingVfx = HoveringVfx;
+
+                DragStartPoint = pos;
+                DragStartMs = startMs;
+
+                List<MapObject> selected = CurrentMap.VfxObjects.Selected;
+
+                if (editor.ShiftHeld && selected.Count > 0)
+                {
+                    selected = new() { selected[0] };
+
+                    MapObject first = selected[0];
+                    MapObject last = HoveringVfx;
+                    long min = Math.Min(first.Ms, last.Ms);
+                    long max = Math.Max(first.Ms, last.Ms);
+
+                    foreach (MapObject obj in CurrentMap.VfxObjects)
+                        if (obj.Ms >= min && obj.Ms <= max && !selected.Contains(obj))
+                            selected.Add(obj);
+                }
+                else if (editor.CtrlHeld)
+                {
+                    if (!selected.Remove(HoveringVfx))
+                    {
+                        if (selected.Count == 0 && editor.CurrentWindow is GuiWindowEditor gse)
+                            gse.ShowVFXSettings(HoveringVfx);
+                        selected.Add(HoveringVfx);
+                    }
+                }
+                else if (!selected.Contains(HoveringVfx))
+                {
+                    if (editor.CurrentWindow is GuiWindowEditor gse)
+                        gse.ShowVFXSettings(HoveringVfx);
+                    selected = new List<MapObject>() { HoveringVfx };
+                }
+
+                CurrentMap.VfxObjects.Selected = new(selected);
+
+                foreach (MapObject obj in CurrentMap.VfxObjects.Selected)
+                    obj.DragStartMs = obj.Ms;
+            }
+            else if (HoveringSpec != null && !right)
+            {
+                DraggingSpec = HoveringSpec;
+
+                DragStartPoint = pos;
+                DragStartMs = startMs;
+
+                List<MapObject> selected = CurrentMap.SpecialObjects.Selected;
+
+                if (editor.ShiftHeld && selected.Count > 0)
+                {
+                    selected = new() { selected[0] };
+
+                    MapObject first = selected[0];
+                    MapObject last = HoveringSpec;
+                    long min = Math.Min(first.Ms, last.Ms);
+                    long max = Math.Max(first.Ms, last.Ms);
+
+                    foreach (MapObject obj in CurrentMap.SpecialObjects)
+                        if (obj.Ms >= min && obj.Ms <= max && !selected.Contains(obj))
+                            selected.Add(obj);
+                }
+                else if (editor.CtrlHeld)
+                {
+                    if (!selected.Remove(HoveringSpec))
+                    {
+                        if (selected.Count == 0 && editor.CurrentWindow is GuiWindowEditor gse)
+                            gse.ShowSpecialSettings(HoveringSpec);
+                        selected.Add(HoveringSpec);
+                    }
+                }
+                else if (!selected.Contains(HoveringSpec))
+                {
+                    if (editor.CurrentWindow is GuiWindowEditor gse)
+                        gse.ShowSpecialSettings(HoveringSpec);
+                    selected = new() { HoveringSpec };
+                }
+
+                CurrentMap.SpecialObjects.Selected = new(selected);
+
+                foreach (MapObject obj in CurrentMap.SpecialObjects.Selected)
+                    obj.DragStartMs = obj.Ms;
             }
             else
             {
@@ -606,50 +1125,49 @@ namespace New_SSQE.GUI
         {
             if (DraggingTrack)
             {
-                var editor = MainWindow.Instance;
-                var currentTime = Settings.settings["currentTime"];
-                var divisor = Settings.settings["beatDivisor"].Value;
-                var cursorPos = Settings.settings["cursorPos"].Value;
+                SliderSetting currentTime = Settings.currentTime.Value;
+                float divisor = Settings.beatDivisor.Value.Value;
+                float cursorPos = Settings.cursorPos.Value.Value;
 
-                var cellStep = editor.NoteStep;
+                float cellStep = CurrentMap.NoteStep;
 
-                var offset = (pos.X - DragStartPoint.X) / cellStep * 1000f;
-                var cursorms = (pos.X - Rect.Width * cursorPos / 100f - noteSize / 2f) / cellStep * 1000f + currentTime.Value;
+                float offset = (pos.X - DragStartPoint.X) / cellStep * 1000f;
+                float cursorms = (pos.X - Rect.Width * cursorPos / 100f - noteSize / 2f) / cellStep * 1000f + currentTime.Value;
 
                 if (DraggingNote != null)
                 {
                     offset = DraggingNote.DragStartMs - cursorms;
                     offset = Math.Abs(offset) / 1000f * cellStep <= 5f ? 0 : offset;
-                    var currentBpm = editor.GetCurrentBpm(cursorms).BPM;
+                    float currentBpm = Timing.GetCurrentBpm(cursorms).BPM;
 
                     if (currentBpm > 0)
                     {
-                        var stepX = 60f / currentBpm * cellStep;
-                        var stepXSmall = stepX / divisor;
+                        float stepX = 60f / currentBpm * cellStep;
+                        float stepXSmall = stepX / divisor;
 
-                        var threshold = MathHelper.Clamp(stepXSmall / 1.75f, 1f, 12f);
-                        var snappedMs = editor.GetClosestBeat(DraggingNote.Ms);
+                        float threshold = MathHelper.Clamp(stepXSmall / 1.75f, 1f, 12f);
+                        float snappedMs = Timing.GetClosestBeat(DraggingNote.Ms);
 
                         if (Math.Abs(snappedMs - cursorms) / 1000f * cellStep <= threshold)
                             offset = DraggingNote.DragStartMs - snappedMs;
                     }
 
-                    foreach (var note in editor.SelectedNotes)
+                    foreach (Note note in CurrentMap.Notes.Selected)
                         note.Ms = (long)MathHelper.Clamp(note.DragStartMs - offset, 0f, currentTime.Max);
 
-                    editor.SortNotes();
+                    CurrentMap.Notes.Sort();
                 }
                 else if (DraggingPoint != null)
                 {
                     offset = DraggingPoint.DragStartMs - cursorms;
-                    var currentBpm = editor.GetCurrentBpm(cursorms).BPM;
+                    float currentBpm = Timing.GetCurrentBpm(cursorms).BPM;
 
-                    var stepX = 60f / currentBpm * cellStep;
-                    var stepXSmall = stepX / divisor;
+                    float stepX = 60f / currentBpm * cellStep;
+                    float stepXSmall = stepX / divisor;
 
-                    var threshold = MathHelper.Clamp(stepXSmall / 1.75f, 1f, 12f);
-                    var snappedMs = editor.GetClosestBeat(DraggingPoint.Ms, true);
-                    var snappedNote = editor.GetClosestNote(DraggingPoint.Ms);
+                    float threshold = MathHelper.Clamp(stepXSmall / 1.75f, 1f, 12f);
+                    float snappedMs = Timing.GetClosestBeat(DraggingPoint.Ms, true);
+                    float snappedNote = CurrentMap.Notes.GetClosest(DraggingPoint.Ms);
 
                     if (Math.Abs(snappedNote - cursorms) < Math.Abs(snappedMs - cursorms))
                         snappedMs = snappedNote;
@@ -660,14 +1178,83 @@ namespace New_SSQE.GUI
 
                     DraggingPoint.Ms = (long)Math.Min(DraggingPoint.DragStartMs - offset, currentTime.Max);
 
-                    editor.SortTimings(false);
+                    CurrentMap.SortTimings(false);
+                }
+                else if (DraggingObjDuration != null)
+                {
+                    MapObject obj = DraggingObjDuration;
+                    cursorms += noteSize / 2 / cellStep * 1000f;
+
+                    offset = obj.DragStartMs - cursorms + obj.Ms;
+                    offset = Math.Abs(offset) / 1000f * cellStep <= 5f ? 0 : offset;
+                    float currentBpm = Timing.GetCurrentBpm(cursorms).BPM;
+
+                    if (currentBpm > 0)
+                    {
+                        float stepX = 60f / currentBpm * cellStep;
+                        float stepXSmall = stepX / divisor;
+
+                        float threshold = MathHelper.Clamp(stepXSmall / 1.75f, 1f, 12f);
+                        float snappedMs = Timing.GetClosestBeat(obj.Ms + obj.Duration);
+
+                        if (Math.Abs(snappedMs - cursorms) / 1000f * cellStep <= threshold)
+                            offset = obj.DragStartMs - snappedMs + obj.Ms;
+                    }
+
+                    obj.Duration = (long)Math.Max(obj.DragStartMs - offset, 0);
+                }
+                else if (DraggingVfx != null)
+                {
+                    offset = DraggingVfx.DragStartMs - cursorms;
+                    offset = Math.Abs(offset) / 1000f * cellStep <= 5f ? 0 : offset;
+                    float currentBpm = Timing.GetCurrentBpm(cursorms).BPM;
+
+                    if (currentBpm > 0)
+                    {
+                        float stepX = 60f / currentBpm * cellStep;
+                        float stepXSmall = stepX / divisor;
+
+                        float threshold = MathHelper.Clamp(stepXSmall / 1.75f, 1f, 12f);
+                        float snappedMs = Timing.GetClosestBeat(DraggingVfx.Ms);
+
+                        if (Math.Abs(snappedMs - cursorms) / 1000f * cellStep <= threshold)
+                            offset = DraggingVfx.DragStartMs - snappedMs;
+                    }
+
+                    foreach (MapObject obj in CurrentMap.VfxObjects.Selected)
+                        obj.Ms = (long)MathHelper.Clamp(obj.DragStartMs - offset, 0f, currentTime.Max);
+
+                    CurrentMap.VfxObjects.Sort();
+                }
+                else if (DraggingSpec != null)
+                {
+                    offset = DraggingSpec.DragStartMs - cursorms;
+                    offset = Math.Abs(offset) / 1000f * cellStep <= 5f ? 0 : offset;
+                    float currentBpm = Timing.GetCurrentBpm(cursorms).BPM;
+
+                    if (currentBpm > 0)
+                    {
+                        float stepX = 60f / currentBpm * cellStep;
+                        float stepXSmall = stepX / divisor;
+
+                        float threshold = MathHelper.Clamp(stepXSmall / 1.75f, 1f, 12f);
+                        float snappedMs = Timing.GetClosestBeat(DraggingSpec.Ms);
+
+                        if (Math.Abs(snappedMs - cursorms) / 1000f * cellStep <= threshold)
+                            offset = DraggingSpec.DragStartMs - snappedMs;
+                    }
+
+                    foreach (MapObject obj in CurrentMap.SpecialObjects.Selected)
+                        obj.Ms = (long)MathHelper.Clamp(obj.DragStartMs - offset, 0f, currentTime.Max);
+
+                    CurrentMap.SpecialObjects.Sort();
                 }
                 else
                 {
-                    var finalTime = DragStartMs - offset;
+                    float finalTime = DragStartMs - offset;
 
-                    if (editor.GetCurrentBpm(finalTime).BPM > 0)
-                        finalTime = editor.GetClosestBeat(finalTime);
+                    if (Timing.GetCurrentBpm(finalTime).BPM > 0)
+                        finalTime = Timing.GetClosestBeat(finalTime);
 
                     finalTime = MathHelper.Clamp(finalTime, 0f, currentTime.Max);
 
@@ -680,61 +1267,64 @@ namespace New_SSQE.GUI
         {
             if (DraggingTrack)
             {
-                var editor = MainWindow.Instance;
+                MainWindow editor = MainWindow.Instance;
 
                 if (DraggingNote != null && DraggingNote.DragStartMs != DraggingNote.Ms)
                 {
-                    var selected = editor.SelectedNotes.ToList();
-                    var startList = new List<long>();
-                    var msList = new List<long>();
+                    List<Note> selected = CurrentMap.Notes.Selected.ToList();
+                    long msDiff = DraggingNote.Ms - DraggingNote.DragStartMs;
 
-                    for (int i = 0; i < selected.Count; i++)
-                    {
-                        startList.Add(selected[i].DragStartMs);
-                        msList.Add(selected[i].Ms);
-                    }
+                    foreach (Note note in selected)
+                        note.Ms -= msDiff;
 
-                    editor.UndoRedoManager.Add($"MOVE NOTE{(selected.Count > 1 ? "S" : "")}", () =>
-                    {
-                        for (int i = 0; i < selected.Count; i++)
-                            selected[i].Ms = startList[i];
-
-                        editor.SortNotes();
-                    }, () =>
-                    {
-                        for (int i = 0; i < selected.Count; i++)
-                            selected[i].Ms = msList[i];
-
-                        editor.SortNotes();
-                    }, false);
+                    NoteManager.Edit("MOVE NOTE[S]", n => n.Ms += msDiff);
                 }
                 else if (DraggingPoint != null && DraggingPoint.DragStartMs != DraggingPoint.Ms)
                 {
-                    var point = DraggingPoint;
-                    var ms = point.Ms;
-                    var msStart = point.DragStartMs;
+                    TimingPoint point = DraggingPoint;
+                    long ms = point.Ms;
+                    point.Ms = point.DragStartMs;
 
-                    editor.UndoRedoManager.Add("MOVE POINT", () =>
-                    {
-                        point.Ms = msStart;
+                    PointManager.Edit("MOVE POINT", n => n.Ms = ms);
+                }
+                else if (DraggingObjDuration != null && DraggingObjDuration.DragStartMs != DraggingObjDuration.Duration)
+                {
+                    MapObject obj = DraggingObjDuration;
+                    long ms = obj.Duration;
+                    obj.Duration = obj.DragStartMs;
 
-                        editor.SortTimings();
-                    }, () =>
-                    {
-                        point.Ms = ms;
+                    VfxObjectManager.Edit("MOVE OBJ DURATION", [obj], n => n.Duration = ms);
+                }
+                else if (DraggingVfx != null && DraggingVfx.DragStartMs != DraggingVfx.Ms)
+                {
+                    List<MapObject> selected = CurrentMap.VfxObjects.Selected.ToList();
+                    long msDiff = DraggingVfx.Ms - DraggingVfx.DragStartMs;
 
-                        editor.SortTimings();
-                    }, false);
+                    foreach (MapObject obj in selected)
+                        obj.Ms -= msDiff;
 
-                    TimingsWindow.Instance?.ResetList();
+                    VfxObjectManager.Edit("MOVE OBJECT[S]", n => n.Ms += msDiff);
+                }
+                else if (DraggingSpec != null && DraggingSpec.DragStartMs != DraggingSpec.Ms)
+                {
+                    List<MapObject> selected = CurrentMap.SpecialObjects.Selected.ToList();
+                    long msDiff = DraggingSpec.Ms - DraggingSpec.DragStartMs;
+
+                    foreach (MapObject obj in selected)
+                        obj.Ms -= msDiff;
+
+                    SpecialObjectManager.Edit("MOVE OBJECT[S]", n => n.Ms += msDiff);
                 }
 
                 DraggingTrack = false;
                 DraggingNote = null;
                 DraggingPoint = null;
+                DraggingVfx = null;
+                DraggingSpec = null;
+                DraggingObjDuration = null;
 
                 if (replay)
-                    editor.MusicPlayer.Play();
+                    MusicPlayer.Play();
             }
 
             if (RightDraggingTrack)

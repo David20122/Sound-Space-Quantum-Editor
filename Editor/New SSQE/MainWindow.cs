@@ -1,12 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using New_SSQE.GUI;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Json;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Drawing;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -19,139 +13,140 @@ using System.Runtime.InteropServices;
 using BigInteger = System.Numerics.BigInteger;
 using System.IO.Compression;
 using OpenTK.Graphics;
-using New_SSQE.Types;
-using DiscordRPC;
-using DiscordRPC.Logging;
-using Un4seen.Bass;
+using New_SSQE.Objects;
+using Assets = New_SSQE.Misc.Static.Assets;
+using New_SSQE.GUI.Font;
+using New_SSQE.Audio;
+using New_SSQE.FileParsing;
+using New_SSQE.GUI.Shaders;
+using New_SSQE.Objects.Other;
+using New_SSQE.Preferences;
+using New_SSQE.GUI.Input;
+using New_SSQE.Objects.Managers;
+using New_SSQE.Misc.Network;
+using New_SSQE.Misc.Dialogs;
+using New_SSQE.Misc.Static;
+using New_SSQE.ExternalUtils;
+using New_SSQE.Maps;
 
 namespace New_SSQE
 {
     internal class MainWindow : GameWindow
     {
-        public static bool IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+#if DEBUG
+        public static bool DebugVersion = true;
+#else
+        public static bool DebugVersion = false;
+#endif
+
+        public static readonly Vector2i SpriteSize = (4, 4);
+
+        public static string InitialFile = "";
 
         public static MainWindow Instance;
-        public MusicPlayer MusicPlayer = new();
-        public SoundPlayer SoundPlayer = new();
-        public UndoRedoManager UndoRedoManager = new();
 
         public GuiWindow CurrentWindow;
 
-        public List<Map> Maps = new();
-        public Map? CurrentMap;
-        private Map prevMap;
-
-        public List<Note> Notes = new();
-        public List<Note> SelectedNotes = new();
-        public List<Note> BezierNodes = new();
-
-        public List<TimingPoint> TimingPoints = new();
-        public TimingPoint? SelectedPoint;
-
-        public List<Bookmark> Bookmarks = new();
-
         public readonly Dictionary<Keys, Tuple<int, int>> KeyMapping = new();
+        public static bool Focused = true;
 
         public Point Mouse = new(-1, -1);
-
-        public float Tempo = 1f;
-        public float Zoom = 1f;
-        public float NoteStep => 500f * Zoom;
+        public Vector2 Delta = (0, 0);
 
         public bool CtrlHeld;
         public bool AltHeld;
         public bool ShiftHeld;
         public bool RightHeld;
 
-        public string? FileName;
-        public string SoundID = "-1";
+        public static Avalonia.Controls.Window DefaultWindow;
 
-        public static Avalonia.Controls.Window DefaultWindow = new BackgroundWindow();
-
-        private DiscordRpcClient discord;
-        private bool discordEnabled = true;
-
-
-
-        // hacky workaround for fullscreen being awful
         private bool isFullscreen = false;
-        private Vector2i startSize = new(1920, 1080);
-
-        private void SwitchFullscreen()
-        {
-            isFullscreen ^= true;
-
-            WindowState = isFullscreen ? WindowState.Normal : WindowState.Maximized;
-            WindowBorder = isFullscreen ? WindowBorder.Hidden : WindowBorder.Resizable;
-
-            if (isFullscreen)
-            {
-                Size = startSize;
-                Location = (0, 0);
-            }
-        }
 
 
 
         private static WindowIcon GetWindowIcon()
         {
-            var bytes = File.ReadAllBytes("assets/textures/Icon.ico");
-            var bmp = SKBitmap.Decode(bytes, new SKImageInfo(256, 256, SKColorType.Rgba8888));
-            var image = new OpenTK.Windowing.Common.Input.Image(bmp.Width, bmp.Height, bmp.Bytes);
+            byte[] bytes = File.ReadAllBytes($"{Assets.TEXTURES}\\Icon.ico");
+            SKBitmap bmp = SKBitmap.Decode(bytes, new SKImageInfo(256, 256, SKColorType.Rgba8888));
+            OpenTK.Windowing.Common.Input.Image image = new(bmp.Width, bmp.Height, bmp.Bytes);
 
-            return new WindowIcon(image);
+            return new(image);
         }
 
-        private const string cacheFile = "assets/temp/cache.txt";
+        private static void OnDebugMessage(DebugSource source, DebugType type, uint id, DebugSeverity severity, int length, IntPtr pMessage, IntPtr pUserParam)
+        {
+            string message = Marshal.PtrToStringAnsi(pMessage, length);
 
-        public MainWindow() : base(GameWindowSettings.Default, new NativeWindowSettings()
+            if (type == DebugType.DebugTypeError)
+                Logging.Register($"[{severity} source={source} type={type} id={id}] {message}", LogSeverity.WARN);
+        }
+        private static readonly GLDebugProc DebugMessageDelegate = OnDebugMessage;
+        
+        public static int MaxSamples = 0;
+
+        public static bool MSAA;
+        public static string FileToLoad = "";
+
+        public MainWindow(int samples) : base(GameWindowSettings.Default, new()
         {
             Size = (1280, 720),
-            Title = $"Sound Space Quantum Editor {Assembly.GetExecutingAssembly().GetName().Version}",
-            NumberOfSamples = 32,
+            Title = $"Sound Space Quantum Editor {Program.Version}",
             WindowState = WindowState.Maximized,
+            NumberOfSamples = samples,
             Icon = GetWindowIcon(),
-            Flags = ContextFlags.Debug,
+            Flags = DebugVersion ? ContextFlags.Debug : 0,
 
-            APIVersion = new Version(3, 3)
+            APIVersion = new(3, 3)
         })
         {
-            ActionLogging.Register("Required OpenGL version: 3.3");
-            ActionLogging.Register("Current OpenGL version: " + (GL.GetString(StringName.Version) ?? "N/A"));
+            MSAA = samples > 0;
+
+            // requires higher OpenGL version
+            if (DebugVersion)
+            {
+                GL.DebugMessageCallback(DebugMessageDelegate, IntPtr.Zero);
+                GL.Enable(EnableCap.DebugOutput);
+            }
+
+            Logging.Register($"Required OpenGL version: {APIVersion}");
+            Logging.Register("Current OpenGL version: " + (GL.GetString(StringName.Version) ?? "N/A"));
             
             string version = GL.GetString(StringName.Version) ?? "";
             int major = 0, minor = 0;
             GL.GetInteger(GetPName.MajorVersion, ref major);
             GL.GetInteger(GetPName.MinorVersion, ref minor);
+            GL.GetInteger(GetPName.MaxFramebufferSamples, ref MaxSamples);
 
             if (string.IsNullOrWhiteSpace(version) || new Version(major, minor) < APIVersion)
-                throw new Exception("Unsupported OpenGL version (Minimum: 3.3)");
+                throw new Exception($"Unsupported OpenGL version (Minimum: {APIVersion})");
 
             Shader.Init();
-
+            
             Instance = this;
+            DefaultWindow = new BackgroundWindow();
 
-            DiscordInit();
-            SetActivity("Sitting in the menu");
+            DiscordManager.Init();
 
-            Settings.Load();
+            Settings.Init();
 
             CheckForUpdates();
+            MessageBox.Instance?.Close();
 
-            if (File.Exists(cacheFile) && !string.IsNullOrWhiteSpace(File.ReadAllText(cacheFile)))
-                LoadCache();
+            MapManager.LoadCache();
 
             OnMouseWheel(new MouseWheelEventArgs());
             SwitchWindow(new GuiWindowMenu());
+
+            if (!string.IsNullOrWhiteSpace(InitialFile))
+                MapManager.Load(InitialFile, true);
         }
 
-        public void UpdateFPS(VSyncMode mode)
+        public void UpdateFPS(VSyncMode mode, float fps)
         {
             if (Context.IsCurrent)
                 VSync = mode;
 
-            var fps = Settings.settings["fpsLimit"].Value;
-            var max = Settings.settings["fpsLimit"].Max;
+            float max = Settings.fpsLimit.Value.Max;
 
             RenderFrequency = Math.Round(fps) == Math.Round(max) ? 0f : fps + 60f;
         }
@@ -167,6 +162,8 @@ namespace New_SSQE
         private double frameTime;
         private const double updateFrequency = 1 / 10.0;
 
+        private double gcTime;
+
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             if (attemptClose)
@@ -174,19 +171,36 @@ namespace New_SSQE
             if (closed)
                 return;
 
+            if (Platform.IsLinux) // because all the other events for this are a key behind on linux (???)
+            {
+                KeyboardState keyboard = KeyboardState;
+
+                CtrlHeld = keyboard.IsKeyDown(Keys.LeftControl) || keyboard.IsKeyDown(Keys.RightControl);
+                AltHeld = keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt);
+                ShiftHeld = keyboard.IsKeyDown(Keys.LeftShift) || keyboard.IsKeyDown(Keys.RightShift);
+            }
+
             frameTime += args.Time;
             if (frameTime > updateFrequency)
             {
                 ExportSSPM.UpdateID();
                 frameTime = 0;
+
+                if (!string.IsNullOrWhiteSpace(FileToLoad))
+                {
+                    MapManager.Load(FileToLoad, true);
+                    FileToLoad = "";
+                }
             }
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             if (MusicPlayer.IsPlaying && CurrentWindow is GuiWindowEditor)
-                Settings.settings["currentTime"].Value = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
+                Settings.currentTime.Value.Value = (float)MusicPlayer.CurrentTime.TotalMilliseconds;
 
-            if ((MouseState.Position - (Mouse.X, Mouse.Y)).Length != 0)
+            Delta = MouseState.Position - (Mouse.X, Mouse.Y);
+
+            if (Delta.X != 0 || Delta.Y != 0)
             {
                 Mouse.X = (int)MouseState.X;
                 Mouse.Y = (int)MouseState.Y;
@@ -196,49 +210,59 @@ namespace New_SSQE
             try
             {
                 CurrentWindow?.Render(Mouse.X, Mouse.Y, (float)args.Time);
+
+                if (RecordingMouse)
+                {
+                    float cur = Settings.currentTime.Value.Value;
+                    long ms = Timing.GetClosestBeat(cur);
+
+                    if (ms > 0 && ms <= cur && CurrentMap.Notes.FirstOrDefault(n => Math.Abs(n.Ms - ms) < 2) == null)
+                    {
+                        PointF point = CurrentWindow?.Grid?.PointToGridSpace(Mouse.X, Mouse.Y) ?? new();
+                        NoteManager.Add("ADD NOTE", new Note(point.X, point.Y, ms));
+                    }
+                }
             }
             catch (Exception ex)
             {
-                ActionLogging.Register($"Failed to render frame", "ERROR", ex);
-            }
-
-            if (CurrentMap != prevMap && CurrentWindow is GuiWindowEditor editor)
-            {
-                editor.Timeline.GenerateOffsets();
-                prevMap = CurrentMap;
+                Logging.Register($"Failed to render frame", LogSeverity.ERROR, ex);
             }
 
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, BufferHandle.Zero);
             GL.BindVertexArray(VertexArrayHandle.Zero);
 
-            var err = GL.GetError();
+            OpenTK.Graphics.OpenGL.ErrorCode err = GL.GetError();
             if (err != OpenTK.Graphics.OpenGL.ErrorCode.NoError)
-                ActionLogging.Register($"OpenGL Error: '{err}'", "WARN");
-            
+                Logging.Register($"OpenGL Error: '{err}'", LogSeverity.WARN);
+
             SwapBuffers();
+
+            // apparently the garbage collector doesnt want to deal with everything on its own .-.
+            // a 2 second timer to ask it to collect stuff seems fine for performance, and it helps a lot with memory usage
+            gcTime += args.Time;
+            if (gcTime >= 2)
+            {
+                GC.Collect();
+                gcTime = 0;
+            }
         }
 
         protected override void OnResize(ResizeEventArgs e)
         {
-            var w = Math.Max(e.Width, 800);
-            var h = Math.Max(e.Height, 600);
-            Size = new Vector2i(w, h);
+            if (e.Width > 0 && e.Height > 0)
+            {
+                int w = Math.Max(e.Width, 800);
+                int h = Math.Max(e.Height, 600);
+                Size = new Vector2i(w, h);
 
-            base.OnResize(new ResizeEventArgs(w, h));
-            GL.Viewport(0, 0, w, h);
+                base.OnResize(new ResizeEventArgs(w, h));
+                GL.Viewport(0, 0, w, h);
+                Shader.UploadOrtho(w, h);
 
-            Shader.UploadOrtho(Shader.Program, w, h);
-            Shader.UploadOrtho(Shader.TexProgram, w, h);
-            Shader.UploadOrtho(Shader.FontTexProgram, w, h);
-            Shader.UploadOrtho(Shader.NoteInstancedProgram, w, h);
-            Shader.UploadOrtho(Shader.InstancedProgram, w, h);
-            Shader.UploadOrtho(Shader.GridInstancedProgram, w, h);
-            Shader.UploadOrtho(Shader.WaveformProgram, w, h);
-            Shader.UploadOrtho(Shader.UnicodeProgram, w, h);
+                CurrentWindow?.OnResize(Size);
 
-            CurrentWindow?.OnResize(Size);
-
-            OnRenderFrame(new FrameEventArgs());
+                OnRenderFrame(new FrameEventArgs());
+            }
         }
 
         protected override void OnMouseUp(MouseButtonEventArgs e)
@@ -274,6 +298,14 @@ namespace New_SSQE
             ShiftHeld = e.Shift;
         }
 
+        private void SwitchFullscreen()
+        {
+            isFullscreen ^= true;
+            WindowState = isFullscreen ? WindowState.Fullscreen : WindowState.Maximized;
+        }
+
+        private bool RecordingMouse = false;
+
         protected override void OnKeyDown(KeyboardKeyEventArgs e)
         {
             CtrlHeld = e.Control;
@@ -296,11 +328,16 @@ namespace New_SSQE
                     if (e.Key == Keys.Space && !editor.Timeline.Dragging)
                     {
                         if (MusicPlayer.IsPlaying)
+                        {
+                            RecordingMouse = false;
                             MusicPlayer.Pause();
+                        }
                         else
                         {
-                            var currentTime = Settings.settings["currentTime"];
-
+                            if (ShiftHeld && CtrlHeld)
+                                RecordingMouse = true;
+                            SliderSetting currentTime = Settings.currentTime.Value;
+                            
                             if (currentTime.Value >= currentTime.Max - 1)
                                 currentTime.Value = 0;
 
@@ -309,367 +346,17 @@ namespace New_SSQE
                     }
 
                     if (e.Key == Keys.Left || e.Key == Keys.Right)
-                    {
-                        if (MusicPlayer.IsPlaying)
-                            MusicPlayer.Pause();
-
-                        Advance(e.Key == Keys.Left);
-                    }
+                        Timing.Scroll(e.Key == Keys.Left);
 
                     if (e.Key == Keys.Escape)
-                    {
-                        SelectedNotes.Clear();
-                        UpdateSelection();
-                        SelectedPoint = null;
-                    }
+                        CurrentMap.ClearSelection();
 
-                    var keybind = Settings.CompareKeybind(e.Key, CtrlHeld, AltHeld, ShiftHeld);
-
-                    if (keybind.Contains("gridKey"))
-                    {
-                        var rep = keybind.Replace("gridKey", "");
-                        string[] xy = rep.Split('|');
-
-                        var x = int.Parse(xy[0]);
-                        var y = int.Parse(xy[1]);
-                        var ms = GetClosestBeat(Settings.settings["currentTime"].Value);
-
-                        var note = new Note(x, y, (long)(ms >= 0 ? ms : Settings.settings["currentTime"].Value));
-
-                        UndoRedoManager.Add("ADD NOTE", () =>
-                        {
-                            Notes.Remove(note);
-                            SortNotes();
-                        }, () =>
-                        {
-                            Notes.Add(note);
-                            SortNotes();
-                        });
-
-                        if (Settings.settings["autoAdvance"])
-                            Advance();
-
-                        return;
-                    }
-
-                    if (keybind.Contains("pattern"))
-                    {
-                        var index = int.Parse(keybind.Replace("pattern", ""));
-
-                        if (ShiftHeld)
-                            BindPattern(index);
-                        else if (CtrlHeld)
-                            UnbindPattern(index);
-                        else
-                            CreatePattern(index);
-
-                        return;
-                    }
-
-                    switch (keybind)
-                    {
-                        case "selectAll":
-                            SelectedPoint = null;
-                            SelectedNotes = Notes.ToList();
-                            UpdateSelection();
-
-                            break;
-
-                        case "save":
-                            if (SaveMap(true))
-                                editor.ShowToast("SAVED", Settings.settings["color1"]);
-
-                            break;
-
-                        case "saveAs":
-                            if (SaveMap(true, true))
-                                editor.ShowToast("SAVED", Settings.settings["color1"]);
-
-                            break;
-
-                        case "undo":
-                            UndoRedoManager.Undo();
-
-                            break;
-
-                        case "redo":
-                            UndoRedoManager.Redo();
-
-                            break;
-
-                        case "copy":
-                            try
-                            {
-                                if (SelectedNotes.Count > 0)
-                                {
-                                    var copied = SelectedNotes.ToList();
-
-                                    Clipboard.SetData(copied);
-
-                                    editor.ShowToast("COPIED NOTES", Settings.settings["color1"]);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                ActionLogging.Register("Failed to copy notes", "WARN", ex);
-                                editor.ShowToast("FAILED TO COPY", Settings.settings["color1"]);
-                            }
-
-                            break;
-
-                        case "paste":
-                            try
-                            {
-                                var copied = Clipboard.GetData().ToList();
-
-                                if (copied.Count > 0)
-                                {
-                                    var offset = copied.Min(n => n.Ms);
-                                    var max = copied.Max(n => n.Ms);
-
-                                    copied.ForEach(n => n.Ms = (long)Settings.settings["currentTime"].Value + n.Ms - offset);
-
-                                    if (Settings.settings["applyOnPaste"])
-                                    {
-                                        if (float.TryParse(editor.RotateBox.Text, out var deg) && float.TryParse(editor.ScaleBox.Text, out var scale))
-                                        {
-                                            foreach (var note in copied.ToList())
-                                            {
-                                                var angle = MathHelper.RadiansToDegrees(Math.Atan2(note.Y - 1, note.X - 1));
-                                                var distance = Math.Sqrt(Math.Pow(note.X - 1, 2) + Math.Pow(note.Y - 1, 2));
-                                                var anglef = MathHelper.DegreesToRadians(angle + deg);
-
-                                                note.X = (float)(Math.Cos(anglef) * distance + 1);
-                                                note.Y = (float)(Math.Sin(anglef) * distance + 1);
-
-                                                var scalef = scale / 100f;
-
-                                                note.X = (note.X - 1) * scalef + 1;
-                                                note.Y = (note.Y - 1) * scalef + 1;
-
-                                                if (Settings.settings["clampSR"])
-                                                {
-                                                    note.X = Math.Clamp(note.X, -0.85f, 2.85f);
-                                                    note.Y = Math.Clamp(note.Y, -0.85f, 2.85f);
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if (Settings.settings["jumpPaste"])
-                                        Settings.settings["currentTime"].Value += max - offset;
-
-                                    UndoRedoManager.Add($"PASTE NOTE{(copied.Count > 0 ? "S" : "")}", () =>
-                                    {
-                                        SelectedNotes.Clear();
-                                        SelectedPoint = null;
-
-                                        for (int i = 0; i < copied.Count; i++)
-                                            Notes.Remove(copied[i]);
-                                        UpdateSelection();
-
-                                        SortNotes();
-                                    }, () =>
-                                    {
-                                        SelectedNotes = copied.ToList();
-                                        SelectedPoint = null;
-
-                                        Notes.AddRange(copied);
-                                        UpdateSelection();
-
-                                        SortNotes();
-                                    });
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                ActionLogging.Register("Failed to paste notes", "WARN", ex);
-                                editor.ShowToast("FAILED TO PASTE", Settings.settings["color1"]);
-                            }
-
-                            break;
-
-                        case "cut":
-                            try
-                            {
-                                if (SelectedNotes.Count > 0)
-                                {
-                                    var copied = SelectedNotes.ToList();
-
-                                    Clipboard.SetData(copied);
-
-                                    UndoRedoManager.Add($"CUT NOTE{(copied.Count > 1 ? "S" : "")}", () =>
-                                    {
-                                        Notes.AddRange(copied);
-
-                                        SortNotes();
-                                    }, () =>
-                                    {
-                                        foreach (var note in copied)
-                                            Notes.Remove(note);
-
-                                        SortNotes();
-                                    });
-
-                                    SelectedNotes.Clear();
-                                    UpdateSelection();
-                                    SelectedPoint = null;
-
-                                    editor.ShowToast("CUT NOTES", Settings.settings["color1"]);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                ActionLogging.Register("Failed to cut notes", "WARN", ex);
-                                editor.ShowToast("FAILED TO CUT", Settings.settings["color1"]);
-                            }
-
-                            break;
-
-                        case "delete":
-                            if (SelectedNotes.Count > 0)
-                            {
-                                var toRemove = SelectedNotes.ToList();
-
-                                UndoRedoManager.Add($"DELETE NOTE{(toRemove.Count > 1 ? "S" : "")}", () =>
-                                {
-                                    Notes.AddRange(toRemove);
-
-                                    SortNotes();
-                                }, () =>
-                                {
-                                    foreach (var note in toRemove)
-                                        Notes.Remove(note);
-
-                                    SortNotes();
-                                });
-
-                                SelectedNotes.Clear();
-                                UpdateSelection();
-                                SelectedPoint = null;
-                            }
-                            else if (SelectedPoint != null)
-                            {
-                                var clone = SelectedPoint;
-
-                                UndoRedoManager.Add("DELETE POINT", () =>
-                                {
-                                    TimingPoints.Add(clone);
-
-                                    SortTimings();
-                                }, () =>
-                                {
-                                    TimingPoints.Remove(clone);
-
-                                    SortTimings();
-                                });
-                            }
-
-                            break;
-
-                        case "hFlip":
-                            var selectedH = SelectedNotes.ToList();
-
-                            editor.ShowToast("HORIZONTAL FLIP", Settings.settings["color1"]);
-
-                            UndoRedoManager.Add("HORIZONTAL FLIP", () =>
-                            {
-                                foreach (var note in selectedH)
-                                    note.X = 2 - note.X;
-                            }, () =>
-                            {
-                                foreach (var note in selectedH)
-                                    note.X = 2 - note.X;
-                            });
-
-                            break;
-
-                        case "vFlip":
-                            var selectedV = SelectedNotes.ToList();
-
-                            editor.ShowToast("VERTICAL FLIP", Settings.settings["color1"]);
-
-                            UndoRedoManager.Add("VERTICAL FLIP", () =>
-                            {
-                                foreach (var note in selectedV)
-                                    note.Y = 2 - note.Y;
-                            }, () =>
-                            {
-                                foreach (var note in selectedV)
-                                    note.Y = 2 - note.Y;
-                            });
-
-                            break;
-
-                        case "switchClickTool":
-                            Settings.settings["selectTool"] ^= true;
-
-                            break;
-
-                        case "quantum":
-                            Settings.settings["enableQuantum"] ^= true;
-
-                            break;
-
-                        case "openTimings":
-                            TimingsWindow.ShowWindow();
-
-                            break;
-
-                        case "openBookmarks":
-                            BookmarksWindow.ShowWindow();
-
-                            break;
-
-                        case "storeNodes":
-                            if (SelectedNotes.Count > 1)
-                                BezierNodes = SelectedNotes.ToList();
-
-                            break;
-
-                        case "drawBezier":
-                            RunBezier();
-
-                            break;
-
-                        case "anchorNode":
-                            var selectedA = SelectedNotes.ToList();
-
-                            UndoRedoManager.Add($"ANCHOR NODE{(selectedA.Count > 1 ? "S" : "")}", () =>
-                            {
-                                foreach (var note in selectedA)
-                                    note.Anchored ^= true;
-                            }, () =>
-                            {
-                                foreach (var note in selectedA)
-                                    note.Anchored ^= true;
-                            });
-
-                            break;
-
-                        case "openDirectory":
-                            if (IsLinux)
-                                Process.Start("xdg-open", Environment.CurrentDirectory);
-                            else
-                                Process.Start("explorer.exe", Environment.CurrentDirectory);
-
-                            break;
-
-                        case "exportSSPM":
-                            ExportSSPM.ShowWindow();
-                            
-                            break;
-                    }
+                    KeybindManager.ParseKeybind(e.Key, CtrlHeld, AltHeld, ShiftHeld);
                 }
             }
 
             CurrentWindow?.OnKeyDown(e.Key, e.Control);
         }
-
-        private static readonly HashSet<string> acceptedAudios = new()
-        {
-            ".mp3", ".ogg", ".wav", ".flac", ".egg", ".m4a", ".asset"
-        };
 
         protected override void OnFileDrop(FileDropEventArgs e)
         {
@@ -680,24 +367,24 @@ namespace New_SSQE
                 if (File.Exists(file))
                 {
                     bool loaded = true;
-                    Map? prev = CurrentMap;
+                    Map? prev = CurrentMap.LoadedMap;
 
                     if (Path.GetExtension(file) == ".ini" && CurrentWindow is GuiWindowEditor)
-                        ImportProperties(file);
-                    else if (acceptedAudios.Contains(Path.GetExtension(file)))
+                        MapManager.ImportProperties(file);
+                    else if (MusicPlayer.SupportedExtensions.Contains(Path.GetExtension(file)))
                     {
-                        string id = Path.GetFileNameWithoutExtension(file);
-                        if (file != $"{Directory.GetCurrentDirectory()}\\cached\\{id}.asset")
-                            File.Copy(file, $"cached/{id}.asset", true);
+                        string id = Exporting.FixID(Path.GetFileNameWithoutExtension(file));
+                        if (file != $"{Assets.CACHED}\\{id}.asset")
+                            File.Copy(file, $"{Assets.CACHED}\\{id}.asset", true);
 
-                        loaded = LoadMap(id);
+                        loaded = MapManager.Load(id);
                     }
                     else
-                        loaded = LoadMap(file, true);
+                        loaded = MapManager.Load(file, true);
 
                     if (!loaded && prev != null)
                     {
-                        prev.MakeCurrent();
+                        prev.Load();
 
                         if (CurrentWindow is GuiWindowEditor editor)
                             editor.Timeline.GenerateOffsets();
@@ -708,7 +395,7 @@ namespace New_SSQE
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
-            var keyboard = KeyboardState;
+            KeyboardState keyboard = KeyboardState;
 
             CtrlHeld = keyboard.IsKeyDown(Keys.LeftControl) || keyboard.IsKeyDown(Keys.RightControl);
             AltHeld = keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt);
@@ -718,56 +405,15 @@ namespace New_SSQE
             {
                 if (ShiftHeld)
                 {
-                    var setting = Settings.settings["beatDivisor"];
-                    var step = setting.Step * (CtrlHeld ? 1 : 2) * e.OffsetY;
+                    SliderSetting setting = Settings.beatDivisor.Value;
+                    float step = setting.Step * (CtrlHeld ? 1 : 2) * e.OffsetY;
 
                     setting.Value = MathHelper.Clamp(setting.Value + step, 0f, setting.Max);
                 }
                 else if (CtrlHeld)
-                {
-                    var step = Zoom < 0.1f || (Zoom == 0.1f && e.OffsetY < 0) ? 0.01f : 0.1f;
-
-                    Zoom = (float)Math.Round(Zoom + e.OffsetY * step, 2);
-                    if (Zoom > 0.1f)
-                        Zoom = (float)Math.Round(Zoom * 10) / 10;
-
-                    Zoom = MathHelper.Clamp(Zoom, 0.01f, 10f);
-                }
+                    CurrentMap.IncrementZoom(e.OffsetY);
                 else
-                {
-                    float delta = e.OffsetY * (Settings.settings["reverseScroll"] ? -1 : 1);
-
-                    var setting = Settings.settings["currentTime"];
-                    var currentTime = setting.Value;
-                    var totalTime = setting.Max;
-
-                    if (MusicPlayer.IsPlaying && !Settings.settings["pauseScroll"])
-                    {
-                        currentTime += delta * 500f * Tempo;
-                        currentTime = MathHelper.Clamp(currentTime, 0f, totalTime);
-
-                        setting.Value = currentTime;
-
-                        MusicPlayer.CurrentTime = TimeSpan.FromMilliseconds(currentTime);
-                    }
-                    else
-                    {
-                        if (MusicPlayer.IsPlaying)
-                            MusicPlayer.Pause();
-
-                        var closest = GetClosestBeatScroll(currentTime, delta < 0);
-                        var bpm = GetCurrentBpm(0);
-
-                        currentTime = closest >= 0 || bpm.BPM > 0 ? closest : currentTime + delta / 10f * 1000f / Zoom * 0.5f;
-
-                        if (GetCurrentBpm(setting.Value).BPM == 0 && GetCurrentBpm(currentTime).BPM != 0)
-                            currentTime = GetCurrentBpm(currentTime).Ms;
-
-                        currentTime = MathHelper.Clamp(currentTime, 0f, totalTime);
-
-                        setting.Value = currentTime;
-                    }
-                }
+                    Timing.Scroll(e.OffsetY < 0 ^ Settings.reverseScroll.Value, Math.Abs(e.OffsetY));
             }
             else if (CurrentWindow is GuiWindowMenu menu)
             {
@@ -775,7 +421,7 @@ namespace New_SSQE
                     menu.ScrollMaps(e.OffsetY > 0);
                 else
                 {
-                    var setting = Settings.settings["changelogPosition"];
+                    SliderSetting setting = Settings.changelogPosition.Value;
 
                     setting.Value = MathHelper.Clamp(setting.Value + setting.Step * e.OffsetY, 0f, setting.Max);
                 }
@@ -792,14 +438,12 @@ namespace New_SSQE
 
             bool cancel = false;
 
-            Map? temp = CurrentMap;
-
             List<Map> tempSave = new();
             List<Map> tempKeep = new();
 
-            foreach (Map map in Maps.ToList())
+            foreach (Map map in MapManager.Cache.ToList())
             {
-                if (map.IsSaved())
+                if (map.IsSaved)
                     tempKeep.Add(map);
                 else
                     tempSave.Add(map);
@@ -807,8 +451,7 @@ namespace New_SSQE
 
             foreach (Map map in tempSave)
             {
-                map.MakeCurrent();
-                SwitchWindow(new GuiWindowEditor());
+                MapManager.Load(map, false);
                 OnRenderFrame(new FrameEventArgs());
 
                 cancel |= !map.Close(false);
@@ -822,7 +465,7 @@ namespace New_SSQE
                     map.Close(false, false, false);
             }
             else
-                temp?.MakeCurrent();
+                SwitchWindow(new GuiWindowMenu());
 
             forceClose = !cancel;
 
@@ -851,1073 +494,59 @@ namespace New_SSQE
 
                 MusicPlayer.Dispose();
                 CurrentWindow?.Dispose();
-
-                if (discordEnabled)
-                    try { discord.Dispose(); } catch { }
+                DiscordManager.Dispose();
             }
         }
 
-
-
-
-
-
-
-
-        public PointF PointToGridSpace(float mousex, float mousey)
+        protected override void OnFocusedChanged(FocusedChangedEventArgs e)
         {
-            var pos = new PointF(0, 0);
+            Focused = e.IsFocused;
 
-            if (CurrentWindow is GuiWindowEditor editor)
-            {
-                var quantum = Settings.settings["enableQuantum"];
-                var rect = editor.Grid.Rect;
-
-                var bounds = quantum ? new Vector2d(-0.85f, 2.85f) : new Vector2d(0, 2);
-
-                var increment = quantum ? (Settings.settings["quantumSnapping"].Value + 3f) / 3f : 1f;
-                var x = (mousex - rect.X - rect.Width / 2f) / rect.Width * 3f + 1 / increment;
-                var y = (mousey - rect.Y - rect.Width / 2f) / rect.Height * 3f + 1 / increment;
-
-                if (Settings.settings["quantumGridSnap"] || !quantum)
-                {
-                    x = (float)Math.Floor((x + 1 / increment / 2) * increment) / increment;
-                    y = (float)Math.Floor((y + 1 / increment / 2) * increment) / increment;
-                }
-
-                x = (float)MathHelper.Clamp(x - 1 / increment + 1, bounds.X, bounds.Y);
-                y = (float)MathHelper.Clamp(y - 1 / increment + 1, bounds.X, bounds.Y);
-
-                pos = new PointF(x, y);
-            }
-
-            return pos;
-        }
-
-        public void UpdateSelection()
-        {
-            for (int i = 0; i < Notes.Count; i++)
-                Notes[i].Selected = false;
-            for (int i = 0; i < SelectedNotes.Count; i++)
-                SelectedNotes[i].Selected = true;
-        }
-
-        public long GetClosestNote(float currentMs)
-        {
-            long closestMs = -1;
-
-            for (int i = 0; i < Notes.Count; i++)
-            {
-                var note = Notes[i];
-
-                if (Math.Abs(note.Ms - currentMs) < Math.Abs(closestMs - currentMs))
-                    closestMs = note.Ms;
-            }
-
-            return closestMs;
-        }
-
-        public long GetClosestBeat(float currentMs, bool draggingPoint = false)
-        {
-            long closestMs = -1;
-            var point = GetCurrentBpm(currentMs, draggingPoint);
-
-            if (point.BPM > 0)
-            {
-                var interval = 60 / point.BPM * 1000f / (Settings.settings["beatDivisor"].Value + 1f);
-                var offset = point.Ms % interval;
-
-                closestMs = (long)Math.Round((long)Math.Round((currentMs - offset) / interval) * interval + offset);
-            }
-
-            return closestMs;
-        }
-
-        public long GetClosestBeatScroll(float currentMs, bool negative = false, int iterations = 1)
-        {
-            var closestMs = GetClosestBeat(currentMs);
-
-            if (GetCurrentBpm(closestMs).BPM == 0)
-                return -1;
-
-            for (int i = 0; i < iterations; i++)
-            {
-                var currentPoint = GetCurrentBpm(currentMs, negative);
-                var interval = 60000 / currentPoint.BPM / (Settings.settings["beatDivisor"].Value + 1f);
-
-                if (negative)
-                {
-                    closestMs = GetClosestBeat(currentMs, true);
-
-                    if (closestMs >= currentMs)
-                        closestMs = GetClosestBeat(closestMs - (long)interval);
-                }
-                else
-                {
-                    if (closestMs <= currentMs)
-                        closestMs = GetClosestBeat(closestMs + (long)interval);
-
-                    if (GetCurrentBpm(currentMs).Ms != GetCurrentBpm(closestMs).Ms)
-                        closestMs = GetCurrentBpm(closestMs, false).Ms;
-                }
-
-                currentMs = closestMs;
-            }
-
-            if (closestMs < 0)
-                return -1;
-
-            return (long)MathHelper.Clamp(closestMs, 0, Settings.settings["currentTime"].Max);
-        }
-
-        public TimingPoint GetCurrentBpm(float currentMs, bool draggingPoint = false)
-        {
-            var currentPoint = new TimingPoint(0, 0);
-
-            for (int i = 0; i < TimingPoints.Count; i++)
-            {
-                var point = TimingPoints[i];
-
-                if (point.Ms < currentMs || (!draggingPoint && point.Ms == currentMs))
-                    currentPoint = point;
-            }
-
-            return currentPoint;
-        }
-
-        public void Advance(bool reverse = false)
-        {
-            var currentMs = Settings.settings["currentTime"];
-            var bpm = GetCurrentBpm(currentMs.Value).BPM;
-
-            if (bpm > 0)
-                currentMs.Value = GetClosestBeatScroll(currentMs.Value, reverse);
-        }
-
-
-
-
-        public void BindPattern(int index)
-        {
-            var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-            culture.NumberFormat.NumberDecimalSeparator = ".";
-
-            string pattern = "";
-            long minDist = 0;
-
-            for (int i = 0; i + 1 < SelectedNotes.Count; i++)
-            {
-                var dist = Math.Abs(SelectedNotes[i].Ms - SelectedNotes[i + 1].Ms);
-
-                if (dist > 0)
-                    minDist = minDist > 0 ? Math.Min(minDist, dist) : dist;
-            }
-
-            foreach (var note in SelectedNotes)
-            {
-                var offset = SelectedNotes[0].Ms;
-
-                var x = note.X.ToString(culture);
-                var y = note.Y.ToString(culture);
-                var time = (minDist > 0 ? Math.Round((double)(note.Ms - offset) / minDist) : 0).ToString(culture);
-
-                pattern += $",{x}|{y}|{time}";
-            }
-
-            if (pattern.Length > 0)
-                pattern = pattern[1..];
-
-            if (CurrentWindow is GuiWindowEditor editor)
-                editor.ShowToast($"BOUND PATTERN {index}", Settings.settings["color1"]);
-
-            Settings.settings["patterns"][index] = pattern;
-        }
-
-        public void UnbindPattern(int index)
-        {
-            if (CurrentWindow is GuiWindowEditor editor)
-            {
-                Settings.settings["patterns"][index] = "";
-                editor.ShowToast($"UNBOUND PATTERN {index}", Settings.settings["color1"]);
-            }
-        }
-
-        public void CreatePattern(int index)
-        {
-            var pattern = Settings.settings["patterns"][index];
-
-            if (pattern == "")
-                return;
-
-            var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-            culture.NumberFormat.NumberDecimalSeparator = ".";
-
-            string[] patternSplit = pattern.Split(',');
-            var toAdd = new List<Note>();
-
-            foreach (var note in patternSplit)
-            {
-                string[] noteSplit = note.Split('|');
-                var x = float.Parse(noteSplit[0], culture);
-                var y = float.Parse(noteSplit[1], culture);
-                var time = int.Parse(noteSplit[2], culture);
-                var ms = GetClosestBeatScroll((long)Settings.settings["currentTime"].Value, false, time);
-
-                toAdd.Add(new Note(x, y, ms));
-            }
-
-            UndoRedoManager.Add("ADD PATTERN", () =>
-            {
-                foreach (var note in toAdd)
-                    Notes.Remove(note);
-
-                SortNotes();
-            }, () =>
-            {
-                Notes.AddRange(toAdd);
-
-                SortNotes();
-            });
-        }
-
-
-
-
-        public bool PromptImport(string id, bool create = false)
-        {
-            var dialog = new OpenFileDialog()
-            {
-                Title = "Select Audio File",
-                Filter = "Audio Files (*.mp3;*.ogg;*.wav;*.flac;*.egg;*.m4a;*.asset)|*.mp3;*.ogg;*.wav;*.flac;*.egg;*.m4a;*.asset"
-            };
-
-            if (Settings.settings["audioPath"] != "")
-                dialog.InitialDirectory = Settings.settings["audioPath"];
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                Settings.settings["audioPath"] = Path.GetDirectoryName(dialog.FileName) ?? "";
-                if (string.IsNullOrWhiteSpace(id))
-                    id = Path.GetFileNameWithoutExtension(dialog.FileName);
-
-                if (dialog.FileName != $"{Directory.GetCurrentDirectory()}\\cached\\{id}.asset")
-                    File.Copy(dialog.FileName, $"cached/{id}.asset", true);
-
-                if (create)
-                    SoundID = id;
-
-                return MusicPlayer.Load($"cached/{id}.asset");
-            }
-
-            return false;
-        }
-
-        public bool LoadAudio(string id)
-        {
-            try
-            {
-                if (!Directory.Exists("cached/"))
-                    Directory.CreateDirectory("cached/");
-
-                if (!File.Exists($"cached/{id}.asset"))
-                {
-                    if (Settings.settings["skipDownload"])
-                    {
-                        var message = MessageBox.Show($"No asset with id '{id}' is present in cache.\n\nWould you like to import a file with this id?", "Warning", "OK", "Cancel");
-
-                        return message == DialogResult.OK && PromptImport(id);
-                    }
-                    else
-                        WebClient.DownloadFile($"https://assetdelivery.roblox.com/v1/asset/?id={id}", $"cached/{id}.asset", true);
-                }
-
-                return MusicPlayer.Load($"cached/{id}.asset");
-            }
-            catch (Exception e)
-            {
-                var message = MessageBox.Show($"Failed to download asset with id '{id}':\n\n{e.Message}\n\nWould you like to import a file with this id instead?", "Error", "OK", "Cancel");
-
-                if (message == DialogResult.OK)
-                    return PromptImport(id);
-            }
-
-            return false;
-        }
-
-        public string ParseProperties()
-        {
-            var timingfinal = new JsonArray();
-
-            foreach (var point in TimingPoints)
-                timingfinal.Add(new JsonArray() { point.BPM, point.Ms });
-
-            var bookmarkfinal = new JsonArray();
-
-            foreach (var bookmark in Bookmarks)
-                bookmarkfinal.Add(new JsonArray() { bookmark.Text, bookmark.Ms, bookmark.EndMs });
-
-            var json = new JsonObject(Array.Empty<KeyValuePair<string, JsonValue>>())
-            {
-                {"timings", timingfinal },
-                {"bookmarks", bookmarkfinal },
-                {"currentTime", Settings.settings["currentTime"].Value },
-                {"beatDivisor", Settings.settings["beatDivisor"].Value },
-                {"exportOffset", Settings.settings["exportOffset"] },
-
-                {"mappers", Settings.settings["mappers"] },
-                {"songName", Settings.settings["songName"] },
-                {"difficulty", Settings.settings["difficulty"] },
-                {"useCover", Settings.settings["useCover"] },
-                {"cover", Settings.settings["cover"] },
-                {"customDifficulty", Settings.settings["customDifficulty"] }
-            };
-
-            return json.ToString();
-        }
-
-        public bool IsSaved()
-        {
-            return FileName != null && File.Exists(FileName) && File.ReadAllText(FileName) == Map.Save(SoundID, Notes);
-        }
-
-        public bool SaveMap(bool forced, bool fileForced = false, bool reload = true)
-        {
-            if (FileName != null && !File.Exists(FileName))
-                FileName = null;
-
-            if (FileName != null)
-                Settings.settings["lastFile"] = FileName;
-            Settings.Save(reload);
-
-            string tempSID = SoundID;
-            string tempFN = FileName;
-
-            var data = Map.Save(SoundID, Notes);
-
-            if (forced || (FileName == null && (Notes.Count > 0 || TimingPoints.Count > 0)) || (FileName != null && data != File.ReadAllText(FileName)))
-            {
-                var result = DialogResult.No;
-
-                if (!forced)
-                    result = MessageBox.Show($"{Path.GetFileNameWithoutExtension(FileName) ?? "Untitled Song"} ({SoundID})\n\nWould you like to save before closing?", "Warning", "Yes", "No", "Cancel");
-
-                if (forced || result == DialogResult.Yes)
-                {
-                    if (FileName == null || fileForced)
-                    {
-                        var dialog = new SaveFileDialog()
-                        {
-                            Title = "Save Map As",
-                            Filter = "Text Documents(*.txt)|*.txt"
-                        };
-
-                        if (Settings.settings["defaultPath"] != "")
-                            dialog.InitialDirectory = Settings.settings["defaultPath"];
-
-                        if (dialog.ShowDialog() == DialogResult.OK)
-                        {
-                            Settings.settings["defaultPath"] = Path.GetDirectoryName(dialog.FileName) ?? "";
-
-                            File.WriteAllText(dialog.FileName, data);
-                            SaveProperties(dialog.FileName);
-                            FileName = dialog.FileName;
-
-                            ActionLogging.Register($"Successfully saved to file: {FileName}");
-                        }
-                        else
-                            return false;
-                    }
-                    else
-                    {
-                        File.WriteAllText(FileName, data);
-                        SaveProperties(FileName);
-
-                        ActionLogging.Register($"Successfully saved to file: {FileName}");
-                    }
-                }
-                else if (result == DialogResult.Cancel)
-                    return false;
-            }
-
-            ActionLogging.Register($"Save returned true with fields: {forced} | {fileForced} | {reload}\n{tempSID} | {tempFN}");
-
-            return true;
-        }
-
-        public void SaveProperties(string filePath)
-        {
-            var file = Path.ChangeExtension(filePath, ".ini");
-
-            File.WriteAllText(file, ParseProperties());
-            Settings.settings["lastFile"] = filePath;
-        }
-
-        public bool LoadMap(string pathOrData, bool file = false, bool autosave = false)
-        {
-            CurrentMap?.Save();
-            
-            foreach (Map map in Maps)
-            {
-                if (file && pathOrData == map.RawFileName)
-                {
-                    map.MakeCurrent();
-                    SwitchWindow(new GuiWindowEditor());
-
-                    return true;
-                }
-            }
-            
-            CurrentMap = new Map();
-
-            SoundID = "-1";
-            FileName = file ? pathOrData : null;
-
-            Settings.settings["mappers"] = "";
-            Settings.settings["songName"] = Path.GetFileNameWithoutExtension(FileName) ?? "Untitled Song";
-            Settings.settings["difficulty"] = "N/A";
-            Settings.settings["useCover"] = true;
-            Settings.settings["cover"] = "Default";
-            Settings.settings["customDifficulty"] = "";
-
-            Notes.Clear();
-            SelectedNotes.Clear();
-            UpdateSelection();
-            SelectedPoint = null;
-
-            TimingPoints.Clear();
-            Bookmarks.Clear();
-
-            UndoRedoManager.Clear();
-            MusicPlayer.Reset();
-
-            if (file && Path.GetExtension(pathOrData) == ".sspm")
-            {
-                pathOrData = RunSSPMImport(pathOrData);
-                file = false;
-                FileName = null;
-            }
-            else if (file && Path.GetExtension(pathOrData) == ".osu")
-            {
-                pathOrData = RunOSUImport(pathOrData);
-                file = false;
-                FileName = null;
-            }
-            else if (file && Path.GetExtension(pathOrData) != ".txt")
-                return false;
-            if (pathOrData == "")
-                return false;
-
-            var data = file ? File.ReadAllText(pathOrData) : pathOrData;
-
-            try
-            {
-                while (true)
-                    data = WebClient.DownloadString(data);
-            }
-            catch { }
-
-            try
-            {
-                string id = Map.Parse(data, Notes);
-
-                SortNotes();
-
-                if (LoadAudio(id))
-                {
-                    SoundID = id;
-
-                    Settings.settings["currentTime"] = new SliderSetting(0f, (float)MusicPlayer.TotalTime.TotalMilliseconds, (float)MusicPlayer.TotalTime.TotalMilliseconds / 2000f);
-                    Settings.settings["beatDivisor"].Value = 3f;
-                    Settings.settings["tempo"].Value = 0.9f;
-                    Settings.settings["exportOffset"] = 0;
-
-                    Tempo = 1f;
-                    Zoom = 1f;
-
-                    if (file)
-                    {
-                        var propertyFile = Path.ChangeExtension(FileName, ".ini");
-
-                        if (File.Exists(propertyFile))
-                            LoadProperties(File.ReadAllText(propertyFile));
-                    }
-                    else if (autosave)
-                        LoadProperties(Settings.settings["autosavedProperties"]);
-
-                    SortTimings();
-                    SortBookmarks();
-
-                    CurrentMap.Save();
-                    CurrentMap.MakeCurrent();
-
-                    Maps.Add(CurrentMap);
-                    CacheMaps();
-
-                    SwitchWindow(new GuiWindowEditor());
-                }
-                else
-                    CurrentMap = null;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to load map data, exit and check '*\\logs.txt' for more info", "Warning", "OK");
-                ActionLogging.Register($"Failed to load map data", "WARN", ex);
-                Console.WriteLine(ex);
-
-                if (CurrentMap != null)
-                    Maps.Remove(CurrentMap);
-                CurrentMap = null;
-
-                return false;
-            }
-
-            return SoundID != "-1";
-        }
-
-        public void CacheMaps()
-        {
-            string[] data = new string[Maps.Count];
-
-            for (int i = 0; i < Maps.Count; i++)
-                data[i] = Maps[i].ToString();
-
-            string text = string.Join("\r\0", data);
-
-            if (!Directory.Exists("assets/temp"))
-                Directory.CreateDirectory("assets/temp");
-            File.WriteAllText(cacheFile, text);
-        }
-
-        public void LoadCache()
-        {
-            Maps.Clear();
-            string[] data = File.ReadAllText(cacheFile).Split("\r\0");
-
-            for (int i = 0; i < data.Length; i++)
-            {
-                Map map = new();
-
-                if (map.FromString(data[i]))
-                    Maps.Add(map);
-            }
-        }
-
-        public void LoadLegacyProperties(string text)
-        {
-            var lines = text.Split('\n');
-            var oldVer = false; // pre 1.7
-
-            foreach (var line in lines)
-            {
-                var split = line.Split('=');
-
-                switch (split[0])
-                {
-                    case "BPM":
-                        var points = split[1].Split(',');
-
-                        foreach (var point in points)
-                        {
-                            var pointsplit = point.Split('|');
-                            if (pointsplit.Length == 1)
-                            {
-                                pointsplit = new string[] { pointsplit[0], "0" };
-                                oldVer = true;
-                            }
-
-                            if (pointsplit.Length == 2 && float.TryParse(pointsplit[0], out var bpm) && long.TryParse(pointsplit[1], out var ms))
-                                TimingPoints.Add(new TimingPoint(bpm, ms));
-                        }
-
-                        SortTimings();
-
-                        break;
-
-                    case "Bookmarks":
-                        var bookmarks = split[1].Split(',');
-
-                        foreach (var bookmark in bookmarks)
-                        {
-                            var bookmarksplit = bookmark.Split('|');
-
-                            if (bookmarksplit.Length == 2 && long.TryParse(bookmarksplit[1], out var ms))
-                                Bookmarks.Add(new Bookmark(bookmarksplit[0], ms, ms));
-                            else if (bookmarksplit.Length == 3 && long.TryParse(bookmarksplit[1], out var startMs) && long.TryParse(bookmarksplit[2], out var endMs))
-                                Bookmarks.Add(new Bookmark(bookmarksplit[0], startMs, endMs));
-                        }
-
-                        SortBookmarks();
-
-                        break;
-
-                    case "Offset":
-                        if (oldVer) // back when timing points didnt exist and the offset meant bpm/note offset
-                        {
-                            if (TimingPoints.Count > 0 && long.TryParse(split[1], out var bpmOffset))
-                                TimingPoints[0].Ms = bpmOffset;
-                        }
-                        else
-                        {
-                            foreach (var note in Notes)
-                                note.Ms += (long)Settings.settings["exportOffset"];
-
-                            if (long.TryParse(split[1], out var offset))
-                                Settings.settings["exportOffset"] = offset;
-
-                            foreach (var note in Notes)
-                                note.Ms -= (long)Settings.settings["exportOffset"];
-                        }
-
-                        break;
-
-                    case "Time":
-                        if (long.TryParse(split[1], out var time))
-                            Settings.settings["currentTime"].Value = time;
-
-                        break;
-
-                    case "Divisor":
-                        if (float.TryParse(split[1], out var divisor))
-                            Settings.settings["beatDivisor"].Value = divisor - 1f;
-
-                        break;
-                }
-            }
-        }
-
-        public void LoadProperties(string text)
-        {
-            try
-            {
-                var result = (JsonObject)JsonValue.Parse(text);
-
-                foreach (var key in result)
-                {
-                    switch (key.Key)
-                    {
-                        case "timings":
-                            foreach (JsonArray timing in key.Value)
-                                TimingPoints.Add(new TimingPoint(timing[0], timing[1]));
-
-                            break;
-
-                        case "bookmarks":
-                            foreach (JsonArray bookmark in key.Value)
-                                Bookmarks.Add(new Bookmark(bookmark[0], bookmark[1], bookmark[^1]));
-
-                            break;
-
-                        case "currentTime":
-                        case "beatDivisor":
-                            Settings.settings[key.Key].Value = key.Value;
-
-                            break;
-
-                        case "exportOffset":
-                            foreach (var note in Notes)
-                                note.Ms += (long)Settings.settings["exportOffset"];
-
-                            Settings.settings["exportOffset"] = key.Value;
-
-                            foreach (var note in Notes)
-                                note.Ms -= (long)Settings.settings["exportOffset"];
-
-                            break;
-
-                        case "mappers":
-                        case "songName":
-                        case "difficulty":
-                        case "useCover":
-                        case "cover":
-                        case "customDifficulty":
-                            Settings.settings[key.Key] = key.Value;
-
-                            break;
-                    }
-                }
-            }
-            catch
-            {
-                try
-                {
-                    LoadLegacyProperties(text);
-                }
-                catch { }
-            }
-        }
-
-        public void ImportProperties(string? file = null)
-        {
-            if (file == null)
-            {
-                var dialog = new OpenFileDialog()
-                {
-                    Title = "Select .ini File",
-                    Filter = "Map Property Files (*.ini)|*.ini"
-                };
-
-                if (Settings.settings["defaultPath"] != "")
-                    dialog.InitialDirectory = Settings.settings["defaultPath"];
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    Settings.settings["defaultPath"] = Path.GetDirectoryName(dialog.FileName) ?? "";
-                    file = dialog.FileName;
-                }
-                else
-                    return;
-            }
-
-            TimingPoints.Clear();
-            Bookmarks.Clear();
-
-            LoadProperties(File.ReadAllText(file));
-
-            if (CurrentWindow is GuiWindowEditor editor)
-                editor.Timeline.GenerateOffsets();
-        }
-
-        public void CopyBookmarks()
-        {
-            string[] data = new string[Bookmarks.Count];
-
-            for (int i = 0; i < Bookmarks.Count; i++)
-            {
-                var bookmark = Bookmarks[i];
-
-                if (bookmark.Ms != bookmark.EndMs)
-                    data[i] = $"{bookmark.Ms}-{bookmark.EndMs} ~ {bookmark.Text.Replace(" ~", "_~")}";
-                else
-                    data[i] = $"{bookmark.Ms} ~ {bookmark.Text.Replace(" ~", "_~")}";
-            }
-
-            if (data.Length == 0)
-                return;
-
-            Clipboard.SetText(string.Join("\n", data));
-
-            if (CurrentWindow is GuiWindowEditor editor)
-                editor.ShowToast("COPIED TO CLIPBOARD", Color.FromArgb(0, 255, 200));
-        }
-
-        public void PasteBookmarks()
-        {
-            var data = Clipboard.GetText();
-            string[] bookmarks = data.Split('\n');
-
-            List<Bookmark> tempBookmarks = new();
-
-            for (int i = 0; i < bookmarks.Length; i++)
-            {
-                bookmarks[i] = bookmarks[i].Trim();
-
-                var split = bookmarks[i].Split(" ~");
-                if (split.Length != 2)
-                    continue;
-
-                var subsplit = split[0].Split("-");
-
-                if (subsplit.Length == 1 && long.TryParse(subsplit[0], out var ms))
-                    tempBookmarks.Add(new Bookmark(split[1].Trim().Replace("_~", " ~"), ms, ms));
-                else if (subsplit.Length == 2 && long.TryParse(subsplit[0], out var startMs) && long.TryParse(subsplit[1], out var endMs))
-                    tempBookmarks.Add(new Bookmark(split[1].Trim().Replace("_~", " ~"), startMs, endMs));
-            }
-
-            if (tempBookmarks.Count > 0)
-            {
-                List<Bookmark> old = Bookmarks.ToList();
-
-                UndoRedoManager.Add($"PASTE BOOKMARK{(tempBookmarks.Count > 1 ? "S" : "")}", () =>
-                {
-                    Bookmarks.Clear();
-
-                    foreach (var bookmark in old)
-                        Bookmarks.Add(bookmark);
-                }, () =>
-                {
-                    old = Bookmarks.ToList();
-                    Bookmarks.Clear();
-
-                    foreach (var bookmark in tempBookmarks)
-                        Bookmarks.Add(bookmark);
-                });
-            }
-        }
-
-        private long currentAutosave;
-
-        private void RunAutosave(long time)
-        {
-            currentAutosave = time;
-
-            Task.Run(() =>
-            {
-                while (currentAutosave == time)
-                {
-                    Thread.Sleep((int)(Settings.settings["autosaveInterval"] * 60000f));
-                    if (currentAutosave == time)
-                        AttemptAutosave();
-                }
-            });
-        }
-
-        public void AttemptAutosave(bool overrideNoteCheck = false)
-        {
-            if (CurrentWindow is GuiWindowEditor editor && (overrideNoteCheck || Notes.Count > 0))
-            {
-                if (FileName == null)
-                {
-                    Settings.settings["autosavedFile"] = Map.Save(SoundID, Notes);
-                    Settings.settings["autosavedProperties"] = ParseProperties();
-                    Settings.Save(false);
-
-                    editor.ShowToast("AUTOSAVED", Settings.settings["color1"]);
-                }
-                else if (SaveMap(true, false, false))
-                    editor.ShowToast("AUTOSAVED", Settings.settings["color1"]);
-            }
-        }
-
-
-
-
-        public void RunBezier()
-        {
-            if (CurrentWindow is GuiWindowEditor editor)
-            {
-                var divisor = (int)((float)Settings.settings["bezierDivisor"] + 0.5f);
-
-                if (divisor > 0 && ((BezierNodes != null && BezierNodes.Count > 1) || SelectedNotes.Count > 1))
-                {
-                    var success = true;
-                    var finalNodes = BezierNodes != null && BezierNodes.Count > 1 ? BezierNodes.ToList() : SelectedNotes.ToList();
-                    var finalNotes = new List<Note>();
-
-                    var anchored = new List<int>() { 0 };
-
-                    for (int i = 0; i < finalNodes.Count; i++)
-                        if (finalNodes[i].Anchored && !anchored.Contains(i))
-                            anchored.Add(i);
-
-                    if (!anchored.Contains(finalNodes.Count - 1))
-                        anchored.Add(finalNodes.Count - 1);
-
-                    for (int i = 1; i < anchored.Count; i++)
-                    {
-                        var newNodes = new List<Note>();
-
-                        for (int j = anchored[i - 1]; j <= anchored[i]; j++)
-                            newNodes.Add(finalNodes[j]);
-
-                        var finalbez = Bezier(newNodes, divisor);
-                        success = finalbez.Count > 0;
-
-                        if (success)
-                            foreach (var note in finalbez)
-                                finalNotes.Add(note);
-                    }
-
-                    SelectedNotes.Clear();
-                    UpdateSelection();
-                    SelectedPoint = null;
-
-                    finalNotes.Add(finalNodes[0]);
-
-                    if (success)
-                    {
-                        UndoRedoManager.Add("DRAW BEZIER", () =>
-                        {
-                            foreach (var note in finalNotes)
-                                Notes.Remove(note);
-                            Notes.AddRange(finalNodes);
-
-                            SortNotes();
-                        }, () =>
-                        {
-                            foreach (var note in finalNodes)
-                                Notes.Remove(note);
-                            Notes.AddRange(finalNotes);
-
-                            SortNotes();
-                        });
-                    }
-                }
-
-                foreach (var note in Notes)
-                    note.Anchored = false;
-
-                BezierNodes?.Clear();
-            }
-        }
-
-        public static BigInteger FactorialApprox(int k)
-        {
-            var result = new BigInteger(1);
-
-            if (k < 10)
-                for (int i = 1; i <= k; i++)
-                    result *= i;
+            if (e.IsFocused)
+                UpdateFPS(Settings.useVSync.Value ? VSyncMode.On : VSyncMode.Off, Settings.fpsLimit.Value.Value);
             else
-                result = (BigInteger)(Math.Sqrt(2 * Math.PI * k) * Math.Pow(k / Math.E, k));
-
-            return result;
+                UpdateFPS(VSyncMode.Off, -45f);
         }
-
-        public static BigInteger BinomialCoefficient(int k, int v)
-        {
-            return FactorialApprox(k) / (FactorialApprox(v) * FactorialApprox(k - v));
-        }
-
-        public List<Note> Bezier(List<Note> finalNodes, int divisor)
-        {
-            var finalNotes = new List<Note>();
-
-            if (CurrentWindow is GuiWindowEditor editor)
-            {
-                try
-                {
-                    var k = finalNodes.Count - 1;
-                    decimal tdiff = finalNodes[k].Ms - finalNodes[0].Ms;
-                    decimal d = 1m / (divisor * k);
-
-                    if (Settings.settings["curveBezier"])
-                    {
-                        for (decimal t = d; t <= 1 + d / 2m; t += d)
-                        {
-                            float xf = 0;
-                            float yf = 0;
-                            decimal tf = finalNodes[0].Ms + tdiff * t;
-
-                            for (int v = 0; v <= k; v++)
-                            {
-                                var note = finalNodes[v];
-                                var bez = (double)BinomialCoefficient(k, v) * (Math.Pow(1 - (double)t, k - v) * Math.Pow((double)t, v));
-
-                                xf += (float)(bez * note.X);
-                                yf += (float)(bez * note.Y);
-                            }
-
-                            finalNotes.Add(new Note(xf, yf, (long)tf));
-                        }
-                    }
-                    else
-                    {
-                        d = 1m / divisor;
-
-                        for (int v = 0; v < k; v++)
-                        {
-                            var note = finalNodes[v];
-                            var nextnote = finalNodes[v + 1];
-                            decimal xdist = (decimal)(nextnote.X - note.X);
-                            decimal ydist = (decimal)(nextnote.Y - note.Y);
-                            decimal tdist = nextnote.Ms - note.Ms;
-
-                            for (decimal t = 0; t < 1 + d / 2m; t += d)
-                            {
-                                if (t > 0)
-                                {
-                                    var xf = (decimal)note.X + xdist * t;
-                                    var yf = (decimal)note.Y + ydist * t;
-                                    var tf = note.Ms + tdist * t;
-
-                                    finalNotes.Add(new Note((float)xf, (float)yf, (long)tf));
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (OverflowException)
-                {
-                    editor.ShowToast("TOO MANY NODES", Color.FromArgb(255, 255, 200, 0));
-                    return new List<Note>();
-                }
-                catch
-                {
-                    editor.ShowToast("FAILED TO DRAW CURVE", Color.FromArgb(255, 255, 200, 0));
-                    return new List<Note>();
-                }
-            }
-
-            return finalNotes;
-        }
-
 
 
 
         private bool FocusingBox()
         {
-            foreach (var control in CurrentWindow.Controls)
+            if (CurrentWindow == null)
+                return false;
+
+            foreach (WindowControl control in CurrentWindow.Controls)
                 if (control is GuiTextbox box && box.Focused)
                     return true;
 
             return false;
         }
 
-        public void SetTempo(float newTempo)
-        {
-            var tempoA = Math.Min(newTempo, 0.9f);
-            var tempoB = (newTempo - tempoA) * 2f;
-
-            Tempo = tempoA + tempoB + 0.1f;
-            MusicPlayer.Tempo = Tempo;
-        }
-
-
-
-
-        public void SortNotes()
-        {
-            Notes = new List<Note>(Notes.OrderBy(n => n.Ms));
-
-            if (CurrentWindow is GuiWindowEditor editor)
-                editor.Timeline.GenerateOffsets();
-        }
-
-        public void SortTimings(bool updateList = true)
-        {
-            TimingPoints = new List<TimingPoint>(TimingPoints.OrderBy(n => n.Ms));
-
-            if (updateList)
-                TimingsWindow.Instance?.ResetList();
-
-            if (CurrentWindow is GuiWindowEditor editor)
-                editor.Timeline.GenerateOffsets();
-        }
-
-        public void SortBookmarks(bool updateList = true)
-        {
-            Bookmarks = new List<Bookmark>(Bookmarks.OrderBy(n => n.Ms));
-
-            if (updateList)
-                BookmarksWindow.Instance?.ResetList();
-
-            if (CurrentWindow is GuiWindowEditor editor)
-                editor.Timeline.GenerateOffsets();
-        }
-
-
 
 
         public void SwitchWindow(GuiWindow window)
         {
             if (CurrentWindow is GuiWindowEditor)
-                CurrentMap.Save();
+                CurrentMap.LoadedMap?.Save();
 
             if (window is GuiWindowEditor)
             {
-                SetActivity("Editing a map");
-                RunAutosave(DateTime.Now.Ticks);
+                DiscordManager.SetActivity("Editing a map");
+                MapManager.BeginAutosaveLoop(DateTime.Now.Ticks);
             }
             else if (window is GuiWindowMenu)
-                SetActivity("Sitting in the menu");
+            {
+                DiscordManager.SetActivity("Watching the sunset");
+                Waveform.Dispose();
+            }
 
             ExportSSPM.Instance?.Close();
             BPMTapper.Instance?.Close();
             TimingsWindow.Instance?.Close();
             BookmarksWindow.Instance?.Close();
 
-            FontRenderer.unicode = Settings.settings["language"] != "english" || window is GuiWindowLanguage;
-            foreach (var control in window.Controls)
+            FontRenderer.unicode = Settings.language.Value != "english" || window is GuiWindowLanguage;
+            foreach (WindowControl control in window.Controls)
                 control.Update();
 
             CurrentWindow?.Dispose();
@@ -1928,46 +557,22 @@ namespace New_SSQE
 
 
 
-
-        private static readonly Dictionary<string, string> windowsLinks = new()
-        {
-            {"SSQE Player Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/player_version" },
-            {"SSQE Player Zip", "https://github.com/David20122/Sound-Space-Quantum-Editor/raw/2.0%2B_rewrite/SSQE%20Player.zip" },
-            {"SSQE Updater Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_version" },
-            {"SSQE Updater Zip", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/SSQE%20Updater.zip" },
-            {"Editor Redirect", "https://github.com/David20122/Sound-Space-Quantum-Editor/releases/latest" }
-        };
-
-        private static readonly Dictionary<string, string> linuxLinks = new()
-        {
-            {"SSQE Player Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/player_version" },
-            {"SSQE Player Zip", "https://github.com/David20122/Sound-Space-Quantum-Editor/raw/2.0%2B_rewrite/SSQE%20Player-linux.zip" },
-            {"SSQE Updater Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_version" },
-            {"SSQE Updater Zip", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/SSQE%20Updater-linux.zip" },
-            {"Editor Redirect", "https://github.com/David20122/Sound-Space-Quantum-Editor/releases/latest" }
-        };
-
         public static void CheckForUpdates()
         {
-            if (!Settings.settings["checkUpdates"])
+            if (!Settings.checkUpdates.Value)
                 return;
-
-            var currentVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
-
-            var links = IsLinux ? linuxLinks : windowsLinks;
-            var ext = IsLinux ? "" : ".exe";
 
             static void ExtractFile(string path)
             {
                 using (ZipArchive archive = ZipFile.OpenRead(path))
                 {
-                    foreach (var entry in archive.Entries)
+                    foreach (ZipArchiveEntry entry in archive.Entries)
                     {
                         try
                         {
                             entry.ExtractToFile(entry.FullName, true);
                         }
-                        catch (Exception ex) { ActionLogging.Register($"Failed to extract file: {entry.FullName}", "WARN", ex); }
+                        catch (Exception ex) { Logging.Register($"Failed to extract file: {entry.FullName}", LogSeverity.WARN, ex); }
                     }
                 }
 
@@ -1976,25 +581,31 @@ namespace New_SSQE
 
             void Download(string file)
             {
-                ActionLogging.Register($"Attempting to download file '{file}'");
-                WebClient.DownloadFile(links[$"{file} Zip"], $"{file}.zip");
-                ExtractFile($"{file}.zip");
+                Logging.Register($"Attempting to download file '{file}'");
+                WebClient.DownloadFile(Links.ALL[$"{file} Zip"], $"{Assets.THIS}\\{file}.zip");
+                ExtractFile($"{Assets.THIS}\\{file}.zip");
             }
 
-            void Run(string file, string tag)
+            void Run(string file, string tag, Setting<string> setting)
             {
-                ActionLogging.Register($"Searching for file '{file}'");
-                if (File.Exists($"{file}{ext}"))
-                {
-                    string current = FileVersionInfo.GetVersionInfo($"{file}{ext}").FileVersion ?? "";
-                    string version = WebClient.DownloadString(links[$"{file} Version"]).Trim();
+                Logging.Register($"Searching for file '{file}'");
 
-                    if (current != version)
+                if (Platform.ExecutableExists(file))
+                {
+                    string current = Platform.IsLinux ? setting.Value : Platform.GetExecutableVersionInfo(file).FileVersion ?? "";
+                    string version = WebClient.DownloadString(Links.ALL[$"{file} Version"]).Trim();
+
+                    if (Version.Parse(current) < Version.Parse(version))
                     {
+                        Logging.Register($"Current and latest versions differ! Current: {current} | Latest: {version}");
+
                         DialogResult diag = MessageBox.Show($"New {tag} version is available ({version}). Would you like to download the new version?", "Warning", "Yes", "No");
 
                         if (diag == DialogResult.Yes)
+                        {
                             Download(file);
+                            setting.Value = version;
+                        }
                     }
                 }
                 else
@@ -2002,797 +613,44 @@ namespace New_SSQE
                     DialogResult diag = MessageBox.Show($"{tag} is not present in this directory. Would you like to download it?", "Warning", "Yes", "No");
 
                     if (diag == DialogResult.Yes)
+                    {
+                        string version = WebClient.DownloadString(Links.ALL[$"{file} Version"]).Trim();
+                        
                         Download(file);
+                        setting.Value = version;
+                    }
                 }
             }
-
+            
             try
             {
-                Run("SSQE Player", "Map Player");
-                Run("SSQE Updater", "Auto Updater");
+                Run("SSQE Player", "Map Player", Settings.SSQE_Player_Version);
+                Run("SSQE Updater", "Auto Updater", Settings.SSQE_Updater_Version);
 
-                var redirect = WebClient.GetRedirect(links["Editor Redirect"]);
+                string redirect = WebClient.GetRedirect(Links.EDITOR_REDIRECT);
 
-                if (File.Exists($"SSQE Updater{ext}") && redirect != "")
+                if (Platform.ExecutableExists("SSQE Updater") && redirect != "")
                 {
-                    var version = redirect[(redirect.LastIndexOf("/") + 1)..];
+                    string version = redirect[(redirect.LastIndexOf('/') + 1)..];
 
-                    ActionLogging.Register("Checking version of editor");
-                    if (version != currentVersion)
+                    Logging.Register("Checking version of editor");
+                    if (Version.Parse(version) > Version.Parse(Program.Version))
                     {
-                        var diag = MessageBox.Show($"New Editor version is available ({version}). Would you like to download the new version?", "Warning", "Yes", "No");
+                        DialogResult diag = MessageBox.Show($"New Editor version is available ({version}). Would you like to download the new version?", "Warning", "Yes", "No");
 
                         if (diag == DialogResult.Yes)
                         {
-                            ActionLogging.Register("Attempting to run updater");
-                            Process.Start($"SSQE Updater{ext}");
+                            Logging.Register("Attempting to run updater");
+                            Platform.RunExecutable("SSQE Updater", "");
                         }
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Logging.Register("Failed to check for updates", LogSeverity.WARN, ex);
                 MessageBox.Show("Failed to check for updates", "Warning", "OK");
             }
-        }
-
-        private void DiscordInit()
-        {
-            try
-            {
-                discord = new("1067849747710345346", -1)
-                {
-                    Logger = new ConsoleLogger() { Level = LogLevel.Warning }
-                };
-
-                discord.OnReady += (sender, e) =>
-                {
-                    ActionLogging.Register($"Discord integration ready");
-                };
-
-                discord.OnPresenceUpdate += (sender, e) =>
-                {
-                    ActionLogging.Register($"Discord integration updated with activity '{e.Presence.State}'");
-                };
-
-                discord.Initialize();
-            }
-            catch { discordEnabled = false; }
-        }
-
-        public void SetActivity(string status)
-        {
-            if (!discordEnabled)
-                return;
-
-            discord.SetPresence(new RichPresence
-            {
-                State = status,
-                Details = $"Version {Assembly.GetExecutingAssembly().GetName().Version}",
-                Timestamps = new() { Start = DateTime.UtcNow },
-                Assets = new() { LargeImageKey = "logo" }
-            });
-        }
-
-
-
-
-        private static Vector2 VecFromNote(Note note)
-        {
-            var x = Math.Round(note.X, 2);
-            var y = Math.Round(note.Y, 2);
-
-            return ((float)x, (float)y);
-        }
-
-
-
-
-        public Dictionary<string, string> info = new()
-        {
-            {"songId", "" },
-            {"mapName", "" },
-            {"mappers", "" },
-            {"coverPath", "" },
-            {"difficulty", "" },
-            {"customDifficulty", "" },
-        };
-
-        public static Dictionary<string, byte> difficulties = new()
-        {
-            {"N/A", 0x00 },
-            {"Easy", 0x01 },
-            {"Medium", 0x02 },
-            {"Hard", 0x03 },
-            {"Logic", 0x04 },
-            {"Tasukete", 0x05 },
-        };
-        public void RunSSPMExport()
-        {
-            if (CurrentWindow is GuiWindowEditor editor)
-            {
-                var dialog = new SaveFileDialog()
-                {
-                    Title = "Export SSPM",
-                    Filter = "Rhythia Maps (*.sspm)|*.sspm"
-                };
-
-                if (Settings.settings["exportPath"] != "")
-                    dialog.InitialDirectory = Settings.settings["exportPath"];
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    Settings.settings["exportPath"] = Path.GetDirectoryName(dialog.FileName) ?? "";
-
-                    try
-                    {
-                        var data = ParseSSPM();
-                        File.WriteAllBytes(dialog.FileName, data);
-
-                        editor.ShowToast("SUCCESSFULLY EXPORTED", Settings.settings["color1"]);
-                    }
-                    catch
-                    {
-                        editor.ShowToast("FAILED TO EXPORT", Settings.settings["color1"]);
-                    }
-                }
-            }
-        }
-
-        private byte[] ParseSSPM()
-        {
-            var header = new byte[]
-            {
-                0x53, 0x53, 0x2b, 0x6d, // file type signature
-                0x02, 0x00, // SSPM format version - 2
-                0x00, 0x00, 0x00, 0x00, // reserved space
-            };
-
-            var hasCover = info["coverPath"] != ""; // whether cover should be present
-            var lastMs = BitConverter.GetBytes((uint)Notes.Last().Ms); // last note ms - 4 bytes
-
-            var noteCount = BitConverter.GetBytes((uint)Notes.Count); // note count - 4 bytes
-            var markerCount = (byte[])noteCount.Clone(); // marker count, repeated from last since no other markers
-
-            var metadata = new byte[]
-            {
-                lastMs[0], lastMs[1], lastMs[2], lastMs[3],
-                noteCount[0], noteCount[1], noteCount[2], noteCount[3],
-                markerCount[0], markerCount[1], markerCount[2], markerCount[3],
-
-                difficulties[info["difficulty"]],
-                0x00, 0x00, // rating? whatever that means
-                0x01, // contains audio
-                (byte)(hasCover ? 0x01 : 0x00), // may contain cover
-                0x00, // does not require a mod
-            };
-
-            var songID = Encoding.ASCII.GetBytes(info["songId"]); // song ID from form
-            var songIDf = BitConverter.GetBytes((ushort)songID.Length).Concat(songID).ToArray(); // song ID array with length
-            var mapName = Encoding.ASCII.GetBytes(info["mapName"]); // map name from form
-            var mapNamef = BitConverter.GetBytes((ushort)mapName.Length).Concat(mapName).ToArray(); // map name array with length
-            var songNamef = mapNamef.ToArray(); // song name copied from map name
-
-            var mappers = info["mappers"].Split('\n'); // list of provided valid mappers or "None" if empty
-            var mapperCount = BitConverter.GetBytes((ushort)mappers.Length); // number of provided valid mappers
-            var mappersf = new List<byte>(); // final list of mappers as bytes
-
-            foreach (var mapper in mappers)
-            {
-                var mapperf = Encoding.ASCII.GetBytes(mapper);
-                var mapperFinal = BitConverter.GetBytes((ushort)mapperf.Length).Concat(mapperf).ToArray(); // mapper array with length
-
-                mappersf.AddRange(mapperFinal);
-            }
-
-            var strings = songIDf.Concat(mapNamef).Concat(songNamef).Concat(mapperCount).Concat(mappersf).ToArray(); // merged string data
-
-            var offset = header.Length + 20 + metadata.Length + 80 + strings.Length; // for pointers
-
-            var customData = new byte[] { 0x00, 0x00 }; // default custom data - none
-
-            if (!string.IsNullOrWhiteSpace(info["customDifficulty"]))
-            {
-                var field = Encoding.ASCII.GetBytes("difficulty_name");
-                var fieldf = BitConverter.GetBytes((ushort)field.Length).Concat(field).ToArray();
-
-                var customDifficulty = Encoding.ASCII.GetBytes(info["customDifficulty"]);
-                var customDifficultyf = BitConverter.GetBytes((ushort)customDifficulty.Length).Concat(customDifficulty).ToArray();
-
-                customData = (new byte[] { 0x01, 0x00 }).Concat(fieldf).Concat(new byte[] { 0x09 }).Concat(customDifficultyf).ToArray();
-            }
-
-            var customDataOffset = BitConverter.GetBytes((ulong)offset);
-            var customDataLength = BitConverter.GetBytes((ulong)customData.Length);
-            offset += customData.Length;
-
-            var audio = File.ReadAllBytes($"cached/{SoundID}.asset"); // audio in bytes
-            var audioOffset = BitConverter.GetBytes((ulong)offset);
-            var audioLength = BitConverter.GetBytes((ulong)audio.Length);
-            offset += audio.Length;
-
-            var path = info["coverPath"];
-            var cover = hasCover ? (path == "Default" || !File.Exists(path) ? File.ReadAllBytes("assets/textures/Cover.png") : File.ReadAllBytes(path)) : Array.Empty<byte>(); // cover in bytes
-            var coverOffset = BitConverter.GetBytes((ulong)(hasCover ? offset : 0));
-            var coverLength = BitConverter.GetBytes((ulong)cover.Length);
-            offset += cover.Length;
-
-            var noteDefinition = Encoding.ASCII.GetBytes("ssp_note");
-            var noteDefinitionf = BitConverter.GetBytes((ushort)noteDefinition.Length).Concat(noteDefinition).ToArray();
-            var markerDefStart = new byte[] { 0x01 /* one definition */ };
-            var markerDefEnd = new byte[] { 0x01, /* one value */ 0x07, /* data type 07 - note */ 0x00 /* end of definition */ };
-
-            var markerDefinitions = markerDefStart.Concat(noteDefinitionf).Concat(markerDefEnd).ToArray(); // defines how to process notes
-            var markerDefinitionsOffset = BitConverter.GetBytes((ulong)offset);
-            var markerDefinitionsLength = BitConverter.GetBytes((ulong)markerDefinitions.Length);
-            offset += markerDefinitions.Length;
-
-            var markers = new List<byte>(); // note data
-            var exportOffset = (long)Settings.settings["exportOffset"];
-            foreach (var note in Notes)
-            {
-                var ms = BitConverter.GetBytes((uint)(note.Ms + exportOffset));
-                var markerType = new byte[1];
-
-                var xyInt = Math.Round(note.X) == Math.Round(note.X, 2) && Math.Round(note.Y) == Math.Round(note.Y, 2);
-                var identifier = new byte[] { (byte)(xyInt ? 0x00 : 0x01) };
-
-                var x = xyInt ? new byte[] { BitConverter.GetBytes((ushort)Math.Round(note.X))[0] } : BitConverter.GetBytes(note.X);
-                var y = xyInt ? new byte[] { BitConverter.GetBytes((ushort)Math.Round(note.Y))[0] } : BitConverter.GetBytes(note.Y);
-
-                var final = ms.Concat(markerType).Concat(identifier).Concat(x).Concat(y).ToArray();
-
-                markers.AddRange(final);
-            }
-            var markerOffset = BitConverter.GetBytes((ulong)offset);
-            var markerLength = BitConverter.GetBytes((ulong)markers.Count);
-
-            var pointers = new List<byte>(); // pointers
-            pointers.AddRange(customDataOffset);
-            pointers.AddRange(customDataLength);
-            pointers.AddRange(audioOffset);
-            pointers.AddRange(audioLength);
-            pointers.AddRange(coverOffset);
-            pointers.AddRange(coverLength);
-            pointers.AddRange(markerDefinitionsOffset);
-            pointers.AddRange(markerDefinitionsLength);
-            pointers.AddRange(markerOffset);
-            pointers.AddRange(markerLength);
-
-            var markerSet = markerDefinitions.Concat(markers).ToArray();
-            using SHA1 sHash = SHA1.Create();
-            var hash = sHash.ComputeHash(markerSet);
-
-            var data = new List<byte>(); // final converted data
-            data.AddRange(header);
-            data.AddRange(hash);
-            data.AddRange(metadata);
-            data.AddRange(pointers);
-            data.AddRange(strings);
-            data.AddRange(customData);
-            data.AddRange(audio);
-            data.AddRange(cover);
-            data.AddRange(markerDefinitions);
-            data.AddRange(markers);
-
-            // the documentation for this stuff really isnt great, some examples would be nice
-            // https://github.com/basils-garden/types/blob/main/sspm/v2.md
-
-            return data.ToArray();
-        }
-
-        public static string RunSSPMImport(string path)
-        {
-            using (FileStream file = new(path, FileMode.Open, FileAccess.Read))
-            {
-                MemoryStream data = new();
-                file.CopyTo(data);
-
-                string? output = ProcessSSPM(data);
-                data.Dispose();
-
-                return output ?? "";
-            }
-        }
-
-        private static readonly char[] invalidChars = { '/', '\\', ':', '*', '?', '"', '<', '>', '|' };
-
-        private static string? ProcessSSPM(MemoryStream data)
-        {
-            data.Seek(0, SeekOrigin.Begin);
-            string? mapData = null;
-
-            byte[] fileTypeSignature = new byte[4];
-            data.Read(fileTypeSignature, 0, 4);
-
-            if (!(fileTypeSignature[0] == 0x53 &&
-                fileTypeSignature[1] == 0x53 &&
-                fileTypeSignature[2] == 0x2b &&
-                fileTypeSignature[3] == 0x6d))
-            {
-                MessageBox.Show("File type not recognized or supported\nCurrently supported: SSPM v1/v2", "Warning", "OK");
-                return null;
-            }
-
-            byte[] formatVersion = new byte[2];
-            data.Read(formatVersion, 0, 2);
-
-            if (formatVersion[0] == 0x01 && formatVersion[1] == 0x00)
-            {
-                string GetNextVariableString()
-                {
-                    List<byte> bytes = new();
-
-                    byte[] currentByte = new byte[1];
-                    data.Read(currentByte, 0, 1);
-
-                    while (currentByte[0] != 0x0a)
-                    {
-                        bytes.Add(currentByte[0]);
-                        data.Read(currentByte, 0, 1);
-                    }
-
-                    return Encoding.ASCII.GetString(bytes.ToArray());
-                }
-
-
-                // v1
-                byte[] reservedSpace = new byte[2];
-                data.Read(reservedSpace, 0, 2);
-
-                // metadata
-                string mapID = GetNextVariableString().Replace(",", "");
-                string mapName = GetNextVariableString();
-                string mappers = GetNextVariableString();
-
-                for (int i = 0; i < mapID.Length; i++)
-                {
-                    if (Array.IndexOf(invalidChars, mapID[i]) > -1)
-                        mapID = mapID.Remove(i, 1).Insert(i, "_");
-                }
-
-                Settings.settings["songName"] = mapName;
-                Settings.settings["mappers"] = mappers;
-
-                byte[] lastMs = new byte[4];
-                byte[] noteCount = new byte[4];
-                byte[] difficulty = new byte[1];
-
-                // read metadata
-                data.Read(lastMs, 0, 4);
-                data.Read(noteCount, 0, 4);
-                data.Read(difficulty, 0, 1);
-
-                foreach (var key in difficulties)
-                {
-                    if (key.Value == difficulty[0])
-                        Settings.settings["difficulty"] = key.Key;
-                }
-
-                // read cover
-                byte[] containsCover = new byte[1];
-                data.Read(containsCover, 0, 1);
-
-                Settings.settings["useCover"] = containsCover[0] == 0x02;
-
-                if (containsCover[0] == 0x02)
-                {
-                    byte[] coverLength = new byte[8];
-                    data.Read(coverLength, 0, 8);
-
-                    int coverLengthF = BitConverter.ToInt32(coverLength);
-                    byte[] cover = new byte[coverLengthF];
-                    data.Read(cover, 0, coverLengthF);
-
-                    File.WriteAllBytes($"cached/{mapID}.png", cover);
-                    Settings.settings["cover"] = $"cached/{mapID}.png";
-                }
-
-                // read audio
-                byte[] containsAudio = new byte[1];
-                data.Read(containsAudio, 0, 1);
-
-                if (containsAudio[0] == 0x01)
-                {
-                    byte[] audioLength = new byte[8];
-                    data.Read(audioLength, 0, 8);
-
-                    int audioLengthF = BitConverter.ToInt32(audioLength);
-                    byte[] audio = new byte[audioLengthF];
-                    data.Read(audio, 0, audioLengthF);
-
-                    File.WriteAllBytes($"cached/{mapID}.asset", audio);
-                }
-
-                mapData = mapID;
-
-                // read notes
-                uint noteCountF = BitConverter.ToUInt32(noteCount);
-                for (int i = 0; i < noteCountF; i++)
-                {
-                    byte[] ms = new byte[4];
-                    data.Read(ms, 0, 4);
-
-                    byte[] isQuantum = new byte[1];
-                    data.Read(isQuantum, 0, 1);
-
-                    float xF;
-                    float yF;
-
-                    if (isQuantum[0] == 0x00)
-                    {
-                        byte[] x = new byte[1];
-                        byte[] y = new byte[1];
-
-                        data.Read(x, 0, 1);
-                        data.Read(y, 0, 1);
-
-                        xF = x[0];
-                        yF = y[0];
-                    }
-                    else
-                    {
-                        byte[] x = new byte[4];
-                        byte[] y = new byte[4];
-
-                        data.Read(x, 0, 4);
-                        data.Read(y, 0, 4);
-
-                        xF = BitConverter.ToSingle(x);
-                        yF = BitConverter.ToSingle(y);
-                    }
-
-                    uint msF = BitConverter.ToUInt32(ms);
-
-                    mapData += $",{2 - xF}|{2 - yF}|{msF}";
-                }
-            }
-            else if (formatVersion[0] == 0x02 && formatVersion[1] == 0x00)
-            {
-                string GetNextVariableString(bool fourBytes = false)
-                {
-                    byte[] length = new byte[2];
-                    data.Read(length, 0, 2);
-                    int lengthF = (int)(fourBytes ? BitConverter.ToUInt32(length) : BitConverter.ToUInt16(length));
-
-                    byte[] str = new byte[lengthF];
-                    data.Read(str, 0, lengthF);
-
-                    return Encoding.ASCII.GetString(str);
-                }
-
-
-                // v2
-                byte[] reservedSpace = new byte[4];
-                data.Read(reservedSpace, 0, 4);
-
-                // metadata
-                byte[] hash = new byte[20];
-                byte[] lastMs = new byte[4];
-                byte[] noteCount = new byte[4];
-                byte[] markerCount = new byte[4];
-
-                byte[] difficulty = new byte[1];
-                byte[] mapRating = new byte[2];
-                byte[] containsAudio = new byte[1];
-                byte[] containsCover = new byte[1];
-                byte[] requiresMod = new byte[1];
-
-                // pointers
-                byte[] customDataOffset = new byte[8];
-                byte[] customDataLength = new byte[8];
-                byte[] audioOffset = new byte[8];
-                byte[] audioLength = new byte[8];
-                byte[] coverOffset = new byte[8];
-                byte[] coverLength = new byte[8];
-                byte[] markerDefinitionsOffset = new byte[8];
-                byte[] markerDefinitionsLength = new byte[8];
-                byte[] markerOffset = new byte[8];
-                byte[] markerLength = new byte[8];
-
-                // read metadata
-                data.Read(hash, 0, 20);
-                data.Read(lastMs, 0, 4);
-                data.Read(noteCount, 0, 4);
-                data.Read(markerCount, 0, 4);
-
-                data.Read(difficulty, 0, 1);
-                data.Read(mapRating, 0, 2);
-                data.Read(containsAudio, 0, 1);
-                data.Read(containsCover, 0, 1);
-                data.Read(requiresMod, 0, 1);
-
-                foreach (var key in difficulties)
-                {
-                    if (key.Value == difficulty[0])
-                        Settings.settings["difficulty"] = key.Key;
-                }
-
-                // read pointers
-                data.Read(customDataOffset, 0, 8);
-                data.Read(customDataLength, 0, 8);
-                data.Read(audioOffset, 0, 8);
-                data.Read(audioLength, 0, 8);
-                data.Read(coverOffset, 0, 8);
-                data.Read(coverLength, 0, 8);
-                data.Read(markerDefinitionsOffset, 0, 8);
-                data.Read(markerDefinitionsLength, 0, 8);
-                data.Read(markerOffset, 0, 8);
-                data.Read(markerLength, 0, 8);
-
-                // get song name stuff and mappers
-                string mapID = GetNextVariableString().Replace(",", "");
-                string mapName = GetNextVariableString();
-                string songName = GetNextVariableString();
-
-                for (int i = 0; i < mapID.Length; i++)
-                {
-                    if (Array.IndexOf(invalidChars, mapID[i]) > -1)
-                        mapID = mapID.Remove(i, 1).Insert(i, "_");
-                }
-
-                Settings.settings["songName"] = mapName;
-
-                byte[] mapperCount = new byte[2];
-                data.Read(mapperCount, 0, 2);
-                uint mapperCountF = BitConverter.ToUInt16(mapperCount);
-
-                string[] mappers = new string[mapperCountF];
-
-                for (int i = 0; i < mapperCountF; i++)
-                    mappers[i] = GetNextVariableString();
-
-                Settings.settings["mappers"] = string.Join("\n", mappers);
-
-                // read custom data block
-                // may implement more fields in the future, but right now only 'difficulty_name' is used
-                try
-                {
-                    void SetField(string field, dynamic value)
-                    {
-                        switch (field)
-                        {
-                            case "difficulty_name":
-                                Settings.settings["customDifficulty"] = value;
-                                break;
-                        }
-                    }
-
-                    byte[] customCount = new byte[2];
-                    data.Read(customCount, 0, 2);
-                    uint customCountF = BitConverter.ToUInt16(customCount);
-
-                    for (int i = 0; i < customCountF; i++)
-                    {
-                        string field = GetNextVariableString();
-                        byte[] id = new byte[1];
-                        data.Read(id, 0, 1);
-
-                        // discard all but 0x08 and 0x0a
-                        switch (id[0])
-                        {
-                            case 0x00:
-                                continue;
-                            case 0x01:
-                                data.Read(new byte[1], 0, 1);
-                                break;
-                            case 0x02:
-                                data.Read(new byte[2], 0, 2);
-                                break;
-                            case 0x03:
-                            case 0x05:
-                                data.Read(new byte[4], 0, 4);
-                                break;
-                            case 0x04:
-                            case 0x06:
-                                data.Read(new byte[8], 0, 8);
-                                break;
-                            case 0x07:
-                                byte[] type = new byte[1];
-                                data.Read(type, 0, 1);
-
-                                if (type[0] == 0x00)
-                                    data.Read(new byte[2], 0, 2);
-                                else if (type[0] == 0x01)
-                                    data.Read(new byte[16], 0, 2);
-                                break;
-                            case 0x08:
-                                GetNextVariableString();
-                                break;
-                            case 0x09:
-                                SetField(field, GetNextVariableString());
-                                break;
-                            case 0x0a:
-                                GetNextVariableString(true);
-                                break;
-                            case 0x0b:
-                                SetField(field, GetNextVariableString(true));
-                                break;
-                            case 0x0c:
-                                data.Read(new byte[1], 0, 1);
-
-                                byte[] valueLength = new byte[4];
-                                data.Read(valueLength, 0, 4);
-                                int valueLengthF = (int)BitConverter.ToUInt32(valueLength);
-
-                                data.Read(new byte[valueLengthF], 0, valueLengthF);
-                                break;
-                        }
-                    }
-                }
-                catch { }
-
-                // jump to beginning of audio block in case custom data reading was unsuccessful
-                long audioOffsetF = BitConverter.ToInt64(audioOffset);
-                data.Seek(audioOffsetF, SeekOrigin.Begin);
-
-                // read and cache audio
-                if (containsAudio[0] == 0x01)
-                {
-                    int audioLengthF = (int)BitConverter.ToInt64(audioLength);
-                    byte[] audio = new byte[audioLengthF];
-                    data.Read(audio, 0, audioLengthF);
-
-                    File.WriteAllBytes($"cached/{mapID}.asset", audio);
-                }
-
-                Settings.settings["useCover"] = containsCover[0] == 0x01;
-
-                // read cover
-                if (containsCover[0] == 0x01)
-                {
-                    int coverLengthF = (int)BitConverter.ToInt64(coverLength);
-                    byte[] cover = new byte[coverLengthF];
-                    data.Read(cover, 0, coverLengthF);
-
-                    File.WriteAllBytes($"cached/{mapID}.png", cover);
-                    Settings.settings["cover"] = $"cached/{mapID}.png";
-                }
-
-                mapData = mapID;
-
-                // read marker definitions
-                bool hasNotes = false;
-
-                byte[] numDefinitions = new byte[1];
-                data.Read(numDefinitions, 0, 1);
-
-                for (int i = 0; i < numDefinitions[0]; i++)
-                {
-                    string definition = GetNextVariableString();
-                    hasNotes |= definition == "ssp_note" && i == 0;
-
-                    byte[] numValues = new byte[1];
-                    data.Read(numValues, 0, 1);
-
-                    byte[] definitionData = new byte[1] { 0x01 };
-                    while (definitionData[0] != 0x00)
-                        data.Read(definitionData, 0, 1);
-                }
-
-                if (!hasNotes)
-                    return mapData;
-
-                // process notes
-                uint noteCountF = BitConverter.ToUInt32(noteCount);
-                for (int i = 0; i < noteCountF; i++)
-                {
-                    byte[] ms = new byte[4];
-                    data.Read(ms, 0, 4);
-                    byte[] markerType = new byte[1];
-                    data.Read(markerType, 0, 1);
-
-                    byte[] isQuantum = new byte[1];
-                    data.Read(isQuantum, 0, 1);
-
-                    float xF;
-                    float yF;
-
-                    if (isQuantum[0] == 0x00)
-                    {
-                        byte[] x = new byte[1];
-                        byte[] y = new byte[1];
-
-                        data.Read(x, 0, 1);
-                        data.Read(y, 0, 1);
-
-                        xF = x[0];
-                        yF = y[0];
-                    }
-                    else
-                    {
-                        byte[] x = new byte[4];
-                        byte[] y = new byte[4];
-
-                        data.Read(x, 0, 4);
-                        data.Read(y, 0, 4);
-
-                        xF = BitConverter.ToSingle(x);
-                        yF = BitConverter.ToSingle(y);
-                    }
-
-                    uint msF = BitConverter.ToUInt32(ms);
-
-                    mapData += $",{2 - xF}|{2 - yF}|{msF}";
-                }
-            }
-            else
-                MessageBox.Show("File version not recognized or supported\nCurrently supported: SSPM v1/v2", "Warning", "OK");
-
-            return mapData;
-        }
-
-        public string RunOSUImport(string path)
-        {
-            var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-            culture.NumberFormat.NumberDecimalSeparator = ".";
-
-            string data = File.ReadAllText(path);
-            string id = "";
-            string mapData = "";
-
-            string[] split = data.Split("\n");
-
-            bool timing = false;
-            bool hitObj = false;
-
-            for (int i = 0; i < split.Length; i++)
-            {
-                string line = split[i].Trim();
-
-                try
-                {
-                    string[] subsplit = line.Split(":");
-                    string[] set = line.Split(",");
-
-                    if (!timing && !hitObj && subsplit.FirstOrDefault() == "AudioFilename")
-                    {
-                        string idPath = subsplit[1].Trim();
-                        id = Path.GetFileNameWithoutExtension(idPath);
-
-                        File.Copy($"{Path.GetDirectoryName(path)}\\{idPath}", $"cached/{id}.asset", true);
-                    }
-
-                    if (timing && !string.IsNullOrWhiteSpace(line))
-                    {
-                        bool canParse = double.TryParse(set[0], NumberStyles.Any, culture, out double time);
-                        canParse &= float.TryParse(set[1], NumberStyles.Any, culture, out float bpm);
-
-                        if (canParse)
-                        {
-                            bool inhereted = set.Length > 6 ? set[6] == "1" : bpm > 0;
-
-                            bpm = (float)Math.Abs(Math.Round(60000 / bpm, 3));
-
-                            if (bpm > 0 && inhereted)
-                                TimingPoints.Add(new(bpm, (long)time));
-                        }
-                    }
-
-                    if (hitObj && !string.IsNullOrWhiteSpace(line))
-                    {
-                        bool canParse = float.TryParse(set[0], NumberStyles.Any, culture, out float x);
-                        canParse &= float.TryParse(set[1], NumberStyles.Any, culture, out float y);
-                        canParse &= double.TryParse(set[2], NumberStyles.Any, culture, out double time);
-                        canParse &= int.TryParse(set[3], NumberStyles.Any, culture, out int type);
-
-                        if (canParse)
-                        {
-                            x = 5 - x / 64;
-                            y = 4 - y / 64;
-
-                            if ((type & 1) != 0)
-                                mapData += $",{Math.Round(x, 2)}|{Math.Round(y, 2)}|{(long)time}";
-                        }
-                    }
-                }
-                catch { }
-
-                timing = line != "[HitObjects]" && (timing || line == "[TimingPoints]");
-                hitObj = line != "[TimingPoints]" && (hitObj || line == "[HitObjects]");
-            }
-
-            return id + mapData;
         }
     }
 }

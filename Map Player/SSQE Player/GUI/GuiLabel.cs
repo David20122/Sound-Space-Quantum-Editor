@@ -70,8 +70,8 @@ namespace SSQE_Player.GUI
 
             if (Centered)
             {
-                var width = FontRenderer.GetWidth(Text, TextSize);
-                var height = FontRenderer.GetHeight(TextSize);
+                int width = FontRenderer.GetWidth(Text, TextSize);
+                int height = FontRenderer.GetHeight(TextSize);
 
                 txX += txW / 2f - width / 2f;
                 txY += txH / 2f - height / 2f;

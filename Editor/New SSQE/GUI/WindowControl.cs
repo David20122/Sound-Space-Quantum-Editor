@@ -45,7 +45,7 @@ namespace New_SSQE.GUI
         // Text Vertex: X, Y, TX, TY, A (float)
         public void Init()
         {
-            var vertices = GetVertices();
+            Tuple <float[], float[]> vertices = GetVertices();
 
             
             VaO = GL.GenVertexArray();
@@ -87,7 +87,7 @@ namespace New_SSQE.GUI
 
         public void Update()
         {
-            var vertices = GetVertices();
+            Tuple<float[], float[]> vertices = GetVertices();
 
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, VbO);
             GL.BufferData(BufferTargetARB.ArrayBuffer, vertices.Item1, Dynamic ? BufferUsageARB.DynamicDraw : BufferUsageARB.StaticDraw);
@@ -110,7 +110,7 @@ namespace New_SSQE.GUI
             GL.DeleteVertexArray(tVaO);
             GL.DeleteBuffer(tVbO);
 
-            if (tHandle.Handle >= 0)
+            if (tHandle.Handle >= 0 && !TextureManager.IsInUse(tHandle))
                 GL.DeleteTexture(tHandle);
         }
 
@@ -139,9 +139,9 @@ namespace New_SSQE.GUI
 
         public virtual void AddToBuffers(float[] vertices, int index)
         {
-            var vao = GL.GenVertexArray();
-            var staticVbO = GL.GenBuffer();
-            var vbo = GL.GenBuffer();
+            VertexArrayHandle vao = GL.GenVertexArray();
+            BufferHandle staticVbO = GL.GenBuffer();
+            BufferHandle vbo = GL.GenBuffer();
 
             GL.BindBuffer(BufferTargetARB.ArrayBuffer, staticVbO);
             GL.BufferData(BufferTargetARB.ArrayBuffer, vertices, BufferUsageARB.StaticDraw);
@@ -169,7 +169,7 @@ namespace New_SSQE.GUI
             VertexCounts[index] = vertices.Length / 6;
         }
 
-        public virtual void RegisterData(int index, Vector4[] data)
+        public virtual void RegisterData(int index, Vector4[] data, int? count = null)
         {
             if (data.Length > 0)
             {
@@ -177,16 +177,22 @@ namespace New_SSQE.GUI
                 GL.BufferData(BufferTargetARB.ArrayBuffer, data, BufferUsageARB.DynamicDraw);
 
                 GL.BindVertexArray(VaOs[index]);
-                GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[index], data.Length);
+                GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, VertexCounts[index], count ?? data.Length);
             }
         }
 
         public virtual void ClearBuffers()
         {
+            for (int i = 0; i < VbOs.Length; i++)
+            {
+                GL.BindBuffer(BufferTargetARB.ArrayBuffer, VbOs[i]);
+                GL.BufferData(BufferTargetARB.ArrayBuffer, 0, IntPtr.Zero, BufferUsageARB.StaticDraw);
+
+                GL.DeleteBuffer(VbOs[i]);
+            }
+
             for (int i = 0; i < VaOs.Length; i++)
                 GL.DeleteVertexArray(VaOs[i]);
-            for (int i = 0; i < VbOs.Length; i++)
-                GL.DeleteBuffer(VbOs[i]);
         }
 
         public virtual void InstanceSetup() { }

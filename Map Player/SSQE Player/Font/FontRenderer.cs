@@ -27,7 +27,7 @@ namespace SSQE_Player
         {
             GL.UseProgram(Shader.FontTexProgram);
 
-            var location = GL.GetUniformLocation(Shader.FontTexProgram, "texture0");
+            int location = GL.GetUniformLocation(Shader.FontTexProgram, "texture0");
             GL.Uniform1i(location, 15);
 
             location = GL.GetUniformLocation(Shader.FontTexProgram, "TexLookup");

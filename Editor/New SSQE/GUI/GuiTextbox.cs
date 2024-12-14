@@ -3,6 +3,10 @@ using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
+using New_SSQE.GUI.Font;
+using New_SSQE.Preferences;
+using New_SSQE.GUI.Input;
+using New_SSQE.ExternalUtils;
 
 namespace New_SSQE.GUI
 {
@@ -11,8 +15,10 @@ namespace New_SSQE.GUI
         public string Text;
         private string prevText;
 
-        public string Setting;
-        public bool IsKeybind;
+        public Setting<Keybind>? Keybind;
+        public Setting<float>? Number;
+        public Setting<string>? String;
+        public int? GKIndex = null;
         public bool IsFloat;
         public bool IsPositive;
 
@@ -24,7 +30,7 @@ namespace New_SSQE.GUI
         private Color textColor;
         private Color prevColor = Color.White;
 
-        public GuiTextbox(float x, float y, float w, float h, string text, int textSize, bool numeric, bool lockSize = false, bool moveWithOffset = false, string setting = "", string font = "main", bool isKeybind = false, bool isFloat = false, bool isPositive = false) : base(x, y, w, h)
+        public GuiTextbox(float x, float y, float w, float h, string text, int textSize, bool lockSize = false, bool moveWithOffset = false, string font = "main", Setting<Keybind>? keySetting = null, Setting<float>? numSetting = null, Setting<string>? strSetting = null, bool numeric = false, bool isFloat = false, bool isPositive = false, int? gkIndex = null) : base(x, y, w, h)
         {
             Text = text;
             prevText = Text;
@@ -33,20 +39,23 @@ namespace New_SSQE.GUI
             TextSize = textSize;
             OriginTextSize = textSize;
 
-            Setting = setting;
-            IsKeybind = isKeybind;
+            Keybind = keySetting;
+            Number = numSetting;
+            String = strSetting;
+            GKIndex = gkIndex;
+
+            Numeric = numeric;
             IsFloat = isFloat;
             IsPositive = isPositive;
 
-            if (isKeybind)
-            {
-                if (setting.Contains("gridKey"))
-                    Text = Settings.settings["gridKeys"][int.Parse(setting.Replace("gridKey", ""))].ToString().ToUpper();
-                else
-                    Text = Settings.settings[setting].Key.ToString().ToUpper();
-            }
-            else if (setting != "")
-                Text = Settings.settings[setting].ToString();
+            if (gkIndex != null)
+                Text = Settings.gridKeys.Value[gkIndex ?? 0].ToString().ToUpper();
+            else if (keySetting != null)
+                Text = keySetting.Value.Key.ToString().ToUpper();
+            else if (numSetting != null)
+                Text = numSetting.Value.ToString(Program.Culture);
+            else if (strSetting != null)
+                Text = strSetting.Value;
 
             Numeric = numeric;
 
@@ -59,19 +68,23 @@ namespace New_SSQE.GUI
         /// <summary>
         /// Numeric setting constructor
         /// </summary>
-        public GuiTextbox(float x, float y, float w, float h, int textSize, string setting, bool isFloat, bool isPositive = false, bool moveWithOffset = false) : this(x, y, w, h, "", textSize, true, false, moveWithOffset, setting, "main", false, isFloat, isPositive) { }
+        public GuiTextbox(float x, float y, float w, float h, int textSize, Setting<float> numSetting, bool isFloat, bool isPositive = false, bool moveWithOffset = false) : this(x, y, w, h, "", textSize, false, moveWithOffset, "main", null, numSetting, null, true, isFloat, isPositive, null) { }
         /// <summary>
         /// Blank universal constructor
         /// </summary>
-        public GuiTextbox(float x, float y, float w, float h, int textSize, bool moveWithOffset = false) : this(x, y, w, h, "", textSize, false, false, moveWithOffset, "", "main", false, false, false) { }
+        public GuiTextbox(float x, float y, float w, float h, int textSize, bool moveWithOffset = false) : this(x, y, w, h, "", textSize, false, moveWithOffset, "main", null, null, null, false, false, false, null) { }
         /// <summary>
         /// Blank numeric constructor
         /// </summary>
-        public GuiTextbox(float x, float y, float w, float h, string text, int textSize, bool moveWithOffset = false) : this(x, y, w, h, text, textSize, true, false, moveWithOffset, "", "main", false, false, false) { }
+        public GuiTextbox(float x, float y, float w, float h, string text, int textSize, bool moveWithOffset = false) : this(x, y, w, h, text, textSize, false, moveWithOffset, "main", null, null, null, false, false, false, null) { }
         /// <summary>
         /// Keybind setting constructor
         /// </summary>
-        public GuiTextbox(float x, float y, float w, float h, int textSize, string keybind) : this(x, y, w, h, "", textSize, false, false, false, keybind, "main", true, false, false) { }
+        public GuiTextbox(float x, float y, float w, float h, int textSize, Setting<Keybind> keybind) : this(x, y, w, h, "", textSize, false, false, "main", keybind, null, null, false, false, false, null) { }
+        /// <summary>
+        /// Grid keybind setting constructor
+        /// </summary>
+        public GuiTextbox(float x, float y, float w, float h, int textSize, int gkIndex) : this(x, y, w, h, "", textSize, false, false, "main", null, null, null, false, false, false, gkIndex) { }
 
         public override void Render(float mousex, float mousey, float frametime)
         {
@@ -103,9 +116,9 @@ namespace New_SSQE.GUI
 
         public override Tuple<float[], float[]> GetVertices()
         {
-            var colored = MainWindow.Instance.CurrentWindow is not GuiWindowSettings;
+            bool colored = MainWindow.Instance.CurrentWindow is not GuiWindowSettings;
 
-            var color2 = colored ? Settings.settings["color2"] : Color.FromArgb(255, 255, 255);
+            Color color2 = colored ? Settings.color2.Value : Color.FromArgb(255, 255, 255);
 
             string textBeforeCursor = "";
             if (cursorPos >= 0)
@@ -138,16 +151,16 @@ namespace New_SSQE.GUI
             FontVertices = FontRenderer.Print(txX, txY, Text, TextSize, Font);
             textColor = color2;
 
-            return new Tuple<float[], float[]>(vertices.ToArray(), Array.Empty<float>());
+            return new(vertices.ToArray(), Array.Empty<float>());
         }
 
         public override void OnMouseClick(Point pos, bool right)
         {
             if (Text.Length > 0)
             {
-                var textWidth = FontRenderer.GetWidth(Text, TextSize, Font);
-                var posX = pos.X - Rect.X - (Rect.Width - textWidth) / 2f;
-                var letterWidth = textWidth / Text.Length;
+                int textWidth = FontRenderer.GetWidth(Text, TextSize, Font);
+                float posX = pos.X - Rect.X - (Rect.Width - textWidth) / 2f;
+                float letterWidth = textWidth / Text.Length;
 
                 posX = MathHelper.Clamp(posX, 0, textWidth);
                 posX = (float)Math.Floor(posX / letterWidth + 0.3);
@@ -169,15 +182,15 @@ namespace New_SSQE.GUI
 
             timer = 0f;
 
-            if (IsKeybind)
+            if (Keybind != null)
             {
                 if (key == Keys.Backspace)
                     key = Keys.Delete;
 
-                if (Setting.Contains("gridKey"))
-                    Settings.settings["gridKeys"][int.Parse(Setting.Replace("gridKey", ""))] = key;
-                else
-                    Settings.settings[Setting] = new Keybind(key, MainWindow.Instance.CtrlHeld, MainWindow.Instance.AltHeld, MainWindow.Instance.ShiftHeld);
+                if (GKIndex != null)
+                    Settings.gridKeys.Value[GKIndex ?? 0] = key;
+                else if (Keybind != null)
+                    Keybind.Value = new Keybind(key, MainWindow.Instance.CtrlHeld, MainWindow.Instance.AltHeld, MainWindow.Instance.ShiftHeld);
 
                 Text = key.ToString().ToUpper();
                 cursorPos = Text.Length;
@@ -194,7 +207,7 @@ namespace New_SSQE.GUI
                     break;
 
                 case Keys.V when control:
-                    var clipboard = Clipboard.GetText();
+                    string clipboard = Clipboard.GetText();
 
                     if (!string.IsNullOrWhiteSpace(clipboard))
                     {
@@ -278,11 +291,11 @@ namespace New_SSQE.GUI
                     break;
 
                 default:
-                    var str = KeyConverter.GetCharFromInput(key, MainWindow.Instance.ShiftHeld).ToString();
+                    string str = KeyConverter.GetCharFromInput(key, MainWindow.Instance.ShiftHeld).ToString();
 
                     if (Numeric)
                     {
-                        var separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                        string separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
 
                         if (int.TryParse(str, out _) || (str == separator && !Text.Contains(str)) || (str == "-" && !Text.Contains('=') && cursorPos == 0))
                         {
@@ -309,12 +322,17 @@ namespace New_SSQE.GUI
 
         public void SetSetting()
         {
-            if (Setting != "" && (IsFloat ? float.TryParse(Text, out _) : int.TryParse(Text, out _)))
+            float tempF = 0;
+            int tempI = 0;
+
+            if (Number != null && Numeric && (IsFloat ? float.TryParse(Text, out tempF) : int.TryParse(Text, out tempI)))
             {
-                var num = IsFloat ? float.Parse(Text) : int.Parse(Text);
+                float num = IsFloat ? tempF : tempI;
                 if (!IsPositive || (IsPositive && num > 0))
-                    Settings.settings[Setting] = num;
+                    Number.Value = num;
             }
+            else if (String != null && !Numeric)
+                String.Value = Text;
         }
 
         // i dont remember how this works but it does so woo

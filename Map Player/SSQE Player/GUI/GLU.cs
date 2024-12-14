@@ -4,7 +4,7 @@
     {
         public static float[] Line(float x1, float y1, float z1, float x2, float y2, float z2, float lw, params float[] c)
         {
-            var horizontal = x1 != x2;
+            bool horizontal = x1 != x2;
 
             if (horizontal)
             {
@@ -31,7 +31,7 @@
 
         public static float[] FadingLine(float x1, float y1, float z1, float x2, float y2, float z2, float lw, params float[] c)
         {
-            var horizontal = x1 != x2;
+            bool horizontal = x1 != x2;
 
             if (horizontal)
             {

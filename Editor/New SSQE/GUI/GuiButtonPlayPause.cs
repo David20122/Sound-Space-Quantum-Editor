@@ -1,4 +1,7 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using New_SSQE.Audio;
+using New_SSQE.GUI.Font;
+using New_SSQE.GUI.Shaders;
+using OpenTK.Graphics.OpenGL;
 
 namespace New_SSQE.GUI
 {
@@ -14,13 +17,11 @@ namespace New_SSQE.GUI
 
         public override void Render(float mousex, float mousey, float frametime)
         {
-            var player = MainWindow.Instance.MusicPlayer;
-
-            if (player.IsPlaying != wasPlaying)
+            if (MusicPlayer.IsPlaying != wasPlaying)
             {
                 Update();
 
-                wasPlaying = player.IsPlaying;
+                wasPlaying = MusicPlayer.IsPlaying;
             }
 
             base.Render(mousex, mousey, frametime);
@@ -28,21 +29,21 @@ namespace New_SSQE.GUI
 
         public override void RenderTexture()
         {
-            GL.UseProgram(Shader.TexProgram);
             TextureManager.SetActive(1);
 
+            GL.BindTexture(TextureTarget.Texture2d, tHandle);
             GL.BindVertexArray(tVaO);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
 
-            GL.UseProgram(FontRenderer.unicode ? Shader.UnicodeProgram : Shader.FontTexProgram);
+            GL.UseProgram(FontRenderer.unicode ? Shader.UnicodeProgram : Shader.FontProgram);
             FontRenderer.SetActive("main");
         }
 
         public override Tuple<float[], float[]> GetVertices()
         {
-            float[] vertices = GLU.TexturedRect(Rect, 1f, MainWindow.Instance.MusicPlayer.IsPlaying ? 0.5f : 0f, 0f, 0.5f, 0.5f);
+            float[] vertices = GLU.TexturedRect(Rect, 1f, MusicPlayer.IsPlaying ? 0.5f : 0f, 0f, 0.5f, 0.5f);
 
-            return new Tuple<float[], float[]>(Array.Empty<float>(), vertices);
+            return new(Array.Empty<float>(), vertices);
         }
     }
 }

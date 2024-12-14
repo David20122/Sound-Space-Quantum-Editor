@@ -23,7 +23,7 @@ namespace SSQE_Player.GUI
             GL.UseProgram(Shader.FontTexProgram);
             FontRenderer.SetActive();
 
-            foreach (var label in Labels)
+            foreach (GuiLabel label in Labels)
                 label.Render();
 
             GL.Enable(EnableCap.DepthTest);
@@ -32,10 +32,10 @@ namespace SSQE_Player.GUI
 
         public virtual void OnResize(Vector2i size)
         {
-            var widthdiff = size.X / 1920f;
-            var heightdiff = size.Y / 1080f;
+            float widthdiff = size.X / 1920f;
+            float heightdiff = size.Y / 1080f;
 
-            foreach (var label in Labels)
+            foreach (GuiLabel label in Labels)
             {
                 label.Rect = ResizeRect(label.OriginRect, widthdiff, heightdiff);
                 label.TextSize = (int)(label.OriginTextSize * heightdiff);
@@ -46,7 +46,7 @@ namespace SSQE_Player.GUI
 
         private static RectangleF ResizeRect(RectangleF originrect, float width, float height)
         {
-            return new RectangleF(originrect.X * width, originrect.Y * height, originrect.Width * width, originrect.Height * height);
+            return new(originrect.X * width, originrect.Y * height, originrect.Width * width, originrect.Height * height);
         }
     }
 }

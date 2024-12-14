@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -31,14 +31,13 @@
     <PackageReference Include="Egorozh.ColorPicker.Avalonia.Dialog" Version="0.10.17" />
     <PackageReference Include="OpenTK" Version="5.0.0-pre.8" />
     <PackageReference Include="StbTrueTypeSharp" Version="1.26.12" />
-    <PackageReference Include="System.Json" Version="4.7.1" />
-    <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
     <PackageReference Include="TextCopy" Version="6.2.1" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.6.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Forms\MessageBox.axaml" />
+    <UpToDateCheckInput Remove="GUI\Forms\MessageBox.axaml" />
   </ItemGroup>
 
   <ItemGroup>

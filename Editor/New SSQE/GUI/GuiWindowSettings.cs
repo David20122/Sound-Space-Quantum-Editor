@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
+using New_SSQE.ExternalUtils;
+using New_SSQE.Misc.Dialogs;
+using New_SSQE.Preferences;
 using OpenTK.Mathematics;
 
 namespace New_SSQE.GUI
@@ -14,67 +16,75 @@ namespace New_SSQE.GUI
 
         private readonly GuiButton Color1Picker = new(180, 80, 200, 50, 4, "PICK COLOR", 30, "square");
         private readonly GuiLabel Color1Label = new(180, 50, 200, 26, "Color 1 (1/X BPM + Primary):", 30, "main", false);
-        private readonly GuiSquare Color1Square = new(390, 80, 75, 50, Settings.settings["color1"]);
+        private readonly GuiSquare Color1Square = new(390, 80, 75, 50, Settings.color1.Value);
 
         private readonly GuiButton Color2Picker = new(180, 180, 200, 50, 5, "PICK COLOR", 30, "square");
         private readonly GuiLabel Color2Label = new(180, 150, 200, 26, "Color 2 (1/1 BPM + Secondary):", 30, "main", false);
-        private readonly GuiSquare Color2Square = new(390, 180, 75, 50, Settings.settings["color2"]);
+        private readonly GuiSquare Color2Square = new(390, 180, 75, 50, Settings.color2.Value);
 
         private readonly GuiButton Color3Picker = new(180, 280, 200, 50, 6, "PICK COLOR", 30, "square");
         private readonly GuiLabel Color3Label = new(180, 250, 200, 26, "Color 3 (1/2 BPM + Preview):", 30, "main", false);
-        private readonly GuiSquare Color3Square = new(390, 280, 75, 50, Settings.settings["color3"]);
+        private readonly GuiSquare Color3Square = new(390, 280, 75, 50, Settings.color3.Value);
 
         private readonly GuiButton Color4Picker = new(180, 380, 200, 50, 7, "PICK COLOR", 30, "square");
         private readonly GuiLabel Color4Label = new(180, 350, 200, 26, "Color 4 (Waveform):", 30, "main", false);
-        private readonly GuiSquare Color4Square = new(390, 380, 75, 50, Settings.settings["color4"]);
+        private readonly GuiSquare Color4Square = new(390, 380, 75, 50, Settings.color4.Value);
 
-        private readonly GuiButton NoteColorPicker = new(180, 480, 200, 50, 8, "ADD COLOR", 30, "square");
-        private readonly GuiLabel NoteColorLabel = new(180, 450, 200, 26, "Note Colors:", 30, "main", false);
-        private readonly GuiLabel NoteColorInfo = new(185, 535, 195, 26, "LMB: Remove\nRMB: Move left", 30, "main", false);
+        private readonly GuiButton Color5Picker = new(180, 480, 200, 50, 11, "PICK COLOR", 30, "square");
+        private readonly GuiLabel Color5Label = new(180, 450, 200, 26, "Color 5 (Modcharts):", 30, "main", false);
+        private readonly GuiSquare Color5Square = new(390, 480, 75, 50, Settings.color5.Value);
+
+        private readonly GuiButton NoteColorPicker = new(180, 580, 200, 50, 8, "ADD COLOR", 30, "square");
+        private readonly GuiLabel NoteColorLabel = new(180, 550, 200, 26, "Note Colors:", 30, "main", false);
+        private readonly GuiLabel NoteColorInfo = new(185, 635, 195, 26, "LMB: Remove\nRMB: Move left", 30, "main", false);
         private readonly GuiSquare NoteColorHoverSquare = new(0, 0, 0, 0, Color.FromArgb(255, 0, 127, 255), true);
 
-        private readonly GuiTextbox EditorBGOpacityTextbox = new(180, 650, 200, 50, 34, "editorBGOpacity", false);
-        private readonly GuiLabel EditorBGOpacityLabel = new(180, 620, 200, 26, "Editor BG Opacity:", 30, "main", false);
-        private readonly GuiSquare EditorBGOpacitySquare = new(390, 650, 75, 50, Color.FromArgb(255, 255, 255, 255));
+        private readonly GuiTextbox EditorBGOpacityTextbox = new(180, 750, 200, 50, 34, Settings.editorBGOpacity, false);
+        private readonly GuiLabel EditorBGOpacityLabel = new(180, 720, 200, 26, "Editor BG Opacity:", 30, "main", false);
+        private readonly GuiSquare EditorBGOpacitySquare = new(390, 750, 75, 50, Color.FromArgb(255, 255, 255, 255));
 
-        private readonly GuiTextbox GridOpacityTextbox = new(180, 750, 200, 50, 34, "gridOpacity", false);
-        private readonly GuiLabel GridOpacityLabel = new(180, 720, 200, 26, "Grid Opacity:", 30, "main", false);
-        private readonly GuiSquare GridOpacitySquare = new(390, 750, 75, 50, Color.FromArgb(255, 255, 255, 255));
+        private readonly GuiTextbox GridOpacityTextbox = new(180, 850, 200, 50, 34, Settings.gridOpacity, false);
+        private readonly GuiLabel GridOpacityLabel = new(180, 820, 200, 26, "Grid Opacity:", 30, "main", false);
+        private readonly GuiSquare GridOpacitySquare = new(390, 850, 75, 50, Color.FromArgb(255, 255, 255, 255));
 
-        private readonly GuiTextbox TrackOpacityTextbox = new(180, 850, 200, 50, 34, "trackOpacity", false);
-        private readonly GuiLabel TrackOpacityLabel = new(180, 820, 200, 26, "Track Opacity:", 30, "main", false);
-        private readonly GuiSquare TrackOpacitySquare = new(390, 850, 75, 50, Color.FromArgb(255, 255, 255, 255));
+        private readonly GuiTextbox TrackOpacityTextbox = new(180, 950, 200, 50, 34, Settings.trackOpacity, false);
+        private readonly GuiLabel TrackOpacityLabel = new(180, 920, 200, 26, "Track Opacity:", 30, "main", false);
+        private readonly GuiSquare TrackOpacitySquare = new(390, 950, 75, 50, Color.FromArgb(255, 255, 255, 255));
 
 
-        private readonly GuiCheckbox UseVSyncCheckbox = new(630, 380, 45, 45, "useVSync", "Enable VSync", 34);
-        private readonly GuiCheckbox LimitPlayerFPSCheckbox = new(630, 440, 45, 45, "limitPlayerFPS", "Limit Player FPS", 34);
-        private readonly GuiSlider FPSLimitSlider = new(630, 490, 400, 55, "fpsLimit", false);
+        private readonly GuiCheckbox UseVSyncCheckbox = new(630, 380, 45, 45, Settings.useVSync, "Enable VSync", 34);
+        private readonly GuiCheckbox LimitPlayerFPSCheckbox = new(630, 440, 45, 45, Settings.limitPlayerFPS, "Limit Player FPS", 34);
+        private readonly GuiSlider FPSLimitSlider = new(630, 490, 400, 55, Settings.fpsLimit, false);
         private readonly GuiLabel FPSLimitLabel = new(630, 540, 400, 55, "FPS Limit: ", 34, "main", false);
 
-        private readonly GuiCheckbox WaveformCheckbox = new(630, 80, 45, 45, "waveform", "Enable Waveform", 34);
-        private readonly GuiCheckbox ClassicWaveformCheckbox = new(630, 140, 45, 45, "classicWaveform", "Use Classic Waveform", 34);
-        private readonly GuiTextbox WaveformDetailTextbox = new(630, 230, 200, 50, 34, "waveformDetail", true, true);
+        private readonly GuiCheckbox WaveformCheckbox = new(630, 80, 45, 45, Settings.waveform, "Enable Waveform", 34);
+        private readonly GuiCheckbox ClassicWaveformCheckbox = new(630, 140, 45, 45, Settings.classicWaveform, "Use Classic Waveform", 34);
+        private readonly GuiTextbox WaveformDetailTextbox = new(630, 230, 200, 50, 34, Settings.waveformDetail, true, true);
         private readonly GuiLabel WaveformDetailLabel = new(630, 200, 200, 26, "Waveform Level of Detail:", 30, "main", false);
 
 
-        private readonly GuiCheckbox AutosaveCheckbox = new(1070, 140, 45, 45, "enableAutosave", "Enable Autosave", 34);
-        private readonly GuiTextbox AutosaveIntervalTextbox = new(1070, 230, 200, 50, 34, "autosaveInterval", true, true);
+        private readonly GuiCheckbox AutosaveCheckbox = new(1070, 140, 45, 45, Settings.enableAutosave, "Enable Autosave", 34);
+        private readonly GuiTextbox AutosaveIntervalTextbox = new(1070, 230, 200, 50, 34, Settings.autosaveInterval, true, true);
         private readonly GuiLabel AutosaveIntervalLabel = new(1070, 200, 200, 26, "Autosave Interval (min):", 30, "main", false);
 
-        private readonly GuiCheckbox FullscreenPlayerCheckbox = new(1070, 380, 45, 45, "fullscreenPlayer", "Open Player in Fullscreen", 34);
-        private readonly GuiCheckbox UseRhythia = new(1070, 440, 45, 45, "useRhythia", "Use Rhythia as Player", 34);
+        private readonly GuiCheckbox FullscreenPlayerCheckbox = new(1070, 380, 45, 45, Settings.fullscreenPlayer, "Open Player in Fullscreen", 34);
+        private readonly GuiCheckbox UseRhythia = new(1070, 440, 45, 45, Settings.useRhythia, "Use Rhythia as Player", 34);
         private readonly GuiLabel RhythiaPathLabel = new(1070, 500, 200, 26, "", 30, "main", false);
         private readonly GuiButton RhythiaPath = new(1070, 530, 200, 50, 9, "CHANGE PATH", 30);
 
 
-        private readonly GuiCheckbox CheckForUpdatesCheckbox = new(1420, 80, 45, 45, "checkUpdates", "Check For Updates", 34);
-        private readonly GuiCheckbox SkipDownloadCheckbox = new(1420, 140, 45, 45, "skipDownload", "Skip Download from Roblox", 34);
-        private readonly GuiCheckbox CorrectOnCopyCheckbox = new(1420, 200, 45, 45, "correctOnCopy", "Correct Errors on Copy", 34);
-        private readonly GuiCheckbox ReverseScrollCheckbox = new(1420, 260, 45, 45, "reverseScroll", "Reverse Scroll Direction", 34);
+        private readonly GuiCheckbox CheckForUpdatesCheckbox = new(1420, 80, 45, 45, Settings.checkUpdates, "Check For Updates", 34);
+        private readonly GuiCheckbox SkipDownloadCheckbox = new(1420, 140, 45, 45, Settings.skipDownload, "Skip Download from Roblox", 34);
+        private readonly GuiCheckbox CorrectOnCopyCheckbox = new(1420, 200, 45, 45, Settings.correctOnCopy, "Correct Errors on Copy", 34);
+        private readonly GuiCheckbox ReverseScrollCheckbox = new(1420, 260, 45, 45, Settings.reverseScroll, "Reverse Scroll Direction", 34);
 
 
-        private readonly GuiButton LanguageButton = new(10);
-        private readonly GuiSquare LanguageIcon = new(Color.FromArgb(255, 0, 0, 0), false, "assets/textures/Translate.png", "translate");
+        private readonly GuiCheckbox MSAACheckbox = new(1420, 650, 45, 45, Settings.msaa, "Use Anti-Aliasing", 34);
+        private readonly GuiLabel RestartLabel = new(1420, 700, 200, 26, "Requires restart!", 30, "main", false);
+
+
+        //private readonly GuiButton LanguageButton = new(10);
+        //private readonly GuiSquare LanguageIcon = new(Color.FromArgb(255, 0, 0, 0), false, $"{Assets.Textures}\\Translate.png", "translate");
 
 
         private readonly List<GuiSquare> ColorPickerSquares = new();
@@ -92,19 +102,19 @@ namespace New_SSQE.GUI
             Controls = new List<WindowControl>
             {
                 // Squares
-                Color1Square, Color2Square, Color3Square, Color4Square, NoteColorHoverSquare, EditorBGOpacitySquare, GridOpacitySquare, TrackOpacitySquare,
+                Color1Square, Color2Square, Color3Square, Color4Square, NoteColorHoverSquare, EditorBGOpacitySquare, GridOpacitySquare, TrackOpacitySquare, Color5Square,
                 // Buttons
-                BackButton, ResetButton, OpenDirectoryButton, KeybindsButton, Color1Picker, Color2Picker, Color3Picker, Color4Picker, NoteColorPicker, RhythiaPath,
+                BackButton, ResetButton, OpenDirectoryButton, KeybindsButton, Color1Picker, Color2Picker, Color3Picker, Color4Picker, NoteColorPicker, RhythiaPath, Color5Picker,
                 // Checkboxes
                 WaveformCheckbox, ClassicWaveformCheckbox, AutosaveCheckbox, CorrectOnCopyCheckbox, SkipDownloadCheckbox, ReverseScrollCheckbox, UseVSyncCheckbox,
-                CheckForUpdatesCheckbox, FullscreenPlayerCheckbox, LimitPlayerFPSCheckbox, UseRhythia,
+                CheckForUpdatesCheckbox, FullscreenPlayerCheckbox, LimitPlayerFPSCheckbox, UseRhythia, MSAACheckbox,
                 // Sliders
                 FPSLimitSlider,
                 // Boxes
                 EditorBGOpacityTextbox, GridOpacityTextbox, TrackOpacityTextbox, AutosaveIntervalTextbox, WaveformDetailTextbox,
                 // Labels
                 Color1Label, Color2Label, Color3Label, Color4Label, NoteColorLabel, NoteColorInfo, EditorBGOpacityLabel, GridOpacityLabel, TrackOpacityLabel, AutosaveIntervalLabel,
-                WaveformDetailLabel, FPSLimitLabel, RhythiaPathLabel,
+                WaveformDetailLabel, FPSLimitLabel, RhythiaPathLabel, RestartLabel, Color5Label
             };
 
             BackgroundSquare = new(Color.FromArgb(255, 30, 30, 30), "background_menu.png", "menubg");
@@ -114,6 +124,7 @@ namespace New_SSQE.GUI
             ColorPickerSquares.Add(Color2Square);
             ColorPickerSquares.Add(Color3Square);
             ColorPickerSquares.Add(Color4Square);
+            ColorPickerSquares.Add(Color5Square);
 
             OpacitySquares.Add(EditorBGOpacitySquare);
             OpacitySquares.Add(GridOpacitySquare);
@@ -123,9 +134,9 @@ namespace New_SSQE.GUI
             Opacities.Add(GridOpacityTextbox);
             Opacities.Add(TrackOpacityTextbox);
 
-            EditorBGOpacityTextbox.Text = Settings.settings["editorBGOpacity"].ToString();
-            GridOpacityTextbox.Text = Settings.settings["gridOpacity"].ToString();
-            TrackOpacityTextbox.Text = Settings.settings["trackOpacity"].ToString();
+            EditorBGOpacityTextbox.Text = Settings.editorBGOpacity.Value.ToString();
+            GridOpacityTextbox.Text = Settings.gridOpacity.Value.ToString();
+            TrackOpacityTextbox.Text = Settings.trackOpacity.Value.ToString();
 
             RefreshNoteColors();
             RefreshRhythiaPath();
@@ -133,22 +144,25 @@ namespace New_SSQE.GUI
 
         public override void Render(float mousex, float mousey, float frametime)
         {
-            var noteColors = Settings.settings["noteColors"];
+            List<Color> noteColors = Settings.noteColors.Value;
 
-            var widthdiff = Rect.Width / 1920f;
-            var heightdiff = Rect.Height / 1080f;
-            var colorWidth = 75f * widthdiff / noteColors.Count;
+            float widthdiff = Rect.Width / 1920f;
+            float heightdiff = Rect.Height / 1080f;
+            float colorWidth = 75f * widthdiff / noteColors.Count;
 
-            //colors 1-4
-            for (int i = 0; i < 4; i++)
-                ColorPickerSquares[i].Color = Settings.settings[$"color{i + 1}"];
+            //colors 1-5
+            ColorPickerSquares[0].Color = Settings.color1.Value;
+            ColorPickerSquares[1].Color = Settings.color2.Value;
+            ColorPickerSquares[2].Color = Settings.color3.Value;
+            ColorPickerSquares[3].Color = Settings.color4.Value;
+            ColorPickerSquares[4].Color = Settings.color5.Value;
 
             //note color hover box
             NoteColorHoverSquare.Visible = hoveringColor >= 0;
 
             if (NoteColorHoverSquare.Visible)
             {
-                var colorRect = new RectangleF(NoteColorPicker.Rect.X + 210 * widthdiff + colorWidth * hoveringColor, NoteColorPicker.Rect.Y, colorWidth, 50 * heightdiff);
+                RectangleF colorRect = new(NoteColorPicker.Rect.X + 210 * widthdiff + colorWidth * hoveringColor, NoteColorPicker.Rect.Y, colorWidth, 50 * heightdiff);
 
                 NoteColorHoverSquare.Rect = colorRect;
                 NoteColorHoverSquare.Update();
@@ -168,10 +182,11 @@ namespace New_SSQE.GUI
                 }
             }
 
-            var fps = Settings.settings["fpsLimit"].Value;
-            var max = Settings.settings["fpsLimit"].Max;
+            float fps = Settings.fpsLimit.Value.Value;
+            float max = Settings.fpsLimit.Value.Max;
 
             FPSLimitLabel.Text = $"FPS Limit: {(Math.Round(fps) == Math.Round(max) ? "Unlimited" : Math.Round(fps + 60f))}";
+            RestartLabel.Visible = MainWindow.MSAA != Settings.msaa.Value;
 
             base.Render(mousex, mousey, frametime);
         }
@@ -180,18 +195,18 @@ namespace New_SSQE.GUI
         {
             base.OnResize(size);
 
-            var widthdiff = size.X / 1920f;
+            //float widthdiff = size.X / 1920f;
 
-            LanguageButton.Rect = new(BackButton.Rect.Right + 10f * widthdiff, BackButton.Rect.Y, BackButton.Rect.Height, BackButton.Rect.Height);
-            LanguageIcon.Rect = LanguageButton.Rect;
+            //LanguageButton.Rect = new(BackButton.Rect.Right + 10f * widthdiff, BackButton.Rect.Y, BackButton.Rect.Height, BackButton.Rect.Height);
+            //LanguageIcon.Rect = LanguageButton.Rect;
 
-            LanguageButton.Update();
-            LanguageIcon.Update();
+            //LanguageButton.Update();
+            //LanguageIcon.Update();
         }
 
         public override void OnMouseClick(Point pos, bool right = false)
         {
-            var setting = Settings.settings["noteColors"];
+            List<Color> setting = Settings.noteColors.Value;
 
             if (hoveringColor >= 0 && setting.Count > 1)
             {
@@ -208,14 +223,14 @@ namespace New_SSQE.GUI
 
         public override void OnMouseMove(Point pos)
         {
-            var widthdiff = Rect.Width / 1920f;
-            var heightdiff = Rect.Height / 1080f;
+            float widthdiff = Rect.Width / 1920f;
+            float heightdiff = Rect.Height / 1080f;
 
-            var setting = Settings.settings["noteColors"];
+            List<Color> setting = Settings.noteColors.Value;
 
-            var x = pos.X - (NoteColorPicker.Rect.X + 210 * widthdiff);
-            var y = pos.Y - NoteColorPicker.Rect.Y;
-            var xint = x / (75f * widthdiff / setting.Count);
+            float x = pos.X - (NoteColorPicker.Rect.X + 210 * widthdiff);
+            float y = pos.Y - NoteColorPicker.Rect.Y;
+            float xint = x / (75f * widthdiff / setting.Count);
 
             if (setting.Count > 1 && xint >= 0 && xint < setting.Count && y >= 0 && y < 50 * heightdiff)
                 hoveringColor = (int)xint;
@@ -229,7 +244,7 @@ namespace New_SSQE.GUI
         {
             resetQueryTime = time;
 
-            var delay = Task.Delay(5000).ContinueWith(_ =>
+            Task delay = Task.Delay(5000).ContinueWith(_ =>
             {
                 if (resetQueryTime == time)
                 {
@@ -241,9 +256,9 @@ namespace New_SSQE.GUI
 
         private void RefreshNoteColors()
         {
-            var setting = Settings.settings["noteColors"];
+            List<Color> setting = Settings.noteColors.Value;
 
-            foreach (var control in NoteColorSquares)
+            foreach (GuiSquare control in NoteColorSquares)
             {
                 Controls.Remove(control);
                 control.Dispose();
@@ -254,8 +269,8 @@ namespace New_SSQE.GUI
 
             for (int i = 0; i < setting.Count; i++)
             {
-                var colorWidth = 75f / setting.Count;
-                var square = new GuiSquare(NoteColorPicker.OriginRect.X + 210 + i * colorWidth, NoteColorPicker.OriginRect.Y, colorWidth, 50, setting[i]);
+                float colorWidth = 75f / setting.Count;
+                GuiSquare square = new(NoteColorPicker.OriginRect.X + 210 + i * colorWidth, NoteColorPicker.OriginRect.Y, colorWidth, 50, setting[i]);
 
                 Controls.Add(square);
                 NoteColorSquares.Add(square);
@@ -270,7 +285,7 @@ namespace New_SSQE.GUI
 
         private void RefreshRhythiaPath()
         {
-            string path = Settings.settings["rhythiaPath"];
+            string path = Settings.rhythiaPath.Value;
             int length = 15;
 
             int startLength = Math.Min(path.Length, length);
@@ -320,10 +335,7 @@ namespace New_SSQE.GUI
                     break;
 
                 case 2:
-                    if (MainWindow.IsLinux)
-                        Process.Start("xdg-open", Environment.CurrentDirectory);
-                    else
-                        Process.Start("explorer.exe", Environment.CurrentDirectory);
+                    Platform.OpenDirectory();
 
                     break;
 
@@ -333,72 +345,72 @@ namespace New_SSQE.GUI
                     break;
 
                 case 4:
-                    var dialog1 = new ColorDialog()
+                    ColorDialog dialog1 = new()
                     {
-                        Color = Settings.settings["color1"]
+                        Color = Settings.color1.Value
                     };
 
                     if (dialog1.ShowDialog() == DialogResult.OK)
                     {
-                        Settings.settings["color1"] = dialog1.Color;
+                        Settings.color1.Value = dialog1.Color;
                         Settings.RefreshColors();
                     }
 
                     break;
 
                 case 5:
-                    var dialog2 = new ColorDialog()
+                    ColorDialog dialog2 = new()
                     {
-                        Color = Settings.settings["color2"]
+                        Color = Settings.color2.Value
                     };
 
                     if (dialog2.ShowDialog() == DialogResult.OK)
                     {
-                        Settings.settings["color2"] = dialog2.Color;
+                        Settings.color2.Value = dialog2.Color;
                         Settings.RefreshColors();
                     }
 
                     break;
 
                 case 6:
-                    var dialog3 = new ColorDialog()
+                    ColorDialog dialog3 = new()
                     {
-                        Color = Settings.settings["color3"]
+                        Color = Settings.color3.Value
                     };
 
                     if (dialog3.ShowDialog() == DialogResult.OK)
                     {
-                        Settings.settings["color3"] = dialog3.Color;
+                        Settings.color3.Value = dialog3.Color;
                         Settings.RefreshColors();
                     }
 
                     break;
 
                 case 7:
-                    var dialog4 = new ColorDialog()
+                    ColorDialog dialog4 = new()
                     {
-                        Color = Settings.settings["color4"]
+                        Color = Settings.color4.Value
                     };
 
                     if (dialog4.ShowDialog() == DialogResult.OK)
                     {
-                        Settings.settings["color4"] = dialog4.Color;
+                        Settings.color4.Value = dialog4.Color;
                         Settings.RefreshColors();
                     }
 
                     break;
 
                 case 8:
-                    if (Settings.settings["noteColors"].Count < 32)
+                    if (Settings.noteColors.Value.Count < 32)
                     {
-                        var dialogN = new ColorDialog()
+                        ColorDialog dialogN = new()
                         {
                             Color = Color.White
                         };
 
                         if (dialogN.ShowDialog() == DialogResult.OK)
                         {
-                            Settings.settings["noteColors"].Add(dialogN.Color);
+                            Settings.noteColors.Value.Add(dialogN.Color);
                             RefreshNoteColors();
                             Settings.RefreshColors();
                         }
@@ -407,20 +419,15 @@ namespace New_SSQE.GUI
                     break;
 
                 case 9:
-                    var dialog = new OpenFileDialog()
+                    DialogResult result = new OpenFileDialog()
                     {
                         Title = "Select Rhythia Executable",
-                        Filter = MainWindow.IsLinux ? "Executable Files|*.*" : "Executable Files (*.exe)|*.exe",
-                    };
+                        Filter = Platform.ExecutableFilter
+                    }.RunWithSetting(Settings.rhythiaFolderPath, out string fileName);
 
-                    if (Settings.settings["rhythiaFolderPath"] != "")
-                        dialog.InitialDirectory = Settings.settings["rhythiaFolderPath"];
-
-                    if (dialog.ShowDialog() == DialogResult.OK)
+                    if (result == DialogResult.OK)
                     {
-                        Settings.settings["rhythiaFolderPath"] = Path.GetDirectoryName(dialog.FileName) ?? "";
-                        Settings.settings["rhythiaPath"] = dialog.FileName;
-
+                        Settings.rhythiaPath.Value = fileName;
                         RefreshRhythiaPath();
                     }
 
@@ -428,6 +435,20 @@ namespace New_SSQE.GUI
 
                 case 10:
                     MainWindow.Instance.SwitchWindow(new GuiWindowLanguage());
+
+                    break;
+
+                case 11:
+                    ColorDialog dialog5 = new()
+                    {
+                        Color = Settings.color5.Value
+                    };
+
+                    if (dialog5.ShowDialog() == DialogResult.OK)
+                    {
+                        Settings.color5.Value = dialog5.Color;
+                        Settings.RefreshColors();
+                    }
 
                     break;
             }

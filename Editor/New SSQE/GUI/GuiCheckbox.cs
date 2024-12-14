@@ -1,4 +1,7 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using New_SSQE.Audio;
+using New_SSQE.GUI.Font;
+using New_SSQE.Preferences;
+using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 
 namespace New_SSQE.GUI
@@ -7,7 +10,7 @@ namespace New_SSQE.GUI
     {
         public string Text;
 
-        private readonly string setting;
+        private readonly Setting<bool>? Bool;
         public bool? Toggle = null;
 
         private float alpha;
@@ -15,9 +18,9 @@ namespace New_SSQE.GUI
         private Color textColor;
         private Color prevColor = Color.White;
 
-        public GuiCheckbox(float x, float y, float w, float h, string Setting, string text, int textSize, bool lockSize = false, bool moveWithOffset = false, string font = "main") : base(x, y, w, h)
+        public GuiCheckbox(float x, float y, float w, float h, Setting<bool>? setting, string text, int textSize, bool lockSize = false, bool moveWithOffset = false, string font = "main") : base(x, y, w, h)
         {
-            setting = Setting;
+            Bool = setting;
 
             Text = text;
             Font = font;
@@ -31,13 +34,13 @@ namespace New_SSQE.GUI
             Init();
         }
 
-        public GuiCheckbox(float x, float y, float w, float h, string Setting, string text, int textSize) : this(x, y, w, h, Setting, text, textSize, false, false, "main") { }
-        public GuiCheckbox(float x, float y, float w, float h) : this(x, y, w, h, "", "", 0, false, false, "main") { }
-        public GuiCheckbox(float x, float y, float w, float h, string text, int textSize) : this(x, y, w, h, "", text, textSize, false, false, "main") { }
+        public GuiCheckbox(float x, float y, float w, float h, Setting<bool> setting, string text, int textSize) : this(x, y, w, h, setting, text, textSize, false, false, "main") { }
+        public GuiCheckbox(float x, float y, float w, float h) : this(x, y, w, h, null, "", 0, false, false, "main") { }
+        public GuiCheckbox(float x, float y, float w, float h, string text, int textSize) : this(x, y, w, h, null, text, textSize, false, false, "main") { }
 
         public override void Render(float mousex, float mousey, float frametime)
         {
-            alpha = (Toggle ?? Settings.settings[setting]) ? Math.Min(1, alpha + frametime * 8) : Math.Max(0, alpha - frametime * 8);
+            alpha = (Toggle ?? Bool?.Value ?? false) ? Math.Min(1, alpha + frametime * 8) : Math.Max(0, alpha - frametime * 8);
 
             if (alpha != prevAlpha || prevColor != textColor)
             {
@@ -61,18 +64,18 @@ namespace New_SSQE.GUI
 
         public override Tuple<float[], float[]> GetVertices()
         {
-            var colored = MainWindow.Instance.CurrentWindow is GuiWindowEditor || MainWindow.Instance.CurrentWindow is GuiWindowKeybinds;
+            bool colored = MainWindow.Instance.CurrentWindow is GuiWindowEditor || MainWindow.Instance.CurrentWindow is GuiWindowKeybinds;
 
-            var color1 = colored ? Settings.settings["color1"] : Color.FromArgb(255, 255, 255);
-            var color2 = colored ? Settings.settings["color2"] : Color.FromArgb(75, 75, 75);
+            Color color1 = colored ? Settings.color1.Value : Color.FromArgb(255, 255, 255);
+            Color color2 = colored ? Settings.color2.Value : Color.FromArgb(75, 75, 75);
 
             float[] fill = GLU.Rect(Rect, 0.05f, 0.05f, 0.05f);
             float[] outline = GLU.Outline(Rect, 2, 0.2f, 0.2f, 0.2f);
 
-            var checkSizeX = Rect.Width * 0.75f * alpha;
-            var checkSizeY = Rect.Height * 0.75f * alpha;
-            var gapX = (Rect.Width - checkSizeX) / 2;
-            var gapY = (Rect.Height - checkSizeY) / 2;
+            float checkSizeX = Rect.Width * 0.75f * alpha;
+            float checkSizeY = Rect.Height * 0.75f * alpha;
+            float gapX = (Rect.Width - checkSizeX) / 2;
+            float gapY = (Rect.Height - checkSizeY) / 2;
 
             float[] check = GLU.Rect(Rect.X + gapX, Rect.Y + gapY, checkSizeX, checkSizeY, color2.R / 255f, color2.G / 255f, color2.B / 255f);
 
@@ -87,23 +90,23 @@ namespace New_SSQE.GUI
             FontVertices = FontRenderer.Print(txX, txY, Text, TextSize, Font);
             textColor = color1;
 
-            return new Tuple<float[], float[]>(vertices.ToArray(), Array.Empty<float>());
+            return new(vertices.ToArray(), Array.Empty<float>());
         }
 
         public override void OnMouseClick(Point pos, bool right)
         {
-            if (setting != "")
+            if (Bool != null)
             {
-                Settings.settings[setting] ^= true;
+                Bool.Value ^= true;
 
-                switch (setting)
+                switch (Bool.Name)
                 {
                     case "numpad":
                         Settings.RefreshKeyMapping();
                         break;
                 }
 
-                MainWindow.Instance.SoundPlayer.Play(Settings.settings["clickSound"]);
+                SoundPlayer.Play(Settings.clickSound.Value);
             }
         }
     }

@@ -1,0 +1,264 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="New_SSQE.ExportNOVA"
+        Width="344" Height="303" CanResize="False"
+        WindowStartupLocation="CenterScreen">
+
+  <StackPanel>
+    <!-- Main panel -->
+    <Panel Width="344" Height="303"
+           Background="#f1f1f1">
+      <Panel Width="320" Height="279">
+        <!-- Name,Artist,Mapper,Link Panel -->
+        <Panel Width="320" Height="94"
+               VerticalAlignment="Top">
+
+          <!-- Name,Artist,Mapper Panel -->
+          <Panel Width="320" Height="70"
+                 VerticalAlignment="Top">
+            
+            <!-- Title -->
+            <TextBox Width="236" Height="20" Name="TitleBox"
+                     MinHeight="20"
+                     VerticalAlignment="Top"
+                     HorizontalAlignment="Right"></TextBox>
+
+            <Label Width="84" Height="20"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"
+                   BorderThickness="0">Title</Label>
+
+            <!-- Artist -->
+            <TextBox Width="236" Height="20" Name="ArtistBox"
+                     MinHeight="20"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Right"></TextBox>
+
+            <Label Width="84" Height="20"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Left"
+                   BorderThickness="0">Artist</Label>
+
+            <!-- Mapper -->
+            <TextBox Width="236" Height="20" Name="MapperBox"
+                     MinHeight="20"
+                     VerticalAlignment="Bottom"
+                     HorizontalAlignment="Right"></TextBox>
+
+            <Label Width="84" Height="20"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   BorderThickness="0">Mapper</Label>
+          </Panel>
+
+          <!-- Link -->
+          <TextBox Width="180" Height="20" Name="LinkBox"
+                   MinHeight="20"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Right"></TextBox>
+
+          <Label Width="140" Height="20"
+                 VerticalAlignment="Bottom"
+                 HorizontalAlignment="Left"
+                 BorderThickness="0">Social Link (Optional)</Label>
+          
+        </Panel>
+
+        <!-- Other -->
+        <Panel Width="320" Height="180"
+               VerticalAlignment="Bottom">
+          <!-- Cover,Time Panel -->
+          <Panel Width="320" Height="140"
+                 VerticalAlignment="Top">
+            
+            <!-- Cover Panel -->
+            <Panel Width="320" Height="70"
+                   VerticalAlignment="Top">
+
+              <!-- Cover -->
+              <Panel Width="320" Height="35"
+                     VerticalAlignment="Top">
+
+                <Panel Width="236" Height="30"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right">
+
+                  <!-- Cover Path -->
+                  <TextBox Width="176" MinHeight="25" Height="25"
+                           IsReadOnly="True"
+                           Name="CoverPathBox"
+                           HorizontalAlignment="Left"
+                           Background="#dfdfdf"></TextBox>
+
+                  <!-- Select Cover Button -->
+                  <Button Width="55" Height="25"
+                          HorizontalAlignment="Right"
+                          Click="SelectCover_Click">Select</Button>
+                </Panel>
+
+                <Label Width="84" Height="20"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
+                       BorderThickness="0">Cover Image</Label>
+              </Panel>
+
+              <!-- Profile -->
+              <Panel Width="320" Height="35"
+                     VerticalAlignment="Bottom">
+
+                <Panel Width="236" Height="30"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right">
+
+                  <!-- Profile Path -->
+                  <TextBox Width="176" MinHeight="25" Height="25"
+                           IsReadOnly="True"
+                           Name="IconPathBox"
+                           HorizontalAlignment="Left"
+                           Background="#dfdfdf"></TextBox>
+
+                  <!-- Select Profile Button -->
+                  <Button Width="55" Height="25"
+                          HorizontalAlignment="Right"
+                          Click="SelectIcon_Click">Select</Button>
+                </Panel>
+
+                <Label Width="84" Height="20"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
+                       BorderThickness="0">Profile Icon</Label>
+              </Panel>
+            </Panel>
+
+            <!-- Time Panel -->
+            <Panel Width="320" Height="70"
+                   VerticalAlignment="Bottom">
+
+              <!-- Song Offset -->
+              <Panel Width="180" Height="20"
+                     VerticalAlignment="Top"
+                     HorizontalAlignment="Right">
+
+                <TextBox Width="88" Height="20" Name="SongOffsetBox"
+                         MinHeight="20"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Left"></TextBox>
+
+                <Button Width="88" Height="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                        Click="SongOffset_Click">Current Pos</Button>
+              </Panel>
+
+              <Label Width="140" Height="20"
+                     VerticalAlignment="Top"
+                     HorizontalAlignment="Left"
+                     BorderThickness="0">Song Offset (ms)</Label>
+
+              <!-- Preview Start -->
+              <Panel Width="180" Height="20"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Right">
+
+                <TextBox Width="88" Height="20" Name="PreviewStartBox"
+                         MinHeight="20"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Left"></TextBox>
+
+                <Button Width="88" Height="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                        Click="PreviewStart_Click">Current Pos</Button>
+              </Panel>
+
+              <Label Width="140" Height="20"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Left"
+                     BorderThickness="0">Preview Start (ms)</Label>
+
+              <!-- Preview Duration -->
+              <Panel Width="180" Height="20"
+                     VerticalAlignment="Bottom"
+                     HorizontalAlignment="Right">
+
+                <TextBox Width="88" Height="20" Name="PreviewDurationBox"
+                         MinHeight="20"
+                         VerticalAlignment="Bottom"
+                         HorizontalAlignment="Left"></TextBox>
+
+                <Button Width="88" Height="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                        Click="PreviewDuration_Click">Current Pos</Button>
+              </Panel>
+
+              <Label Width="140" Height="20"
+                     VerticalAlignment="Bottom"
+                     HorizontalAlignment="Left"
+                     BorderThickness="0">Preview Duration (ms)</Label>
+            </Panel>
+          </Panel>
+          
+          <!-- Finish Button -->
+          <Button Width="320" Height="36"
+                  VerticalAlignment="Bottom"
+                  Click="FinishButton_Click">Finish</Button>
+        </Panel>
+      </Panel>
+    </Panel>
+
+    <StackPanel.Styles>
+      <!-- Button -->
+      <Style Selector="Button">
+        <Setter Property="Background" Value="#e5e5e5"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="CornerRadius" Value="2"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Width" Value="184"/>
+        <Setter Property="Padding" Value="0"/>
+      </Style>
+
+      <!-- Label -->
+      <Style Selector="Label">
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="CornerRadius" Value="2"/>
+        <Setter Property="Width" Value="184"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+      </Style>
+
+      <!-- TextBox -->
+      <Style Selector="TextBox">
+        <Setter Property="Opacity" Value="1"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="CornerRadius" Value="2"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+      </Style>
+
+      <!-- ComboBox -->
+      <Style Selector="ComboBox">
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontSize" Value="12"/>
+      </Style>
+
+      <!-- CheckBox -->
+      <Style Selector="CheckBox">
+        <Setter Property="FontSize" Value="12"/>
+      </Style>
+
+      <!-- Button hover -->
+      <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="BorderBrush" Value="Black"/>
+      </Style>
+    </StackPanel.Styles>
+  </StackPanel>
+</Window>

@@ -13,93 +13,93 @@ namespace SSQE_Player.GUI
         public static ProgramHandle FontTexProgram;
 
         private static readonly string vertexShader = @"#version 330 core
-                                                          layout (location = 0) in vec3 position;
-                                                          layout (location = 1) in vec4 color;
-                                                          out vec4 pass_color;
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec4 color;
+out vec4 pass_color;
 
-                                                          uniform mat4 projectionMatrix;
+uniform mat4 projectionMatrix;
 
-                                                          void main()
-                                                          {
-                                                              gl_Position = projectionMatrix * vec4(position, 1.0);
-                                                              pass_color = color;
-                                                          }";
+void main()
+{
+    gl_Position = projectionMatrix * vec4(position, 1.0);
+    pass_color = color;
+}";
 
         private static readonly string fragmentShader = @"#version 330 core
-                                                          in vec4 pass_color;
-                                                          out vec4 out_Color;
+in vec4 pass_color;
+out vec4 out_Color;
 
-                                                          void main()
-                                                          {
-                                                              out_Color = pass_color;
-                                                          }";
+void main()
+{
+    out_Color = pass_color;
+}";
 
         private static readonly string modelVertShader = @"#version 330 core
-                                                          layout (location = 0) in vec3 position;
-                                                          layout (location = 1) in vec3 mPosition;
-                                                          layout (location = 2) in vec4 mColor;
-                                                          out vec4 pass_color;
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 mPosition;
+layout (location = 2) in vec4 mColor;
+out vec4 pass_color;
 
-                                                          uniform mat4 transformationMatrix;
-                                                          uniform mat4 projectionMatrix;
-                                                          uniform mat4 viewMatrix;
+uniform mat4 transformationMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
 
-                                                          void main()
-                                                          {
-                                                              mat4 m;
-                                                              m[0][0] = 1;
-                                                              m[1][1] = 1;
-                                                              m[2][2] = 1;
-                                                              m[3] = vec4(mPosition, 1.0);
+void main()
+{
+    mat4 m;
+    m[0][0] = 1;
+    m[1][1] = 1;
+    m[2][2] = 1;
+    m[3] = vec4(mPosition, 1.0);
 
-	                                                          vec4 worldPos = m * transformationMatrix * vec4(position, 1.0);
-	                                                          gl_Position = projectionMatrix * viewMatrix * worldPos;
-	                                                          pass_color = mColor;
-                                                          }";
+	vec4 worldPos = m * transformationMatrix * vec4(position, 1.0);
+	gl_Position = projectionMatrix * viewMatrix * worldPos;
+	pass_color = mColor;
+}";
 
         private readonly static string fontTexVertShader = @"#version 330 core
-                                               layout (location = 0) in vec2 aPosition;
-                                               layout (location = 1) in vec4 aCharLayout;
-                                               layout (location = 2) in float aCharAlpha;
+layout (location = 0) in vec2 aPosition;
+layout (location = 1) in vec4 aCharLayout;
+layout (location = 2) in float aCharAlpha;
 
-                                               out vec4 texColor;
-                                               out vec2 texCoord;
+out vec4 texColor;
+out vec2 texCoord;
 
-                                               uniform vec4 TexLookup[128];
-                                               uniform vec2 CharSize;
+uniform vec4 TexLookup[128];
+uniform vec2 CharSize;
                                                
-                                               uniform vec4 TexColor;
-                                               uniform mat4 Projection;
+uniform vec4 TexColor;
+uniform mat4 Projection;
                                                 
-                                               void main()
-                                               {
-                                                   vec4 texLocation = TexLookup[int(aCharLayout.w)];
+void main()
+{
+    vec4 texLocation = TexLookup[int(aCharLayout.w)];
 
-                                                   float x = aCharLayout.x + aPosition.x * aCharLayout.z;
-                                                   float y = aCharLayout.y + aPosition.y * aCharLayout.z;
-                                                   float tx = texLocation.x + texLocation.z * (aPosition.x / CharSize.x);
-                                                   float ty = texLocation.y + texLocation.w * (aPosition.y / CharSize.y);
+    float x = aCharLayout.x + aPosition.x * aCharLayout.z;
+    float y = aCharLayout.y + aPosition.y * aCharLayout.z;
+    float tx = texLocation.x + texLocation.z * (aPosition.x / CharSize.x);
+    float ty = texLocation.y + texLocation.w * (aPosition.y / CharSize.y);
 
-                                                   gl_Position = Projection * vec4(x, y, 0.0f, 1.0f);
+    gl_Position = Projection * vec4(x, y, 0.0f, 1.0f);
 
-                                                   texColor = vec4(TexColor.xyz, TexColor.w * (1.0f - aCharAlpha));
-                                                   texCoord = vec2(tx, ty);
-                                               }";
+    texColor = vec4(TexColor.xyz, TexColor.w * (1.0f - aCharAlpha));
+    texCoord = vec2(tx, ty);
+}";
 
         private readonly static string fontTexFragShader = @"#version 330 core
-                                               out vec4 FragColor;
+out vec4 FragColor;
 
-                                               in vec4 texColor;
-                                               in vec2 texCoord;
+in vec4 texColor;
+in vec2 texCoord;
 
-                                               uniform sampler2D texture0;
-                                               
-                                               void main()
-                                               {
-                                                   FragColor = vec4(texColor.xyz, texture(texture0, texCoord).w * texColor.w);
-                                               }";
+uniform sampler2D texture0;
 
-        private readonly static Dictionary<string, int> uniforms = new();
+void main()
+{
+    FragColor = vec4(texColor.xyz, texture(texture0, texCoord).w * texColor.w);
+}";
+
+        private readonly static Dictionary<string, int> uniforms = [];
 
         public static void Init()
         {
@@ -168,7 +168,7 @@ namespace SSQE_Player.GUI
         public static void SetProjView(Matrix4 projection, Matrix4 view)
         {
             GL.UseProgram(Program);
-            var projview = view * projection;
+            Matrix4 projview = view * projection;
             GL.UniformMatrix4f(uniforms["VertexProjection"], false, projview);
         }
     }

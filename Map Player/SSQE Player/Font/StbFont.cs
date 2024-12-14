@@ -34,7 +34,6 @@ namespace SSQE_Player
         public BufferHandle StaticVbO;
 
         private readonly int _baseline;
-        private readonly int _charSize;
         private readonly TextureHandle _handle;
 
         public TextureHandle Handle => _handle;
@@ -52,8 +51,8 @@ namespace SSQE_Player
 
             AtlasMetrics = new Vector4[CharRange];
 
-            var fontInfo = StbTrueType.CreateFont(File.ReadAllBytes($"assets/fonts/{font}.ttf"), 0);
-            var scale = StbTrueType.stbtt_ScaleForPixelHeight(fontInfo, OriginSize);
+            StbTrueType.stbtt_fontinfo fontInfo = StbTrueType.CreateFont(File.ReadAllBytes($"assets/fonts/{font}.ttf"), 0);
+            float scale = StbTrueType.stbtt_ScaleForPixelHeight(fontInfo, OriginSize);
 
             int ascent, descent, lineGap;
             StbTrueType.stbtt_GetFontVMetrics(fontInfo, &ascent, &descent, &lineGap);
@@ -76,18 +75,18 @@ namespace SSQE_Player
 
             _baseline = (int)(scale * ascent);
 
-            var maxCharX = Extents.Max();
-            var maxCharY = (int)(scale * (ascent - descent)) + YOffsets.Max();
+            int maxCharX = Extents.Max();
+            int maxCharY = (int)(scale * (ascent - descent)) + YOffsets.Max();
             int px = maxCharX * maxCharY;
             CharSize = new(maxCharX, maxCharY);
 
-            var texSize = Math.Sqrt(px * CharRange);
-            var texX = (int)(texSize / maxCharX + 1) * (maxCharX + CharSpacing);
-            var texY = (int)(texSize / maxCharY + 1) * (maxCharY + CharSpacing);
+            double texSize = Math.Sqrt(px * CharRange);
+            int texX = (int)(texSize / maxCharX + 1) * (maxCharX + CharSpacing);
+            int texY = (int)(texSize / maxCharY + 1) * (maxCharY + CharSpacing);
 
-            var info = new SKImageInfo(texX + 1, texY);
-            var surface = SKSurface.Create(info);
-            var canvas = surface.Canvas;
+            SKImageInfo info = new(texX + 1, texY);
+            SKSurface surface = SKSurface.Create(info);
+            SKCanvas canvas = surface.Canvas;
 
             float currentX = 0;
             float currentY = 0;
@@ -126,9 +125,9 @@ namespace SSQE_Player
 
             // Store the font texture as a png in the current directory - for debugging
             /*
-            using (var image = surface.Snapshot())
-            using (var imgData = image.Encode(SKEncodedImageFormat.Png, 80))
-            using (var stream = File.OpenWrite("font_texture.png"))
+            using (SKImage image = surface.Snapshot())
+            using (SKData imgData = image.Encode(SKEncodedImageFormat.Png, 80))
+            using (FileStream stream = File.OpenWrite("font_texture.png"))
                 imgData.SaveTo(stream);
             */
 
@@ -190,7 +189,7 @@ namespace SSQE_Player
         // Converts alpha bitmap to RGBa
         private static SKBitmap ConvertToSKBitmap(byte* bytes, int width, int height)
         {
-            var pixels = new SKColor[width * height];
+            SKColor[] pixels = new SKColor[width * height];
 
             for (int row = 0; row < height; row++)
             {
@@ -224,7 +223,7 @@ namespace SSQE_Player
 
             float maxX = 0;
 
-            foreach (var line in split)
+            foreach (string line in split)
             {
                 float currentX = 0;
 

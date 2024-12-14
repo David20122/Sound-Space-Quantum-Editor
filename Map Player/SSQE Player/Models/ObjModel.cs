@@ -21,18 +21,18 @@ namespace SSQE_Player.Models
 
         public static ObjModel FromFile(string file)
         {
-            var lines = File.ReadAllLines(file);
-            var model = new ObjModel();
+            string[] lines = File.ReadAllLines(file);
+            ObjModel model = new();
 
             for (int i = 0; i < lines.Length; i++)
             {
-                var line = lines[i];
-                var start = line[..line.IndexOf(' ')];
+                string line = lines[i];
+                string start = line[..line.IndexOf(' ')];
 
                 switch (start)
                 {
                     case "mtllib":
-                        var mtlFile = line[7..];
+                        string mtlFile = line[7..];
 
                         if (File.Exists(mtlFile))
                             model.Material = ObjMaterial.FromFile(mtlFile);
@@ -40,15 +40,15 @@ namespace SSQE_Player.Models
                         break;
 
                     case "v":
-                        var positionsV = line[2..].Split(' ').Where(pos => float.TryParse(pos, out _)).Select(pos => float.Parse(pos)).ToArray();
-                        var vertex = new Vertex(positionsV);
+                        float[] positionsV = line[2..].Split(' ').Where(pos => float.TryParse(pos, out _)).Select(pos => float.Parse(pos)).ToArray();
+                        Vertex vertex = new(positionsV);
 
                         model.vertices.Add(vertex);
 
                         break;
 
                     case "vt":
-                        var positionsVT = line[3..].Split(' ').Where(pos => float.TryParse(pos, out _)).Select(pos => float.Parse(pos)).ToArray();
+                        float[] positionsVT = line[3..].Split(' ').Where(pos => float.TryParse(pos, out _)).Select(pos => float.Parse(pos)).ToArray();
 
                         if (positionsVT.Length >= 2)
                             model.uvs.Add((positionsVT[0], positionsVT[1]));
@@ -56,7 +56,7 @@ namespace SSQE_Player.Models
                         break;
 
                     case "vn":
-                        var positionsVN = line[3..].Split(' ').Where(pos => float.TryParse(pos, out _)).Select(pos => float.Parse(pos)).ToArray();
+                        float[] positionsVN = line[3..].Split(' ').Where(pos => float.TryParse(pos, out _)).Select(pos => float.Parse(pos)).ToArray();
 
                         if (positionsVN.Length == 3)
                             model.normals.Add((positionsVN[0], positionsVN[1], positionsVN[2]));
@@ -64,24 +64,24 @@ namespace SSQE_Player.Models
                         break;
 
                     case "f":
-                        var faceArray = line[2..].Split(' ');
+                        string[] faceArray = line[2..].Split(' ');
 
-                        var indexArray = new List<long>();
-                        var textureArray = new List<long>();
-                        var normalArray = new List<long>();
+                        List<long> indexArray = new();
+                        List<long> textureArray = new();
+                        List<long> normalArray = new();
 
-                        foreach (var data in faceArray)
+                        foreach (string data in faceArray)
                         {
-                            var dataSplit = data.Split('/');
+                            string[] dataSplit = data.Split('/');
 
-                            if (dataSplit.Length >= 1 && long.TryParse(dataSplit[0], out var index))
+                            if (dataSplit.Length >= 1 && long.TryParse(dataSplit[0], out long index))
                                 indexArray.Add(index - 1);
-                            if (dataSplit.Length >= 2 && long.TryParse(dataSplit[1], out var texture))
+                            if (dataSplit.Length >= 2 && long.TryParse(dataSplit[1], out long texture))
                                 textureArray.Add(texture);
-                            if (dataSplit.Length == 3 && long.TryParse(dataSplit[2], out var normal))
+                            if (dataSplit.Length == 3 && long.TryParse(dataSplit[2], out long normal))
                                 normalArray.Add(normal);
 
-                            var face = new Face(indexArray.ToArray(), textureArray.ToArray(), normalArray.ToArray());
+                            Face face = new(indexArray.ToArray(), textureArray.ToArray(), normalArray.ToArray());
 
                             model.faces.Add(face);
                         }
@@ -98,12 +98,12 @@ namespace SSQE_Player.Models
             float[] verticesF = new float[faces.Count * 3 * 3];
             int k = 0;
 
-            foreach (var face in faces)
+            foreach (Face face in faces)
             {
-                for (var i = 0; i < face.Indices.Length; i++)
+                for (int i = 0; i < face.Indices.Length; i++)
                 {
-                    var index = face.Indices[i];
-                    var vertex = vertices[(int)index];
+                    long index = face.Indices[i];
+                    Vertex vertex = vertices[(int)index];
 
                     for (int j = 0; j < vertex.Positions.Length; j++)
                         verticesF[k++] = vertex.Positions[j];

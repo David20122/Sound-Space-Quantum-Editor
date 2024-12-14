@@ -47,10 +47,5 @@ namespace SSQE_Player.Models
         {
             GL.BindVertexArray(VaO);
         }
-
-        public void Render()
-        {
-            GL.DrawArrays(PrimitiveType.Triangles, 0, vertexCount);
-        }
     }
 }

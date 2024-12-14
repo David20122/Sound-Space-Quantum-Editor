@@ -1,47 +1,54 @@
 ﻿using SSQE_Player.Types;
 using System.Drawing;
 using System.Json;
+using System.Reflection;
 
 namespace SSQE_Player
 {
+    internal class Setting<T>
+    {
+        public T Value;
+
+        public static implicit operator Setting<T>(T value)
+        {
+            return new() { Value = value };
+        }
+    }
+
     internal class Settings
     {
-        public static Dictionary<string, dynamic> settings = new()
-        {
-            {"sensitivity", 1f },
-            {"parallax", 1f },
-            {"approachDistance", 1f },
-            {"hitWindow", 55f },
-            {"fov", 70f },
-            {"noteScale", 1f },
-            {"cursorScale", 1f },
+        public static Setting<float> sensitivity = 1f;
+        public static Setting<float> parallax = 1f;
+        public static Setting<float> approachDistance = 1f;
+        public static Setting<float> hitWindow = 55f;
+        public static Setting<float> fov = 70f;
+        public static Setting<float> noteScale = 1f;
+        public static Setting<float> cursorScale = 1f;
 
-            {"cameraMode", new ListSetting("half lock", "half lock", "full lock", "spin") },
-            {"hitSound", "hit" },
+        public static Setting<ListSetting> cameraMode = new ListSetting("half lock", "half lock", "full lock", "spin");
+        public static Setting<string> hitSound = "hit";
 
-            {"lockCursor", true },
-            {"fullscreenPlayer", true },
-            {"approachFade", false },
-            {"gridGuides", false },
-            {"useVSync", false },
-            {"limitPlayerFPS", false },
+        public static Setting<bool> lockCursor = true;
+        public static Setting<bool> fullscreenPlayer = true;
+        public static Setting<bool> approachFade = false;
+        public static Setting<bool> gridGuides = false;
+        public static Setting<bool> useVSync = false;
+        public static Setting<bool> limitPlayerFPS = false;
 
-            {"currentTime", new SliderSetting(0f, 0f, 0f) },
-            {"tempo", new SliderSetting(0.9f, 1.4f, 0.05f) },
-            {"playerApproachRate", new SliderSetting(9, 29, 1) },
+        public static Setting<SliderSetting> currentTime = new SliderSetting(0f, 0f, 0f);
+        public static Setting<SliderSetting> tempo = new SliderSetting(0.9f, 1.4f, 0.05f);
+        public static Setting<SliderSetting> playerApproachRate = new SliderSetting(11, 29, 1);
 
-            {"masterVolume", new SliderSetting(0.05f, 1, 0.01f) },
-            {"sfxVolume", new SliderSetting(0.1f, 1, 0.01f) },
-            {"fpsLimit", new SliderSetting(60f, 305f, 5f) },
+        public static Setting<SliderSetting> masterVolume = new SliderSetting(0.05f, 1, 0.01f);
+        public static Setting<SliderSetting> sfxVolume = new SliderSetting(0.1f, 1, 0.01f);
+        public static Setting<SliderSetting> fpsLimit = new SliderSetting(60f, 305f, 5f);
 
-            {"color1", Color.FromArgb(0, 255, 200) },
-            {"color2", Color.FromArgb(255, 0, 255) },
-            {"color3", Color.FromArgb(255, 0, 0) },
+        public static Setting<Color> color1 = Color.FromArgb(0, 255, 200);
+        public static Setting<Color> color2 = Color.FromArgb(255, 0, 255);
+        public static Setting<Color> color3 = Color.FromArgb(255, 0, 0);
 
-            {"noteColors", new List<Color>() { Color.FromArgb(255, 0, 255), Color.FromArgb(0, 255, 200) } },
-        };
-
-        private static readonly Dictionary<string, dynamic> settingsCloned = new(settings);
+        public static Setting<List<Color>> noteColors = new List<Color>() { Color.FromArgb(255, 0, 255), Color.FromArgb(0, 255, 200) };
+        public static Setting<bool> msaa = true;
 
         public static void Load()
         {
@@ -49,33 +56,37 @@ namespace SSQE_Player
             {
                 JsonObject result = (JsonObject)JsonValue.Parse(File.ReadAllText("settings.txt"));
 
-                foreach (var setting in settingsCloned)
+                foreach (FieldInfo key in typeof(Settings).GetFields())
                 {
                     try
                     {
-                        if (result.TryGetValue(setting.Key, out var value))
+                        dynamic? setting = key.GetValue(null);
+
+                        if (result.TryGetValue(key.Name, out JsonValue value) && setting != null)
                         {
-                            if (setting.Value.GetType() == typeof(Color))
-                                settings[setting.Key] = Color.FromArgb(value[0], value[1], value[2]);
-                            else if (setting.Value.GetType() == typeof(SliderSetting))
-                                settings[setting.Key] = ConvertToSliderSetting(value);
-                            else if (setting.Value.GetType() == typeof(ListSetting))
-                                settings[setting.Key].Current = value;
-                            else if (setting.Key == "noteColors")
+                            if (setting is Setting<Color> color)
+                                color.Value = Color.FromArgb(value[0], value[1], value[2]);
+                            else if (setting is Setting<SliderSetting> slider)
+                                slider.Value = ConvertToSliderSetting(value, slider.Value.Default, slider.Value.Decimals);
+                            else if (setting is Setting<ListSetting> list)
+                                list.Value.Current = value;
+                            else if (key.Name == "noteColors" && setting is Setting<List<Color>> colors)
                             {
-                                var colors = new List<Color>();
+                                List<Color> temp = new();
 
-                                foreach (JsonArray color in value)
-                                    colors.Add(Color.FromArgb(color[0], color[1], color[2]));
+                                foreach (JsonArray c in value)
+                                    temp.Add(Color.FromArgb(c[0], c[1], c[2]));
 
-                                settings[setting.Key] = colors;
+                                colors.Value = temp;
                             }
-                            else if (setting.Key != "mergedColor")
-                                settings[setting.Key] = value;
+                            else
+                                setting!.Value = value;
                         }
                     }
                     catch
-                    { Console.WriteLine($"Failed to update setting - {setting.Key}"); }
+                    {
+                        Console.WriteLine($"Failed to update setting - {key.Name}");
+                    }
                 }
             }
             catch
@@ -84,9 +95,9 @@ namespace SSQE_Player
             }
         }
 
-        private static SliderSetting ConvertToSliderSetting(JsonValue value)
+        private static SliderSetting ConvertToSliderSetting(JsonValue value, float defaultVal, int decimalVal)
         {
-            return new SliderSetting(value[0], value[1], value[2]);
+            return new(value[0], value[1], value[2]) { Default = defaultVal, Decimals = decimalVal };
         }
     }
 }

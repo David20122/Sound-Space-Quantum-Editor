@@ -14,9 +14,9 @@ namespace New_SSQE
 
         public static void YieldWindow(Window window)
         {
-            using var source = new CancellationTokenSource();
+            using CancellationTokenSource source = new();
 
-            var task = Task.Run(async () =>
+            Task<bool> task = Task.Run(async () =>
             {
                 tcs = new();
                 window.Closed += (s, e) => tcs.TrySetResult(true);
@@ -31,7 +31,7 @@ namespace New_SSQE
 
             Dispatcher.UIThread.MainLoop(source.Token);
 
-            var final = task.Result;
+            bool final = task.Result;
             return;
         }
     }

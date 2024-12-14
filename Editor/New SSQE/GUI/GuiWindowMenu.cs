@@ -1,4 +1,11 @@
-﻿using OpenTK.Mathematics;
+﻿using New_SSQE.ExternalUtils;
+using New_SSQE.GUI.Font;
+using New_SSQE.Maps;
+using New_SSQE.Misc.Dialogs;
+using New_SSQE.Misc.Network;
+using New_SSQE.Misc.Static;
+using New_SSQE.Preferences;
+using OpenTK.Mathematics;
 using System.Diagnostics;
 using System.Drawing;
 
@@ -13,7 +20,7 @@ namespace New_SSQE.GUI
 
         private readonly GuiButton CreateButton = new(1190, 180, 600, 100, 0, "CREATE NEW MAP", 54, "square");
         private readonly GuiButton LoadButton = new(1190, 295, 600, 100, 1, "LOAD MAP", 54, "square");
-        private readonly GuiButton ImportButton = new(1190, 410, 600, 100, 2, "IMPORT MAP", 54, "square");
+        private readonly GuiButton ImportButton = new(1190, 410, 600, 100, 2, "PASTE MAP", 54, "square");
         private readonly GuiButton SettingsButton = new(1190, 525, 600, 100, 3, "SETTINGS", 54, "square");
 
         private readonly GuiButton FeedbackButton = new(35, 140, 100, 40, 8, "Feedback?", 20);
@@ -21,7 +28,7 @@ namespace New_SSQE.GUI
         private readonly GuiButton AutosavedButton = new(1190, 640, 600, 100, 4, "AUTOSAVED MAP", 54, "square");
         private readonly GuiButton LastMapButton = new(1190, 755, 600, 100, 5, "EDIT LAST MAP", 54, "square");
 
-        private readonly GuiSlider ChangelogSlider = new(950, 230, 20, 720, "changelogPosition", true);
+        private readonly GuiSlider ChangelogSlider = new(950, 230, 20, 720, Settings.changelogPosition, true);
 
         private readonly GuiSquare ChangelogBackdrop1 = new(35, 180, 950, 790, Color.FromArgb(40, 0, 0, 0));
         private readonly GuiSquare ChangelogBackdrop2 = new(55, 230, 900, 715, Color.FromArgb(50, 0, 0, 0));
@@ -86,7 +93,7 @@ namespace New_SSQE.GUI
 
             try
             {
-                changelogText = WebClient.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/changelog");
+                changelogText = WebClient.DownloadString(Links.CHANGELOG);
             }
             catch { changelogText = "Failed to load changelog"; }
 
@@ -96,20 +103,20 @@ namespace New_SSQE.GUI
 
         public override void Render(float mousex, float mousey, float frametime)
         {
-            if ((int)Settings.settings["changelogPosition"].Value != lastAssembled)
+            if ((int)Settings.changelogPosition.Value.Value != lastAssembled)
             {
                 AssembleChangelog();
 
-                lastAssembled = (int)Settings.settings["changelogPosition"].Value;
+                lastAssembled = (int)Settings.changelogPosition.Value.Value;
             }
 
-            AutosavedButton.Visible = Settings.settings["autosavedFile"] != "";
-            LastMapButton.Visible = Settings.settings["lastFile"] != "" && File.Exists(Settings.settings["lastFile"]);
+            AutosavedButton.Visible = Settings.autosavedFile.Value != "";
+            LastMapButton.Visible = Settings.lastFile.Value != "" && File.Exists(Settings.lastFile.Value);
 
             for (int i = 0; i < mapSelects.Count; i++)
             {
-                var select = mapSelects[i].Item1;
-                var close = mapSelects[i].Item2;
+                GuiButton select = mapSelects[i].Item1;
+                GuiButton close = mapSelects[i].Item2;
 
                 close.Visible = select.Visible && select.Rect.Contains(mousex, mousey);
                 select.Text = close.Visible ? "Open Map" : prevTexts[i] ?? "";
@@ -122,28 +129,28 @@ namespace New_SSQE.GUI
         {
             base.OnResize(size);
 
-            LastMapButton.Rect.Y = Settings.settings["autosavedFile"] == "" ? AutosavedButton.Rect.Y : LastMapButton.Rect.Y;
+            LastMapButton.Rect.Y = Settings.autosavedFile.Value == "" ? AutosavedButton.Rect.Y : LastMapButton.Rect.Y;
             LastMapButton.Update();
 
             AssembleChangelog();
-            Settings.settings["changelogPosition"].Value = Settings.settings["changelogPosition"].Max;
+            Settings.changelogPosition.Value.Value = Settings.changelogPosition.Value.Max;
         }
 
         private void AssembleChangelog()
         {
-            var widthdiff = Rect.Width / 1920f;
-            var heightdiff = Rect.Height / 1080f;
+            float widthdiff = Rect.Width / 1920f;
+            float heightdiff = Rect.Height / 1080f;
 
-            var result = "";
-            var lines = new List<string>();
+            string result = "";
+            List<string> lines = new();
 
-            foreach (var line in changelogText.Split('\n'))
+            foreach (string line in changelogText.Split('\n'))
             {
-                var lineedit = line;
+                string lineedit = line;
 
                 while (FontRenderer.GetWidth(lineedit, ChangelogLabel.TextSize, "main") > 890 * widthdiff && lineedit.Contains(' '))
                 {
-                    var index = lineedit.LastIndexOf(' ');
+                    int index = lineedit.LastIndexOf(' ');
 
                     if (FontRenderer.GetWidth(lineedit[..index], ChangelogLabel.TextSize, "main") <= 890 * widthdiff)
                         lineedit = lineedit.Remove(index, 1).Insert(index, "\n");
@@ -153,11 +160,11 @@ namespace New_SSQE.GUI
 
                 lineedit = lineedit.Replace("\\", " ");
 
-                foreach (var newline in lineedit.Split('\n'))
+                foreach (string newline in lineedit.Split('\n'))
                     lines.Add(newline);
             }
 
-            var setting = Settings.settings["changelogPosition"];
+            SliderSetting setting = Settings.changelogPosition.Value;
 
             setting.Max = lines.Count - (int)(715f * heightdiff / ChangelogLabel.TextSize);
             ChangelogSlider.Visible = setting.Max > 0;
@@ -171,22 +178,20 @@ namespace New_SSQE.GUI
 
         public void AssembleMapList()
         {
-            var editor = MainWindow.Instance;
-
-            mapOffset = MathHelper.Clamp(mapOffset, 0, editor.Maps.Count - mapSelects.Count);
+            mapOffset = MathHelper.Clamp(mapOffset, 0, MapManager.Cache.Count - mapSelects.Count);
 
             NavLeft.Visible = mapOffset > 0;
-            NavRight.Visible = mapOffset < editor.Maps.Count - mapSelects.Count;
+            NavRight.Visible = mapOffset < MapManager.Cache.Count - mapSelects.Count;
 
             for (int i = 0; i < mapSelects.Count; i++)
             {
-                var button = mapSelects[i].Item1;
-                button.Visible = i + mapOffset < editor.Maps.Count;
+                GuiButton button = mapSelects[i].Item1;
+                button.Visible = i + mapOffset < MapManager.Cache.Count;
 
                 if (button.Visible)
                 {
-                    var map = editor.Maps[i + mapOffset];
-                    var fileName = (!map.IsSaved() ? "[!] " : "") + map.FileName;
+                    Map map = MapManager.Cache[i + mapOffset];
+                    string fileName = (!map.IsSaved ? "[!] " : "") + map.FileID;
 
                     button.Text = FontRenderer.TrimText(fileName, button.TextSize, (int)button.Rect.Width - 10, button.Font);
                     prevTexts[i] = button.Text;
@@ -196,7 +201,7 @@ namespace New_SSQE.GUI
 
         public override void OnButtonClicked(int id)
         {
-            var editor = MainWindow.Instance;
+            MainWindow editor = MainWindow.Instance;
 
             switch (id)
             {
@@ -206,29 +211,22 @@ namespace New_SSQE.GUI
                     break;
 
                 case 1:
-                    var dialog = new OpenFileDialog()
+                    DialogResult result = new OpenFileDialog()
                     {
                         Title = "Select Map File",
-                        Filter = "Beatmap Files (*.txt;*.sspm;*.osu)|*.txt;*.sspm;*.osu",
-                    };
+                        Filter = "Map Files (*.txt;*.sspm;*.osu;*.nch;*.npk;*.phxm;*.phz;*.json)|*.txt;*.sspm;*.osu;*.nch;*.npk;*.phxm;*.phz;*.json"
+                    }.RunWithSetting(Settings.defaultPath, out string fileName);
 
-                    if (Settings.settings["defaultPath"] != "")
-                        dialog.InitialDirectory = Settings.settings["defaultPath"];
-
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        Settings.settings["defaultPath"] = Path.GetDirectoryName(dialog.FileName) ?? "";
-
-                        editor.LoadMap(dialog.FileName, true);
-                    }
+                    if (result == DialogResult.OK)
+                        MapManager.Load(fileName, true);
 
                     break;
 
                 case 2:
-                    var clipboard = Clipboard.GetText();
+                    string clipboard = Clipboard.GetText();
 
                     if (!string.IsNullOrWhiteSpace(clipboard))
-                        editor.LoadMap(clipboard);
+                        MapManager.Load(clipboard);
 
                     break;
 
@@ -238,18 +236,18 @@ namespace New_SSQE.GUI
                     break;
 
                 case 4:
-                    var autosavedFile = Settings.settings["autosavedFile"];
+                    string autosavedFile = Settings.autosavedFile.Value;
 
                     if (autosavedFile != "")
-                        editor.LoadMap(autosavedFile, false, true);
+                        MapManager.Load(autosavedFile, false, true);
 
                     break;
 
                 case 5:
-                    var lastFile = Settings.settings["lastFile"];
+                    string lastFile = Settings.lastFile.Value;
 
                     if (lastFile != "" && File.Exists(lastFile))
-                        editor.LoadMap(lastFile, true);
+                        MapManager.Load(lastFile, true);
 
                     break;
 
@@ -263,7 +261,7 @@ namespace New_SSQE.GUI
                     break;
 
                 case 7:
-                    if (mapOffset < editor.Maps.Count - mapSelects.Count)
+                    if (mapOffset < MapManager.Cache.Count - mapSelects.Count)
                     {
                         mapOffset++;
                         AssembleMapList();
@@ -272,13 +270,7 @@ namespace New_SSQE.GUI
                     break;
 
                 case 8:
-                    var ps = new ProcessStartInfo("https://forms.gle/Rh4RXKT9KyttJ9Dc6")
-                    {
-                        UseShellExecute = true,
-                        Verb = "open"
-                    };
-
-                    Process.Start(ps);
+                    Platform.OpenLink(Links.FEEDBACK_FORM);
 
                     break;
 
@@ -289,11 +281,8 @@ namespace New_SSQE.GUI
                 case 84:
                     int indexM = id % 80 + mapOffset;
 
-                    if (indexM >= 0 && indexM < editor.Maps.Count)
-                    {
-                        editor.Maps[indexM].MakeCurrent();
-                        editor.SwitchWindow(new GuiWindowEditor());
-                    }
+                    if (indexM >= 0 && indexM < MapManager.Cache.Count)
+                        MapManager.Load(MapManager.Cache[indexM]);
 
                     break;
 
@@ -304,9 +293,9 @@ namespace New_SSQE.GUI
                 case 94:
                     int indexC = id % 90 + mapOffset;
 
-                    if (indexC >= 0 && indexC < editor.Maps.Count)
+                    if (indexC >= 0 && indexC < MapManager.Cache.Count)
                     {
-                        editor.Maps[indexC].Close(false);
+                        MapManager.Cache[indexC].Close(false);
                         AssembleMapList();
                     }
 
@@ -318,7 +307,7 @@ namespace New_SSQE.GUI
 
         public void ScrollMaps(bool up)
         {
-            if (up && mapOffset < MainWindow.Instance.Maps.Count - mapSelects.Count)
+            if (up && mapOffset < MapManager.Cache.Count - mapSelects.Count)
                 mapOffset++;
             else if (!up && mapOffset > 0)
                 mapOffset--;

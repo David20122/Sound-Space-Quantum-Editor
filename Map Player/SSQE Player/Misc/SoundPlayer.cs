@@ -10,20 +10,20 @@ namespace SSQE_Player
 
         public SoundPlayer()
         {
-            var sounds = Directory.GetFiles("assets/sounds");
+            string[] sounds = Directory.GetFiles("assets/sounds");
 
-            foreach (var file in sounds)
+            foreach (string file in sounds)
                 files.Add(Path.GetFileNameWithoutExtension(file), file);
         }
 
         public void Play(string fileName)
         {
-            if (files.TryGetValue(fileName, out var value))
+            if (files.TryGetValue(fileName, out string? value))
             {
-                var s = Bass.BASS_StreamCreateFile(value, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_MUSIC_PRESCAN);
+                int s = Bass.BASS_StreamCreateFile(value, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_MUSIC_PRESCAN);
                 s = BassFx.BASS_FX_TempoCreate(s, BASSFlag.BASS_MUSIC_AUTOFREE | BASSFlag.BASS_FX_FREESOURCE);
 
-                Bass.BASS_ChannelSetAttribute(s, BASSAttribute.BASS_ATTRIB_VOL, fileName == Settings.settings["hitSound"] ? Volume : 0.035f);
+                Bass.BASS_ChannelSetAttribute(s, BASSAttribute.BASS_ATTRIB_VOL, fileName == Settings.hitSound.Value ? Volume : 0.035f);
 
                 Bass.BASS_ChannelPlay(s, false);
             }

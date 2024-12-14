@@ -8,16 +8,16 @@
 
         public static ObjMaterial FromFile(string file)
         {
-            var lines = File.ReadAllLines(file);
-            var material = new ObjMaterial();
+            string[] lines = File.ReadAllLines(file);
+            ObjMaterial material = new();
 
             for (int i = 0; i < lines.Length; i++)
             {
-                var line = lines[i];
+                string line = lines[i];
 
                 if (line.StartsWith("map_Kd "))
                 {
-                    var textureFile = line[7..];
+                    string textureFile = line[7..];
 
                     if (File.Exists(textureFile))
                         material.TextureFile = textureFile;

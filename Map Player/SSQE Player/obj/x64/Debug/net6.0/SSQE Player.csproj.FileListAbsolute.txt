@@ -66,7 +66,6 @@ F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE_Player.Resources
 F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE Player.csproj.GenerateResource.cache
 F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE Player.GeneratedMSBuildEditorConfig.editorconfig
 F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE Player.csproj.CoreCompileInputs.cache
-F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE Player.csproj.CopyComplete
 F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE Player.dll
 F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\refint\SSQE Player.dll
 F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE Player.pdb
@@ -78,3 +77,4 @@ F:\GitHub\SSQE\Map Player\SSQE Player\bin\x64\Debug\net6.0\runtimes\linux-arm\na
 F:\GitHub\SSQE\Map Player\SSQE Player\bin\x64\Debug\net6.0\runtimes\linux-arm64\native\libSkiaSharp.so
 F:\GitHub\SSQE\Map Player\SSQE Player\bin\x64\Debug\net6.0\runtimes\linux-musl-x64\native\libSkiaSharp.so
 F:\GitHub\SSQE\Map Player\SSQE Player\bin\x64\Debug\net6.0\runtimes\linux-x64\native\libSkiaSharp.so
+F:\GitHub\SSQE\Map Player\SSQE Player\obj\x64\Debug\net6.0\SSQE Pla.44CE357C.Up2Date

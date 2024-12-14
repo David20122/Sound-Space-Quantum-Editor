@@ -1,4 +1,9 @@
 ﻿using System.Drawing;
+using New_SSQE.GUI.Font;
+using New_SSQE.GUI.Shaders;
+using New_SSQE.Maps;
+using New_SSQE.Preferences;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -33,10 +38,10 @@ namespace New_SSQE.GUI
 
         protected void Init()
         {
-            foreach (var control in Controls)
+            foreach (WindowControl control in Controls)
             {
-                if (control.Font != null && FontSet.ContainsKey(control.Font))
-                    FontSet[control.Font].Add(control);
+                if (control.Font != null && FontSet.TryGetValue(control.Font, out List<WindowControl>? value))
+                    value.Add(control);
                 else
                     FontSet["other"].Add(control);
             }
@@ -44,28 +49,32 @@ namespace New_SSQE.GUI
 
         public virtual void Render(float mousex, float mousey, float frametime)
         {
-            var controlsCopied = Controls.ToList();
-            var subcontrolsCopied = new Dictionary<string, List<WindowControl>>(FontSet);
+            List<WindowControl> controlsCopied = Controls.ToList();
+            Dictionary<string, List<WindowControl>> subcontrolsCopied = new(FontSet);
 
             GL.UseProgram(Shader.Program);
             BackgroundSquare?.Render(mousex, mousey, frametime);
-            GL.UseProgram(Shader.TexProgram);
+            GL.UseProgram(Shader.TextureProgram);
             BackgroundSquare?.RenderTexture();
             GL.UseProgram(Shader.Program);
 
-            foreach (var control in controlsCopied)
+            if (GuiGrid.RenderMapObjects)
+                Grid?.Render(mousex, mousey, frametime);
+
+            foreach (WindowControl control in controlsCopied)
                 if (control.Visible && !control.IsDisposed)
                     control.Render(mousex, mousey, frametime);
 
-            Grid?.Render(mousex, mousey, frametime);
+            if (!GuiGrid.RenderMapObjects)
+                Grid?.Render(mousex, mousey, frametime);
             Track?.Render(mousex, mousey, frametime);
 
-            var prog = FontRenderer.unicode ? Shader.UnicodeProgram : Shader.FontTexProgram;
+            ProgramHandle prog = FontRenderer.unicode ? Shader.UnicodeProgram : Shader.FontProgram;
             GL.UseProgram(prog);
             WindowControl.TexColorLocation = GL.GetUniformLocation(prog, "TexColor");
 
             FontRenderer.SetActive("main");
-            foreach (var control in subcontrolsCopied["main"])
+            foreach (WindowControl control in subcontrolsCopied["main"])
                 if (control.Visible && !control.IsDisposed)
                     control.RenderTexture();
 
@@ -73,30 +82,30 @@ namespace New_SSQE.GUI
             Grid?.RenderTexture();
 
             FontRenderer.SetActive("square");
-            foreach (var control in subcontrolsCopied["square"])
+            foreach (WindowControl control in subcontrolsCopied["square"])
                 if (control.Visible && !control.IsDisposed)
                     control.RenderTexture();
 
             FontRenderer.SetActive("squareo");
-            foreach (var control in subcontrolsCopied["squareo"])
+            foreach (WindowControl control in subcontrolsCopied["squareo"])
                 if (control.Visible && !control.IsDisposed)
                     control.RenderTexture();
 
-            GL.UseProgram(Shader.TexProgram);
+            GL.UseProgram(Shader.TextureProgram);
 
-            foreach (var control in subcontrolsCopied["other"])
+            foreach (WindowControl control in subcontrolsCopied["other"])
                 if (control.Visible && !control.IsDisposed)
                     control.RenderTexture();
         }
 
         public virtual void OnMouseClick(Point pos, bool right)
         {
-            var editor = MainWindow.Instance;
+            MainWindow editor = MainWindow.Instance;
 
-            if (Track != null && (Track.Rect.Contains(pos) || Track.HoveringPoint != null || Track.DraggingNote != null || Track.DraggingPoint != null))
+            if (Track != null && (Track.Rect.Contains(pos) || Track.HoveringPoint != null || Track.DraggingNote != null || Track.DraggingPoint != null || Track.DraggingVfx != null || Track.DraggingSpec != null))
                 Track.OnMouseClick(pos, right);
 
-            var controlsCopied = Controls.ToList();
+            List<WindowControl> controlsCopied = Controls.ToList();
 
             if (!right)
             {
@@ -104,7 +113,7 @@ namespace New_SSQE.GUI
 
                 for (int i = controlsCopied.Count; i > 0; i--)
                 {
-                    var control = controlsCopied[i - 1];
+                    WindowControl control = controlsCopied[i - 1];
                     
                     if (!buttonClicked && control.Visible && control.Rect.Contains(pos))
                         control.OnMouseClick(pos, false);
@@ -112,45 +121,61 @@ namespace New_SSQE.GUI
                         box.Focused = false;
                 }
 
-                var gridRect = Grid == null ? new RectangleF() :
-                    (Settings.settings["enableQuantum"] ? new RectangleF(Grid.Rect.X - Grid.Rect.Width / 3f, Grid.Rect.Y - Grid.Rect.Height / 3f, Grid.Rect.Width * 5 / 3f, Grid.Rect.Height * 5 / 3f) : Grid.Rect);
+                RectangleF gridRect = Grid == null ? new() :
+                    (Settings.enableQuantum.Value ? new(Grid.Rect.X - Grid.Rect.Width / 3f, Grid.Rect.Y - Grid.Rect.Height / 3f, Grid.Rect.Width * 5 / 3f, Grid.Rect.Height * 5 / 3f) : Grid.Rect);
 
-                if (!buttonClicked && Grid != null && gridRect.Contains(pos))
+                if (!buttonClicked && Grid != null && (gridRect.Contains(pos) || Grid.HoveringNote != null) && Track?.Rect.Contains(pos) != true)
                     Grid.OnMouseClick(pos);
                 else if (!buttonClicked && Track != null && !Track.Rect.Contains(pos))
                 {
-                    editor.SelectedNotes.Clear();
-                    editor.UpdateSelection();
+                    CurrentMap.Notes.Selected = new();
                     if (Track.HoveringPoint == null)
-                        editor.SelectedPoint = null;
+                        CurrentMap.SelectedPoint = null;
                 }
             }
             else
             {
-                editor.SelectedNotes.Clear();
-                editor.UpdateSelection();
-                editor.SelectedPoint = null;
+                buttonClicked = false;
 
-                foreach (var control in controlsCopied)
+                for (int i = controlsCopied.Count; i > 0; i--)
                 {
-                    if (control is not GuiSlider || control is GuiSliderTimeline)
-                        continue;
+                    WindowControl control = controlsCopied[i - 1];
 
-                    var horizontal = control.Rect.Width > control.Rect.Height;
-                    var xdiff = horizontal ? 12f : 0f;
-                    var ydiff = horizontal ? 0f : 12f;
-
-                    var hitbox = new RectangleF(control.Rect.X - xdiff, control.Rect.Y - ydiff, control.Rect.Width + xdiff * 2f, control.Rect.Height + ydiff * 2f);
-
-                    if (control.Visible && hitbox.Contains(pos))
+                    if (!buttonClicked && control.Visible && control.Rect.Contains(pos) && control is GuiButtonList)
                         control.OnMouseClick(pos, true);
+                }
+
+                if (!buttonClicked && Grid != null && Grid.HoveringNote != null)
+                {
+                    Grid.OnMouseClick(pos, right);
+                    buttonClicked = true;
+                }
+                
+                if (!buttonClicked)
+                {
+                    CurrentMap.ClearSelection();
+
+                    foreach (WindowControl control in controlsCopied)
+                    {
+                        if (control is not GuiSlider || control is GuiSliderTimeline)
+                            continue;
+
+                        bool horizontal = control.Rect.Width > control.Rect.Height;
+                        float xdiff = horizontal ? 12f : 0f;
+                        float ydiff = horizontal ? 0f : 12f;
+
+                        RectangleF hitbox = new(control.Rect.X - xdiff, control.Rect.Y - ydiff, control.Rect.Width + xdiff * 2f, control.Rect.Height + ydiff * 2f);
+
+                        if (control.Visible && hitbox.Contains(pos))
+                            control.OnMouseClick(pos, true);
+                    }
                 }
             }
         }
 
         public virtual void OnMouseUp(Point pos)
         {
-            foreach (var control in Controls)
+            foreach (WindowControl control in Controls)
                 control.OnMouseUp(pos);
 
             if (Track != null)
@@ -158,6 +183,8 @@ namespace New_SSQE.GUI
                 Track.OnMouseUp(pos);
                 Track.DraggingNote = null;
                 Track.DraggingPoint = null;
+                Track.DraggingVfx = null;
+                Track.DraggingSpec = null;
             }
 
             if (Grid != null)
@@ -169,7 +196,7 @@ namespace New_SSQE.GUI
 
         public virtual void OnMouseLeave(Point pos)
         {
-            foreach (var control in Controls)
+            foreach (WindowControl control in Controls)
                 control.OnMouseLeave(pos);
         }
 
@@ -183,7 +210,7 @@ namespace New_SSQE.GUI
 
             if (Grid != null)
             {
-                var gridrect = Settings.settings["enableQuantum"] ? new RectangleF(Grid.Rect.X - Grid.Rect.Width / 3f, Grid.Rect.Y - Grid.Rect.Height / 3f, Grid.Rect.Width * 5 / 3f, Grid.Rect.Height * 5 / 3f) : Grid.Rect;
+                RectangleF gridrect = Settings.enableQuantum.Value ? new(Grid.Rect.X - Grid.Rect.Width / 3f, Grid.Rect.Y - Grid.Rect.Height / 3f, Grid.Rect.Width * 5 / 3f, Grid.Rect.Height * 5 / 3f) : Grid.Rect;
 
                 Grid.Hovering = gridrect.Contains(pos);
                 Grid.OnMouseMove(pos);
@@ -194,8 +221,9 @@ namespace New_SSQE.GUI
         {
             Rect = new(0, 0, size.X, size.Y);
 
-            var widthdiff = size.X / 1920f;
-            var heightdiff = size.Y / 1080f;
+            float widthdiff = size.X / 1920f;
+            float heightdiff = size.Y / 1080f;
+            float textMult = Math.Min(widthdiff, heightdiff);
 
             if (BackgroundSquare != null)
             {
@@ -203,18 +231,18 @@ namespace New_SSQE.GUI
                 BackgroundSquare.Update();
             }
 
-            foreach (var control in Controls)
+            foreach (WindowControl control in Controls)
             {
                 control.Rect = ResizeRect(control.OriginRect, widthdiff, heightdiff, control.LockSize, control.MoveWithOffset);
-                control.TextSize = (int)(control.OriginTextSize * (control.LockSize ? 1f : heightdiff));
+                control.TextSize = (int)(control.OriginTextSize * (control.LockSize ? 1f : textMult));
 
                 control.Update();
             }
 
             if (Track != null)
-                Track.Rect = new RectangleF(0, 0, size.X, YOffset);
+                Track.Rect = new(0, 0, size.X, YOffset);
             if (Grid != null)
-                Grid.Rect = new RectangleF(size.X / 2f - Grid.OriginRect.Size.Width / 2f, size.Y / 2f - Grid.OriginRect.Size.Height / 2f, Grid.OriginRect.Size.Width, Grid.OriginRect.Size.Height);
+                Grid.Rect = new(size.X / 2f - Grid.OriginRect.Size.Width / 2f, size.Y / 2f - Grid.OriginRect.Size.Height / 2f, Grid.OriginRect.Size.Width, Grid.OriginRect.Size.Height);
         }
 
         public virtual void OnButtonClicked(int id)
@@ -224,16 +252,16 @@ namespace New_SSQE.GUI
 
         public virtual void OnKeyDown(Keys key, bool control)
         {
-            foreach (var windowControl in Controls)
+            foreach (WindowControl windowControl in Controls)
                 windowControl.OnKeyDown(key, control);
         }
 
         public RectangleF ResizeRect(RectangleF originrect, float width, float height, bool lockSize, bool moveWithOffset)
         {
-            var offset = moveWithOffset && MainWindow.Instance.CurrentWindow is GuiWindowEditor ? YOffset : 0;
-            var yf = originrect.Y * height + offset;
+            float offset = moveWithOffset && MainWindow.Instance.CurrentWindow is GuiWindowEditor ? YOffset : 0;
+            float yf = originrect.Y * height + offset;
 
-            var locationWidth = width;
+            float locationWidth = width;
 
             if (lockSize)
             {
@@ -241,15 +269,15 @@ namespace New_SSQE.GUI
                 height = 1f;
             }
 
-            return new RectangleF(originrect.X * locationWidth, yf, originrect.Width * width, originrect.Height * height);
+            return new(originrect.X * locationWidth, yf, originrect.Width * width, originrect.Height * height);
         }
 
         public void Dispose()
         {
-            var controlsCopied = Controls.ToList();
+            List<WindowControl> controlsCopied = Controls.ToList();
             Controls.Clear();
 
-            foreach (var control in controlsCopied)
+            foreach (WindowControl control in controlsCopied)
                 control.Dispose();
         }
     }

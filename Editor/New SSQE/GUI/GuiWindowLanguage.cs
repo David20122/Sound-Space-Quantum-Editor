@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+﻿using New_SSQE.Preferences;
 using System.Drawing;
 
 namespace New_SSQE.GUI
@@ -47,7 +47,7 @@ namespace New_SSQE.GUI
         public override void Render(float mousex, float mousey, float frametime)
         {
             for (int i = 0; i < languageCheckboxes.Count; i++)
-                languageCheckboxes[i].Toggle = Settings.settings["language"] == languages[i];
+                languageCheckboxes[i].Toggle = Settings.language.Value == languages[i];
 
             base.Render(mousex, mousey, frametime);
         }
@@ -63,7 +63,7 @@ namespace New_SSQE.GUI
 
                 default:
                     if (id >= 0 && id < languages.Count)
-                        Settings.settings["language"] = languages[id];
+                        Settings.language.Value = languages[id];
 
                     break;
             }
