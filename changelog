@@ -1,4 +1,57 @@
 ----------------------------------
+    -- 2.3.0.0 - 12/28/2024 --
+
+- updated to .NET 8.0
+  > this means smaller file sizes and potentially better performance, plus support for future versions of OpenTK
+  > you may need to update your installed .NET version, sorry about that
+
+- NEW MAP OBJECT SYSTEM (just one new object for now)!
+  > map objects can be edited via a window under the 'OPTIONS' tab
+  > additional objects may be added in the future as they gain support elsewhere; youre welcome to suggest new object types!
+
+- added a setting to disable anti-aliasing for better performance on older hardware
+- heavily optimized rendering the track and grid
+- optimized copying/pasting/deleting notes
+- fixed a memory leak
+- fps is now capped to 15 when not focused on the editor to conserve resources
+- save on close prompts no longer reload the map's audio, which will improve closing times with unsaved maps
+  > pressing 'Cancel' will now send you back to the menu instead of staying on the current map
+
+- fixed being unable to click a note outside the grid's borders
+- fixed text scaling going wild with non-16:9 aspect ratios
+- fixed a crash caused by overlapping grid keybinds
+- fixed commas in imported audio files causing file load errors
+- fixed fullscreen viewport size when not on a 1080p monitor
+- fixed some dragging bugs causing selected notes to teleport
+- improved waveform consistency and sync
+- modified map load error messages
+- modified the crash report possible fixes list
+
+- added support for Phoenyx (import), Nova (import/export), and Pulsus (import)
+- added a button to convert the current audio to MP3 in case Rhythia/Phoenyx/etc cant load it
+- added a note tracker and song name to the Discord Rich Presence integration
+- added a bpm detection tool in the timing panel
+  > PLEASE CHECK RESULTS! this tool offers an approximate baseline to help with finding a song's bpm, but should not be blindly trusted without testing it first
+
+- pressing CTRL+SHIFT+B with two notes selected now creates a timing point based on their positions
+- holding shift while clicking a bookmark now jumps to the end of that bookmark
+- pasting with "Jump on Paste" enabled now applies the Auto Advance setting to advance one tick
+- .wma files are now supported for loading audio
+- disabling the waveform now properly skips initializing the waveform
+- duplicate keybinds no longer conflict with each other
+- adjusted character spacing in text
+- possibly other things i mightve missed
+
+- future updates will continue back in Avibah's forked repository linked in Sound Space! this means this version is the last version being published to the main repository
+  > you will not have to change anything! updates will automatically point to the fork with this version and you can continue using the editor just like you did before!
+  > GitHub issues however, if you choose to make any, should be made in the fork instead of the main one or they likely wont be seen
+  > https://github.com/Avibah/Sound-Space-Quantum-Editor
+
+   -- U-2.0.2.1 - 12/28/2024 --
+
+- updated links
+
+----------------------------------
     -- 2.2.2.3 - 7/17/2024 --
 
 - fixed visual artifacting on some gpus due to a buffer over-read
