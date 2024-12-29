@@ -6,18 +6,18 @@ namespace New_SSQE.Misc.Static
     {
         private static readonly Dictionary<string, string> windowsLinks = new()
         {
-            {"SSQE Player Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/player_version" },
-            {"SSQE Player Zip", "https://github.com/David20122/Sound-Space-Quantum-Editor/raw/2.0%2B_rewrite/SSQE%20Player.zip" },
-            {"SSQE Updater Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_version" },
-            {"SSQE Updater Zip", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/SSQE%20Updater.zip" }
+            {"SSQE Player Version", "https://raw.githubusercontent.com/Avibah/Sound-Space-Quantum-Editor/master/player_version" },
+            {"SSQE Player Zip", "https://github.com/Avibah/Sound-Space-Quantum-Editor/raw/master/SSQE%20Player.zip" },
+            {"SSQE Updater Version", "https://raw.githubusercontent.com/Avibah/Sound-Space-Quantum-Editor/master/updater_version" },
+            {"SSQE Updater Zip", "https://raw.githubusercontent.com/Avibah/Sound-Space-Quantum-Editor/master/SSQE%20Updater.zip" }
         };
 
         private static readonly Dictionary<string, string> linuxLinks = new()
         {
-            {"SSQE Player Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/player_version" },
-            {"SSQE Player Zip", "https://github.com/David20122/Sound-Space-Quantum-Editor/raw/2.0%2B_rewrite/SSQE%20Player-linux.zip" },
-            {"SSQE Updater Version", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_version" },
-            {"SSQE Updater Zip", "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/SSQE%20Updater-linux.zip" }
+            {"SSQE Player Version", "https://raw.githubusercontent.com/Avibah/Sound-Space-Quantum-Editor/master/player_version" },
+            {"SSQE Player Zip", "https://github.com/Avibah/Sound-Space-Quantum-Editor/raw/master/SSQE%20Player-linux.zip" },
+            {"SSQE Updater Version", "https://raw.githubusercontent.com/Avibah/Sound-Space-Quantum-Editor/master/updater_version" },
+            {"SSQE Updater Zip", "https://raw.githubusercontent.com/Avibah/Sound-Space-Quantum-Editor/master/SSQE%20Updater-linux.zip" }
         };
 
         public static readonly string SSQE_PLAYER_VERSION = (Platform.IsLinux ? linuxLinks : windowsLinks)["SSQE Player Version"];
@@ -25,8 +25,8 @@ namespace New_SSQE.Misc.Static
         public static readonly string SSQE_UPDATER_VERSION = (Platform.IsLinux ? linuxLinks : windowsLinks)["SSQE Updater Version"];
         public static readonly string SSQE_UPDATER_ZIP = (Platform.IsLinux ? linuxLinks : windowsLinks)["SSQE Updater Zip"];
 
-        public static readonly string EDITOR_REDIRECT = "https://github.com/David20122/Sound-Space-Quantum-Editor/releases/latest";
-        public static readonly string CHANGELOG = "https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/changelog";
+        public static readonly string EDITOR_REDIRECT = "https://github.com/Avibah/Sound-Space-Quantum-Editor/releases/latest";
+        public static readonly string CHANGELOG = "https://raw.githubusercontent.com/Avibah/Sound-Space-Quantum-Editor/master/changelog";
 
         public static readonly string FEEDBACK_FORM = "https://forms.gle/Rh4RXKT9KyttJ9Dc6";
 
@@ -38,7 +38,7 @@ namespace New_SSQE.Misc.Static
             {"SSQE Updater Zip", SSQE_UPDATER_ZIP }
         };
 
-        public static readonly string NEW_GITHUB_ISSUE = $"https://github.com/David20122/Sound-Space-Quantum-Editor/issues/new?title=SSQE+Crash+-+{Program.Version}&body=" +
+        public static readonly string NEW_GITHUB_ISSUE = $"https://github.com/Avibah/Sound-Space-Quantum-Editor/issues/new?title=SSQE+Crash+-+{Program.Version}&body=" +
             $"Upload+your+crash+report+and+describe+how+it+happened+here&labels=bug";
     }
 }

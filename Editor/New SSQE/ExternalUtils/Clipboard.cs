@@ -17,7 +17,7 @@ namespace New_SSQE.ExternalUtils
             catch (AggregateException ex) when (Platform.IsLinux)
             {
                 Logging.Register("Failed to set text of clipboard", LogSeverity.WARN, ex);
-                MessageBox.Show("Clipboard functions require 'xsel' to be installed and accessible\nhttps://github.com/kfish/xsel", "Warning", "OK");
+                MessageBox.Show("Clipboard functions require 'xsel' to be installed and accessible\nhttps://github.com/kfish/xsel", MBoxIcon.Warning, MBoxButtons.OK);
             }
         }
 
@@ -64,7 +64,7 @@ namespace New_SSQE.ExternalUtils
             catch (AggregateException ex) when (Platform.IsLinux)
             {
                 Logging.Register("Failed to get text of clipboard", LogSeverity.WARN, ex);
-                MessageBox.Show("Clipboard functions require 'xsel' to be installed and accessible\nhttps://github.com/kfish/xsel", "Warning", "OK");
+                MessageBox.Show("Clipboard functions require 'xsel' to be installed and accessible\nhttps://github.com/kfish/xsel", MBoxIcon.Warning, MBoxButtons.OK);
             }
 
             return "";

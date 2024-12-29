@@ -131,7 +131,7 @@ namespace New_SSQE.Preferences
                 (color5.Value.R / 255f, color5.Value.G / 255f, color5.Value.B / 255f, 1f)
             };
 
-            GL.Uniform4f(location, 11, colors);
+            GL.Uniform4f(location, colors.Length, colors);
         }
 
         public static void RefreshKeyMapping()

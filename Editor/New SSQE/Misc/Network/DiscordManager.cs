@@ -1,9 +1,18 @@
 ﻿using DiscordRPC;
 using DiscordRPC.Logging;
 using New_SSQE.ExternalUtils;
+using New_SSQE.GUI;
+using New_SSQE.Maps;
 
 namespace New_SSQE.Misc.Network
 {
+    internal enum DiscordStatus
+    {
+        None,
+        Menu,
+        Editor
+    }
+
     internal class DiscordManager
     {
         private static DiscordRpcClient? client;
@@ -33,17 +42,53 @@ namespace New_SSQE.Misc.Network
             catch { enabled = false; }
         }
 
-        public static void SetActivity(string status)
+        private static double time = 0;
+
+        public static void Process(double frametime)
+        {
+            time += frametime;
+
+            if (time >= 5)
+            {
+                if (MainWindow.Instance.CurrentWindow is GuiWindowEditor)
+                    SetActivity(DiscordStatus.Editor);
+                time %= 5;
+            }
+        }
+
+        private static DiscordStatus prevStatus = DiscordStatus.None;
+        private static DateTime prevTimestamp = DateTime.UtcNow;
+
+        public static void SetActivity(DiscordStatus status)
         {
             if (!enabled)
                 return;
 
+            string details = status switch
+            {
+                DiscordStatus.Menu => "Watching the sunset",
+                DiscordStatus.Editor => $"Editing a map - {CurrentMap.Notes.Count} notes",
+                _ => ""
+            };
+
+            string state = status switch
+            {
+                DiscordStatus.Editor => CurrentMap.FileID[..Math.Min(CurrentMap.FileID.Length, 128)],
+                _ => ""
+            };
+
+            if (prevStatus != status)
+            {
+                prevTimestamp = DateTime.UtcNow;
+                prevStatus = status;
+            }
+
             client?.SetPresence(new RichPresence
             {
-                State = status,
-                Details = $"Version {Program.Version}{(MainWindow.DebugVersion ? "-pre" : "")}",
-                Timestamps = new() { Start = DateTime.UtcNow },
-                Assets = new() { LargeImageKey = "logo" }
+                Details = details,
+                State = state,
+                Timestamps = new() { Start = prevTimestamp },
+                Assets = new() { LargeImageKey = "logo", LargeImageText = $"Version {Program.Version}{(MainWindow.DebugVersion ? "-pre" : "")}" }
             });
         }
 

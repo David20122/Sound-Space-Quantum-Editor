@@ -49,7 +49,7 @@ namespace New_SSQE.GUI.Shaders
             TrackProgram = CompileShader(TrackShader.Vertex, TrackShader.Fragment, "Track");
             TimelineProgram = CompileShader(TimelineShader.Vertex, TimelineShader.Fragment, "Timeline");
             ScalingProgram = CompileShader(ScalingShader.Vertex, ScalingShader.Fragment, "Scaling");
-            ColoredProgram = CompileShader(ScalingShader.Vertex, ColoredShader.Fragment, "Colored");
+            ColoredProgram = CompileShader(ColoredShader.Vertex, ColoredShader.Fragment, "Colored");
             XScalingProgram = CompileShader(XScalingShader.Vertex, XScalingShader.Fragment, "XScaling");
             WaveformProgram = CompileShader(WaveformShader.Vertex, WaveformShader.Fragment, "Waveform");
             UnicodeProgram = CompileShader(UnicodeShader.Vertex, UnicodeShader.Fragment, "Unicode");
@@ -161,17 +161,6 @@ namespace New_SSQE.GUI.Shaders
             GL.UseProgram(VFXFBOProgram);
             int location = GL.GetUniformLocation(VFXFBOProgram, "offset");
             GL.Uniform1f(location, 1f / 2000f * (blur * 10f + 1f));
-        }
-
-        private static ProgramHandle activeShader = new(-1);
-
-        public static void SetActive(ProgramHandle shader)
-        {
-            if (activeShader != shader)
-            {
-                GL.UseProgram(shader);
-                activeShader = shader;
-            }
         }
     }
 }

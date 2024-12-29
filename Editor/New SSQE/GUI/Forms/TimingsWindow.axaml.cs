@@ -27,11 +27,12 @@ namespace New_SSQE
 
             InitializeComponent();
             PointList.Items = Dataset;
+            AdjustNotes.IsChecked = Settings.adjustNotes.Value;
+        }
 
-            AdjustNotes.Checked += (s, e) =>
-            {
-                Settings.adjustNotes.Value = AdjustNotes.IsChecked ?? false;
-            };
+        private void AdjustNotes_Checked(object sender, RoutedEventArgs e)
+        {
+            Settings.adjustNotes.Value = AdjustNotes.IsChecked ?? false;
         }
 
         public static void ShowWindow()
@@ -277,7 +278,7 @@ namespace New_SSQE
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to parse beatmap\n[ OSU : {ex.GetType().Name} ]", "Warning", "OK");
+                MessageBox.Show($"Failed to parse beatmap\n[ OSU : {ex.GetType().Name} ]", MBoxIcon.Warning, MBoxButtons.OK);
                 Logging.Register($"Failed to parse beatmap - OSU", LogSeverity.WARN, ex);
             }
         }
@@ -442,7 +443,7 @@ namespace New_SSQE
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to parse beatmap\n[ ADOFAI : {ex.GetType().Name} ]", "Warning", "OK");
+                MessageBox.Show($"Failed to parse beatmap\n[ ADOFAI : {ex.GetType().Name} ]", MBoxIcon.Warning, MBoxButtons.OK);
                 Logging.Register($"Failed to parse beatmap - ADOFAI", LogSeverity.WARN, ex);
             }
         }
@@ -508,7 +509,7 @@ namespace New_SSQE
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to parse beatmap\n[ CH : {ex.GetType().Name} ]", "Warning", "OK");
+                MessageBox.Show($"Failed to parse beatmap\n[ CH : {ex.GetType().Name} ]", MBoxIcon.Warning, MBoxButtons.OK);
                 Logging.Register($"Failed to parse beatmap - CH", LogSeverity.WARN, ex);
             }
         }
@@ -524,7 +525,7 @@ namespace New_SSQE
                 {
                     if (!Settings.detectWarningShown.Value)
                     {
-                        MessageBox.Show("BPM detection results are rarely accurate! Make sure to test and adjust the result before using it in your map.\n\nThis may be used as a general baseline but not the final answer for this song's BPM.", "Warning", "OK");
+                        MessageBox.Show("BPM detection results are rarely accurate! Make sure to test and adjust the result before using it in your map.\n\nThis may be used as a general baseline but not the final answer for this song's BPM.", MBoxIcon.Warning, MBoxButtons.OK);
                         Settings.detectWarningShown.Value = true;
                     }
 

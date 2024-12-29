@@ -30,7 +30,6 @@ namespace New_SSQE.Audio
             int stream = Bass.BASS_StreamCreateFile(file, 0, 0, BASSFlag.BASS_STREAM_PRESCAN);
             BASSError err = Bass.BASS_ErrorGetCode();
 
-            Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, sound == Settings.clickSound.Value ? 0.035f : SoundPlayer.Volume);
             Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_END, 0, sync, nint.Zero);
 
             return stream;
@@ -42,6 +41,7 @@ namespace New_SSQE.Audio
                 sounds.Enqueue(GetNew());
 
             int stream = sounds.Dequeue();
+            Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, sound == Settings.clickSound.Value ? 0.035f : SoundPlayer.Volume);
             Bass.BASS_ChannelPlay(stream, false);
         }
     }

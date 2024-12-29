@@ -26,7 +26,7 @@ namespace SSQE_Updater
                 
                 try
                 {
-                    WebClient.DownloadFile($"https://github.com/David20122/Sound-Space-Quantum-Editor/releases/download/{newVersion}/{file}", file);
+                    WebClient.DownloadFile($"https://github.com/Avibah/Sound-Space-Quantum-Editor/releases/download/{newVersion}/{file}", file);
                     ExtractFile();
                 }
                 catch
@@ -66,7 +66,7 @@ namespace SSQE_Updater
                 {
                     List<string> overwrites = new();
 
-                    var overwriteList = WebClient.DownloadString("https://raw.githubusercontent.com/David20122/Sound-Space-Quantum-Editor/2.0%2B_rewrite/updater_overwrite");
+                    var overwriteList = WebClient.DownloadString("https://raw.githubusercontent.com/Avibah/Sound-Space-Quantum-Editor/master/updater_overwrite");
                     var split = overwriteList.Split('\n');
                     var overwriteVersion = "";
 
@@ -102,7 +102,7 @@ namespace SSQE_Updater
             {
                 try
                 {
-                    var redirect = WebClient.GetRedirect("https://github.com/David20122/Sound-Space-Quantum-Editor/releases/latest");
+                    var redirect = WebClient.GetRedirect("https://github.com/Avibah/Sound-Space-Quantum-Editor/releases/latest");
 
                     if (!string.IsNullOrWhiteSpace(redirect))
                     {

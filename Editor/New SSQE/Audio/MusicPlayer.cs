@@ -32,7 +32,7 @@ namespace New_SSQE.Audio
         {
             if (!File.Exists($"{Assets.THIS}\\lame.exe"))
             {
-                MessageBox.Show("MP3 encoder not present from latest release", "Warning", "OK");
+                MessageBox.Show("MP3 encoder not present from latest release", MBoxIcon.Warning, MBoxButtons.OK);
                 return;
             }
 
@@ -54,7 +54,7 @@ namespace New_SSQE.Audio
             catch (Exception ex)
             {
                 Logging.Register($"Failed to encode file to mp3: {lastFile}", LogSeverity.WARN, ex);
-                MessageBox.Show($"Failed to convert file {lastFile}\n\nExternal playtesting may not be possible with this asset.", "Warning", "OK");
+                MessageBox.Show($"Failed to convert file {lastFile}\n\nExternal playtesting may not be possible with this asset.", MBoxIcon.Warning, MBoxButtons.OK);
             }
 
             Load(lastFile);
@@ -68,13 +68,13 @@ namespace New_SSQE.Audio
 
             if (IsMP3)
             {
-                DialogResult result = MessageBox.Show("This asset is already an MP3. Do you want to convert it anyway?\n\nThis may take a while.", "Info", "Yes", "No");
+                DialogResult result = MessageBox.Show("This asset is already an MP3. Do you want to convert it anyway?\n\nThis may take a while.", MBoxIcon.Info, MBoxButtons.Yes_No);
                 if (result != DialogResult.Yes)
                     return;
             }
             else
             {
-                DialogResult result = MessageBox.Show("Are you sure you want to convert this asset to MP3?\n\nThis may take a while.", "Info", "Yes", "No");
+                DialogResult result = MessageBox.Show("Are you sure you want to convert this asset to MP3?\n\nThis may take a while.", MBoxIcon.Info, MBoxButtons.Yes_No);
                 if (result != DialogResult.Yes)
                     return;
             }
@@ -134,7 +134,7 @@ namespace New_SSQE.Audio
                 string id = Path.GetFileNameWithoutExtension(file);
 
                 Logging.Register($"Audio failed to load - {err}\n{file}", LogSeverity.ERROR);
-                DialogResult message = MessageBox.Show($"Audio file with id '{id}' is corrupt.\n\nWould you like to try importing a new file?", "Warning", "OK", "Cancel");
+                DialogResult message = MessageBox.Show($"Audio file with id '{id}' is corrupt.\n\nWould you like to try importing a new file?", MBoxIcon.Warning, MBoxButtons.OK_Cancel);
 
                 return message == DialogResult.OK && MapManager.ImportAudio(id);
             }

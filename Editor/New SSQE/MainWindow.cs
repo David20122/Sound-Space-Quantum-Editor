@@ -10,7 +10,6 @@ using SkiaSharp;
 using MouseButton = OpenTK.Windowing.GraphicsLibraryFramework.MouseButton;
 using OpenTK.Windowing.Common.Input;
 using System.Runtime.InteropServices;
-using BigInteger = System.Numerics.BigInteger;
 using System.IO.Compression;
 using OpenTK.Graphics;
 using New_SSQE.Objects;
@@ -19,7 +18,6 @@ using New_SSQE.GUI.Font;
 using New_SSQE.Audio;
 using New_SSQE.FileParsing;
 using New_SSQE.GUI.Shaders;
-using New_SSQE.Objects.Other;
 using New_SSQE.Preferences;
 using New_SSQE.GUI.Input;
 using New_SSQE.Objects.Managers;
@@ -28,16 +26,69 @@ using New_SSQE.Misc.Dialogs;
 using New_SSQE.Misc.Static;
 using New_SSQE.ExternalUtils;
 using New_SSQE.Maps;
+using System.Diagnostics;
 
 namespace New_SSQE
 {
+    /*
+     * OpenGL functions used in this program (with their required versions):
+     * 
+     * 4.3 - glDebugMessageCallback (only used when DebugVersion is true, should be disabled on release)
+     * 3.3 - glVertexAttribDivisor
+     * 3.1 - glDrawArraysInstanced
+     * 3.0 - glBindVertexArray
+     * 3.0 - glBindRenderbuffer
+     * 3.0 - glBindFramebuffer
+     * 3.0 - glBlitFramebuffer
+     * 3.0 - glGenRenderbuffers
+     * 3.0 - glGenFramebuffers
+     * 3.0 - glGenVertexArrays
+     * 3.0 - glDeleteVertexArrays
+     * 3.0 - glRenderbufferStorageMultisample
+     * 3.0 - glFramebufferRenderbuffer
+     * 2.0 - glBindBuffer
+     * 2.0 - glBindTexture
+     * 2.0 - glActiveTexture
+     * 2.0 - glGenTextures
+     * 2.0 - glGenBuffers
+     * 2.0 - glGetUniformLocation
+     * 2.0 - glUniform (4f, 3f, 2f, 1i)
+     * 2.0 - glUniformMatrix (4f)
+     * 2.0 - glDrawArrays
+     * 2.0 - glBufferData
+     * 2.0 - glDeleteTextures
+     * 2.0 - glDeleteBuffers
+     * 2.0 - glVertexAttribPointer
+     * 2.0 - glUseProgram
+     * 2.0 - glTexParameter (i)
+     * 2.0 - glTexImage2D
+     * 2.0 - glEnableVertexAttribArray
+     * 2.0 - glViewport
+     * 2.0 - glClear
+     * 2.0 - glClearColor
+     * 2.0 - glGetString
+     * 2.0 - glGetError
+     * 2.0 - glGetInteger
+     * 2.0 - glEnable
+     * 2.0 - glBlendFunc
+     * 2.0 - glCreateShader
+     * 2.0 - glCreateProgram
+     * 2.0 - glShaderSource
+     * 2.0 - glLinkProgram
+     * 2.0 - glGetShaderInfoLog
+     * 2.0 - glDetachShader
+     * 2.0 - glDeleteShader
+     * 2.0 - glCompileShader
+     * 2.0 - glAttachShader
+     * 
+     * The requested API version should match the version of the highest unconditionally required function in this list.
+     * Currently: 3.3 - glVertexAttribDivisor (required for efficient instancing of map objects and text)
+     * 
+     */
+
     internal class MainWindow : GameWindow
     {
-#if DEBUG
-        public static bool DebugVersion = true;
-#else
         public static bool DebugVersion = false;
-#endif
 
         public static readonly Vector2i SpriteSize = (4, 4);
 
@@ -163,6 +214,7 @@ namespace New_SSQE
         private const double updateFrequency = 1 / 10.0;
 
         private double gcTime;
+        private bool gcEnabled = true;
 
         protected override void OnRenderFrame(FrameEventArgs args)
         {
@@ -232,19 +284,37 @@ namespace New_SSQE
             GL.BindVertexArray(VertexArrayHandle.Zero);
 
             OpenTK.Graphics.OpenGL.ErrorCode err = GL.GetError();
-            if (err != OpenTK.Graphics.OpenGL.ErrorCode.NoError)
+            while (err != OpenTK.Graphics.OpenGL.ErrorCode.NoError)
+            {
                 Logging.Register($"OpenGL Error: '{err}'", LogSeverity.WARN);
+                err = GL.GetError();
+            }
 
             SwapBuffers();
 
             // apparently the garbage collector doesnt want to deal with everything on its own .-.
-            // a 2 second timer to ask it to collect stuff seems fine for performance, and it helps a lot with memory usage
             gcTime += args.Time;
-            if (gcTime >= 2)
+
+            if (gcTime >= 2 && gcEnabled)
             {
+                Stopwatch sw = Stopwatch.StartNew();
+
                 GC.Collect();
                 gcTime = 0;
+
+                double duration = sw.Elapsed.TotalMilliseconds;
+
+                // something is causing the gc to have a noticeable lag spike when it runs, so maybe now its doing more harm than good
+                if (duration > 50)
+                {
+                    Logging.Register($"GC took {duration}ms to process! Disabling forced garbage collection to improve performance");
+                    gcEnabled = false;
+                }
+
+                sw.Stop();
             }
+
+            DiscordManager.Process(args.Time);
         }
 
         protected override void OnResize(ResizeEventArgs e)
@@ -531,12 +601,12 @@ namespace New_SSQE
 
             if (window is GuiWindowEditor)
             {
-                DiscordManager.SetActivity("Editing a map");
+                DiscordManager.SetActivity(DiscordStatus.Editor);
                 MapManager.BeginAutosaveLoop(DateTime.Now.Ticks);
             }
             else if (window is GuiWindowMenu)
             {
-                DiscordManager.SetActivity("Watching the sunset");
+                DiscordManager.SetActivity(DiscordStatus.Menu);
                 Waveform.Dispose();
             }
 
@@ -599,7 +669,7 @@ namespace New_SSQE
                     {
                         Logging.Register($"Current and latest versions differ! Current: {current} | Latest: {version}");
 
-                        DialogResult diag = MessageBox.Show($"New {tag} version is available ({version}). Would you like to download the new version?", "Warning", "Yes", "No");
+                        DialogResult diag = MessageBox.Show($"New {tag} version is available ({version}). Would you like to download the new version?", MBoxIcon.Info, MBoxButtons.Yes_No);
 
                         if (diag == DialogResult.Yes)
                         {
@@ -610,7 +680,7 @@ namespace New_SSQE
                 }
                 else
                 {
-                    DialogResult diag = MessageBox.Show($"{tag} is not present in this directory. Would you like to download it?", "Warning", "Yes", "No");
+                    DialogResult diag = MessageBox.Show($"{tag} is not present in this directory. Would you like to download it?", MBoxIcon.Info, MBoxButtons.Yes_No);
 
                     if (diag == DialogResult.Yes)
                     {
@@ -636,7 +706,7 @@ namespace New_SSQE
                     Logging.Register("Checking version of editor");
                     if (Version.Parse(version) > Version.Parse(Program.Version))
                     {
-                        DialogResult diag = MessageBox.Show($"New Editor version is available ({version}). Would you like to download the new version?", "Warning", "Yes", "No");
+                        DialogResult diag = MessageBox.Show($"New Editor version is available ({version}). Would you like to download the new version?", MBoxIcon.Info, MBoxButtons.Yes_No);
 
                         if (diag == DialogResult.Yes)
                         {
@@ -649,7 +719,7 @@ namespace New_SSQE
             catch (Exception ex)
             {
                 Logging.Register("Failed to check for updates", LogSeverity.WARN, ex);
-                MessageBox.Show("Failed to check for updates", "Warning", "OK");
+                MessageBox.Show("Failed to check for updates", MBoxIcon.Warning, MBoxButtons.OK);
             }
         }
     }

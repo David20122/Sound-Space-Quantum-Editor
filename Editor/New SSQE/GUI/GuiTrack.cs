@@ -24,16 +24,19 @@ namespace New_SSQE.GUI
 
         public MapObject? LastPlayed;
         public Note? HoveringNote;
-        public Note? DraggingNote; 
+        public Note? DraggingNote;
+        private List<Note> draggingNotes;
 
         public TimingPoint? HoveringPoint;
         public TimingPoint? DraggingPoint;
 
         public MapObject? HoveringVfx;
         public MapObject? DraggingVfx;
+        private List<MapObject> draggingVfxs;
 
         public MapObject? HoveringSpec;
         public MapObject? DraggingSpec;
+        private List<MapObject> draggingSpecs;
 
         public MapObject? HoveringObjDuration;
         public MapObject? DraggingObjDuration;
@@ -313,8 +316,6 @@ namespace New_SSQE.GUI
                 MapObject? closest = null;
 
                 (int low, int high) = CurrentMap.Notes.SearchRange(minMs, maxMs);
-                if (CurrentMap.Notes.Count > 0 && CurrentMap.Notes[high].Ms <= (long)maxMs && CurrentMap.Notes[low].Ms >= (long)minMs)
-                    high++;
                 int range = high - low;
 
                 c1Set = new string[range + CurrentMap.TimingPoints.Count];
@@ -638,10 +639,6 @@ namespace New_SSQE.GUI
                         }
                     }
 
-
-                    if (obj.Ms < minMs || obj.Ms > maxMs)
-                        continue;
-
                     c1Set[i] = $"{obj.Name ?? "null"} {indices[obj.ID]:##,###}";
                     c2Set[i] = $"{obj.Ms:##,##0}ms";
                     xSet[i] = (int)x + 3;
@@ -956,6 +953,8 @@ namespace New_SSQE.GUI
         {
             if (right)
                 OnMouseUp(pos);
+            else
+                RightDraggingTrack = false;
 
             long startMs = (long)Settings.currentTime.Value.Value;
             MainWindow editor = MainWindow.Instance;
@@ -997,8 +996,9 @@ namespace New_SSQE.GUI
                     selected = new List<Note>() { HoveringNote };
 
                 CurrentMap.Notes.Selected = new(selected);
+                draggingNotes = selected;
 
-                foreach (Note note in CurrentMap.Notes.Selected)
+                foreach (Note note in draggingNotes)
                     note.DragStartMs = note.Ms;
             }
             else if (HoveringPoint != null && !right)
@@ -1062,8 +1062,9 @@ namespace New_SSQE.GUI
                 }
 
                 CurrentMap.VfxObjects.Selected = new(selected);
+                draggingVfxs = selected;
 
-                foreach (MapObject obj in CurrentMap.VfxObjects.Selected)
+                foreach (MapObject obj in draggingVfxs)
                     obj.DragStartMs = obj.Ms;
             }
             else if (HoveringSpec != null && !right)
@@ -1105,8 +1106,9 @@ namespace New_SSQE.GUI
                 }
 
                 CurrentMap.SpecialObjects.Selected = new(selected);
+                draggingSpecs = selected;
 
-                foreach (MapObject obj in CurrentMap.SpecialObjects.Selected)
+                foreach (MapObject obj in draggingSpecs)
                     obj.DragStartMs = obj.Ms;
             }
             else
@@ -1152,7 +1154,7 @@ namespace New_SSQE.GUI
                             offset = DraggingNote.DragStartMs - snappedMs;
                     }
 
-                    foreach (Note note in CurrentMap.Notes.Selected)
+                    foreach (Note note in draggingNotes)
                         note.Ms = (long)MathHelper.Clamp(note.DragStartMs - offset, 0f, currentTime.Max);
 
                     CurrentMap.Notes.Sort();
@@ -1221,7 +1223,7 @@ namespace New_SSQE.GUI
                             offset = DraggingVfx.DragStartMs - snappedMs;
                     }
 
-                    foreach (MapObject obj in CurrentMap.VfxObjects.Selected)
+                    foreach (MapObject obj in draggingVfxs)
                         obj.Ms = (long)MathHelper.Clamp(obj.DragStartMs - offset, 0f, currentTime.Max);
 
                     CurrentMap.VfxObjects.Sort();
@@ -1244,7 +1246,7 @@ namespace New_SSQE.GUI
                             offset = DraggingSpec.DragStartMs - snappedMs;
                     }
 
-                    foreach (MapObject obj in CurrentMap.SpecialObjects.Selected)
+                    foreach (MapObject obj in draggingSpecs)
                         obj.Ms = (long)MathHelper.Clamp(obj.DragStartMs - offset, 0f, currentTime.Max);
 
                     CurrentMap.SpecialObjects.Sort();
@@ -1271,10 +1273,9 @@ namespace New_SSQE.GUI
 
                 if (DraggingNote != null && DraggingNote.DragStartMs != DraggingNote.Ms)
                 {
-                    List<Note> selected = CurrentMap.Notes.Selected.ToList();
                     long msDiff = DraggingNote.Ms - DraggingNote.DragStartMs;
 
-                    foreach (Note note in selected)
+                    foreach (Note note in draggingNotes)
                         note.Ms -= msDiff;
 
                     NoteManager.Edit("MOVE NOTE[S]", n => n.Ms += msDiff);
@@ -1297,20 +1298,18 @@ namespace New_SSQE.GUI
                 }
                 else if (DraggingVfx != null && DraggingVfx.DragStartMs != DraggingVfx.Ms)
                 {
-                    List<MapObject> selected = CurrentMap.VfxObjects.Selected.ToList();
                     long msDiff = DraggingVfx.Ms - DraggingVfx.DragStartMs;
 
-                    foreach (MapObject obj in selected)
+                    foreach (MapObject obj in draggingVfxs)
                         obj.Ms -= msDiff;
 
                     VfxObjectManager.Edit("MOVE OBJECT[S]", n => n.Ms += msDiff);
                 }
                 else if (DraggingSpec != null && DraggingSpec.DragStartMs != DraggingSpec.Ms)
                 {
-                    List<MapObject> selected = CurrentMap.SpecialObjects.Selected.ToList();
                     long msDiff = DraggingSpec.Ms - DraggingSpec.DragStartMs;
 
-                    foreach (MapObject obj in selected)
+                    foreach (MapObject obj in draggingSpecs)
                         obj.Ms -= msDiff;
 
                     SpecialObjectManager.Edit("MOVE OBJECT[S]", n => n.Ms += msDiff);

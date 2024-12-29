@@ -119,7 +119,9 @@
               <CheckBox Width="250" Height="20" Name="AdjustNotes"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
-                        IsChecked="False">
+                        IsChecked="False"
+                        Checked="AdjustNotes_Checked"
+                        Unchecked="AdjustNotes_Checked">
                 <TextBlock Text="Adjust notes when changing points"/>
               </CheckBox>
               

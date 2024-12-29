@@ -28,8 +28,6 @@ namespace New_SSQE.GUI
         private readonly ArrayPool<Vector4> Pool = ArrayPool<Vector4>.Shared;
         public bool WasPlaying;
 
-        public bool ShouldUpdate;
-
         public GuiSliderTimeline() : base(0, 0, 0, 0, Settings.currentTime, false)
         {
             Font = "main";
@@ -62,8 +60,6 @@ namespace New_SSQE.GUI
         // stuff here doesnt need to be updated every frame
         public override void GenerateOffsets()
         {
-            ShouldUpdate = false;
-
             SliderSetting setting = Slider.Value;
             int plen = CurrentMap.TimingPoints.Count;
             int mlen = CurrentMap.VfxObjects.Count + CurrentMap.SpecialObjects.Count;
@@ -153,7 +149,7 @@ namespace New_SSQE.GUI
 
             GL.UseProgram(Shader.TimelineProgram);
 
-            if (ShouldUpdate || prevRect != lineRect || prevHover != HoveringBookmark)
+            if (prevRect != lineRect || prevHover != HoveringBookmark)
             {
                 InstanceSetup();
                 GenerateOffsets();

@@ -238,9 +238,9 @@ namespace New_SSQE.GUI
                 // Buttons
                 CopyButton, BackButton, SaveButton, PlayPause, LNavOptions, LNavTiming, OpenTimings, ImportIni, LNavPatterns, HFlip, VFlip, StoreNodes, ClearNodes,
                 BezierButton, RotateButton, ScaleButton, RNavExport, OpenBookmarks, CopyBookmarks, PasteBookmarks, LNavPlayer, CameraMode, PlayMap, ExportButton,
-                FromStart, RNavGraphics, RNavSnapping, SwapClickMode, SaveAsButton, ReplaceID, EditMapVFX, ExitMapVFX, ConvertAudio,
+                FromStart, RNavGraphics, RNavSnapping, SwapClickMode, SaveAsButton, ReplaceID, /*EditMapVFX,*/ ExitMapVFX, ConvertAudio,
                 NavBrightness, NavContrast, NavSaturation, NavBlur, NavFOV, NavTint, NavPosition, NavRotation, NavARFactor, NavText,
-                VFXStyle, VFXDirection, VFXColor, VFXApply, ExportSwitch, /*EditSpecial,*/ ExitSpecial, NavBeat, GameSwitch, VFXStrength,
+                VFXStyle, VFXDirection, VFXColor, VFXApply, ExportSwitch, EditSpecial, ExitSpecial, NavBeat, GameSwitch, VFXStrength,
                 // Checkboxes
                 AutoAdvance, Autoplay, ApproachSquares, GridNumbers, GridLetters, Quantum, Numpad, QuantumGridLines, QuantumGridSnap, Metronome, SeparateClickTools, JumpOnPaste,
                 CurveBezier, ApplyOnPaste, LockCursor, ApproachFade, GridGuides, PauseOnScroll, ClampSR, PasteReversed,
@@ -664,7 +664,7 @@ namespace New_SSQE.GUI
                     {
                         if (!string.IsNullOrWhiteSpace(ReplaceIDBox.Text))
                         {
-                            DialogResult result = MessageBox.Show("Are you sure you want to replace this ID?\n\nAny existing asset with this ID will be overwritten and the current map will be saved.", "Warning", "Yes", "No");
+                            DialogResult result = MessageBox.Show("Are you sure you want to replace this ID?\n\nAny existing asset with this ID will be overwritten and the current map will be saved.", MBoxIcon.Warning, MBoxButtons.Yes_No);
                             if (result == DialogResult.No)
                                 return;
 

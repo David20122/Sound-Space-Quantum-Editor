@@ -1,4 +1,5 @@
-﻿using New_SSQE.GUI.Shaders;
+﻿using Avalonia.OpenGL;
+using New_SSQE.GUI.Shaders;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
@@ -67,10 +68,20 @@ namespace New_SSQE.NewGUI
             GL.BufferData(BufferTargetARB.ArrayBuffer, data, BufferUsageARB.StaticDraw);
         }
 
-        public static VertexArrayHandle NewVAO(params int[] fieldWidths)
+        public static void BufferData(BufferHandle vbo, Vector3[] data)
+        {
+            EnableVBO(vbo);
+            GL.BufferData(BufferTargetARB.ArrayBuffer, data, BufferUsageARB.StaticDraw);
+        }
+
+        public static (VertexArrayHandle, BufferHandle) NewVAO_VBO(params int[] fieldWidths)
         {
             VertexArrayHandle vao = GL.GenVertexArray();
             EnableVAO(vao);
+
+            BufferHandle vbo = GL.GenBuffer();
+            EnableVBO(vbo);
+
             int stride = fieldWidths.Sum();
             int offset = 0;
 
@@ -82,25 +93,31 @@ namespace New_SSQE.NewGUI
                 offset += i;
             }
 
-            return vao;
+            DisableVAO_VBO();
+
+            return (vao, vbo);
         }
 
-        public static BufferHandle NewVBO() => GL.GenBuffer();
-
-        public static BufferHandle NewVBO(float[] initialValues)
+        public static BufferHandle ExtendInstancingVAO(VertexArrayHandle vao, int location, int width)
         {
+            EnableVAO(vao);
+
             BufferHandle vbo = GL.GenBuffer();
-            BufferData(vbo, initialValues);
+            EnableVBO(vbo);
+
+            GL.VertexAttribPointer((uint)location, width, VertexAttribPointerType.Float, false, width * sizeof(float), 0);
+            GL.EnableVertexAttribArray((uint)location);
+            GL.VertexAttribDivisor((uint)location, 1);
+
+            DisableVAO_VBO();
 
             return vbo;
         }
 
-        public static BufferHandle NewVBO(Vector4[] initialValues)
+        public static void DisableVAO_VBO()
         {
-            BufferHandle vbo = GL.GenBuffer();
-            BufferData(vbo, initialValues);
-
-            return vbo;
+            EnableVAO(VertexArrayHandle.Zero);
+            EnableVBO(BufferHandle.Zero);
         }
 
         public static void LoadTexture(TextureHandle texture, int width, int height, nint pixels, TextureUnit texUnit)
@@ -134,12 +151,18 @@ namespace New_SSQE.NewGUI
 
         public static void DrawTriangles(int first, int count) => GL.DrawArrays(PrimitiveType.Triangles, first, count);
 
-        public static void DrawTriangles(VertexArrayHandle vao, BufferHandle vbo, int first, int count)
+        public static void DrawTriangles(VertexArrayHandle vao, int first, int count)
         {
             EnableVAO(vao);
-            EnableVBO(vbo);
-
             DrawTriangles(first, count);
+        }
+
+        public static void DrawInstances(int first, int count, int instances) => GL.DrawArraysInstanced(PrimitiveType.Triangles, first, count, instances);
+
+        public static void DrawInstances(VertexArrayHandle vao, int first, int count, int instances)
+        {
+            EnableVAO(vao);
+            DrawInstances(first, count, instances);
         }
 
         public static void Clean(VertexArrayHandle vao) => GL.DeleteVertexArray(vao);

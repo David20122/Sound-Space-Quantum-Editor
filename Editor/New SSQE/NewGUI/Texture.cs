@@ -9,26 +9,15 @@ namespace New_SSQE.NewGUI
 {
     internal class Texture : IDisposable
     {
+        // todo: new shader for coloring/sprite compatibility
+
         private static readonly RectangleF defaultSource = new(0, 0, 1, 1);
-
-        private static VertexArrayHandle _vao;
-        private static bool _initialized = false;
-
-        private static void Initialize()
-        {
-            if (_initialized)
-                return;
-
-            _vao = GLState.NewVAO(2, 2, 1);
-            _initialized = true;
-        }
-
-
 
         private ProgramHandle shader;
         private TextureHandle texture;
         private TextureUnit texUnit;
 
+        private VertexArrayHandle vao;
         private BufferHandle vbo;
 
         public Texture(string texture, SKBitmap? img = null, bool smooth = false, TextureUnit unit = TextureUnit.Texture0)
@@ -37,8 +26,7 @@ namespace New_SSQE.NewGUI
             this.texture = TextureManager.GetOrRegister(texture, img, smooth, unit);
             texUnit = unit;
 
-            Initialize();
-            vbo = GLState.NewVBO();
+            (vao, vbo) = GLState.NewVAO_VBO(2, 2, 1);
         }
 
         public Texture(string texture) : this(texture, null, false, TextureUnit.Texture0) { }
@@ -65,7 +53,7 @@ namespace New_SSQE.NewGUI
             GLState.EnableTextureUnit(shader, texUnit);
             GLState.EnableTexture(texture);
 
-            GLState.DrawTriangles(_vao, vbo, 0, 6);
+            GLState.DrawTriangles(vao, 0, 6);
         }
 
 

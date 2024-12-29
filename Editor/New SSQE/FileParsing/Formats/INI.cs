@@ -130,6 +130,30 @@ namespace New_SSQE.FileParsing.Formats
 
                             break;
 
+                        case "vfxObjects":
+                            List<string> vfx = value.Deserialize<List<string>>() ?? new();
+
+                            foreach (string obj in vfx)
+                            {
+                                MapObject? final = MOParser.Parse(null, obj.Split('|'));
+                                if (final != null)
+                                    CurrentMap.VfxObjects.Add(final);
+                            }
+
+                            break;
+
+                        case "specialObjects":
+                            List<string> special = value.Deserialize<List<string>>() ?? new();
+
+                            foreach (string obj in special)
+                            {
+                                MapObject? final = MOParser.Parse(null, obj.Split('|'));
+                                if (final != null)
+                                    CurrentMap.SpecialObjects.Add(final);
+                            }
+
+                            break;
+
                         case "currentTime":
                             Settings.currentTime.Value.Value = value.GetSingle();
                             break;
@@ -230,10 +254,23 @@ namespace New_SSQE.FileParsing.Formats
             foreach (Bookmark bookmark in CurrentMap.Bookmarks)
                 bookmarkfinal.Add(new object[] { bookmark.Text, bookmark.Ms, bookmark.EndMs });
 
+            List<string> vfxFinal = new();
+
+            foreach (MapObject obj in CurrentMap.VfxObjects)
+                vfxFinal.Add($"{obj.ID}|{obj.ToString()}");
+
+            List<string> specialFinal = new();
+
+            foreach (MapObject obj in CurrentMap.SpecialObjects)
+                specialFinal.Add($"{obj.ID}|{obj.ToString()}");
+
             Dictionary<string, object> json = new()
             {
                 {"timings", timingfinal },
                 {"bookmarks", bookmarkfinal },
+                {"vfxObjects", vfxFinal },
+                {"specialObjects", specialFinal },
+
                 {"currentTime", Settings.currentTime.Value.Value },
                 {"beatDivisor", Settings.beatDivisor.Value.Value },
                 {"exportOffset", Settings.exportOffset.Value },

@@ -1,5 +1,6 @@
 ﻿using New_SSQE.Audio;
 using New_SSQE.Objects;
+using New_SSQE.Objects.Managers;
 using New_SSQE.Preferences;
 using OpenTK.Mathematics;
 
@@ -29,25 +30,23 @@ namespace New_SSQE.Maps
             float mult = point.BPM / newBpm;
             List<Note> notes = GetNotesFromPoint(point);
 
-            for (int i = 0; i < notes.Count; i++)
-            {
-                Note note = notes[i];
-                long offset = note.Ms - point.Ms;
-
-                note.Ms = newMs + (long)(offset * mult);
-            }
+            NoteManager.Edit("ADJUST NOTE[S]", notes, (n) => n.Ms = (long)((n.Ms - point.Ms) * mult) + point.Ms);
         }
 
         public static void MovePoints(List<TimingPoint> points, long offset)
         {
+            List<Note> toAdjust = [];
+
             for (int i = 0; i < points.Count; i++)
             {
                 TimingPoint point = points[i];
                 List<Note> notes = GetNotesFromPoint(point);
 
                 for (int j = 0; j < notes.Count; j++)
-                    notes[j].Ms += offset;
+                    toAdjust.Add(notes[j]);
             }
+
+            NoteManager.Edit("ADJUST NOTE[S]", toAdjust, (n) => n.Ms += offset);
         }
 
 

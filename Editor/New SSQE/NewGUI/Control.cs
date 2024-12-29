@@ -6,20 +6,6 @@ namespace New_SSQE.NewGUI
 {
     internal abstract class Control : IDisposable
     {
-        protected static VertexArrayHandle _vao;
-        private static bool _initialized = false;
-
-        private static void Initialize()
-        {
-            if (_initialized)
-                return;
-
-            _vao = GLState.NewVAO(2, 4);
-            _initialized = true;
-        }
-
-
-
         protected ProgramHandle shader;
         protected Texture[] textures;
 
@@ -28,6 +14,7 @@ namespace New_SSQE.NewGUI
         protected readonly RectangleF startRect;
         protected RectangleF rect;
 
+        protected VertexArrayHandle vao;
         protected BufferHandle vbo;
         protected int vertexCount;
 
@@ -42,8 +29,7 @@ namespace New_SSQE.NewGUI
             startRect = rect;
             this.rect = rect;
 
-            Initialize();
-            vbo = GLState.NewVBO();
+            (vao, vbo) = GLState.NewVAO_VBO(2, 4);
         }
 
         public Control(float x, float y, float w, float h) : this(new RectangleF(x, y, w, h)) { }
@@ -65,7 +51,7 @@ namespace New_SSQE.NewGUI
         public virtual void Render(float mousex, float mousey, float frametime)
         {
             GLState.EnableProgram(shader);
-            GLState.DrawTriangles(_vao, vbo, 0, vertexCount);
+            GLState.DrawTriangles(vao, 0, vertexCount);
         }
 
         public virtual void PostRender(float mousex, float mousey, float frametime)

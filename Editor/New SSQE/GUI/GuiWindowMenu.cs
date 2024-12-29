@@ -226,7 +226,7 @@ namespace New_SSQE.GUI
                     string clipboard = Clipboard.GetText();
 
                     if (!string.IsNullOrWhiteSpace(clipboard))
-                        MapManager.Load(clipboard);
+                        MapManager.Load(clipboard, false, false, MainWindow.DebugVersion && MainWindow.Instance.AltHeld);
 
                     break;
 

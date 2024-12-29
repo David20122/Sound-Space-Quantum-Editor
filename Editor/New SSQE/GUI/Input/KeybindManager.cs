@@ -153,7 +153,7 @@ namespace New_SSQE.GUI.Input
                                 long offset = copied.Min(n => n.Ms);
                                 long max = copied.Max(n => n.Ms);
 
-                                copied.ForEach(n => n.Ms = (long)Settings.currentTime.Value.Value + n.Ms - offset);
+                                copied.ForEach(n => n.Ms = (long)MathHelper.Clamp(Settings.currentTime.Value.Value + n.Ms - offset, 0, Settings.currentTime.Value.Max));
 
                                 if (isNote && !GuiTrack.RenderMapObjects)
                                 {

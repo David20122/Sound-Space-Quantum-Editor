@@ -228,7 +228,7 @@ namespace SSQE_Player.GUI
                         MissNote(i);
                 }
 
-                positions[index] = (x, y, noteSet[i] ? z : -10);
+                positions[index] = (x, y, (noteSet[i] && (Settings.notePushback.Value || z >= 0)) ? z : -10);
                 colors[index] = new(note.Color, fade ? Math.Min(1f, (1f - z / SpawnZ) * 2f) : 1f);
             }
 

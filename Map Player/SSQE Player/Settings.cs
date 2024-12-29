@@ -34,6 +34,7 @@ namespace SSQE_Player
         public static Setting<bool> gridGuides = false;
         public static Setting<bool> useVSync = false;
         public static Setting<bool> limitPlayerFPS = false;
+        public static Setting<bool> notePushback = false;
 
         public static Setting<SliderSetting> currentTime = new SliderSetting(0f, 0f, 0f);
         public static Setting<SliderSetting> tempo = new SliderSetting(0.9f, 1.4f, 0.05f);

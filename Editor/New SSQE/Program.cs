@@ -31,6 +31,7 @@ namespace New_SSQE
             BuildAvaloniaApp();
 
             Settings.Load(false);
+            MainWindow.DebugVersion |= Settings.debugMode.Value;
             
             MainWindow window = new(Settings.msaa.Value ? 32 : 0);
             ProgramArgs.Watch();
@@ -155,7 +156,7 @@ If none of these work or aren't applicable, report the error in the official Sou
                 DialogResult result = MessageBox.Show(@"Fatal error encountered while running this application
 A crash report has been created at '*\crash-report.txt'
 
-Would you like to report this crash on GitHub?", "Error", "Yes", "No");
+Would you like to report this crash on GitHub?", MBoxIcon.Error, MBoxButtons.Yes_No);
 
                 if (result == DialogResult.Yes)
                 {

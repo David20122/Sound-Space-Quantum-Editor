@@ -26,6 +26,7 @@ namespace New_SSQE.Maps
 
         public static string? FileName;
         public static string SoundID = "-1";
+        public static string FileID => Path.GetFileNameWithoutExtension(FileName) ?? SoundID;
 
         public static float Tempo = 1f;
         public static float Zoom = 1f;
@@ -85,6 +86,8 @@ namespace New_SSQE.Maps
             Settings.previewDuration.Value = "";
             Settings.novaCover.Value = "";
             Settings.novaIcon.Value = "";
+
+            GC.Collect();
         }
 
 

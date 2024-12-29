@@ -6,6 +6,21 @@ using New_SSQE.Misc.Dialogs;
 
 namespace New_SSQE
 {
+    public enum MBoxButtons
+    {
+        OK,
+        Yes_No,
+        Yes_No_Cancel,
+        OK_Cancel
+    }
+
+    public enum MBoxIcon
+    {
+        Info,
+        Warning,
+        Error
+    }
+
     public partial class MessageBox : Window
     {
         public static MessageBox Instance;
@@ -48,18 +63,19 @@ namespace New_SSQE
 
         private static DialogResult Result;
 
-        public static DialogResult Show(string message, string icon, params string[] buttons)
+        public static DialogResult Show(string message, MBoxIcon icon, MBoxButtons buttons)
         {
             Instance?.Close();
             Result = DialogResult.Cancel;
 
-            iconPath = icon;
+            iconPath = icon.ToString();
             MessageBox box = new();
 
             box.Text.Text = message;
 
-            for (int i = 0; i < buttons.Length; i++)
-                box.GetControl<Button>($"{buttons[i]}{buttons.Length - i}").IsVisible = true;
+            string[] buttonStr = buttons.ToString().Split('_');
+            for (int i = 0; i < buttonStr.Length; i++)
+                box.GetControl<Button>($"{buttonStr[i]}{buttonStr.Length - i}").IsVisible = true;
 
             box.Show();
             BackgroundWindow.YieldWindow(box);

@@ -2,7 +2,6 @@
 using New_SSQE.Misc.Static;
 using New_SSQE.Objects;
 using New_SSQE.Preferences;
-using System.Reflection;
 using System.Text;
 
 namespace New_SSQE.FileParsing.Formats
@@ -21,7 +20,7 @@ namespace New_SSQE.FileParsing.Formats
 
             if (fileTypeSignature != "SS+m")
             {
-                MessageBox.Show("File type not recognized or supported\nCurrently supported: SSPM v1/v2", "Warning", "OK");
+                MessageBox.Show("File type not recognized or supported\nCurrently supported: SSPM v1/v2", MBoxIcon.Warning, MBoxButtons.OK);
                 return "";
             }
 
@@ -320,7 +319,7 @@ namespace New_SSQE.FileParsing.Formats
                 mapData += string.Join("", notes);
             }
             else
-                MessageBox.Show("File version not recognized or supported\nCurrently supported: SSPM v1/v2", "Warning", "OK");
+                MessageBox.Show("File version not recognized or supported\nCurrently supported: SSPM v1/v2", MBoxIcon.Warning, MBoxButtons.OK);
 
             return mapData ?? "";
         }

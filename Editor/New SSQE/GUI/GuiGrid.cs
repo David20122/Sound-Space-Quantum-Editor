@@ -233,8 +233,6 @@ namespace New_SSQE.GUI
                 bool selectTool = Settings.selectTool.Value;
 
                 (int low, int high) = CurrentMap.Notes.SearchRange(currentTime, maxMs);
-                if (CurrentMap.Notes.Count > 0 && CurrentMap.Notes[high].Ms <= (long)maxMs && CurrentMap.Notes[low].Ms >= (long)currentTime)
-                    high++;
                 int range = high - low;
                 int nc = gridNumbers ? range : 0;
 
@@ -492,8 +490,6 @@ namespace New_SSQE.GUI
                 int colorCount = Settings.noteColors.Value.Count;
 
                 (int low, int high) = CurrentMap.Notes.SearchRange(currentTime, maxMs);
-                if (CurrentMap.Notes.Count > 0 && CurrentMap.Notes[high].Ms <= (long)maxMs && CurrentMap.Notes[low].Ms >= (long)currentTime)
-                    high++;
                 int range = high - low;
 
                 Vector4[] noteOffsets = Pool.Rent(range);

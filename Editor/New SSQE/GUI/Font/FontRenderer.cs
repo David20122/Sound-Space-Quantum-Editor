@@ -3,6 +3,7 @@ using New_SSQE.Misc.Static;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using System.Drawing;
 
 namespace New_SSQE.GUI.Font
 {
@@ -53,8 +54,14 @@ namespace New_SSQE.GUI.Font
             return fonts[font].Baseline(fontSize, unicode);
         }
 
+        private static string _activeFont = "";
+
         public static void SetActive(string font)
         {
+            //if (font == _activeFont)
+                //return;
+            _activeFont = font;
+
             if (unicode)
             {
                 int location = GL.GetUniformLocation(Shader.UnicodeProgram, "texture0");
@@ -78,6 +85,18 @@ namespace New_SSQE.GUI.Font
 
                 GL.BindVertexArray(fonts[font].VaO);
             }
+        }
+
+        private static Color _activeColor = Color.White;
+
+        public static void SetColor(Color color)
+        {
+            if (color == _activeColor)
+                return;
+            _activeColor = color;
+
+            int location = GL.GetUniformLocation(unicode ? Shader.FontProgram : Shader.UnicodeProgram, "TexColor");
+            GL.Uniform4f(location, color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
         }
 
         public static void RenderData(string font, Vector4[] data, float[]? alpha = null, int? count = null)

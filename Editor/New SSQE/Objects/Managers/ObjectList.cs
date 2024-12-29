@@ -2,7 +2,7 @@
 
 namespace New_SSQE.Objects.Managers
 {
-    internal class SelectionList<T> : List<T>
+    internal class SelectionList<T> : List<T> where T : MapObject
     {
         public SelectionList() { }
         public SelectionList(int capacity) : base(capacity) { }
@@ -73,6 +73,9 @@ namespace New_SSQE.Objects.Managers
             int first = SearchFirst(start);
             int last = SearchLast(end);
 
+            if (Count > 0 && this[last].Ms <= end && this[first].Ms >= start)
+                last++;
+
             return (first, last);
         }
 
@@ -140,6 +143,33 @@ namespace New_SSQE.Objects.Managers
 
             if (MainWindow.Instance.CurrentWindow is GuiWindowEditor editor)
                 editor.Timeline.GenerateOffsets();
+        }
+
+
+
+        public void RemoveAll(List<T> items)
+        {
+            int curIndex = Count - 1;
+            int itemIndex = items.Count - 1;
+
+            while (curIndex >= 0 && itemIndex >= 0)
+            {
+                int prevIndex = curIndex;
+
+                for (int i = curIndex; i >= 0; i--)
+                {
+                    if (this[i] == items[itemIndex])
+                    {
+                        RemoveAt(i);
+                        curIndex--;
+                        itemIndex--;
+                        break;
+                    }
+                }
+
+                if (curIndex == prevIndex)
+                    itemIndex--;
+            }
         }
     }
 }

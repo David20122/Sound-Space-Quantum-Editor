@@ -49,7 +49,7 @@ namespace New_SSQE.FileParsing
                     catch (Exception ex)
                     {
                         Logging.Register("Failed to export", LogSeverity.WARN, ex);
-                        MessageBox.Show($"Failed to export SSPM:\n\n{ex.Message}", "Warning", "OK");
+                        MessageBox.Show($"Failed to export SSPM:\n\n{ex.Message}", MBoxIcon.Warning, MBoxButtons.OK);
                     }
                 }
             }
@@ -94,7 +94,7 @@ namespace New_SSQE.FileParsing
                     catch (Exception ex)
                     {
                         Logging.Register("Failed to export", LogSeverity.WARN, ex);
-                        MessageBox.Show($"Failed to export NPK:\n\n{ex.Message}", "Warning", "OK");
+                        MessageBox.Show($"Failed to export NPK:\n\n{ex.Message}", MBoxIcon.Warning, MBoxButtons.OK);
                     }
                 }
             }

@@ -16,16 +16,14 @@ namespace New_SSQE.Objects.Managers
 
             UndoRedoManager.Add(label, () =>
             {
-                foreach (MapObject n in newObjects)
-                    Objects.Remove(n);
+                Objects.RemoveAll(newObjects);
                 Objects.AddRange(oldObjects);
 
                 Objects.Sort();
                 Objects.Selected = new(oldObjects);
             }, () =>
             {
-                foreach (MapObject n in oldObjects)
-                    Objects.Remove(n);
+                Objects.RemoveAll(oldObjects);
                 Objects.AddRange(newObjects);
 
                 Objects.Sort();

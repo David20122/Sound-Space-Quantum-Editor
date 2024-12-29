@@ -126,7 +126,7 @@ namespace New_SSQE.Maps
             MainWindow.Instance.SwitchWindow(new GuiWindowEditor());
         }
 
-        public static bool Load(string pathOrData, bool file = false, bool autosave = false)
+        public static bool Load(string pathOrData, bool file = false, bool autosave = false, bool downloadFile = false)
         {
             foreach (Map map in Cache)
             {
@@ -203,8 +203,18 @@ namespace New_SSQE.Maps
 
             try
             {
-                while (true)
-                    data = WebClient.DownloadString(data);
+                if (!downloadFile)
+                {
+                    while (true)
+                        data = WebClient.DownloadString(data);
+                }
+                else
+                {
+                    string path = $"{Assets.TEMP}\\tempdownload.sspm";
+
+                    WebClient.DownloadFile(data, path);
+                    data = Parser.ParseSSPM(path);
+                }
             }
             catch { }
 
@@ -251,7 +261,7 @@ namespace New_SSQE.Maps
             catch (Exception ex)
             {
                 Logging.Register($"Failed to load map data", LogSeverity.WARN, ex);
-                MessageBox.Show("Failed to load map data, exit and check '*\\logs.txt' for more info", "Warning", "OK");
+                MessageBox.Show($"Failed to load map data: {ex.Message}\n\nExit and check '*\\logs.txt' for more info", MBoxIcon.Warning, MBoxButtons.OK);
 
                 if (CurrentMap.LoadedMap != null)
                     Cache.Remove(CurrentMap.LoadedMap);
@@ -284,7 +294,7 @@ namespace New_SSQE.Maps
                 DialogResult result = DialogResult.No;
 
                 if (!forced)
-                    result = MessageBox.Show($"{Path.GetFileNameWithoutExtension(CurrentMap.FileName) ?? "Untitled Song"} ({CurrentMap.SoundID})\n\nWould you like to save before closing?", "Warning", "Yes", "No", "Cancel");
+                    result = MessageBox.Show($"{Path.GetFileNameWithoutExtension(CurrentMap.FileName) ?? "Untitled Song"} ({CurrentMap.SoundID})\n\nWould you like to save before closing?", MBoxIcon.Warning, MBoxButtons.Yes_No_Cancel);
 
                 if (forced || result == DialogResult.Yes)
                 {
@@ -392,7 +402,7 @@ namespace New_SSQE.Maps
                 {
                     if (Settings.skipDownload.Value)
                     {
-                        DialogResult message = MessageBox.Show($"No asset with id '{id}' is present in cache.\n\nWould you like to import a file with this id?", "Warning", "OK", "Cancel");
+                        DialogResult message = MessageBox.Show($"No asset with id '{id}' is present in cache.\n\nWould you like to import a file with this id?", MBoxIcon.Warning, MBoxButtons.OK_Cancel);
 
                         return message == DialogResult.OK && ImportAudio(id);
                     }
@@ -405,7 +415,7 @@ namespace New_SSQE.Maps
             catch (Exception e)
             {
                 Logging.Register("Failed to load audio", LogSeverity.WARN, e);
-                DialogResult message = MessageBox.Show($"Failed to download asset with id '{id}':\n\n{e.Message}\n\nWould you like to import a file with this id instead?", "Error", "OK", "Cancel");
+                DialogResult message = MessageBox.Show($"Failed to download asset with id '{id}':\n\n{e.Message}\n\nWould you like to import a file with this id instead?", MBoxIcon.Error, MBoxButtons.OK_Cancel);
 
                 if (message == DialogResult.OK)
                     return ImportAudio(id);
