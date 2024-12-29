@@ -316,7 +316,7 @@
         }
       }
     },
-    "net8.0/win-x64": {
+    "net8.0/linux-x64": {
       "Microsoft.NET.ILLink.Tasks/8.0.6": {
         "type": "package",
         "build": {
@@ -435,7 +435,7 @@
           "lib/netstandard2.0/_._": {}
         },
         "native": {
-          "runtimes/win-x64/native/glfw3.dll": {}
+          "runtimes/linux-x64/native/libglfw.so.3.3": {}
         }
       },
       "OpenTK.Windowing.Common/5.0.0-pre.8": {
@@ -518,6 +518,9 @@
         },
         "runtime": {
           "lib/net6.0/_._": {}
+        },
+        "native": {
+          "runtimes/linux-x64/native/libSkiaSharp.so": {}
         }
       },
       "SkiaSharp.NativeAssets.macOS/2.88.7": {
@@ -536,9 +539,6 @@
         },
         "runtime": {
           "lib/net6.0/_._": {}
-        },
-        "native": {
-          "runtimes/win-x64/native/libSkiaSharp.dll": {}
         }
       },
       "StbTrueTypeSharp/1.26.12": {
@@ -1027,11 +1027,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
+      "projectUniqueName": "F:\\Github\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
       "projectName": "SSQE Player",
-      "projectPath": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
+      "projectPath": "F:\\Github\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
       "packagesPath": "C:\\Users\\Owner\\.nuget\\packages\\",
-      "outputPath": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\obj\\",
+      "outputPath": "F:\\Github\\SSQE\\Map Player\\SSQE Player\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "F:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1108,6 +1108,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.NETCore.App.Host.linux-x64",
+            "version": "[8.0.6, 8.0.6]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
@@ -1117,7 +1123,7 @@
       }
     },
     "runtimes": {
-      "win-x64": {
+      "linux-x64": {
         "#import": []
       }
     }

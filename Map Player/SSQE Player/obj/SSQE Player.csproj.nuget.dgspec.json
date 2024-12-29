@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj": {}
+    "F:\\Github\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj": {}
   },
   "projects": {
-    "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj": {
+    "F:\\Github\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
+        "projectUniqueName": "F:\\Github\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
         "projectName": "SSQE Player",
-        "projectPath": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
+        "projectPath": "F:\\Github\\SSQE\\Map Player\\SSQE Player\\SSQE Player.csproj",
         "packagesPath": "C:\\Users\\Owner\\.nuget\\packages\\",
-        "outputPath": "F:\\GitHub\\SSQE\\Map Player\\SSQE Player\\obj\\",
+        "outputPath": "F:\\Github\\SSQE\\Map Player\\SSQE Player\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "F:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -88,6 +88,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.NETCore.App.Host.linux-x64",
+              "version": "[8.0.6, 8.0.6]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
@@ -97,7 +103,7 @@
         }
       },
       "runtimes": {
-        "win-x64": {
+        "linux-x64": {
           "#import": []
         }
       }
