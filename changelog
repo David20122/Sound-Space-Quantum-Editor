@@ -47,6 +47,19 @@
   > GitHub issues however, if you choose to make any, should be made in the fork instead of the main one or they likely wont be seen
   > https://github.com/Avibah/Sound-Space-Quantum-Editor
 
+   -- P-2.1.5.0 - 12/28/2024 --
+
+- fullscreen is now actually fullscreen
+  > may improve latency and/or stutters
+- added autoplay
+  > hold alt when clicking play from start/play here in the editor to use autoplay
+- disabled note pushback by default
+  > can be enabled via settings.txt if you really want it back
+
+- possibly improved mouse movement consistency
+- adjusted approach fade math for consistency
+- some optimizations
+
    -- U-2.0.2.1 - 12/28/2024 --
 
 - updated links
